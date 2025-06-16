@@ -43,6 +43,7 @@ class MobileErrorBoundary extends React.Component<
               <button 
                 onClick={() => {
                   localStorage.clear();
+                  sessionStorage.clear();
                   window.location.reload();
                 }}
                 className="w-full bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
