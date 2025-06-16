@@ -368,7 +368,7 @@ const Home: React.FC = () => {
                   >
                     <div className="relative overflow-hidden">
                       <img
-                        src={getProductImageUrl(product.images?.[0])}
+                        src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
                         className="w-full h-40 sm:h-44 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
@@ -580,7 +580,7 @@ const Home: React.FC = () => {
                   <Link to={`/products/${product.id}`} className="block">
                     <div className="relative overflow-hidden">
                       <img
-                        src={product.images?.[0]?.url}
+                        src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
                         className="w-full h-40 sm:h-44 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
@@ -591,9 +591,9 @@ const Home: React.FC = () => {
                       />
                       
                       {/* Discount Badge */}
-                      {calculateDiscount(product) > 0 && (
+                      {calculateDiscount(product.price, product.salePrice) > 0 && (
                         <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                          -{calculateDiscount(product)}%
+                          -{calculateDiscount(product.price, product.salePrice)}%
                         </div>
                       )}
                       

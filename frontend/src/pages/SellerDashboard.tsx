@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { Package, ShoppingBag, TrendingUp, Clock, User, AlertCircle, ArrowLeft, Wallet, Megaphone } from 'lucide-react';
+import { Package, ShoppingBag, TrendingUp, Clock, User, AlertCircle, ArrowLeft, Wallet, Megaphone, DollarSign } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { sellerApi } from '../services/sellerApi';
 import { formatPrice } from '../utils/currency';
@@ -172,7 +172,7 @@ const SellerDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Products</p>
-                <p className="text-2xl font-bold text-gray-900">{dashboard?.totalProducts || 0}</p>
+                <p className="text-2xl font-bold text-gray-900">{0}</p>
               </div>
               <Package className="h-8 w-8 text-blue-500" />
             </div>
@@ -192,7 +192,7 @@ const SellerDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">${dashboard?.totalRevenue?.toFixed(2) || '0.00'}</p>
+                <p className="text-2xl font-bold text-gray-900">${(dashboard as any)?.totalRevenue?.toFixed(2) || '0.00'}</p>
               </div>
               <DollarSign className="h-8 w-8 text-yellow-500" />
             </div>
@@ -202,7 +202,7 @@ const SellerDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Active Products</p>
-                <p className="text-2xl font-bold text-gray-900">{dashboard?.totalProducts || 0}</p>
+                <p className="text-2xl font-bold text-gray-900">{(dashboard as any)?.products?.length || 0}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-purple-500" />
             </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ShoppingCart, 
@@ -133,6 +134,14 @@ const Header: React.FC = () => {
 
   return (
     <>
+      <style>
+        {`
+          .mobile-menu-portal {
+            z-index: 2147483647 !important;
+            position: fixed !important;
+          }
+        `}
+      </style>
       {/* Enhanced Top Banner with Performance Info */}
       <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white text-center py-2 text-sm">
         <div className="container mx-auto px-4">
@@ -147,9 +156,7 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      <header className={`bg-white/95 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'shadow-lg shadow-gray-200/20' : ''
-      }`}>
+      <header className={`sticky top-0 bg-white shadow-sm border-b border-gray-200 transition-all duration-300 z-40 ${isScrolled ? 'shadow-md' : ''}`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Enhanced Logo with Fallback */}
@@ -490,348 +497,345 @@ const Header: React.FC = () => {
           )}
 
           {/* Enhanced Mobile Menu */}
-          <AnimatePresence mode="wait">
-            {isMenuOpen && (
-              <>
-                {/* Mobile Menu Backdrop */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2147483647] lg:hidden"
-                  onClick={() => {
-                    console.log('Backdrop clicked, closing menu');
-                    setIsMenuOpen(false);
-                  }}
-                  style={{ zIndex: 2147483647 }}
-                />
-                
-                {/* Mobile Menu Content */}
-                <motion.div
-                  initial={{ opacity: 0, x: '100%' }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: '100%' }}
-                  transition={{ 
-                    type: 'spring',
-                    damping: 25,
-                    stiffness: 300,
-                    duration: 0.3
-                  }}
-                  className="fixed top-0 right-0 h-full w-[340px] max-w-[85vw] sm:max-w-[400px] bg-white/95 backdrop-blur-xl shadow-2xl z-[2147483647] lg:hidden overflow-hidden"
-                  style={{ 
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)',
-                    zIndex: 2147483647,
-                    position: 'fixed !important' as any
-                  }}
-                >
-                  <div className="h-full overflow-y-auto">
-                    {/* Header */}
-                    <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-pink-500 text-white p-6 border-b border-white/20">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                            <img src="/iwanyu-logo.png" alt="Iwanyu" className="w-6 h-6" />
-                          </div>
-                          <div>
-                            <h2 className="font-bold text-lg">Iwanyu Store</h2>
-                            <p className="text-xs text-white/80">Your shopping destination</p>
-                          </div>
+          {isMenuOpen && createPortal(
+            <AnimatePresence mode="wait">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="mobile-menu-portal fixed inset-0 bg-black/60 backdrop-blur-sm z-[2147483647] lg:hidden"
+                onClick={() => {
+                  console.log('Backdrop clicked, closing menu');
+                  setIsMenuOpen(false);
+                }}
+                style={{ zIndex: 2147483647 }}
+              />
+              
+              <motion.div
+                initial={{ opacity: 0, x: '100%' }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: '100%' }}
+                transition={{ 
+                  type: 'spring',
+                  damping: 25,
+                  stiffness: 300,
+                  duration: 0.3
+                }}
+                className="mobile-menu-portal fixed top-0 right-0 h-full w-[340px] max-w-[85vw] sm:max-w-[400px] bg-white/95 backdrop-blur-xl shadow-2xl z-[2147483647] lg:hidden overflow-hidden"
+                style={{ 
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+                  zIndex: 2147483647,
+                  position: 'fixed !important' as any
+                }}
+              >
+                <div className="h-full overflow-y-auto">
+                  {/* Header */}
+                  <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-pink-500 text-white p-6 border-b border-white/20">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                          <img src="/iwanyu-logo.png" alt="Iwanyu" className="w-6 h-6" />
                         </div>
-                        <button
-                          onClick={() => {
-                            console.log('Close button clicked');
-                            setIsMenuOpen(false);
-                          }}
-                          aria-label="Close mobile menu"
-                          className="p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-xl transition-all duration-200 active:scale-95"
-                        >
-                          <X size={22} strokeWidth={2.5} />
-                        </button>
+                        <div>
+                          <h2 className="font-bold text-lg">Iwanyu Store</h2>
+                          <p className="text-xs text-white/80">Your shopping destination</p>
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="p-6 space-y-6">
-                      {/* User Profile Section */}
-                      {user ? (
-                        <motion.div 
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 }}
-                          className="bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 rounded-2xl p-5 border border-orange-100/50 shadow-sm"
-                        >
-                          <div className="flex items-center space-x-4 mb-4">
-                            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white/50">
-                              {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-gray-900 truncate text-base">
-                                {user.firstName || 'User'}
-                              </p>
-                              <p className="text-sm text-gray-600 truncate">{user.email}</p>
-                              <div className="flex items-center mt-1">
-                                <div className={`w-2 h-2 rounded-full mr-2 ${
-                                  user.role === 'ADMIN' ? 'bg-blue-500' :
-                                  user.role === 'SELLER' ? 'bg-green-500' : 'bg-gray-400'
-                                }`}></div>
-                                <span className="text-xs font-medium text-gray-500 capitalize">
-                                  {user.role?.toLowerCase() || 'Customer'}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="grid gap-2">
-                            {user.role === 'ADMIN' && (
-                              <Link
-                                to="/admin/dashboard"
-                                className="flex items-center space-x-3 p-3 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all duration-200 group border border-blue-100"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                                  <Settings size={16} />
-                                </div>
-                                <span className="font-medium">Admin Dashboard</span>
-                              </Link>
-                            )}
-                            
-                            {user.role === 'SELLER' ? (
-                              <Link
-                                to="/seller/dashboard"
-                                className="flex items-center space-x-3 p-3 rounded-xl bg-green-50 text-green-700 hover:bg-green-100 transition-all duration-200 group border border-green-100"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                                  <Store size={16} />
-                                </div>
-                                <span className="font-medium">Seller Dashboard</span>
-                              </Link>
-                            ) : user.role !== 'ADMIN' && (
-                              <Link
-                                to="/become-seller"
-                                className="flex items-center space-x-3 p-3 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 transition-all duration-200 group border border-purple-100"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                                  <Store size={16} />
-                                </div>
-                                <span className="font-medium">Become a Seller</span>
-                              </Link>
-                            )}
-                          </div>
-                        </motion.div>
-                      ) : (
-                        <motion.div 
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 }}
-                          className="bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 rounded-2xl p-5 border border-orange-100/50 shadow-sm"
-                        >
-                          <div className="text-center mb-4">
-                            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
-                              <User size={24} className="text-white" />
-                            </div>
-                            <h3 className="font-semibold text-gray-900 mb-1">Join Iwanyu Store!</h3>
-                            <p className="text-sm text-gray-600">Sign up to access exclusive features</p>
-                          </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <Link
-                              to="/login"
-                              className="text-center py-3 px-4 border-2 border-orange-200 text-orange-700 rounded-xl hover:bg-orange-50 hover:border-orange-300 transition-all duration-200 font-medium active:scale-95"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              Login
-                            </Link>
-                            <Link
-                              to="/register"
-                              className="text-center py-3 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg active:scale-95"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              Sign Up
-                            </Link>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* Categories Section */}
-                      <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="space-y-4"
+                      <button
+                        onClick={() => {
+                          console.log('Close button clicked');
+                          setIsMenuOpen(false);
+                        }}
+                        aria-label="Close mobile menu"
+                        className="p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-xl transition-all duration-200 active:scale-95"
                       >
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
-                              <Grid size={16} className="text-white" />
-                            </div>
-                            Categories
-                          </h3>
-                          <span className="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">
-                            {categories.length}
-                          </span>
-                        </div>
-                        
-                        {isLoading ? (
-                          <div className="space-y-3">
-                            {[...Array(6)].map((_, i) => (
-                              <div key={i} className="h-14 bg-gray-100 rounded-xl animate-pulse"></div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="space-y-2 max-h-64 overflow-y-auto">
-                            {categories.map((category: Category, index: number) => (
-                              <motion.div
-                                key={category.id}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3 + index * 0.05 }}
-                              >
-                                <Link
-                                  to={`/products?category=${category.slug}`}
-                                  className="flex items-center justify-between p-4 rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200 group active:scale-[0.98]"
-                                  onClick={() => setIsMenuOpen(false)}
-                                >
-                                  <div className="flex items-center space-x-3">
-                                    <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                                      {renderCategoryIcon(category.name, 18)}
-                                    </div>
-                                    <span className="text-gray-700 group-hover:text-orange-600 font-medium">
-                                      {category.name}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <span className="text-xs text-gray-400 group-hover:text-orange-500 font-medium bg-gray-100 group-hover:bg-orange-100 px-2 py-1 rounded-full">
-                                      {category._count?.products || 0}
-                                    </span>
-                                    <ChevronRight size={14} className="text-gray-400 group-hover:text-orange-500" />
-                                  </div>
-                                </Link>
-                              </motion.div>
-                            ))}
-                            
-                            <motion.div
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.3 + categories.length * 0.05 }}
-                            >
-                              <Link
-                                to="/products"
-                                className="flex items-center justify-center p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-200 text-blue-600 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 transition-all duration-200 group active:scale-[0.98]"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                <Package size={18} className="mr-2" />
-                                <span className="font-semibold">View All Products</span>
-                              </Link>
-                            </motion.div>
-                          </div>
-                        )}
-                      </motion.div>
-
-                      {/* Quick Actions */}
-                      <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 }}
-                        className="space-y-3"
-                      >
-                        <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
-                            <Star size={16} className="text-white" />
-                          </div>
-                          Quick Actions
-                        </h3>
-
-                        {user && (
-                          <Link
-                            to="/orders"
-                            className="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-100 hover:bg-blue-100 hover:border-blue-200 transition-all duration-200 group active:scale-[0.98]"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                                <Package size={18} className="text-blue-600" />
-                              </div>
-                              <span className="font-semibold text-blue-700">My Orders</span>
-                            </div>
-                            <ChevronRight size={16} className="text-blue-500" />
-                          </Link>
-                        )}
-
-                        <Link
-                          to="/cart"
-                          className="flex items-center justify-between p-4 rounded-xl bg-orange-50 border border-orange-100 hover:bg-orange-100 hover:border-orange-200 transition-all duration-200 group active:scale-[0.98]"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors relative">
-                              <ShoppingCart size={18} className="text-orange-600" />
-                              {itemCount > 0 && (
-                                <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                                  {itemCount > 9 ? '9+' : itemCount}
-                                </div>
-                              )}
-                            </div>
-                            <span className="font-semibold text-orange-700">Shopping Cart</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            {itemCount > 0 && (
-                              <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                                {itemCount}
-                              </span>
-                            )}
-                            <ChevronRight size={16} className="text-orange-500" />
-                          </div>
-                        </Link>
-
-                        <Link
-                          to="/wishlist"
-                          className="flex items-center justify-between p-4 rounded-xl bg-red-50 border border-red-100 hover:bg-red-100 hover:border-red-200 transition-all duration-200 group active:scale-[0.98]"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                              <Heart size={18} className="text-red-600" />
-                            </div>
-                            <span className="font-semibold text-red-700">Wishlist</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                              0
-                            </span>
-                            <ChevronRight size={16} className="text-red-500" />
-                          </div>
-                        </Link>
-                      </motion.div>
-
-                      {/* Logout Section */}
-                      {user && (
-                        <motion.div 
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.5 }}
-                          className="pt-6 border-t border-gray-200"
-                        >
-                          <button
-                            onClick={() => {
-                              logout();
-                              setIsMenuOpen(false);
-                            }}
-                            className="w-full flex items-center justify-center space-x-3 p-4 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 border border-red-100 hover:border-red-200 active:scale-[0.98] group"
-                          >
-                            <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                              <X size={16} />
-                            </div>
-                            <span className="font-semibold">Sign Out</span>
-                          </button>
-                        </motion.div>
-                      )}
+                        <X size={22} strokeWidth={2.5} />
+                      </button>
                     </div>
                   </div>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
+
+                  <div className="p-6 space-y-6">
+                    {/* User Profile Section */}
+                    {user ? (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 rounded-2xl p-5 border border-orange-100/50 shadow-sm"
+                      >
+                        <div className="flex items-center space-x-4 mb-4">
+                          <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white/50">
+                            {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-900 truncate text-base">
+                              {user.firstName || 'User'}
+                            </p>
+                            <p className="text-sm text-gray-600 truncate">{user.email}</p>
+                            <div className="flex items-center mt-1">
+                              <div className={`w-2 h-2 rounded-full mr-2 ${
+                                user.role === 'ADMIN' ? 'bg-blue-500' :
+                                user.role === 'SELLER' ? 'bg-green-500' : 'bg-gray-400'
+                              }`}></div>
+                              <span className="text-xs font-medium text-gray-500 capitalize">
+                                {user.role?.toLowerCase() || 'Customer'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="grid gap-2">
+                          {user.role === 'ADMIN' && (
+                            <Link
+                              to="/admin/dashboard"
+                              className="flex items-center space-x-3 p-3 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all duration-200 group border border-blue-100"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                <Settings size={16} />
+                              </div>
+                              <span className="font-medium">Admin Dashboard</span>
+                            </Link>
+                          )}
+                          
+                          {user.role === 'SELLER' ? (
+                            <Link
+                              to="/seller/dashboard"
+                              className="flex items-center space-x-3 p-3 rounded-xl bg-green-50 text-green-700 hover:bg-green-100 transition-all duration-200 group border border-green-100"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                <Store size={16} />
+                              </div>
+                              <span className="font-medium">Seller Dashboard</span>
+                            </Link>
+                          ) : user.role !== 'ADMIN' && (
+                            <Link
+                              to="/become-seller"
+                              className="flex items-center space-x-3 p-3 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 transition-all duration-200 group border border-purple-100"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                                <Store size={16} />
+                              </div>
+                              <span className="font-medium">Become a Seller</span>
+                            </Link>
+                          )}
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 rounded-2xl p-5 border border-orange-100/50 shadow-sm"
+                      >
+                        <div className="text-center mb-4">
+                          <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                            <User size={24} className="text-white" />
+                          </div>
+                          <h3 className="font-semibold text-gray-900 mb-1">Join Iwanyu Store!</h3>
+                          <p className="text-sm text-gray-600">Sign up to access exclusive features</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <Link
+                            to="/login"
+                            className="text-center py-3 px-4 border-2 border-orange-200 text-orange-700 rounded-xl hover:bg-orange-50 hover:border-orange-300 transition-all duration-200 font-medium active:scale-95"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            Login
+                          </Link>
+                          <Link
+                            to="/register"
+                            className="text-center py-3 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg active:scale-95"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            Sign Up
+                          </Link>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Categories Section */}
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="space-y-4"
+                    >
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                          <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                            <Grid size={16} className="text-white" />
+                          </div>
+                          Categories
+                        </h3>
+                        <span className="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">
+                          {categories.length}
+                        </span>
+                      </div>
+                      
+                      {isLoading ? (
+                        <div className="space-y-3">
+                          {[...Array(6)].map((_, i) => (
+                            <div key={i} className="h-14 bg-gray-100 rounded-xl animate-pulse"></div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                          {categories.map((category: Category, index: number) => (
+                            <motion.div
+                              key={category.id}
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.3 + index * 0.05 }}
+                            >
+                              <Link
+                                to={`/products?category=${category.slug}`}
+                                className="flex items-center justify-between p-4 rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200 group active:scale-[0.98]"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+                                    {renderCategoryIcon(category.name, 18)}
+                                  </div>
+                                  <span className="text-gray-700 group-hover:text-orange-600 font-medium">
+                                    {category.name}
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-xs text-gray-400 group-hover:text-orange-500 font-medium bg-gray-100 group-hover:bg-orange-100 px-2 py-1 rounded-full">
+                                    {category._count?.products || 0}
+                                  </span>
+                                  <ChevronRight size={14} className="text-gray-400 group-hover:text-orange-500" />
+                                </div>
+                              </Link>
+                            </motion.div>
+                          ))}
+                          
+                          <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 + categories.length * 0.05 }}
+                          >
+                            <Link
+                              to="/products"
+                              className="flex items-center justify-center p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-200 text-blue-600 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 transition-all duration-200 group active:scale-[0.98]"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <Package size={18} className="mr-2" />
+                              <span className="font-semibold">View All Products</span>
+                            </Link>
+                          </motion.div>
+                        </div>
+                      )}
+                    </motion.div>
+
+                    {/* Quick Actions */}
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="space-y-3"
+                    >
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+                          <Star size={16} className="text-white" />
+                        </div>
+                        Quick Actions
+                      </h3>
+
+                      {user && (
+                        <Link
+                          to="/orders"
+                          className="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-100 hover:bg-blue-100 hover:border-blue-200 transition-all duration-200 group active:scale-[0.98]"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                              <Package size={18} className="text-blue-600" />
+                            </div>
+                            <span className="font-semibold text-blue-700">My Orders</span>
+                          </div>
+                          <ChevronRight size={16} className="text-blue-500" />
+                        </Link>
+                      )}
+
+                      <Link
+                        to="/cart"
+                        className="flex items-center justify-between p-4 rounded-xl bg-orange-50 border border-orange-100 hover:bg-orange-100 hover:border-orange-200 transition-all duration-200 group active:scale-[0.98]"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors relative">
+                            <ShoppingCart size={18} className="text-orange-600" />
+                            {itemCount > 0 && (
+                              <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                                {itemCount > 9 ? '9+' : itemCount}
+                              </div>
+                            )}
+                          </div>
+                          <span className="font-semibold text-orange-700">Shopping Cart</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {itemCount > 0 && (
+                            <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                              {itemCount}
+                            </span>
+                          )}
+                          <ChevronRight size={16} className="text-orange-500" />
+                        </div>
+                      </Link>
+
+                      <Link
+                        to="/wishlist"
+                        className="flex items-center justify-between p-4 rounded-xl bg-red-50 border border-red-100 hover:bg-red-100 hover:border-red-200 transition-all duration-200 group active:scale-[0.98]"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                            <Heart size={18} className="text-red-600" />
+                          </div>
+                          <span className="font-semibold text-red-700">Wishlist</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                            0
+                          </span>
+                          <ChevronRight size={16} className="text-red-500" />
+                        </div>
+                      </Link>
+                    </motion.div>
+
+                    {/* Logout Section */}
+                    {user && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="pt-6 border-t border-gray-200"
+                      >
+                        <button
+                          onClick={() => {
+                            logout();
+                            setIsMenuOpen(false);
+                          }}
+                          className="w-full flex items-center justify-center space-x-3 p-4 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 border border-red-100 hover:border-red-200 active:scale-[0.98] group"
+                        >
+                          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                            <X size={16} />
+                          </div>
+                          <span className="font-semibold">Sign Out</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>,
+            document.body
+          )}
         </div>
       </header>
     </>
