@@ -446,9 +446,12 @@ const Header: React.FC = () => {
 
             {/* Mobile Menu Button */}
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => {
+                console.log('Mobile menu button clicked, current state:', isMenuOpen);
+                setIsMenuOpen(!isMenuOpen);
+              }}
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-              className="md:hidden p-2 text-gray-600 hover:text-orange-500 transition-colors duration-200 rounded-lg hover:bg-orange-50"
+              className="md:hidden p-2 text-gray-600 hover:text-orange-500 transition-colors duration-200 rounded-lg hover:bg-orange-50 z-50"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>

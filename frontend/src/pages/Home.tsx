@@ -350,7 +350,7 @@ const Home: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-4">
               {promotedProducts.map((product: PromotedProduct, index: number) => (
                 <motion.div
                   key={product.id}
@@ -368,7 +368,7 @@ const Home: React.FC = () => {
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-32 sm:h-36 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-44 sm:h-40 md:h-44 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -377,8 +377,8 @@ const Home: React.FC = () => {
                         }}
                       />
                     ) : null}
-                    <div className={`w-full h-32 sm:h-36 md:h-40 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
-                      <Package className="text-gray-400" size={24} />
+                    <div className={`w-full h-44 sm:h-40 md:h-44 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
+                      <Package className="text-gray-400" size={32} />
                     </div>
                     
                     {/* Sponsored Badge */}
@@ -590,7 +590,7 @@ const Home: React.FC = () => {
 
           {/* Best Sellers - Always show if data exists */}
           {bestSellers.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-4">
               {bestSellers.slice(0, 12).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}

@@ -493,7 +493,7 @@ const Products: React.FC = () => {
             ) : (
               <>
                 <div className={viewMode === 'grid' 
-                  ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4" 
+                  ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4" 
                   : "space-y-4"
                 }>
                   {products.map((product: Product, index: number) => (
@@ -515,7 +515,7 @@ const Products: React.FC = () => {
                               <img
                                 src={getProductImageUrl(product)!}
                                 alt={product.name}
-                                className="w-full h-32 sm:h-36 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-40 sm:h-44 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                                 loading="lazy"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
@@ -524,8 +524,8 @@ const Products: React.FC = () => {
                                 }}
                               />
                             ) : null}
-                            <div className={`w-full h-32 sm:h-36 md:h-40 bg-gray-100 flex items-center justify-center ${getProductImageUrl(product) ? 'hidden' : ''}`}>
-                              <Package className="text-gray-400" size={24} />
+                            <div className={`w-full h-40 sm:h-44 md:h-48 bg-gray-100 flex items-center justify-center ${getProductImageUrl(product) ? 'hidden' : ''}`}>
+                              <Package className="text-gray-400" size={32} />
                             </div>
                             
                             {product.featured && (
@@ -554,26 +554,26 @@ const Products: React.FC = () => {
                             </div>
                           </Link>
                           
-                          <div className="p-2 sm:p-3">
+                          <div className="p-3 sm:p-4">
                             <Link to={`/products/${product.id}`}>
-                              <h3 className="font-medium text-gray-900 line-clamp-2 text-sm mb-1">
+                              <h3 className="font-medium text-gray-900 line-clamp-2 text-base sm:text-sm mb-2">
                                 {product.name}
                               </h3>
                               
                               {/* Price and Discount */}
-                              <div className="flex items-center justify-between mb-1">
-                                <div className="flex items-center space-x-1">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center space-x-2">
                                   {product.salePrice ? (
                                     <>
-                                      <span className="text-orange-600 font-bold text-sm">
+                                      <span className="text-orange-600 font-bold text-lg sm:text-base">
                                         RF {product.salePrice.toLocaleString()}
                                       </span>
-                                      <span className="text-gray-400 line-through text-xs">
+                                      <span className="text-gray-400 line-through text-sm">
                                         RF {product.price.toLocaleString()}
                                       </span>
                                     </>
                                   ) : (
-                                    <span className="text-orange-600 font-bold text-sm">
+                                    <span className="text-orange-600 font-bold text-lg sm:text-base">
                                       RF {product.price.toLocaleString()}
                                     </span>
                                   )}
@@ -581,19 +581,19 @@ const Products: React.FC = () => {
                                 
                                 {/* Discount Badge */}
                                 {product.salePrice && product.salePrice < product.price && (
-                                  <span className="bg-red-100 text-red-600 text-xs px-1 py-0.5 rounded">
+                                  <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
                                     -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
                                   </span>
                                 )}
                               </div>
 
                               {/* Rating */}
-                              <div className="flex items-center space-x-1 mb-1">
+                              <div className="flex items-center space-x-2 mb-2">
                                 <div className="flex items-center">
                                   {[...Array(5)].map((_, i) => (
                                     <Star
                                       key={i}
-                                      size={10}
+                                      size={12}
                                       className={i < Math.floor(getProductRating(product.id)) 
                                         ? "text-yellow-400 fill-current" 
                                         : "text-gray-300"
@@ -601,18 +601,18 @@ const Products: React.FC = () => {
                                     />
                                   ))}
                                 </div>
-                                <span className="text-gray-500 text-xs">
+                                <span className="text-gray-500 text-sm">
                                   ({getProductRating(product.id)})
                                 </span>
                               </div>
 
-                              <div className="flex items-center justify-between text-xs text-gray-500">
+                              <div className="flex items-center justify-between text-sm text-gray-500">
                                 <span className="flex items-center">
-                                  <Users size={8} className="mr-1" />
+                                  <Users size={12} className="mr-1" />
                                   {getSoldCount(product.id)} sold
                                 </span>
                                 <span className="flex items-center">
-                                  <Truck size={8} className="mr-1" />
+                                  <Truck size={12} className="mr-1" />
                                   Free shipping
                                 </span>
                               </div>
