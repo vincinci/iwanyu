@@ -298,14 +298,17 @@ const Home: React.FC = () => {
     }
   };
 
-  // Helper function to get product rating safely
-  const getProductRating = (productId: string) => {
+  // Helper function to get product rating safely - now uses actual product data
+  const getProductRating = (product: any) => {
     try {
-      // Simulate rating calculation or return default
-      return Math.random() * 5;
+      // Use actual product rating if available
+      if (product?.avgRating && product.avgRating > 0) {
+        return parseFloat(product.avgRating.toFixed(1));
+      }
+      return 0;
     } catch (error) {
       console.warn('Rating calculation failed:', error);
-      return 4.0; // Default rating
+      return 0; // Default to 0 if no rating
     }
   };
 
@@ -535,17 +538,19 @@ const Home: React.FC = () => {
                         </div>
                       </div>
                       
-                      {/* Stars - Show on all devices */}
-                      <div className="flex items-center space-x-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star 
-                            key={i} 
-                            size={10} 
-                            className={i < Math.floor(getProductRating(product.id)) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
-                          />
-                        ))}
-                        <span className="text-xs text-gray-500 ml-1">({getProductRating(product.id).toFixed(1)})</span>
-                      </div>
+                      {/* Stars - Show only if product has ratings */}
+                      {(product as any).avgRating > 0 && (
+                        <div className="flex items-center space-x-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i} 
+                              size={10} 
+                              className={i < Math.floor((product as any).avgRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
+                            />
+                          ))}
+                          <span className="text-xs text-gray-500 ml-1">(({(product as any).avgRating.toFixed(1)}) {(product as any).totalReviews} reviews</span>
+                        </div>
+                      )}
                     </div>
                   </Link>
                 </motion.div>
@@ -558,7 +563,7 @@ const Home: React.FC = () => {
       {/* Flash Sale Section - Show on all devices */}
       <section className="py-4 md:py-8 bg-white">
         <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-lg p-4 md:p-6 text-white mb-4 md:mb-6">
+          <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-lg p-4 md:p-6 text-white mb-4 md:mb-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2 md:space-x-4">
                 <Fire className="text-yellow-300" size={24} />
@@ -638,13 +643,13 @@ const Home: React.FC = () => {
                       <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
                         {product.name}
                       </h3>
-                      {/* Seller name */}
+                      {/* Seller name - remove 'Unknown Seller' fallback */}
                       {product.seller && (
                         <p className="text-xs text-gray-500 mb-1">
                           by {product.seller.businessName || 
                               (product.seller.user?.firstName && product.seller.user?.lastName 
                                 ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                                : product.seller.user?.name || 'Unknown Seller')}
+                                : (product.seller.user?.name || 'Seller'))}
                         </p>
                       )}
                       <div className="flex items-center justify-between">
@@ -741,16 +746,9 @@ const Home: React.FC = () => {
                         {product.name}
                       </h3>
                       
-                      {/* Stars - Show on all devices */}
-                      <div className="flex items-center space-x-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star 
-                            key={i} 
-                            size={10} 
-                            className={i < Math.floor(getProductRating(product.id)) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
-                          />
-                        ))}
-                        <span className="text-xs text-gray-500 ml-1">({getProductRating(product.id).toFixed(1)})</span>
+                      {/* Price display */}
+                      <div className="text-sm md:text-lg font-bold text-red-600">
+                        {formatPrice(product.salePrice || product.price)}
                       </div>
                     </div>
                   </Link>
@@ -777,7 +775,7 @@ const Home: React.FC = () => {
 
           {/* Latest Products - Always show if data exists */}
           {latestProducts.length > 0 ? (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-3">
               {latestProducts.map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
@@ -815,14 +813,14 @@ const Home: React.FC = () => {
                       </h3>
                       </div>
                       
-                      {/* Seller name - hidden on small cards */}
+                      {/* Seller name - remove 'Unknown Seller' fallback */}
                       {product.seller && (
                         <div className="mb-1 hidden sm:block">
                           <p className="text-[10px] text-gray-500 truncate">
                             by {product.seller.businessName || 
                                 (product.seller.user?.firstName && product.seller.user?.lastName 
                                   ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                                  : product.seller.user?.name || 'Unknown Seller')}
+                                  : (product.seller.user?.name || 'Seller'))}
                           </p>
                         </div>
                       )}

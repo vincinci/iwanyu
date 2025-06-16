@@ -40,14 +40,13 @@ const ProductDetail: React.FC = () => {
   const { addToCart, isInCart, getItemQuantity } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
-  // Helper function to get consistent rating based on product ID
-  const getProductRating = (productId: string) => {
-    const hash = productId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    const rating = 3.5 + (Math.abs(hash) % 15) / 10;
-    return Math.round(rating * 10) / 10;
+  // Helper function to get product rating from actual data
+  const getProductRating = (product: any) => {
+    // Use actual product rating if available
+    if (product?.avgRating && product.avgRating > 0) {
+      return parseFloat(product.avgRating.toFixed(1));
+    }
+    return 0;
   };
 
   // Use instant loading for product
@@ -447,48 +446,39 @@ const ProductDetail: React.FC = () => {
               {product.name}
             </h1>
 
-            {/* Rating - Mobile optimized */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 space-y-2 sm:space-y-0 mb-6">
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      size={16}
-                      className={i < Math.floor(getProductRating(product.id)) ? "text-yellow-400 fill-current" : "text-gray-300"}
-                    />
-                  ))}
-                </div>
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                  <span className="flex items-center">
-                    <Star size={14} className="text-yellow-400 fill-current mr-1" />
-                    {getProductRating(product.id).toFixed(1)} ({product.reviews.length} reviews)
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Seller Information */}
-            {product.seller && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-medium text-sm">
-                      {product.seller.businessName?.charAt(0) || 
-                       product.seller.user?.firstName?.charAt(0) || 
-                       product.seller.user?.name?.charAt(0) || 'S'}
+            {/* Product Rating and Reviews - Only show if ratings exist */}
+            {product.avgRating > 0 && (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 space-y-2 sm:space-y-0 mb-6">
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        className={i < Math.floor(product.avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex items-center space-x-4 text-sm text-gray-600">
+                    <span className="flex items-center">
+                      <Star size={14} className="text-yellow-400 fill-current mr-1" />
+                      {product.avgRating.toFixed(1)} ({product.totalReviews || 0} reviews)
                     </span>
                   </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">
-                      {product.seller.businessName || 
-                       (product.seller.user?.firstName && product.seller.user?.lastName 
-                         ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                         : product.seller.user?.name || 'Unknown Seller')}
-                    </h3>
-                    <p className="text-sm text-gray-600">Seller</p>
-                  </div>
                 </div>
+              </div>
+            )}
+
+            {/* Seller Information - Remove 'Unknown Seller' fallback */}
+            {product.seller && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h3 className="font-semibold mb-2">Sold by</h3>
+                <p className="text-gray-600">
+                  {product.seller.businessName || 
+                    (product.seller.user?.firstName && product.seller.user?.lastName 
+                      ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
+                      : (product.seller.user?.name || 'Seller'))}
+                </p>
               </div>
             )}
 

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Mobile Responsiveness Test - Iwanyu Store</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .test-card {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .touch-target {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            min-height: 44px;
+            min-width: 44px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .warning { background: #fff3cd; color: #856404; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>📱 Mobile Test Suite</h1>
+        
+        <div class="test-section">
+            <h3>Viewport & Device Info</h3>
+            <div id="device-info">
+                <p><strong>Screen:</strong> <span id="screen-size"></span></p>
+                <p><strong>Viewport:</strong> <span id="viewport-size"></span></p>
+                <p><strong>Device Pixel Ratio:</strong> <span id="dpr"></span></p>
+                <p><strong>User Agent:</strong> <span id="user-agent"></span></p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 Touch Target Test</h3>
+            <p>All buttons should be at least 44x44px for iOS accessibility:</p>
+            <button class="touch-target" onclick="testTouch(this)">Test Button 1</button>
+            <button class="touch-target" onclick="testTouch(this)">Test Button 2</button>
+            <div id="touch-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📐 Grid Layout Test</h3>
+            <p>2-column grid (mobile standard):</p>
+            <div class="test-grid">
+                <div class="test-card">Card 1</div>
+                <div class="test-card">Card 2</div>
+                <div class="test-card">Card 3</div>
+                <div class="test-card">Card 4</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>⌨️ Input Test</h3>
+            <p>Should not zoom on iOS when focused:</p>
+            <input type="text" placeholder="Test input" style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 5px;">
+            <textarea placeholder="Test textarea" style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;"></textarea>
+        </div>
+
+        <div class="test-section">
+            <h3>🔄 Performance Test</h3>
+            <button onclick="runPerformanceTest()" class="touch-target">Run Performance Test</button>
+            <div id="performance-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🌐 Network Test</h3>
+            <button onclick="testNetworkSpeed()" class="touch-target">Test API Connection</button>
+            <div id="network-results"></div>
+        </div>
+
+        <div id="overall-status" class="status"></div>
+    </div>
+
+    <script>
+        // Initialize device info
+        document.getElementById('screen-size').textContent = `${screen.width}x${screen.height}`;
+        document.getElementById('viewport-size').textContent = `${window.innerWidth}x${window.innerHeight}`;
+        document.getElementById('dpr').textContent = window.devicePixelRatio;
+        document.getElementById('user-agent').textContent = navigator.userAgent.substring(0, 50) + '...';
+
+        function testTouch(button) {
+            const rect = button.getBoundingClientRect();
+            const size = Math.min(rect.width, rect.height);
+            const isValid = size >= 44;
+            
+            document.getElementById('touch-results').innerHTML = `
+                <div class="${isValid ? 'success' : 'error'}">
+                    Touch target: ${size.toFixed(1)}px (${isValid ? 'PASS' : 'FAIL - needs ≥44px'})
+                </div>
+            `;
+        }
+
+        function runPerformanceTest() {
+            const start = performance.now();
+            
+            // Simulate layout operations
+            for (let i = 0; i < 1000; i++) {
+                const div = document.createElement('div');
+                div.style.width = '100px';
+                div.style.height = '100px';
+                document.body.appendChild(div);
+                document.body.removeChild(div);
+            }
+            
+            const end = performance.now();
+            const duration = end - start;
+            
+            let status = 'success';
+            let message = 'Good performance';
+            
+            if (duration > 100) {
+                status = 'warning';
+                message = 'Moderate performance';
+            }
+            if (duration > 200) {
+                status = 'error';
+                message = 'Poor performance - may cause mobile issues';
+            }
+            
+            document.getElementById('performance-results').innerHTML = `
+                <div class="${status}">
+                    Layout test: ${duration.toFixed(1)}ms - ${message}
+                </div>
+            `;
+        }
+
+        async function testNetworkSpeed() {
+            const apiUrl = window.location.origin.includes('localhost') 
+                ? 'http://localhost:3001/api' 
+                : 'https://iwanyu-backend.onrender.com/api';
+            
+            const start = performance.now();
+            
+            try {
+                const response = await fetch(`${apiUrl}/products?limit=1`);
+                const end = performance.now();
+                const duration = end - start;
+                
+                if (response.ok) {
+                    let status = 'success';
+                    let message = 'Fast connection';
+                    
+                    if (duration > 2000) {
+                        status = 'warning';
+                        message = 'Slow connection';
+                    }
+                    if (duration > 5000) {
+                        status = 'error';
+                        message = 'Very slow - may cause mobile timeouts';
+                    }
+                    
+                    document.getElementById('network-results').innerHTML = `
+                        <div class="${status}">
+                            API response: ${duration.toFixed(0)}ms - ${message}
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('network-results').innerHTML = `
+                        <div class="error">API Error: ${response.status}</div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('network-results').innerHTML = `
+                    <div class="error">Network Error: ${error.message}</div>
+                `;
+            }
+        }
+
+        // Detect mobile issues
+        function detectMobileIssues() {
+            const issues = [];
+            
+            // Check if running on mobile
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // Check viewport
+            if (window.innerWidth < 400) {
+                issues.push('Very small viewport - layout may be cramped');
+            }
+            
+            // Check if localStorage is available
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+            } catch (e) {
+                issues.push('localStorage not available - may cause app crashes');
+            }
+            
+            // Check device memory (if available)
+            if (navigator.deviceMemory && navigator.deviceMemory < 2) {
+                issues.push('Low device memory - may cause performance issues');
+            }
+            
+            // Check connection
+            if (navigator.connection && navigator.connection.effectiveType === 'slow-2g') {
+                issues.push('Very slow network - may cause timeouts');
+            }
+            
+            const statusDiv = document.getElementById('overall-status');
+            if (issues.length === 0) {
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '<strong>✅ No mobile issues detected</strong>';
+            } else {
+                statusDiv.className = 'status warning';
+                statusDiv.innerHTML = '<strong>⚠️ Potential mobile issues:</strong><ul>' + 
+                    issues.map(issue => `<li>${issue}</li>`).join('') + '</ul>';
+            }
+        }
+
+        // Run tests on load
+        window.addEventListener('load', detectMobileIssues);
+        
+        // Update viewport on resize
+        window.addEventListener('resize', () => {
+            document.getElementById('viewport-size').textContent = `${window.innerWidth}x${window.innerHeight}`;
+        });
+    </script>
+</body>
+</html> 

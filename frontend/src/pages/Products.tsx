@@ -218,14 +218,13 @@ const Products: React.FC = () => {
     return Math.abs(hash) % 1900 + 100;
   };
 
-  // Helper function to get consistent rating based on product ID
-  const getProductRating = (productId: string) => {
-    const hash = productId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    const rating = 3.5 + (Math.abs(hash) % 15) / 10;
-    return Math.round(rating * 10) / 10;
+  // Helper function to get product rating from actual data
+  const getProductRating = (product: any) => {
+    // Use actual product rating if available
+    if (product?.avgRating && product.avgRating > 0) {
+      return parseFloat(product.avgRating.toFixed(1));
+    }
+    return 0;
   };
 
   if (isError) {
@@ -493,7 +492,7 @@ const Products: React.FC = () => {
             ) : (
               <>
                 <div className={viewMode === 'grid' 
-                  ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4" 
+                  ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4" 
                   : "space-y-4"
                 }>
                   {products.map((product: Product, index: number) => (
@@ -587,26 +586,28 @@ const Products: React.FC = () => {
                                 )}
                               </div>
 
-                              {/* Rating */}
-                              <div className="flex items-center space-x-2 mb-2">
-                                <div className="flex items-center">
-                                  {[...Array(5)].map((_, i) => (
-                                    <Star
-                                      key={i}
-                                      size={12}
-                                      className={i < Math.floor(getProductRating(product.id)) 
-                                        ? "text-yellow-400 fill-current" 
-                                        : "text-gray-300"
-                                      }
-                                    />
-                                  ))}
+                              {/* Rating - Only show if product has rating */}
+                              {product.avgRating > 0 && (
+                                <div className="flex items-center space-x-2 mb-2">
+                                  <div className="flex items-center">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star
+                                        key={i}
+                                        size={12}
+                                        className={i < Math.floor(product.avgRating) 
+                                          ? "text-yellow-400 fill-current" 
+                                          : "text-gray-300"
+                                        }
+                                      />
+                                    ))}
+                                  </div>
+                                  <span className="text-gray-500 text-sm">
+                                    ({product.avgRating.toFixed(1)}) {product.totalReviews} reviews
+                                  </span>
                                 </div>
-                                <span className="text-gray-500 text-sm">
-                                  ({getProductRating(product.id)})
-                                </span>
-                              </div>
+                              )}
 
-                              {/* Rating */}
+                              {/* Shipping info */}
                               <div className="flex items-center justify-between text-sm text-gray-500">
                                 <span className="flex items-center">
                                   <Truck size={12} className="mr-1" />
@@ -645,17 +646,20 @@ const Products: React.FC = () => {
                                   by {product.seller.businessName || 
                                       (product.seller.user?.firstName && product.seller.user?.lastName 
                                         ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                                        : product.seller.user?.name || 'Unknown Seller')}
+                                        : (product.seller.user?.name || 'Seller'))}
                                 </p>
                               )}
-                              <div className="flex items-center mb-3">
-                                <div className="flex items-center">
-                                  {[...Array(5)].map((_, i) => (
-                                    <Star key={i} size={16} className={i < Math.floor(getProductRating(product.id)) ? "text-yellow-400 fill-current" : "text-gray-300"} />
-                                  ))}
+                              {/* Rating - Only show if product has rating */}
+                              {product.avgRating > 0 && (
+                                <div className="flex items-center mb-3">
+                                  <div className="flex items-center">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star key={i} size={16} className={i < Math.floor(product.avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"} />
+                                    ))}
+                                  </div>
+                                  <span className="text-sm text-gray-500 ml-2">({product.avgRating.toFixed(1)}) {product.totalReviews} reviews</span>
                                 </div>
-                                <span className="text-sm text-gray-500 ml-2">({getProductRating(product.id)})</span>
-                              </div>
+                              )}
                               <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                                 {product.description || "High quality product with excellent features and amazing value."}
                               </p>

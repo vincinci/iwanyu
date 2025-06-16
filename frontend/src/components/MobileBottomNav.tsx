@@ -47,7 +47,7 @@ const MobileBottomNav: React.FC = () => {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-inset">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="grid grid-cols-5 h-16">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -55,11 +55,12 @@ const MobileBottomNav: React.FC = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center justify-center space-y-1 transition-colors duration-200 relative ${
+              className={`flex flex-col items-center justify-center space-y-1 transition-colors duration-200 relative touch-manipulation ${
                 item.isActive 
                   ? 'text-orange-500' 
-                  : 'text-gray-500 hover:text-orange-500'
+                  : 'text-gray-500 active:text-orange-500'
               }`}
+              style={{ minHeight: '48px', minWidth: '48px' }}
             >
               <div className="relative">
                 <Icon size={20} className={item.isActive ? 'fill-current' : ''} />

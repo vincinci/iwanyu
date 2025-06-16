@@ -22,14 +22,13 @@ const Wishlist: React.FC = () => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  // Helper function to get consistent rating based on product ID
-  const getProductRating = (productId: string) => {
-    const hash = productId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    const rating = 3.5 + (Math.abs(hash) % 15) / 10;
-    return Math.round(rating * 10) / 10;
+  // Helper function to get product rating from actual data
+  const getProductRating = (product: any) => {
+    // Use actual product rating if available
+    if (product?.avgRating && product.avgRating > 0) {
+      return parseFloat(product.avgRating.toFixed(1));
+    }
+    return 0;
   };
 
   const handleRemoveFromWishlist = async (productId: string) => {
@@ -199,19 +198,21 @@ const Wishlist: React.FC = () => {
                     {/* Seller name */}
                     {item.product.seller && (
                       <p className="text-xs text-gray-500 mb-2">
-                        by {item.product.seller.businessName || 'Unknown Seller'}
+                        by {item.product.seller.businessName || 'Seller'}
                       </p>
                     )}
                     
-                    {/* Rating */}
-                    <div className="flex items-center mb-2">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={12} className={i < Math.floor(getProductRating(item.product.id)) ? "text-yellow-400 fill-current" : "text-gray-300"} />
-                        ))}
+                    {/* Rating - Only show if product has rating */}
+                    {item.product.avgRating > 0 && (
+                      <div className="flex items-center mb-2">
+                        <div className="flex items-center">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} size={12} className={i < Math.floor(item.product.avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"} />
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-500 ml-2">({item.product.avgRating.toFixed(1)}) {item.product.totalReviews} reviews</span>
                       </div>
-                      <span className="text-xs text-gray-500 ml-2">({getProductRating(item.product.id)})</span>
-                    </div>
+                    )}
                     
                     {/* Price */}
                     <div className="flex items-center justify-between mb-3">

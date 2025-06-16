@@ -14,9 +14,11 @@ export const calculateDiscount = (originalPrice: number, salePrice?: number): nu
  * Get rating from product data (use actual avgRating if available)
  */
 export const getProductRating = (product: any): number => {
-  // This could be enhanced to calculate from actual review data
-  // For now, return a random rating between 3.5 and 5
-  return parseFloat((3.5 + Math.random() * 1.5).toFixed(1));
+  // Use actual product rating if available, otherwise return 0
+  if (product?.avgRating && product.avgRating > 0) {
+    return parseFloat(product.avgRating.toFixed(1));
+  }
+  return 0;
 };
 
 /**
