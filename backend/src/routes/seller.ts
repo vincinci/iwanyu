@@ -206,16 +206,21 @@ router.get('/dashboard', authenticateToken, async (req: AuthRequest, res: Respon
       return;
     }
 
-    // Get product count
+    // Get active product count only (excludes soft-deleted products)
     const productCount = await prisma.product.count({
-      where: { sellerId: seller.id }
+      where: { 
+        sellerId: seller.id,
+        isActive: true // Only count active products
+      }
     });
 
     // Get total sales (orders containing seller's products)
+    // This includes ALL historical sales, even from deleted products
     const totalSales = await prisma.orderItem.aggregate({
       where: {
         product: {
           sellerId: seller.id
+          // Note: We don't filter by isActive here to preserve historical sales data
         }
       },
       _sum: {
@@ -224,11 +229,12 @@ router.get('/dashboard', authenticateToken, async (req: AuthRequest, res: Respon
       _count: true
     });
 
-    // Get recent orders
+    // Get recent orders (including orders from deleted products for complete history)
     const recentOrders = await prisma.orderItem.findMany({
       where: {
         product: {
           sellerId: seller.id
+          // Note: We don't filter by isActive here to show complete order history
         }
       },
       include: {
@@ -247,7 +253,8 @@ router.get('/dashboard', authenticateToken, async (req: AuthRequest, res: Respon
           select: {
             name: true,
             price: true,
-            image: true
+            image: true,
+            isActive: true // Include this to show if product is still active
           }
         }
       },
@@ -258,10 +265,10 @@ router.get('/dashboard', authenticateToken, async (req: AuthRequest, res: Respon
     });
 
     res.json({
-      productCount,
-      totalSales: totalSales._sum.quantity || 0,
-      totalOrders: totalSales._count || 0,
-      recentOrders
+      productCount, // Only active products
+      totalSales: totalSales._sum.quantity || 0, // All historical sales
+      totalOrders: totalSales._count || 0, // All historical orders
+      recentOrders // All recent orders (with product status)
     });
   } catch (error) {
     console.error('Get seller dashboard error:', error);
@@ -269,7 +276,7 @@ router.get('/dashboard', authenticateToken, async (req: AuthRequest, res: Respon
   }
 });
 
-// Get seller's products
+// Get seller's products (only active products for management)
 router.get('/products', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.id;
@@ -289,9 +296,12 @@ router.get('/products', authenticateToken, async (req: AuthRequest, res: Respons
       return;
     }
 
-    // Get seller's products
+    // Get seller's active products only (excludes soft-deleted products)
     const products = await prisma.product.findMany({
-      where: { sellerId: seller.id },
+      where: { 
+        sellerId: seller.id,
+        isActive: true // Only show active products in management interface
+      },
       include: {
         category: {
           select: {
@@ -480,7 +490,7 @@ router.put('/products/:id', authenticateToken, async (req: AuthRequest, res: Res
   }
 });
 
-// Delete a product
+// Delete a product (soft delete - preserves historical data)
 router.delete('/products/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.id;
@@ -514,12 +524,21 @@ router.delete('/products/:id', authenticateToken, async (req: AuthRequest, res: 
       return;
     }
 
-    // Delete product
-    await prisma.product.delete({
-      where: { id: productId }
+    // Soft delete: Set isActive to false instead of deleting
+    // This preserves all historical data (orders, sales, statistics)
+    await prisma.product.update({
+      where: { id: productId },
+      data: { 
+        isActive: false,
+        status: 'deleted',
+        updatedAt: new Date()
+      }
     });
 
-    res.json({ message: 'Product deleted successfully' });
+    res.json({ 
+      message: 'Product deleted successfully',
+      note: 'Product has been deactivated. Historical sales data is preserved.'
+    });
   } catch (error) {
     console.error('Delete product error:', error);
     res.status(500).json({ error: 'Failed to delete product' });

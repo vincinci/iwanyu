@@ -350,7 +350,7 @@ const Home: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
               {promotedProducts.map((product: PromotedProduct, index: number) => (
                 <motion.div
                   key={product.id}
@@ -368,14 +368,18 @@ const Home: React.FC = () => {
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-32 sm:h-36 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling?.classList.remove('hidden');
+                        }}
                       />
-                    ) : (
-                      <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
-                        <Package className="text-gray-400" size={32} />
-                      </div>
-                    )}
+                    ) : null}
+                    <div className={`w-full h-32 sm:h-36 md:h-40 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
+                      <Package className="text-gray-400" size={24} />
+                    </div>
                     
                     {/* Sponsored Badge */}
                     <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold">
@@ -485,7 +489,7 @@ const Home: React.FC = () => {
 
           {/* Flash Sale Products - Always show if data exists */}
           {flashProducts.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
               {flashProducts.slice(0, 8).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
@@ -499,14 +503,18 @@ const Home: React.FC = () => {
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-28 sm:h-32 md:h-36 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling?.classList.remove('hidden');
+                        }}
                       />
-                    ) : (
-                      <div className="w-full h-32 bg-gray-100 flex items-center justify-center">
-                        <Package className="text-gray-400" size={24} />
-                      </div>
-                    )}
+                    ) : null}
+                    <div className={`w-full h-28 sm:h-32 md:h-36 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
+                      <Package className="text-gray-400" size={20} />
+                    </div>
                     
                     {/* Flash Sale Badge */}
                     {(product.salePrice && product.salePrice < product.price) ? (
@@ -582,7 +590,7 @@ const Home: React.FC = () => {
 
           {/* Best Sellers - Always show if data exists */}
           {bestSellers.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
               {bestSellers.slice(0, 12).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
@@ -596,14 +604,18 @@ const Home: React.FC = () => {
                         <img
                           src={product.images[0]}
                           alt={product.name}
-                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-32 sm:h-36 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling?.classList.remove('hidden');
+                        }}
                         />
-                      ) : (
-                      <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
-                        <Package className="text-gray-400" size={32} />
+                      ) : null}
+                      <div className={`w-full h-32 sm:h-36 md:h-40 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
+                        <Package className="text-gray-400" size={24} />
                       </div>
-                    )}
                     
                     {/* Bestseller Badge */}
                     <div className="absolute top-2 left-2 bg-yellow-400 text-gray-900 text-xs px-2 py-1 rounded-full font-bold">

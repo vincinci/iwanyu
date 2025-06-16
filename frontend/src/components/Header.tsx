@@ -553,19 +553,19 @@ const Header: React.FC = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-4 mb-6 border border-orange-200">
-                        <p className="text-sm text-gray-600 mb-3">Join Iwanyu Store today!</p>
+                      <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-3 mb-4 border border-orange-200">
+                        <p className="text-xs text-gray-600 mb-2">Join Iwanyu Store!</p>
                         <div className="flex space-x-2">
                           <Link
                             to="/login"
-                            className="flex-1 text-center py-2 px-4 border border-orange-300 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors duration-200 text-sm font-medium"
+                            className="flex-1 text-center py-1.5 px-3 border border-orange-300 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors duration-200 text-xs font-medium"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             Login
                           </Link>
                           <Link
                             to="/register"
-                            className="flex-1 text-center py-2 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 text-sm font-medium shadow-md"
+                            className="flex-1 text-center py-1.5 px-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 text-xs font-medium shadow-md"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             Sign Up

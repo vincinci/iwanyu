@@ -6,55 +6,66 @@ const BACKEND_BASE_URL = API_BASE_URL.replace('/api', ''); // Remove /api to get
 /**
  * Converts a product image path to a full URL
  * @param imagePath - The image path from the database (could be local path or external URL)
- * @returns Full URL for the image
+ * @returns Full URL for the image or null if invalid
  */
 export const getImageUrl = (imagePath: string | undefined | null): string | null => {
-  if (!imagePath) {
-    return null;
-  }
+  if (!imagePath || imagePath.trim() === '') return null;
 
-  // If it's already a full URL (starts with http:// or https://), return as is
+  // External URLs (http/https) → Used as-is
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
 
-  // If it's a local path (starts with uploads/), prepend backend URL
+  // Data URLs (base64 images) → Used as-is
+  if (imagePath.startsWith('data:')) {
+    return imagePath;
+  }
+
+  // Local paths (uploads/) → Prepend backend URL
   if (imagePath.startsWith('uploads/')) {
     return `${BACKEND_BASE_URL}/${imagePath}`;
   }
 
-  // If it's a relative path without uploads/, assume it's in uploads/products/
+  // Relative paths → Assume uploads/products/
   if (!imagePath.startsWith('/')) {
     return `${BACKEND_BASE_URL}/uploads/products/${imagePath}`;
   }
 
-  // For absolute paths, prepend backend URL
   return `${BACKEND_BASE_URL}${imagePath}`;
 };
 
 /**
- * Gets the primary image URL for a product
+ * Gets the primary image URL for a product with better error handling
  * @param product - Product object with image and images properties
  * @returns Primary image URL or null
  */
 export const getProductImageUrl = (product: { image?: string; images?: string[] | null }): string | null => {
   // Try to get from images array first (check for null and empty array)
   if (product.images && Array.isArray(product.images) && product.images.length > 0) {
-    return getImageUrl(product.images[0]);
+    // Find the first valid image URL
+    for (const imagePath of product.images) {
+      const url = getImageUrl(imagePath);
+      if (url && url !== '') {
+        return url;
+      }
+    }
   }
 
   // Fall back to single image field
   if (product.image) {
-    return getImageUrl(product.image);
+    const url = getImageUrl(product.image);
+    if (url && url !== '') {
+      return url;
+    }
   }
 
   return null;
 };
 
 /**
- * Gets all image URLs for a product
+ * Gets all valid image URLs for a product
  * @param product - Product object with image and images properties
- * @returns Array of image URLs
+ * @returns Array of valid image URLs
  */
 export const getProductImageUrls = (product: { image?: string; images?: string[] | null }): string[] => {
   const urls: string[] = [];
@@ -63,7 +74,7 @@ export const getProductImageUrls = (product: { image?: string; images?: string[]
   if (product.images && Array.isArray(product.images) && product.images.length > 0) {
     product.images.forEach(imagePath => {
       const url = getImageUrl(imagePath);
-      if (url) {
+      if (url && url !== '' && !urls.includes(url)) {
         urls.push(url);
       }
     });
@@ -72,7 +83,7 @@ export const getProductImageUrls = (product: { image?: string; images?: string[]
   // If no images in array, try single image field
   if (urls.length === 0 && product.image) {
     const url = getImageUrl(product.image);
-    if (url) {
+    if (url && url !== '') {
       urls.push(url);
     }
   }

@@ -293,11 +293,21 @@ const SellerProducts: React.FC = () => {
                     <Trash2 className="w-5 h-5 text-red-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Delete Product</h3>
-                    <p className="text-sm text-gray-600">This action cannot be undone.</p>
+                    <h3 className="font-semibold text-gray-900">Remove Product</h3>
+                    <p className="text-sm text-gray-600">This will deactivate the product from your store.</p>
                   </div>
                 </div>
                 
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-blue-800">
+                      <p className="font-medium mb-1">Your sales data is safe!</p>
+                      <p>This product will be removed from your store, but all historical sales data, orders, and statistics will be preserved for your records.</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowDeleteConfirm(null)}
@@ -310,7 +320,7 @@ const SellerProducts: React.FC = () => {
                     disabled={deleteProductMutation.isPending}
                     className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50"
                   >
-                    {deleteProductMutation.isPending ? 'Deleting...' : 'Delete'}
+                    {deleteProductMutation.isPending ? 'Removing...' : 'Remove Product'}
                   </button>
                 </div>
               </motion.div>

@@ -123,20 +123,25 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// Get single product with optimized query
-router.get('/:slug', async (req: Request, res: Response) => {
+// Get single product with optimized query (handles both ID and slug)
+router.get('/:identifier', async (req: Request, res: Response) => {
   try {
-    const { slug } = req.params;
+    const { identifier } = req.params;
     
     // Check cache first
-    const cacheKey = `product:${slug}`;
+    const cacheKey = `product:${identifier}`;
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
       return res.json(cached.data);
     }
 
-    const product = await prisma.product.findUnique({
-      where: { slug },
+    // Determine if identifier is an ID (cuid format) or slug
+    const isId = /^c[a-z0-9]{24}$/.test(identifier); // CUID format check
+    
+    const product = await prisma.product.findFirst({
+      where: isId 
+        ? { id: identifier, isActive: true } // Search by ID and ensure product is active
+        : { slug: identifier, isActive: true }, // Search by slug and ensure product is active
       select: {
         id: true,
         name: true,
@@ -156,6 +161,7 @@ router.get('/:slug', async (req: Request, res: Response) => {
         totalSales: true,
         views: true,
         tags: true,
+        isActive: true,
         createdAt: true,
         category: {
           select: {

@@ -493,7 +493,7 @@ const Products: React.FC = () => {
             ) : (
               <>
                 <div className={viewMode === 'grid' 
-                  ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4" 
+                  ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4" 
                   : "space-y-4"
                 }>
                   {products.map((product: Product, index: number) => (
@@ -515,14 +515,18 @@ const Products: React.FC = () => {
                               <img
                                 src={getProductImageUrl(product)!}
                                 alt={product.name}
-                                className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-32 sm:h-36 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                                 loading="lazy"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  target.nextElementSibling?.classList.remove('hidden');
+                                }}
                               />
-                            ) : (
-                              <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
-                                <Package className="text-gray-400" size={32} />
-                              </div>
-                            )}
+                            ) : null}
+                            <div className={`w-full h-32 sm:h-36 md:h-40 bg-gray-100 flex items-center justify-center ${getProductImageUrl(product) ? 'hidden' : ''}`}>
+                              <Package className="text-gray-400" size={24} />
+                            </div>
                             
                             {product.featured && (
                               <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
@@ -550,56 +554,65 @@ const Products: React.FC = () => {
                             </div>
                           </Link>
                           
-                          <div className="p-3">
+                          <div className="p-2 sm:p-3">
                             <Link to={`/products/${product.id}`}>
-                              <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                              <h3 className="font-medium text-gray-900 line-clamp-2 text-sm mb-1">
                                 {product.name}
                               </h3>
-                              {/* Seller name */}
-                              {product.seller && (
-                                <p className="text-xs text-gray-500 mb-2">
-                                  by {product.seller.businessName || 
-                                      (product.seller.user?.firstName && product.seller.user?.lastName 
-                                        ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                                        : product.seller.user?.name || 'Unknown Seller')}
-                                </p>
-                              )}
-                              <div className="flex items-center mb-2">
-                                <div className="flex items-center">
-                                  {[...Array(5)].map((_, i) => (
-                                    <Star key={i} size={12} className={i < Math.floor(getProductRating(product.id)) ? "text-yellow-400 fill-current" : "text-gray-300"} />
-                                  ))}
-                                </div>
-                                <span className="text-xs text-gray-500 ml-2">({getProductRating(product.id)})</span>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <span className="text-lg font-bold text-red-600">
-                                    {formatPrice(product.salePrice || product.price)}
-                                  </span>
-                                  {product.salePrice && (
-                                    <div className="text-xs text-gray-500 line-through">
-                                      {formatPrice(product.price)}
-                                    </div>
+                              
+                              {/* Price and Discount */}
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center space-x-1">
+                                  {product.salePrice ? (
+                                    <>
+                                      <span className="text-orange-600 font-bold text-sm">
+                                        RF {product.salePrice.toLocaleString()}
+                                      </span>
+                                      <span className="text-gray-400 line-through text-xs">
+                                        RF {product.price.toLocaleString()}
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <span className="text-orange-600 font-bold text-sm">
+                                      RF {product.price.toLocaleString()}
+                                    </span>
                                   )}
                                 </div>
-                                <button
-                                  onClick={(e) => quickAddToCart(product, e)}
-                                  disabled={product.stock === 0}
-                                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-                                  aria-label="Add to cart"
-                                >
-                                  <ShoppingCart size={16} className="mr-2" />
-                                  Add to Cart
-                                </button>
+                                
+                                {/* Discount Badge */}
+                                {product.salePrice && product.salePrice < product.price && (
+                                  <span className="bg-red-100 text-red-600 text-xs px-1 py-0.5 rounded">
+                                    -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
+                                  </span>
+                                )}
                               </div>
-                              <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+
+                              {/* Rating */}
+                              <div className="flex items-center space-x-1 mb-1">
+                                <div className="flex items-center">
+                                  {[...Array(5)].map((_, i) => (
+                                    <Star
+                                      key={i}
+                                      size={10}
+                                      className={i < Math.floor(getProductRating(product.id)) 
+                                        ? "text-yellow-400 fill-current" 
+                                        : "text-gray-300"
+                                      }
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-gray-500 text-xs">
+                                  ({getProductRating(product.id)})
+                                </span>
+                              </div>
+
+                              <div className="flex items-center justify-between text-xs text-gray-500">
                                 <span className="flex items-center">
-                                  <Users size={10} className="mr-1" />
+                                  <Users size={8} className="mr-1" />
                                   {getSoldCount(product.id)} sold
                                 </span>
                                 <span className="flex items-center">
-                                  <Truck size={10} className="mr-1" />
+                                  <Truck size={8} className="mr-1" />
                                   Free shipping
                                 </span>
                               </div>
