@@ -132,7 +132,12 @@ const InstantLoadingInitializer: React.FC = () => {
     const timer = setTimeout(() => {
       // Only prefetch everything on desktop to prevent mobile crashes
       if (!isMobile) {
-        prefetchEverything();
+        try {
+          prefetchEverything();
+        } catch (error) {
+          console.warn('Prefetching failed, continuing without prefetch:', error);
+          // Don't crash the app, just log the warning
+        }
       }
     }, isMobile ? 2000 : 100); // Longer delay on mobile
 
@@ -219,7 +224,8 @@ function App() {
             <WishlistProvider>
               <Router>
                 <div className="min-h-screen bg-gray-50 flex flex-col">
-                  <InstantLoadingInitializer />
+                  {/* Only initialize on desktop to prevent mobile crashes */}
+                  {typeof window !== 'undefined' && window.innerWidth >= 768 && <InstantLoadingInitializer />}
                   <PerformanceMonitor />
                   <Header />
                   <main className="flex-1">

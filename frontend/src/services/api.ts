@@ -9,21 +9,35 @@ import type {
 // Use environment variable for production, fallback to localhost for development
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
+console.log('API Base URL:', API_BASE_URL); // Debug log to check URL
+
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 10000, // 10 second timeout to prevent hanging
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 // Add auth token to requests if available
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+  (config) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.warn('Failed to get token from localStorage:', error);
+      // Continue without token
+    }
+    return config;
+  },
+  (error) => {
+    console.error('Request interceptor error:', error);
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 // Handle response errors and auto-logout on 401
 api.interceptors.response.use(
@@ -33,29 +47,47 @@ api.interceptors.response.use(
       status: error.response?.status,
       url: error.config?.url,
       method: error.config?.method,
-      currentPath: window.location.pathname
+      currentPath: typeof window !== 'undefined' ? window.location.pathname : '/',
+      isNetworkError: !error.response && error.message.includes('Network Error')
     });
+
+    // Handle network errors gracefully (backend not running, no internet, etc.)
+    if (!error.response && error.code === 'ECONNABORTED') {
+      console.warn('Request timeout - backend might be slow or unavailable');
+      return Promise.reject(new Error('Request timeout. Please check your connection.'));
+    }
+
+    if (!error.response && error.message.includes('Network Error')) {
+      console.warn('Network error - backend might not be running');
+      return Promise.reject(new Error('Unable to connect to server. Please try again later.'));
+    }
 
     if (error.response?.status === 401) {
       // Don't redirect if we're already on auth pages or if this is an auth validation call
-      const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password'].includes(window.location.pathname);
+      const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password'].includes(
+        typeof window !== 'undefined' ? window.location.pathname : '/'
+      );
       const isAuthValidation = error.config?.url?.includes('/auth/validate');
       
       console.log('401 Error details:', {
         isAuthPage,
         isAuthValidation,
         url: error.config?.url,
-        currentPath: window.location.pathname
+        currentPath: typeof window !== 'undefined' ? window.location.pathname : '/'
       });
 
       // Only clear storage and redirect if it's not an auth validation call
       if (!isAuthValidation) {
         console.log('Clearing auth storage due to 401 error');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        try {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        } catch (storageError) {
+          console.warn('Failed to clear localStorage:', storageError);
+        }
         
-        // Only redirect if we're not already on an auth page
-        if (!isAuthPage) {
+        // Only redirect if we're not already on an auth page and window is available
+        if (!isAuthPage && typeof window !== 'undefined') {
           console.log('Redirecting to login due to 401 error');
           window.location.href = '/login';
         }

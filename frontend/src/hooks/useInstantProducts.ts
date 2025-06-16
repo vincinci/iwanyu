@@ -293,33 +293,36 @@ export const useInstantProduct = (id: string, enabled = true) => {
 export const useGlobalPrefetch = () => {
   const queryClient = useQueryClient();
 
-  const prefetchEverything = useCallback(() => {
-    const prefetchPromises = [
-      // Prefetch first page of all products
-      queryClient.prefetchQuery({
-        queryKey: ['products', 1, '', '', 'createdAt', 'desc', 12],
-        queryFn: () => productsApi.getAll({ page: 1, limit: 12, sortBy: 'createdAt', sortOrder: 'desc' }),
-        ...INSTANT_CONFIG,
-      }),
-      
-      // Prefetch featured products
-      queryClient.prefetchQuery({
-        queryKey: ['products', 1, '', '', 'featured', 'desc', 8],
-        queryFn: () => productsApi.getAll({ page: 1, limit: 8, sortBy: 'featured', sortOrder: 'desc' }),
-        ...INSTANT_CONFIG,
-      }),
-      
-      // Prefetch popular products
-      queryClient.prefetchQuery({
-        queryKey: ['products', 1, '', '', 'totalSales', 'desc', 8],
-        queryFn: () => productsApi.getAll({ page: 1, limit: 8, sortBy: 'totalSales', sortOrder: 'desc' }),
-        ...INSTANT_CONFIG,
-      }),
-    ];
+  const prefetchEverything = useCallback(async () => {
+    try {
+      const prefetchPromises = [
+        // Prefetch first page of all products
+        queryClient.prefetchQuery({
+          queryKey: ['products', 1, '', '', 'createdAt', 'desc', 12],
+          queryFn: () => productsApi.getAll({ page: 1, limit: 12, sortBy: 'createdAt', sortOrder: 'desc' }),
+          ...INSTANT_CONFIG,
+        }),
+        
+        // Prefetch featured products
+        queryClient.prefetchQuery({
+          queryKey: ['products', 1, '', '', 'featured', 'desc', 8],
+          queryFn: () => productsApi.getAll({ page: 1, limit: 8, sortBy: 'featured', sortOrder: 'desc' }),
+          ...INSTANT_CONFIG,
+        }),
+        
+        // Prefetch popular products
+        queryClient.prefetchQuery({
+          queryKey: ['products', 1, '', '', 'totalSales', 'desc', 8],
+          queryFn: () => productsApi.getAll({ page: 1, limit: 8, sortBy: 'totalSales', sortOrder: 'desc' }),
+          ...INSTANT_CONFIG,
+        }),
+      ];
 
-    Promise.all(prefetchPromises).catch(() => {
-      // Silently fail - don't block UI
-    });
+      await Promise.all(prefetchPromises);
+    } catch (error) {
+      console.warn('Global prefetch failed, but app will continue normally:', error);
+      // Don't rethrow - let the app continue without prefetching
+    }
   }, [queryClient]);
 
   return { prefetchEverything };
