@@ -1,21 +1,35 @@
 import express, { Response } from 'express';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import prisma from '../utils/db';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import brevoService from '../services/brevoService';
 
+// Ensure upload directories exist
+const ensureDirectoryExists = (dirPath: string) => {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+};
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    let uploadPath: string;
+    
     // Use different directories for different file types
     if (file.fieldname === 'nationalId') {
-      cb(null, 'uploads/national-ids/');
+      uploadPath = 'uploads/national-ids/';
     } else if (file.fieldname === 'productImage') {
-      cb(null, 'uploads/products/');
+      uploadPath = 'uploads/products/';
     } else {
-      cb(null, 'uploads/');
+      uploadPath = 'uploads/';
     }
+    
+    // Ensure the directory exists
+    ensureDirectoryExists(uploadPath);
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -77,6 +91,18 @@ router.post('/become-seller', authenticateToken, upload.single('nationalId'), as
       businessType 
     } = req.body;
 
+    // Validate required fields
+    if (!businessName || !businessEmail) {
+      res.status(400).json({ 
+        error: 'Business name and business email are required',
+        details: {
+          businessName: !businessName ? 'Business name is required' : null,
+          businessEmail: !businessEmail ? 'Business email is required' : null
+        }
+      });
+      return;
+    }
+
     // Check if user already has a seller profile
     const existingSeller = await prisma.seller.findFirst({
       where: { userId }
@@ -87,15 +113,37 @@ router.post('/become-seller', authenticateToken, upload.single('nationalId'), as
       return;
     }
 
+    // Check if business email is already taken
+    const existingBusinessEmail = await prisma.seller.findFirst({
+      where: { businessEmail }
+    });
+
+    if (existingBusinessEmail) {
+      res.status(400).json({ 
+        error: 'Business email is already registered',
+        details: { businessEmail: 'This email is already associated with another seller account' }
+      });
+      return;
+    }
+
     // Get the uploaded file path if present
     const nationalId = req.file ? req.file.path : null;
+
+    // Log the creation attempt for debugging
+    console.log('Creating seller profile:', {
+      userId,
+      businessName,
+      businessEmail,
+      businessPhone,
+      nationalIdUploaded: !!nationalId
+    });
 
     // Create seller profile
     const seller = await prisma.seller.create({
       data: {
         userId,
         businessName,
-        businessEmail: businessEmail || req.user?.email,
+        businessEmail,
         businessPhone,
         businessAddress,
         businessDescription,
@@ -111,13 +159,35 @@ router.post('/become-seller', authenticateToken, upload.single('nationalId'), as
       data: { role: 'SELLER' }
     });
 
+    console.log('Seller profile created successfully:', seller.id);
+
     res.status(201).json({
       message: 'Seller profile created successfully',
       seller
     });
   } catch (error) {
     console.error('Seller creation error:', error);
-    res.status(500).json({ error: 'Failed to create seller profile' });
+    
+    // Handle specific Prisma errors
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+      const target = (error as any).meta?.target;
+      if (target?.includes('businessEmail')) {
+        res.status(400).json({ 
+          error: 'Business email is already registered',
+          details: { businessEmail: 'This email is already associated with another seller account' }
+        });
+        return;
+      }
+      if (target?.includes('userId')) {
+        res.status(400).json({ error: 'User already has a seller profile' });
+        return;
+      }
+    }
+    
+    res.status(500).json({ 
+      error: 'Failed to create seller profile',
+      details: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
+    });
   }
 });
 

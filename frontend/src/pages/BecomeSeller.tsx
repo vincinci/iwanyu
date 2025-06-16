@@ -17,6 +17,7 @@ const BecomeSeller: React.FC = () => {
   const [nationalIdFile, setNationalIdFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ const BecomeSeller: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -73,7 +75,25 @@ const BecomeSeller: React.FC = () => {
       setSuccess(true);
     } catch (err) {
       console.error('Seller application error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to submit application');
+      
+      // Handle API error response with field-specific errors
+      if (err instanceof Error) {
+        try {
+          // Try to parse the error message as JSON for detailed errors
+          const errorData = JSON.parse(err.message);
+          if (errorData.details) {
+            setFieldErrors(errorData.details);
+            setError(errorData.error || 'Please check the form for errors');
+          } else {
+            setError(err.message);
+          }
+        } catch {
+          // If not JSON, use the error message as is
+          setError(err.message);
+        }
+      } else {
+        setError('Failed to submit application');
+      }
     } finally {
       setLoading(false);
     }
@@ -181,9 +201,12 @@ const BecomeSeller: React.FC = () => {
                   value={formData.businessName}
                   onChange={handleChange}
                   required
-                  className="input-field"
+                  className={`input-field ${fieldErrors.businessName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
                   placeholder="Your business name"
                 />
+                {fieldErrors.businessName && (
+                  <p className="mt-1 text-sm text-red-600">{fieldErrors.businessName}</p>
+                )}
               </div>
 
               <div>
@@ -196,10 +219,17 @@ const BecomeSeller: React.FC = () => {
                   name="businessEmail"
                   value={formData.businessEmail}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-colors ${
+                    fieldErrors.businessEmail 
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                      : 'focus:ring-red-500'
+                  }`}
                   placeholder="Your business email address"
                   required
                 />
+                {fieldErrors.businessEmail && (
+                  <p className="mt-1 text-sm text-red-600">{fieldErrors.businessEmail}</p>
+                )}
               </div>
             </div>
 
