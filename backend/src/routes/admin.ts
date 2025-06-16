@@ -379,6 +379,91 @@ router.put('/sellers/:id/status', authenticateToken, requireAdmin, async (req: A
   }
 });
 
+// Get seller verification document
+router.get('/sellers/:id/document', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const seller = await prisma.seller.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        businessName: true,
+        nationalId: true,
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true
+          }
+        }
+      }
+    });
+
+    if (!seller) {
+      res.status(404).json({ error: 'Seller not found' });
+      return;
+    }
+
+    if (!seller.nationalId) {
+      res.status(404).json({ error: 'No verification document found for this seller' });
+      return;
+    }
+
+    // Check if the file exists
+    const fs = require('fs');
+    const path = require('path');
+    const filePath = path.resolve(seller.nationalId);
+
+    if (!fs.existsSync(filePath)) {
+      res.status(404).json({ error: 'Document file not found on server' });
+      return;
+    }
+
+    // Get file info
+    const fileStats = fs.statSync(filePath);
+    const fileExtension = path.extname(filePath).toLowerCase();
+    const fileName = path.basename(filePath);
+
+    // Determine content type
+    let contentType = 'application/octet-stream';
+    if (fileExtension === '.pdf') {
+      contentType = 'application/pdf';
+    } else if (['.jpg', '.jpeg'].includes(fileExtension)) {
+      contentType = 'image/jpeg';
+    } else if (fileExtension === '.png') {
+      contentType = 'image/png';
+    }
+
+    // Return document info and URL
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://iwanyu-backend.onrender.com' 
+      : `http://localhost:${process.env.PORT || 3001}`;
+    
+    const documentUrl = `${baseUrl}/${seller.nationalId.replace(/\\/g, '/')}`;
+
+    res.json({
+      seller: {
+        id: seller.id,
+        businessName: seller.businessName,
+        ownerName: `${seller.user.firstName} ${seller.user.lastName}`,
+        email: seller.user.email
+      },
+      document: {
+        fileName,
+        fileSize: fileStats.size,
+        fileType: contentType,
+        uploadedAt: fileStats.birthtime,
+        downloadUrl: documentUrl,
+        viewUrl: documentUrl // Same as download for now
+      }
+    });
+  } catch (error) {
+    console.error('Get seller document error:', error);
+    res.status(500).json({ error: 'Failed to get seller document' });
+  }
+});
+
 // Product Management
 router.get('/products', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {

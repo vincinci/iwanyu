@@ -15,7 +15,11 @@ import {
   Mail,
   Phone,
   MapPin,
-  Briefcase
+  Briefcase,
+  FileText,
+  Download,
+  Eye,
+  Calendar
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { adminApi, type AdminSeller } from '../services/adminApi';
@@ -29,6 +33,9 @@ const AdminSellers: React.FC = () => {
   const [status, setStatus] = useState('');
   const [selectedSeller, setSelectedSeller] = useState<AdminSeller | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showDocumentModal, setShowDocumentModal] = useState(false);
+  const [documentData, setDocumentData] = useState<any>(null);
+  const [loadingDocument, setLoadingDocument] = useState(false);
 
   React.useEffect(() => {
     if (!user) {
@@ -61,6 +68,30 @@ const AdminSellers: React.FC = () => {
     } catch (error) {
       console.error('Failed to update seller status:', error);
     }
+  };
+
+  const handleViewDocument = async (sellerId: string) => {
+    setLoadingDocument(true);
+    setDocumentData(null);
+    
+    try {
+      const result = await adminApi.getSellerDocument(sellerId);
+      setDocumentData(result);
+      setShowDocumentModal(true);
+    } catch (error) {
+      console.error('Failed to get seller document:', error);
+      alert(error instanceof Error ? error.message : 'Failed to load document');
+    } finally {
+      setLoadingDocument(false);
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const getStatusColor = (status: string) => {
@@ -254,6 +285,17 @@ const AdminSellers: React.FC = () => {
                           <p>Joined {new Date(seller.createdAt).toLocaleDateString()}</p>
                         </div>
                         
+                        {seller.nationalId && (
+                          <button
+                            onClick={() => handleViewDocument(seller.id)}
+                            disabled={loadingDocument}
+                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors disabled:opacity-50"
+                          >
+                            <FileText size={14} />
+                            {loadingDocument ? 'Loading...' : 'Document'}
+                          </button>
+                        )}
+                        
                         <button
                           onClick={() => {
                             setSelectedSeller(seller);
@@ -396,6 +438,40 @@ const AdminSellers: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Verification Document */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Verification Document</h4>
+                    {selectedSeller.nationalId ? (
+                      <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <FileText className="w-8 h-8 text-blue-600" />
+                          <div>
+                            <p className="font-medium text-blue-900">National ID Document</p>
+                            <p className="text-sm text-blue-700">Verification document submitted</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleViewDocument(selectedSeller.id)}
+                          disabled={loadingDocument}
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        >
+                          <Eye size={16} />
+                          {loadingDocument ? 'Loading...' : 'View Document'}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <AlertCircle className="w-6 h-6 text-yellow-600" />
+                          <div>
+                            <p className="font-medium text-yellow-900">No Document Submitted</p>
+                            <p className="text-sm text-yellow-700">This seller hasn't submitted verification documents</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Current Status */}
                   <div>
                     <h4 className="font-medium text-gray-900 mb-3">Current Status</h4>
@@ -408,7 +484,18 @@ const AdminSellers: React.FC = () => {
                   {/* Actions */}
                   <div>
                     <h4 className="font-medium text-gray-900 mb-3">Actions</h4>
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-3">
+                      {selectedSeller.nationalId && (
+                        <button
+                          onClick={() => handleViewDocument(selectedSeller.id)}
+                          disabled={loadingDocument}
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        >
+                          <Eye size={16} />
+                          {loadingDocument ? 'Loading...' : 'View Document'}
+                        </button>
+                      )}
+                      
                       {selectedSeller.status !== 'APPROVED' && (
                         <button
                           onClick={() => handleStatusUpdate(selectedSeller.id, 'APPROVED')}
@@ -441,6 +528,129 @@ const AdminSellers: React.FC = () => {
                           Suspend
                         </button>
                       )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Document Viewing Modal */}
+        <AnimatePresence>
+          {showDocumentModal && documentData && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden"
+              >
+                <div className="p-6 border-b border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Verification Document
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {documentData.seller.businessName} - {documentData.seller.ownerName}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setShowDocumentModal(false)}
+                      className="text-gray-400 hover:text-gray-600 text-xl"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  {/* Document Info */}
+                  <div className="mb-6 bg-gray-50 p-4 rounded-lg">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium text-gray-700">File Name:</span>
+                        <p className="text-gray-900">{documentData.document.fileName}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700">File Size:</span>
+                        <p className="text-gray-900">{formatFileSize(documentData.document.fileSize)}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700">File Type:</span>
+                        <p className="text-gray-900">{documentData.document.fileType}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700">Uploaded:</span>
+                        <p className="text-gray-900">
+                          {new Date(documentData.document.uploadedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Document Preview/Download */}
+                  <div className="text-center">
+                    {documentData.document.fileType.startsWith('image/') ? (
+                      <div className="mb-4">
+                        <img
+                          src={documentData.document.viewUrl}
+                          alt="National ID Document"
+                          className="max-w-full max-h-96 mx-auto object-contain border rounded shadow"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'p-8 bg-red-50 border border-red-200 rounded text-red-700';
+                            errorDiv.innerHTML = '<p>Failed to load image</p>';
+                            target.parentNode?.appendChild(errorDiv);
+                          }}
+                        />
+                      </div>
+                    ) : documentData.document.fileType === 'application/pdf' ? (
+                      <div className="mb-4">
+                        <div className="p-8 bg-gray-100 border-2 border-dashed border-gray-300 rounded">
+                          <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                          <p className="text-gray-600 mb-2">PDF Document</p>
+                          <p className="text-sm text-gray-500">Click the download button below to view the PDF</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mb-4">
+                        <div className="p-8 bg-gray-100 border-2 border-dashed border-gray-300 rounded">
+                          <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                          <p className="text-gray-600 mb-2">Document File</p>
+                          <p className="text-sm text-gray-500">Click the download button below to view the document</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex justify-center gap-4">
+                      <a
+                        href={documentData.document.downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                      >
+                        <Download size={16} />
+                        Download Document
+                      </a>
+                      
+                      <a
+                        href={documentData.document.viewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                      >
+                        <Eye size={16} />
+                        Open in New Tab
+                      </a>
                     </div>
                   </div>
                 </div>

@@ -341,6 +341,36 @@ class AdminApi {
     return response.json();
   }
 
+  // Get seller verification document
+  async getSellerDocument(id: string): Promise<{
+    seller: {
+      id: string;
+      businessName?: string;
+      ownerName: string;
+      email: string;
+    };
+    document: {
+      fileName: string;
+      fileSize: number;
+      fileType: string;
+      uploadedAt: string;
+      downloadUrl: string;
+      viewUrl: string;
+    };
+  }> {
+    const response = await fetch(`${API_BASE_URL}/admin/sellers/${id}/document`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to get seller document');
+    }
+
+    return response.json();
+  }
+
   // Product Management
   async getProducts(params: {
     page?: number;
