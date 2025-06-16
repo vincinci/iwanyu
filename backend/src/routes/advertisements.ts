@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateToken, requireSeller } from '../middleware/auth';
 import AdvertisementService, { CreateCampaignData } from '../services/advertisementService';
-import { AdType, AdPlacement } from '../../generated/prisma';
+import { AdType, AdPlacement } from '@prisma/client';
 import { AuthRequest } from '../middleware/auth';
 
 const router = express.Router();

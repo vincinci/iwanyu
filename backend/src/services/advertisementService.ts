@@ -1,4 +1,4 @@
-import { PrismaClient, AdStatus, AdType, AdPlacement, PaymentStatus } from '../../generated/prisma';
+import { PrismaClient, AdStatus, AdType, AdPlacement, PaymentStatus } from '@prisma/client';
 import { Request } from 'express';
 
 const prisma = new PrismaClient();
