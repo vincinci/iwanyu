@@ -114,26 +114,48 @@ const Navbar: React.FC = React.memo(() => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-            <img 
-              src="/iwanyu-logo.png" 
-              alt="Iwanyu" 
-              className="h-8 w-auto"
-              style={{ maxWidth: '150px' }}
-              onError={(e) => {
-                console.log('Navbar logo failed to load');
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const textElement = target.nextElementSibling as HTMLElement;
-                if (textElement) {
-                  textElement.style.display = 'inline-block';
-                  textElement.className = 'text-xl font-bold text-red-600 bg-red-100 px-3 py-1 rounded';
-                }
-              }}
-              onLoad={() => {
-                console.log('Navbar logo loaded successfully');
-              }}
-            />
-            <span className="text-xl font-bold text-red-600" style={{ display: 'none' }}>
+            <div className="relative">
+              <img 
+                src="/iwanyu-logo.png" 
+                alt="Iwanyu" 
+                className="h-8 w-auto"
+                style={{ maxWidth: '150px' }}
+                onError={(e) => {
+                  console.log('Navbar PNG logo failed to load');
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const svgFallback = target.nextElementSibling as HTMLElement;
+                  if (svgFallback) {
+                    svgFallback.style.display = 'block';
+                  }
+                }}
+                onLoad={() => {
+                  console.log('Navbar PNG logo loaded successfully');
+                }}
+              />
+              
+              {/* SVG Fallback */}
+              <svg 
+                width="100" 
+                height="32" 
+                viewBox="0 0 100 32" 
+                className="h-8 w-auto" 
+                style={{ display: 'none' }}
+              >
+                <defs>
+                  <linearGradient id="navLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#dc2626" />
+                    <stop offset="100%" stopColor="#b91c1c" />
+                  </linearGradient>
+                </defs>
+                <rect width="100" height="32" rx="6" fill="url(#navLogoGradient)" />
+                <text x="50" y="21" textAnchor="middle" fill="white" style={{ fontSize: '14px', fontWeight: 'bold', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                  IWANYU
+                </text>
+              </svg>
+            </div>
+            
+            <span className="text-xl font-bold text-red-600">
               Iwanyu
             </span>
           </Link>

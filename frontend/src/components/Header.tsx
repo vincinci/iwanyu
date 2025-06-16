@@ -159,7 +159,7 @@ const Header: React.FC = () => {
       <header className={`sticky top-0 bg-white shadow-sm border-b border-gray-200 transition-all duration-300 z-40 ${isScrolled ? 'shadow-md' : ''}`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Enhanced Logo with Fallback */}
+            {/* Enhanced Logo with Multiple Fallbacks */}
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="relative">
                 <img
@@ -170,25 +170,48 @@ const Header: React.FC = () => {
                   decoding="async"
                   style={{ maxWidth: '200px' }}
                   onError={(e) => {
-                    console.log('Logo failed to load, showing fallback');
-                    // Fallback if logo doesn't load
+                    console.log('PNG logo failed to load, trying fallbacks');
+                    // Hide the image
                     e.currentTarget.style.display = 'none';
-                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                    if (fallback) {
-                      fallback.style.display = 'flex';
+                    
+                    // Show SVG fallback first
+                    const svgFallback = e.currentTarget.nextElementSibling as HTMLElement;
+                    if (svgFallback) {
+                      svgFallback.style.display = 'flex';
                     }
                   }}
                   onLoad={() => {
-                    console.log('Logo loaded successfully');
+                    console.log('PNG logo loaded successfully');
                   }}
                 />
-                {/* Fallback Text Logo */}
+                
+                {/* SVG Logo Fallback */}
+                <div 
+                  className="h-12 flex items-center justify-center group-hover:scale-105 transition-transform duration-200"
+                  style={{ display: 'none', minWidth: '120px' }}
+                >
+                  <svg width="120" height="48" viewBox="0 0 120 48" className="h-12 w-auto">
+                    <defs>
+                      <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#f97316" />
+                        <stop offset="100%" stopColor="#ec4899" />
+                      </linearGradient>
+                    </defs>
+                    <rect width="120" height="48" rx="8" fill="url(#logoGradient)" />
+                    <text x="60" y="30" textAnchor="middle" className="fill-white font-bold text-lg" style={{ fontSize: '18px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                      IWANYU
+                    </text>
+                  </svg>
+                </div>
+                
+                {/* Text Fallback (last resort) */}
                 <div 
                   className="h-12 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold text-xl rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200 shadow-md"
                   style={{ display: 'none', minWidth: '120px' }}
                 >
                   IWANYU
                 </div>
+                
                 <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
               </div>
             </Link>
@@ -539,16 +562,27 @@ const Header: React.FC = () => {
                             alt="Iwanyu" 
                             className="w-6 h-6 object-contain"
                             onError={(e) => {
-                              console.log('Mobile logo failed to load');
+                              console.log('Mobile PNG logo failed to load, using SVG');
                               const target = e.target as HTMLImageElement;
                               target.style.display = 'none';
                               const parent = target.parentElement;
                               if (parent) {
-                                parent.innerHTML = '<span class="text-orange-600 font-bold text-xs">IW</span>';
+                                parent.innerHTML = `
+                                  <svg width="24" height="24" viewBox="0 0 24 24" class="w-6 h-6">
+                                    <defs>
+                                      <linearGradient id="mobileLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#f97316" />
+                                        <stop offset="100%" stop-color="#ec4899" />
+                                      </linearGradient>
+                                    </defs>
+                                    <rect width="24" height="24" rx="4" fill="url(#mobileLogoGradient)" />
+                                    <text x="12" y="16" text-anchor="middle" fill="white" style="font-size: 8px; font-weight: bold; font-family: system-ui, -apple-system, sans-serif;">IW</text>
+                                  </svg>
+                                `;
                               }
                             }}
                             onLoad={() => {
-                              console.log('Mobile logo loaded successfully');
+                              console.log('Mobile PNG logo loaded successfully');
                             }}
                           />
                         </div>
