@@ -566,15 +566,15 @@ const Products: React.FC = () => {
                                   {product.salePrice ? (
                                     <>
                                       <span className="text-orange-600 font-bold text-lg sm:text-base">
-                                        RF {product.salePrice.toLocaleString()}
+                                        {formatPrice(product.salePrice)}
                                       </span>
                                       <span className="text-gray-400 line-through text-sm">
-                                        RF {product.price.toLocaleString()}
+                                        {formatPrice(product.price)}
                                       </span>
                                     </>
                                   ) : (
                                     <span className="text-orange-600 font-bold text-lg sm:text-base">
-                                      RF {product.price.toLocaleString()}
+                                      {formatPrice(product.price)}
                                     </span>
                                   )}
                                 </div>

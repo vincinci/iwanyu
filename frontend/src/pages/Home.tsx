@@ -398,7 +398,7 @@ const Home: React.FC = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-2">
                           <span className="text-lg sm:text-base font-bold text-gray-900">
-                            ${product.price.toFixed(2)}
+                            {formatPrice(product.price)}
                           </span>
                         </div>
                       </div>
@@ -609,7 +609,7 @@ const Home: React.FC = () => {
                       
                       <div className="flex items-center justify-between">
                         <span className="text-sm md:text-lg font-bold text-gray-900">
-                          ${product.price.toFixed(2)}
+                          {formatPrice(product.price)}
                         </span>
                         
                         {/* Stars - Hidden on mobile for cleaner look */}

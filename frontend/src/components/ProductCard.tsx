@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
+import { formatPrice } from '../utils/currency';
 import type { Product } from '../types/api';
 
 interface ProductCardProps {
@@ -72,10 +73,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
           </div>
           <div className="flex items-center space-x-2 mb-4">
-            <span className="text-xl font-bold">${finalPrice.toFixed(2)}</span>
+            <span className="text-xl font-bold">{formatPrice(finalPrice)}</span>
             {salePrice && (
               <span className="text-sm text-gray-500 line-through">
-                ${price.toFixed(2)}
+                {formatPrice(price)}
               </span>
             )}
           </div>
