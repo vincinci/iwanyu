@@ -154,9 +154,9 @@ const Header: React.FC = () => {
             {/* Enhanced Logo with Fallback */}
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="relative">
-                <img 
-                  src="/iwanyu logo.png" 
-                  alt="Iwanyu Store Logo" 
+                              <img
+                src="/iwanyu-logo.png"
+                alt="Iwanyu Store Logo" 
                   className="h-12 w-auto group-hover:scale-105 transition-transform duration-200"
                   loading="eager"
                   decoding="async"
@@ -496,7 +496,7 @@ const Header: React.FC = () => {
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center space-x-3">
-                        <img src="/iwanyu logo.png" alt="Iwanyu" className="h-8 w-auto" />
+                        <img src="/iwanyu-logo.png" alt="Iwanyu" className="h-8 w-auto" />
                       </div>
                       <button
                         onClick={() => setIsMenuOpen(false)}

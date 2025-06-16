@@ -114,7 +114,7 @@ const Navbar: React.FC = React.memo(() => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
             <img 
-              src="/iwanyu logo.png" 
+              src="/iwanyu-logo.png" 
               alt="Iwanyu" 
               className="h-8 w-auto"
               onError={(e) => {

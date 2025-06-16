@@ -167,7 +167,7 @@ function App() {
                     <Route path="/orders" element={<Orders />} />
                     
                     {/* Seller Routes */}
-                    <Route path="/seller" element={<SellerDashboard />} />
+                    <Route path="/seller/dashboard" element={<SellerDashboard />} />
                     <Route path="/seller/products" element={<SellerProducts />} />
                     <Route path="/seller/wallet" element={<SellerWallet />} />
                     <Route path="/seller/ad-campaigns" element={<AdCampaigns />} />
