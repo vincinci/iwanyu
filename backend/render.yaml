@@ -3,7 +3,7 @@ services:
     name: ecommerce-backend
     env: node
     plan: free
-    buildCommand: npm install && npm run build && npx prisma generate
+    buildCommand: chmod +x scripts/deploy.sh && ./scripts/deploy.sh
     startCommand: npm start
     envVars:
       - key: NODE_ENV
