@@ -10,7 +10,6 @@ import {
   ChevronDown,
   Package,
   Heart,
-  Bell,
   MapPin,
   Shield,
   Truck,
@@ -330,14 +329,6 @@ const Navbar: React.FC = React.memo(() => {
                                 </span>
                               )}
                             </div>
-                          </Link>
-                          <Link
-                            to="/notifications"
-                            className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-                            onClick={() => setShowUserMenu(false)}
-                          >
-                            <span>Notifications</span>
-                            <Bell size={16} />
                           </Link>
                         </div>
                         <div className="border-t py-2">
