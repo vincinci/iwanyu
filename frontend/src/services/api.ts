@@ -198,9 +198,8 @@ api.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
       
-      // Add connection persistence headers
-      config.headers['Connection'] = 'keep-alive';
-      config.headers['Keep-Alive'] = 'timeout=30, max=100';
+      // Connection persistence is handled by the browser automatically
+      // Note: Connection and Keep-Alive headers are restricted by browser security
       
       console.log(`🔗 API Request: ${config.method?.toUpperCase()} ${config.url}`);
     } catch (error) {
