@@ -453,11 +453,12 @@ const Header: React.FC = () => {
                 console.log('Mobile menu button clicked, new state:', !isMenuOpen);
               }}
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-              className={`md:hidden p-3 rounded-lg transition-all duration-200 z-50 ${
+              className={`md:hidden p-3 rounded-lg transition-all duration-200 z-[2147483647] ${
                 isMenuOpen 
                   ? 'text-orange-500 bg-orange-50' 
                   : 'text-gray-600 hover:text-orange-500 hover:bg-orange-50'
               }`}
+              style={{ zIndex: 2147483647, position: 'relative' }}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -498,11 +499,12 @@ const Header: React.FC = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] lg:hidden"
+                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2147483647] lg:hidden"
                   onClick={() => {
                     console.log('Backdrop clicked, closing menu');
                     setIsMenuOpen(false);
                   }}
+                  style={{ zIndex: 2147483647 }}
                 />
                 
                 {/* Mobile Menu Content */}
@@ -516,9 +518,11 @@ const Header: React.FC = () => {
                     stiffness: 300,
                     duration: 0.3
                   }}
-                  className="fixed top-0 right-0 h-full w-[340px] max-w-[85vw] sm:max-w-[400px] bg-white/95 backdrop-blur-xl shadow-2xl z-[101] lg:hidden overflow-hidden"
+                  className="fixed top-0 right-0 h-full w-[340px] max-w-[85vw] sm:max-w-[400px] bg-white/95 backdrop-blur-xl shadow-2xl z-[2147483647] lg:hidden overflow-hidden"
                   style={{ 
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+                    zIndex: 2147483647,
+                    position: 'fixed !important' as any
                   }}
                 >
                   <div className="h-full overflow-y-auto">

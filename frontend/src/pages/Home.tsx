@@ -30,6 +30,7 @@ import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useAuth } from '../contexts/AuthContext';
 import { formatPrice } from '../utils/currency';
+import { getProductImageUrl } from '../utils/imageUtils';
 import ProductSkeleton from '../components/ProductSkeleton';
 import { advertisementApi } from '../services/advertisementApi';
 import type { Category, Product } from '../types/api';
@@ -567,7 +568,7 @@ const Home: React.FC = () => {
           {/* Best Sellers - Always show if data exists */}
           {bestSellers.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4">
-              {bestSellers.slice(0, 8).map((product, index) => (
+              {bestSellers.slice(0, 8).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
