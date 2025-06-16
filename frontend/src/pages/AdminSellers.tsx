@@ -80,7 +80,25 @@ const AdminSellers: React.FC = () => {
       setShowDocumentModal(true);
     } catch (error) {
       console.error('Failed to get seller document:', error);
-      alert(error instanceof Error ? error.message : 'Failed to load document');
+      
+      let errorMessage = 'Failed to load document';
+      
+      if (error instanceof Error) {
+        try {
+          // Try to parse additional error info
+          const errorData = JSON.parse(error.message);
+          if (errorData.error && errorData.message) {
+            errorMessage = `${errorData.error}\n\n${errorData.message}`;
+          } else if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch {
+          errorMessage = error.message;
+        }
+      }
+      
+      // Show a more detailed alert
+      alert(errorMessage);
     } finally {
       setLoadingDocument(false);
     }

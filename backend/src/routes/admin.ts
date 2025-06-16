@@ -390,6 +390,8 @@ router.get('/sellers/:id/document', authenticateToken, requireAdmin, async (req:
         id: true,
         businessName: true,
         nationalId: true,
+        createdAt: true,
+        status: true,
         user: {
           select: {
             firstName: true,
@@ -406,7 +408,16 @@ router.get('/sellers/:id/document', authenticateToken, requireAdmin, async (req:
     }
 
     if (!seller.nationalId) {
-      res.status(404).json({ error: 'No verification document found for this seller' });
+      res.status(404).json({ 
+        error: 'No verification document found for this seller',
+        seller: {
+          id: seller.id,
+          businessName: seller.businessName,
+          ownerName: `${seller.user.firstName} ${seller.user.lastName}`,
+          email: seller.user.email,
+          status: seller.status
+        }
+      });
       return;
     }
 
@@ -416,11 +427,41 @@ router.get('/sellers/:id/document', authenticateToken, requireAdmin, async (req:
     const filePath = path.resolve(seller.nationalId);
 
     if (!fs.existsSync(filePath)) {
-      res.status(404).json({ error: 'Document file not found on server' });
+      // File was uploaded but is no longer available (common on cloud platforms)
+      const fileName = path.basename(seller.nationalId);
+      const fileExtension = path.extname(seller.nationalId).toLowerCase();
+      
+      let contentType = 'application/octet-stream';
+      if (fileExtension === '.pdf') {
+        contentType = 'application/pdf';
+      } else if (['.jpg', '.jpeg'].includes(fileExtension)) {
+        contentType = 'image/jpeg';
+      } else if (fileExtension === '.png') {
+        contentType = 'image/png';
+      }
+
+      res.status(410).json({ 
+        error: 'Document file is no longer available on server',
+        message: 'The verification document was uploaded but is no longer accessible due to server deployment. Please ask the seller to re-submit their verification document.',
+        seller: {
+          id: seller.id,
+          businessName: seller.businessName,
+          ownerName: `${seller.user.firstName} ${seller.user.lastName}`,
+          email: seller.user.email,
+          status: seller.status
+        },
+        documentInfo: {
+          fileName,
+          fileType: contentType,
+          originalPath: seller.nationalId,
+          uploadedApproximately: seller.createdAt,
+          reason: 'File was uploaded but is no longer available due to server redeployment. Cloud platforms like Render do not persist uploaded files across deployments.'
+        }
+      });
       return;
     }
 
-    // Get file info
+    // Get file info (if file exists)
     const fileStats = fs.statSync(filePath);
     const fileExtension = path.extname(filePath).toLowerCase();
     const fileName = path.basename(filePath);
@@ -447,7 +488,8 @@ router.get('/sellers/:id/document', authenticateToken, requireAdmin, async (req:
         id: seller.id,
         businessName: seller.businessName,
         ownerName: `${seller.user.firstName} ${seller.user.lastName}`,
-        email: seller.user.email
+        email: seller.user.email,
+        status: seller.status
       },
       document: {
         fileName,
@@ -455,7 +497,7 @@ router.get('/sellers/:id/document', authenticateToken, requireAdmin, async (req:
         fileType: contentType,
         uploadedAt: fileStats.birthtime,
         downloadUrl: documentUrl,
-        viewUrl: documentUrl // Same as download for now
+        viewUrl: documentUrl
       }
     });
   } catch (error) {
