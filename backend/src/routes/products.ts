@@ -7,6 +7,21 @@ const router = express.Router();
 const cache = new Map();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+// Function to clear product-related caches
+const clearProductCaches = () => {
+  const keysToDelete: string[] = [];
+  for (const key of cache.keys()) {
+    if (key.startsWith('products:') || key.startsWith('product:')) {
+      keysToDelete.push(key);
+    }
+  }
+  keysToDelete.forEach(key => cache.delete(key));
+  console.log(`Cleared ${keysToDelete.length} product cache entries`);
+};
+
+// Export the cache clearing function for use in other routes
+export { clearProductCaches };
+
 // Get all products with ultra-optimized query
 router.get('/', async (req: Request, res: Response) => {
   try {

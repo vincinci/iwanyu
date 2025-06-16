@@ -1,6 +1,7 @@
 import express, { Response } from 'express';
 import prisma from '../utils/db';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
+import { clearProductCaches } from './products';
 
 const router = express.Router();
 
@@ -696,6 +697,9 @@ router.put('/products/:id', authenticateToken, requireAdmin, async (req: AuthReq
         }
       }
     });
+
+    // Clear product caches when products are updated
+    clearProductCaches();
 
     res.json({ message: 'Product updated successfully', product });
   } catch (error) {
