@@ -334,16 +334,16 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Promoted Products Section - Desktop Only */}
+      {/* Sponsored Products Section - Show on all devices */}
       {promotedProducts.length > 0 && (
-        <section className="hidden md:block py-8 bg-gradient-to-r from-blue-50 to-purple-50">
+        <section className="py-4 md:py-8 bg-gradient-to-r from-blue-50 to-purple-50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                <Star className="mr-2 text-blue-500" size={24} />
+            <div className="flex items-center justify-between mb-4 md:mb-6">
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900 flex items-center">
+                <Star className="mr-2 text-blue-500" size={20} />
                 Sponsored Products
               </h2>
-              <span className="text-sm text-gray-500 bg-blue-100 px-3 py-1 rounded-full">
+              <span className="text-xs md:text-sm text-gray-500 bg-blue-100 px-2 md:px-3 py-1 rounded-full">
                 Promoted
               </span>
             </div>
@@ -375,15 +375,15 @@ const Home: React.FC = () => {
                         }}
                       />
                       
-                      {/* Discount Badge */}
-                      {product.salePrice && product.salePrice < product.price && (
+                      {/* Discount Badge - Show on all devices */}
+                      {calculateDiscount(product.price, product.salePrice) > 0 && (
                         <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                           -{calculateDiscount(product.price, product.salePrice)}%
                         </div>
                       )}
                       
-                      {/* Quick Action Buttons */}
-                      <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      {/* Quick Action Buttons - Desktop only */}
+                      <div className="hidden md:flex absolute top-2 right-2 flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button className="p-2 bg-white rounded-full shadow-md hover:bg-orange-50 transition-colors">
                           <Heart size={16} className="text-gray-600 hover:text-orange-500" />
                         </button>
@@ -403,17 +403,16 @@ const Home: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i} 
-                              size={12} 
-                              className={i < Math.floor(getProductRating(product.id)) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
-                            />
-                          ))}
-                          <span className="text-xs text-gray-500 ml-1">({getProductRating(product.id).toFixed(1)})</span>
-                        </div>
+                      {/* Stars - Show on all devices */}
+                      <div className="flex items-center space-x-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            size={10} 
+                            className={i < Math.floor(getProductRating(product.id)) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
+                          />
+                        ))}
+                        <span className="text-xs text-gray-500 ml-1">({getProductRating(product.id).toFixed(1)})</span>
                       </div>
                     </div>
                   </Link>
@@ -424,40 +423,40 @@ const Home: React.FC = () => {
         </section>
       )}
 
-      {/* Flash Sale Section - Desktop Only */}
-      <section className="hidden md:block py-8 bg-white">
+      {/* Flash Sale Section - Show on all devices */}
+      <section className="py-4 md:py-8 bg-white">
         <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-lg p-6 text-white mb-6">
+          <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-lg p-4 md:p-6 text-white mb-4 md:mb-6">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Fire className="text-yellow-300" size={32} />
+              <div className="flex items-center space-x-2 md:space-x-4">
+                <Fire className="text-yellow-300" size={24} />
                 <div>
-                  <h2 className="text-2xl font-bold">Flash Sale</h2>
-                  <p className="text-red-100">Limited time offers</p>
+                  <h2 className="text-lg md:text-2xl font-bold">Flash Sale</h2>
+                  <p className="text-red-100 text-sm md:text-base">Limited time offers</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 md:space-x-4">
                 <div className="text-center">
-                  <div className="bg-white/20 rounded-lg px-3 py-2">
-                    <div className="text-2xl font-bold">{String(flashSaleTime.hours).padStart(2, '0')}</div>
+                  <div className="bg-white/20 rounded-lg px-2 md:px-3 py-1 md:py-2">
+                    <div className="text-lg md:text-2xl font-bold">{String(flashSaleTime.hours).padStart(2, '0')}</div>
                     <div className="text-xs">Hours</div>
                   </div>
                 </div>
-                <div className="text-2xl">:</div>
+                <div className="text-lg md:text-2xl">:</div>
                 <div className="text-center">
-                  <div className="bg-white/20 rounded-lg px-3 py-2">
-                    <div className="text-2xl font-bold">{String(flashSaleTime.minutes).padStart(2, '0')}</div>
+                  <div className="bg-white/20 rounded-lg px-2 md:px-3 py-1 md:py-2">
+                    <div className="text-lg md:text-2xl font-bold">{String(flashSaleTime.minutes).padStart(2, '0')}</div>
                     <div className="text-xs">Min</div>
                   </div>
                 </div>
-                <div className="text-2xl">:</div>
+                <div className="text-lg md:text-2xl">:</div>
                 <div className="text-center">
-                  <div className="bg-white/20 rounded-lg px-3 py-2">
-                    <div className="text-2xl font-bold">{String(flashSaleTime.seconds).padStart(2, '0')}</div>
+                  <div className="bg-white/20 rounded-lg px-2 md:px-3 py-1 md:py-2">
+                    <div className="text-lg md:text-2xl font-bold">{String(flashSaleTime.seconds).padStart(2, '0')}</div>
                     <div className="text-xs">Sec</div>
                   </div>
                 </div>
-          </div>
+              </div>
             </div>
           </div>
 
@@ -587,9 +586,9 @@ const Home: React.FC = () => {
                         }}
                       />
                       
-                      {/* Discount Badge - Hidden on mobile for cleaner look */}
+                      {/* Discount Badge - Show on all devices */}
                       {calculateDiscount(product.price, product.salePrice) > 0 && (
-                        <div className="hidden md:block absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                        <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                           -{calculateDiscount(product.price, product.salePrice)}%
                         </div>
                       )}
@@ -607,22 +606,16 @@ const Home: React.FC = () => {
                         {product.name}
                       </h3>
                       
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm md:text-lg font-bold text-gray-900">
-                          {formatPrice(product.price)}
-                        </span>
-                        
-                        {/* Stars - Hidden on mobile for cleaner look */}
-                        <div className="hidden md:flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i} 
-                              size={12} 
-                              className={i < Math.floor(getProductRating(product.id)) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
-                            />
-                          ))}
-                          <span className="text-xs text-gray-500 ml-1">({getProductRating(product.id).toFixed(1)})</span>
-                        </div>
+                      {/* Stars - Show on all devices */}
+                      <div className="flex items-center space-x-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            size={10} 
+                            className={i < Math.floor(getProductRating(product.id)) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
+                          />
+                        ))}
+                        <span className="text-xs text-gray-500 ml-1">({getProductRating(product.id).toFixed(1)})</span>
                       </div>
                     </div>
                   </Link>
@@ -637,12 +630,12 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Latest Products Grid - Desktop Only */}
-      <section className="hidden md:block py-8 bg-white">
+      {/* Latest Products Grid - Show on all devices */}
+      <section className="py-4 md:py-8 bg-white">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-              <Sparkles className="mr-2 text-blue-500" size={24} />
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <h2 className="text-lg md:text-2xl font-bold text-gray-900 flex items-center">
+              <Sparkles className="mr-2 text-blue-500" size={20} />
               Just for You
             </h2>
           </div>
