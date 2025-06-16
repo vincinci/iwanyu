@@ -245,24 +245,21 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* AliExpress-style Header Banner */}
-      <div className="bg-gradient-to-r from-red-600 to-red-700 text-white py-2">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-6">
-                              <span className="flex items-center"><Truck size={14} className="mr-1" /> Free shipping</span>
-              <span className="flex items-center"><Shield size={14} className="mr-1" /> Buyer protection</span>
-              <span className="flex items-center"><Gift size={14} className="mr-1" /> New user bonus</span>
+    <div className="min-h-screen bg-white">
+      {/* Minimalistic Hero Section - Mobile First */}
+      <section className="relative">
+        <div className="container mx-auto px-4 py-4 md:py-8">
+          {/* Mobile: Simple product grid, Desktop: Hero + Categories */}
+          <div className="block md:hidden">
+            {/* Mobile: Just a simple welcome message */}
+            <div className="text-center py-6 bg-gray-50 rounded-lg mb-6">
+              <h1 className="text-xl font-bold text-gray-900 mb-2">Welcome to Iwanyu Store</h1>
+              <p className="text-sm text-gray-600">Quality products at great prices</p>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Hero Section with Rotating Banners */}
-      <section className="relative">
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Desktop: Original layout */}
+          <div className="hidden md:grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Categories Sidebar */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-sm border p-4">
@@ -308,12 +305,12 @@ const Home: React.FC = () => {
                     <div className="text-center">
                       <h1 className="text-4xl md:text-6xl font-bold mb-4">{banner.title}</h1>
                       <p className="text-xl mb-8">{banner.subtitle}</p>
-          <Link 
-            to="/products" 
+                      <Link 
+                        to="/products" 
                         className="inline-flex items-center bg-white text-gray-900 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200"
-          >
+                      >
                         {banner.cta} <ArrowRight className="ml-2" size={20} />
-          </Link>
+                      </Link>
                     </div>
                   </motion.div>
                 ))}
@@ -337,9 +334,9 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Promoted Products Section */}
+      {/* Promoted Products Section - Desktop Only */}
       {promotedProducts.length > 0 && (
-        <section className="py-8 bg-gradient-to-r from-blue-50 to-purple-50">
+        <section className="hidden md:block py-8 bg-gradient-to-r from-blue-50 to-purple-50">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 flex items-center">
@@ -427,8 +424,8 @@ const Home: React.FC = () => {
         </section>
       )}
 
-      {/* Flash Sale Section */}
-      <section className="py-8 bg-white">
+      {/* Flash Sale Section - Desktop Only */}
+      <section className="hidden md:block py-8 bg-white">
         <div className="container mx-auto px-4">
           <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-lg p-6 text-white mb-6">
             <div className="flex items-center justify-between">
@@ -552,22 +549,22 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Best Sellers Section */}
-      <section className="py-8 bg-gray-50">
+      {/* Best Sellers Section - Simplified for Mobile */}
+      <section className="py-4 md:py-8 bg-white">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-              <Trophy className="mr-2 text-yellow-500" size={24} />
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <h2 className="text-lg md:text-2xl font-bold text-gray-900 flex items-center">
+              <Trophy className="mr-2 text-yellow-500 hidden md:block" size={24} />
               Best Sellers
             </h2>
-            <Link to="/products" className="text-red-500 hover:text-red-600 font-medium">
+            <Link to="/products" className="text-red-500 hover:text-red-600 font-medium text-sm md:text-base">
               View All <ArrowRight className="inline ml-1" size={16} />
             </Link>
           </div>
 
-          {/* Best Sellers - Always show if data exists */}
+          {/* Best Sellers - Clean Mobile Grid */}
           {bestSellers.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
               {bestSellers.slice(0, 8).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
@@ -575,14 +572,14 @@ const Home: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-orange-200 overflow-hidden"
+                  className="group bg-white rounded-lg md:rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden"
                 >
                   <Link to={`/products/${product.id}`} className="block">
                     <div className="relative overflow-hidden">
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
-                        className="w-full h-40 sm:h-44 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-32 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -590,36 +587,33 @@ const Home: React.FC = () => {
                         }}
                       />
                       
-                      {/* Discount Badge */}
+                      {/* Discount Badge - Hidden on mobile for cleaner look */}
                       {calculateDiscount(product.price, product.salePrice) > 0 && (
-                        <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                        <div className="hidden md:block absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                           -{calculateDiscount(product.price, product.salePrice)}%
                         </div>
                       )}
                       
-                      {/* Quick Action Buttons */}
-                      <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      {/* Quick Action Buttons - Desktop only */}
+                      <div className="hidden md:flex absolute top-2 right-2 flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button className="p-2 bg-white rounded-full shadow-md hover:bg-orange-50 transition-colors">
                           <Heart size={16} className="text-gray-600 hover:text-orange-500" />
                         </button>
                       </div>
                     </div>
                     
-                    <div className="p-3 sm:p-4">
-                      <h3 className="font-medium text-base sm:text-sm text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                    <div className="p-2 md:p-4">
+                      <h3 className="font-medium text-sm md:text-base text-gray-900 mb-1 md:mb-2 line-clamp-2">
                         {product.name}
                       </h3>
                       
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg sm:text-base font-bold text-gray-900">
-                            ${product.price.toFixed(2)}
-                          </span>
-                        </div>
-                      </div>
-                      
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1">
+                        <span className="text-sm md:text-lg font-bold text-gray-900">
+                          ${product.price.toFixed(2)}
+                        </span>
+                        
+                        {/* Stars - Hidden on mobile for cleaner look */}
+                        <div className="hidden md:flex items-center space-x-1">
                           {[...Array(5)].map((_, i) => (
                             <Star 
                               key={i} 
@@ -643,8 +637,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Latest Products Grid */}
-      <section className="py-8 bg-white">
+      {/* Latest Products Grid - Desktop Only */}
+      <section className="hidden md:block py-8 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900 flex items-center">
@@ -738,24 +732,24 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Trust Indicators */}
-      <section className="py-8 bg-gray-100">
+      {/* Trust Indicators - Simplified for Mobile */}
+      <section className="py-6 md:py-8 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
+          <div className="grid grid-cols-3 gap-4 md:gap-6 text-center">
             <div className="flex flex-col items-center">
-              <Truck className="text-blue-500 mb-2" size={32} />
-              <h3 className="font-semibold text-gray-900">Fast Shipping</h3>
-                              <p className="text-sm text-gray-600">Free shipping nationwide</p>
+              <Truck className="text-blue-500 mb-2" size={24} />
+              <h3 className="font-semibold text-gray-900 text-sm md:text-base">Fast Shipping</h3>
+              <p className="text-xs md:text-sm text-gray-600 hidden md:block">Free shipping nationwide</p>
             </div>
             <div className="flex flex-col items-center">
-              <Shield className="text-green-500 mb-2" size={32} />
-              <h3 className="font-semibold text-gray-900">Secure Payment</h3>
-              <p className="text-sm text-gray-600">100% secure transactions</p>
+              <Shield className="text-green-500 mb-2" size={24} />
+              <h3 className="font-semibold text-gray-900 text-sm md:text-base">Secure Payment</h3>
+              <p className="text-xs md:text-sm text-gray-600 hidden md:block">100% secure transactions</p>
             </div>
             <div className="flex flex-col items-center">
-              <Gift className="text-purple-500 mb-2" size={32} />
-              <h3 className="font-semibold text-gray-900">Daily Deals</h3>
-              <p className="text-sm text-gray-600">New offers every day</p>
+              <Gift className="text-purple-500 mb-2" size={24} />
+              <h3 className="font-semibold text-gray-900 text-sm md:text-base">Daily Deals</h3>
+              <p className="text-xs md:text-sm text-gray-600 hidden md:block">New offers every day</p>
             </div>
           </div>
         </div>

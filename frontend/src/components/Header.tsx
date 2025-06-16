@@ -142,8 +142,8 @@ const Header: React.FC = () => {
           }
         `}
       </style>
-      {/* Enhanced Top Banner with Performance Info */}
-      <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white text-center py-2 text-sm">
+      {/* Enhanced Top Banner with Performance Info - Desktop Only */}
+      <div className="hidden md:block bg-gradient-to-r from-orange-500 to-pink-500 text-white text-center py-2 text-sm">
         <div className="container mx-auto px-4">
           <motion.p 
             initial={{ opacity: 0 }}
@@ -531,15 +531,14 @@ const Header: React.FC = () => {
               >
                 <div className="h-full overflow-y-auto">
                   {/* Header */}
-                  <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-pink-500 text-white p-6 border-b border-white/20">
+                  <div className="sticky top-0 bg-white text-gray-900 p-4 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                          <img src="/iwanyu-logo.png" alt="Iwanyu" className="w-6 h-6" />
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                          <img src="/iwanyu-logo.png" alt="Iwanyu" className="w-5 h-5" />
                         </div>
                         <div>
                           <h2 className="font-bold text-lg">Iwanyu Store</h2>
-                          <p className="text-xs text-white/80">Your shopping destination</p>
                         </div>
                       </div>
                       <button
@@ -548,9 +547,9 @@ const Header: React.FC = () => {
                           setIsMenuOpen(false);
                         }}
                         aria-label="Close mobile menu"
-                        className="p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-xl transition-all duration-200 active:scale-95"
+                        className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200"
                       >
-                        <X size={22} strokeWidth={2.5} />
+                        <X size={20} />
                       </button>
                     </div>
                   </div>
@@ -562,26 +561,17 @@ const Header: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 rounded-2xl p-5 border border-orange-100/50 shadow-sm"
+                        className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm"
                       >
-                        <div className="flex items-center space-x-4 mb-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white/50">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-bold">
                             {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-gray-900 truncate text-base">
+                            <p className="font-semibold text-gray-900 truncate">
                               {user.firstName || 'User'}
                             </p>
                             <p className="text-sm text-gray-600 truncate">{user.email}</p>
-                            <div className="flex items-center mt-1">
-                              <div className={`w-2 h-2 rounded-full mr-2 ${
-                                user.role === 'ADMIN' ? 'bg-blue-500' :
-                                user.role === 'SELLER' ? 'bg-green-500' : 'bg-gray-400'
-                              }`}></div>
-                              <span className="text-xs font-medium text-gray-500 capitalize">
-                                {user.role?.toLowerCase() || 'Customer'}
-                              </span>
-                            </div>
                           </div>
                         </div>
                         
@@ -657,77 +647,52 @@ const Header: React.FC = () => {
                       </motion.div>
                     )}
 
-                    {/* Categories Section */}
+                    {/* Categories Section - Simplified */}
                     <motion.div 
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
-                      className="space-y-4"
+                      className="space-y-3"
                     >
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                          <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
-                            <Grid size={16} className="text-white" />
-                          </div>
-                          Categories
-                        </h3>
-                        <span className="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">
-                          {categories.length}
-                        </span>
-                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900">Categories</h3>
                       
                       {isLoading ? (
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           {[...Array(6)].map((_, i) => (
-                            <div key={i} className="h-14 bg-gray-100 rounded-xl animate-pulse"></div>
+                            <div key={i} className="h-12 bg-gray-100 rounded-lg animate-pulse"></div>
                           ))}
                         </div>
                       ) : (
-                        <div className="space-y-2 max-h-64 overflow-y-auto">
-                          {categories.map((category: Category, index: number) => (
-                            <motion.div
-                              key={category.id}
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.3 + index * 0.05 }}
-                            >
-                              <Link
-                                to={`/products?category=${category.slug}`}
-                                className="flex items-center justify-between p-4 rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200 group active:scale-[0.98]"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                <div className="flex items-center space-x-3">
-                                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                                    {renderCategoryIcon(category.name, 18)}
-                                  </div>
-                                  <span className="text-gray-700 group-hover:text-orange-600 font-medium">
-                                    {category.name}
-                                  </span>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-xs text-gray-400 group-hover:text-orange-500 font-medium bg-gray-100 group-hover:bg-orange-100 px-2 py-1 rounded-full">
-                                    {category._count?.products || 0}
-                                  </span>
-                                  <ChevronRight size={14} className="text-gray-400 group-hover:text-orange-500" />
-                                </div>
-                              </Link>
-                            </motion.div>
-                          ))}
-                          
-                          <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3 + categories.length * 0.05 }}
-                          >
+                        <div className="space-y-1 max-h-64 overflow-y-auto">
+                          {categories.map((category: Category) => (
                             <Link
-                              to="/products"
-                              className="flex items-center justify-center p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-200 text-blue-600 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 transition-all duration-200 group active:scale-[0.98]"
+                              key={category.id}
+                              to={`/products?category=${category.slug}`}
+                              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200"
                               onClick={() => setIsMenuOpen(false)}
                             >
-                              <Package size={18} className="mr-2" />
-                              <span className="font-semibold">View All Products</span>
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                                  {renderCategoryIcon(category.name, 16)}
+                                </div>
+                                <span className="text-gray-700 font-medium">
+                                  {category.name}
+                                </span>
+                              </div>
+                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                {category._count?.products || 0}
+                              </span>
                             </Link>
-                          </motion.div>
+                          ))}
+                          
+                          <Link
+                            to="/products"
+                            className="flex items-center justify-center p-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 transition-colors mt-2"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <Package size={16} className="mr-2" />
+                            <span className="font-medium">View All Products</span>
+                          </Link>
                         </div>
                       )}
                     </motion.div>
