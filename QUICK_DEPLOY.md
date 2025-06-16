@@ -36,6 +36,7 @@
 2. **Configure API** (2 min)
    - Project Settings → Environment Variables
    - Add: `VITE_API_URL=https://your-backend.onrender.com/api`
+   - 🚨 **CRITICAL**: Must end with `/api`!
    - Redeploy
 
 ### 3. Final Setup (2 minutes)
