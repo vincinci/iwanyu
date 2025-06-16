@@ -118,11 +118,22 @@ const Navbar: React.FC = React.memo(() => {
               src="/iwanyu-logo.png" 
               alt="Iwanyu" 
               className="h-8 w-auto"
+              style={{ maxWidth: '150px' }}
               onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
+                console.log('Navbar logo failed to load');
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const textElement = target.nextElementSibling as HTMLElement;
+                if (textElement) {
+                  textElement.style.display = 'inline-block';
+                  textElement.className = 'text-xl font-bold text-red-600 bg-red-100 px-3 py-1 rounded';
+                }
+              }}
+              onLoad={() => {
+                console.log('Navbar logo loaded successfully');
               }}
             />
-            <span className="text-xl font-bold text-red-600">
+            <span className="text-xl font-bold text-red-600" style={{ display: 'none' }}>
               Iwanyu
             </span>
           </Link>

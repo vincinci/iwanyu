@@ -162,23 +162,30 @@ const Header: React.FC = () => {
             {/* Enhanced Logo with Fallback */}
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="relative">
-                              <img
-                src="/iwanyu-logo.png"
-                alt="Iwanyu Store Logo" 
+                <img
+                  src="/iwanyu-logo.png"
+                  alt="Iwanyu Store Logo" 
                   className="h-12 w-auto group-hover:scale-105 transition-transform duration-200"
                   loading="eager"
                   decoding="async"
+                  style={{ maxWidth: '200px' }}
                   onError={(e) => {
+                    console.log('Logo failed to load, showing fallback');
                     // Fallback if logo doesn't load
                     e.currentTarget.style.display = 'none';
                     const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                    if (fallback) fallback.style.display = 'flex';
+                    if (fallback) {
+                      fallback.style.display = 'flex';
+                    }
+                  }}
+                  onLoad={() => {
+                    console.log('Logo loaded successfully');
                   }}
                 />
                 {/* Fallback Text Logo */}
                 <div 
-                  className="h-12 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold text-xl rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200"
-                  style={{ display: 'none' }}
+                  className="h-12 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold text-xl rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200 shadow-md"
+                  style={{ display: 'none', minWidth: '120px' }}
                 >
                   IWANYU
                 </div>
@@ -526,11 +533,27 @@ const Header: React.FC = () => {
                   <div className="sticky top-0 bg-white text-gray-900 p-4 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                          <img src="/iwanyu-logo.png" alt="Iwanyu" className="w-5 h-5" />
+                        <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center overflow-hidden">
+                          <img 
+                            src="/iwanyu-logo.png" 
+                            alt="Iwanyu" 
+                            className="w-6 h-6 object-contain"
+                            onError={(e) => {
+                              console.log('Mobile logo failed to load');
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                parent.innerHTML = '<span class="text-orange-600 font-bold text-xs">IW</span>';
+                              }
+                            }}
+                            onLoad={() => {
+                              console.log('Mobile logo loaded successfully');
+                            }}
+                          />
                         </div>
                         <div>
-                          <h2 className="font-bold text-lg">Iwanyu Store</h2>
+                          <h2 className="font-bold text-lg text-gray-900">Iwanyu Store</h2>
                         </div>
                       </div>
                       <button
