@@ -81,24 +81,35 @@ const AdminSellers: React.FC = () => {
     } catch (error) {
       console.error('Failed to get seller document:', error);
       
+      // Try to parse the error response for better error handling
       let errorMessage = 'Failed to load document';
+      let isDocumentMissing = false;
       
       if (error instanceof Error) {
         try {
-          // Try to parse additional error info
-          const errorData = JSON.parse(error.message);
-          if (errorData.error && errorData.message) {
-            errorMessage = `${errorData.error}\n\n${errorData.message}`;
-          } else if (errorData.error) {
-            errorMessage = errorData.error;
+          // If the error message contains JSON, parse it
+          if (error.message.includes('{')) {
+            const errorData = JSON.parse(error.message);
+            if (errorData.error && errorData.message) {
+              errorMessage = `${errorData.error}: ${errorData.message}`;
+              isDocumentMissing = errorData.error.includes('no longer available');
+            } else {
+              errorMessage = errorData.error || error.message;
+            }
+          } else {
+            errorMessage = error.message;
           }
         } catch {
           errorMessage = error.message;
         }
       }
       
-      // Show a more detailed alert
-      alert(errorMessage);
+      // Show a more user-friendly alert for missing documents
+      if (isDocumentMissing) {
+        alert(`Document Not Available\n\nThe verification document for this seller is no longer available on the server. This typically happens when files are uploaded locally but the server has been redeployed.\n\nTo resolve this:\n1. Contact the seller to re-submit their verification document\n2. Or ask them to upload it again through the seller application process\n\nNote: Cloud platforms like Render.com don't persist uploaded files across deployments.`);
+      } else {
+        alert(errorMessage);
+      }
     } finally {
       setLoadingDocument(false);
     }

@@ -10,6 +10,7 @@ import {
   ChevronDown,
   Package,
   Heart,
+  Bell,
   MapPin,
   Shield,
   Truck,
@@ -113,47 +114,14 @@ const Navbar: React.FC = React.memo(() => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-            <div className="relative">
-              <img 
-                src="/iwanyu-logo.png" 
-                alt="Iwanyu" 
-                className="h-8 w-auto"
-                style={{ maxWidth: '150px' }}
-                onError={(e) => {
-                  console.log('Navbar PNG logo failed to load');
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const svgFallback = target.nextElementSibling as HTMLElement;
-                  if (svgFallback) {
-                    svgFallback.style.display = 'block';
-                  }
-                }}
-                onLoad={() => {
-                  console.log('Navbar PNG logo loaded successfully');
-                }}
-              />
-              
-              {/* SVG Fallback */}
-              <svg 
-                width="100" 
-                height="32" 
-                viewBox="0 0 100 32" 
-                className="h-8 w-auto" 
-                style={{ display: 'none' }}
-              >
-                <defs>
-                  <linearGradient id="navLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#dc2626" />
-                    <stop offset="100%" stopColor="#b91c1c" />
-                  </linearGradient>
-                </defs>
-                <rect width="100" height="32" rx="6" fill="url(#navLogoGradient)" />
-                <text x="50" y="21" textAnchor="middle" fill="white" style={{ fontSize: '14px', fontWeight: 'bold', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                  IWANYU
-                </text>
-              </svg>
-            </div>
-            
+            <img 
+              src="/iwanyu-logo.png" 
+              alt="Iwanyu" 
+              className="h-8 w-auto"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
             <span className="text-xl font-bold text-red-600">
               Iwanyu
             </span>
@@ -329,6 +297,14 @@ const Navbar: React.FC = React.memo(() => {
                                 </span>
                               )}
                             </div>
+                          </Link>
+                          <Link
+                            to="/notifications"
+                            className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+                            onClick={() => setShowUserMenu(false)}
+                          >
+                            <span>Notifications</span>
+                            <Bell size={16} />
                           </Link>
                         </div>
                         <div className="border-t py-2">
