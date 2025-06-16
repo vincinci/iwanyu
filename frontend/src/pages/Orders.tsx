@@ -21,6 +21,7 @@ import { getUserOrders, getOrder, cancelOrder } from '../services/ordersApi';
 import type { Order } from '../services/ordersApi';
 import { useAuth } from '../contexts/AuthContext';
 import { getProductImageUrl } from '../utils/imageUtils';
+import { formatPrice } from '../utils/currency';
 
 const Orders: React.FC = () => {
   const { user } = useAuth();
@@ -66,14 +67,6 @@ const Orders: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch order details:', error);
     }
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-RW', {
-      style: 'currency',
-      currency: 'RWF',
-      minimumFractionDigits: 0,
-    }).format(price);
   };
 
   const formatDate = (dateString: string) => {

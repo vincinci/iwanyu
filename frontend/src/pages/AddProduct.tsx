@@ -65,6 +65,12 @@ const AddProduct: React.FC = () => {
     enabled: !!user && user.role === 'SELLER',
   });
 
+  const { data: products } = useQuery({
+    queryKey: ['seller-products'],
+    queryFn: sellerApi.getProducts,
+    enabled: !!user && user.role === 'SELLER',
+  });
+
   const createProductMutation = useMutation({
     mutationFn: sellerApi.createProduct,
     onSuccess: () => {
@@ -219,6 +225,30 @@ const AddProduct: React.FC = () => {
             className="btn-primary"
           >
             Back to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Check product limit (10 products max)
+  if ((products?.length || 0) >= 10) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <AlertCircle className="w-12 h-12 text-orange-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Product Limit Reached</h2>
+          <p className="text-gray-600 mb-4">
+            You've reached the maximum limit of 10 products. Please delete a product to add a new one.
+          </p>
+          <div className="text-sm text-gray-500 mb-4">
+            Current products: {products?.length || 0}/10
+          </div>
+          <button 
+            onClick={() => navigate('/seller/products')} 
+            className="btn-primary"
+          >
+            Manage Products
           </button>
         </div>
       </div>

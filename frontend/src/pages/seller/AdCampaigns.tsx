@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { advertisementApi } from '../../services/advertisementApi';
 import type { AdCampaign } from '../../services/advertisementApi';
+import { formatPrice } from '../../utils/currency';
 
 const AdCampaigns: React.FC = () => {
   const [campaigns, setCampaigns] = useState<AdCampaign[]>([]);
@@ -61,11 +62,7 @@ const AdCampaigns: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-RW', {
-      style: 'currency',
-      currency: 'RWF',
-      minimumFractionDigits: 0
-    }).format(amount);
+    return formatPrice(amount);
   };
 
   const calculateCTR = (clicks: number, impressions: number) => {

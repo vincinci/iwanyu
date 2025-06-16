@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 Authentication System Test</h1>
+    
+    <div class="container">
+        <h2>API Configuration</h2>
+        <div id="api-config"></div>
+    </div>
+
+    <div class="container">
+        <h2>🆕 Register New User</h2>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="reg-email">Email:</label>
+                <input type="email" id="reg-email" value="testuser1@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-password">Password:</label>
+                <input type="password" id="reg-password" value="TestPass123" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-firstname">First Name:</label>
+                <input type="text" id="reg-firstname" value="Test" required>
+            </div>
+            <div class="form-group">
+                <label for="reg-lastname">Last Name:</label>
+                <input type="text" id="reg-lastname" value="User" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div id="register-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>🔑 Login User</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" value="testuser1@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" value="TestPass123" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <div id="login-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>🏪 Become Seller</h2>
+        <form id="seller-form">
+            <div class="form-group">
+                <label for="business-name">Business Name:</label>
+                <input type="text" id="business-name" value="Test Business Store" required>
+            </div>
+            <div class="form-group">
+                <label for="business-email">Business Email:</label>
+                <input type="email" id="business-email" value="business1@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="business-phone">Business Phone:</label>
+                <input type="tel" id="business-phone" value="1234567890" required>
+            </div>
+            <button type="submit">Become Seller</button>
+        </form>
+        <div id="seller-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>🎯 Test All Functions</h2>
+        <button onclick="testFullFlow()">Test Complete Authentication Flow</button>
+        <div id="full-test-result"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3001/api';
+        
+        // Display API configuration
+        document.getElementById('api-config').innerHTML = `
+            <div class="info">
+                <strong>API Base URL:</strong> ${API_BASE_URL}<br>
+                <strong>Backend Status:</strong> <span id="backend-status">Checking...</span>
+            </div>
+        `;
+
+        // Check backend status
+        fetch(`http://localhost:3001/health`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('backend-status').innerHTML = `✅ ${data.message}`;
+            })
+            .catch(error => {
+                document.getElementById('backend-status').innerHTML = `❌ Backend not running`;
+            });
+
+        // Register form handler
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('register-result');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('reg-email').value,
+                        password: document.getElementById('reg-password').value,
+                        firstName: document.getElementById('reg-firstname').value,
+                        lastName: document.getElementById('reg-lastname').value,
+                    }),
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Registration Successful!<br>
+                            User ID: ${data.user.id}<br>
+                            Role: ${data.user.role}
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    // Store token for testing
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Registration Failed: ${data.error}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">❌ Network Error: ${error.message}</div>
+                `;
+            }
+        });
+
+        // Login form handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('login-result');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('login-email').value,
+                        password: document.getElementById('login-password').value,
+                    }),
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Login Successful!<br>
+                            User: ${data.user.firstName} ${data.user.lastName}<br>
+                            Role: ${data.user.role}
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    // Store token for testing
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Login Failed: ${data.error}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">❌ Network Error: ${error.message}</div>
+                `;
+            }
+        });
+
+        // Seller form handler
+        document.getElementById('seller-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('seller-result');
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                resultDiv.innerHTML = `
+                    <div class="error">❌ Please login first!</div>
+                `;
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/seller/become-seller`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        businessName: document.getElementById('business-name').value,
+                        businessEmail: document.getElementById('business-email').value,
+                        businessPhone: document.getElementById('business-phone').value,
+                    }),
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Seller Application Successful!<br>
+                            Business: ${data.seller.businessName}<br>
+                            Status: ${data.seller.status}
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Seller Application Failed: ${data.error}</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">❌ Network Error: ${error.message}</div>
+                `;
+            }
+        });
+
+        // Test full authentication flow
+        async function testFullFlow() {
+            const resultDiv = document.getElementById('full-test-result');
+            resultDiv.innerHTML = '<div class="info">🔄 Testing full authentication flow...</div>';
+            
+            const testEmail = `test${Date.now()}@example.com`;
+            const testPassword = 'TestPass123';
+            
+            try {
+                // 1. Register
+                const registerResponse = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: testEmail,
+                        password: testPassword,
+                        firstName: 'Test',
+                        lastName: 'User',
+                    }),
+                });
+                const registerData = await registerResponse.json();
+                
+                if (!registerResponse.ok) {
+                    throw new Error(`Registration failed: ${registerData.error}`);
+                }
+                
+                // 2. Login
+                const loginResponse = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: testEmail,
+                        password: testPassword,
+                    }),
+                });
+                const loginData = await loginResponse.json();
+                
+                if (!loginResponse.ok) {
+                    throw new Error(`Login failed: ${loginData.error}`);
+                }
+                
+                // 3. Become Seller
+                const sellerResponse = await fetch(`${API_BASE_URL}/seller/become-seller`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${loginData.token}`,
+                    },
+                    body: JSON.stringify({
+                        businessName: 'Test Business',
+                        businessEmail: `business${Date.now()}@example.com`,
+                        businessPhone: '1234567890',
+                    }),
+                });
+                const sellerData = await sellerResponse.json();
+                
+                if (!sellerResponse.ok) {
+                    throw new Error(`Seller application failed: ${sellerData.error}`);
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Full Authentication Flow Successful!<br>
+                        ✅ User Registration: ${registerData.user.email}<br>
+                        ✅ User Login: Token received<br>
+                        ✅ Seller Application: ${sellerData.seller.businessName} (${sellerData.seller.status})
+                    </div>
+                    <details>
+                        <summary>View Details</summary>
+                        <h4>Registration:</h4>
+                        <pre>${JSON.stringify(registerData, null, 2)}</pre>
+                        <h4>Login:</h4>
+                        <pre>${JSON.stringify(loginData, null, 2)}</pre>
+                        <h4>Seller:</h4>
+                        <pre>${JSON.stringify(sellerData, null, 2)}</pre>
+                    </details>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">❌ Full Flow Failed: ${error.message}</div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 

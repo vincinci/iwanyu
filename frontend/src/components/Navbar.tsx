@@ -20,6 +20,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
+import { formatPrice } from '../utils/currency';
 
 const Navbar: React.FC = React.memo(() => {
   const navigate = useNavigate();
@@ -228,7 +229,7 @@ const Navbar: React.FC = React.memo(() => {
               <div className="hidden lg:flex flex-col">
                 <span className="text-xs text-gray-500">Cart</span>
                 <span className="text-sm font-semibold">
-                  {totalAmount.toLocaleString('en-RW', { style: 'currency', currency: 'RWF' })}
+                  {formatPrice(totalAmount)}
                 </span>
               </div>
             </Link>

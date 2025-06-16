@@ -417,6 +417,25 @@ router.post('/products', authenticateToken, upload.single('productImage'), async
       return;
     }
 
+    // Check product limit (10 products max for sellers)
+    const existingProductsCount = await prisma.product.count({
+      where: {
+        sellerId: seller.id,
+        isActive: true
+      }
+    });
+
+    if (existingProductsCount >= 10) {
+      res.status(403).json({ 
+        error: 'Product limit exceeded. Sellers can only have a maximum of 10 active products.',
+        details: {
+          currentCount: existingProductsCount,
+          maxAllowed: 10
+        }
+      });
+      return;
+    }
+
     const {
       name,
       description,

@@ -101,6 +101,7 @@ import { useGlobalPrefetch } from './hooks/useInstantProducts';
 import SellerWallet from './pages/SellerWallet';
 import AdCampaigns from './pages/seller/AdCampaigns';
 import AuthDebugPage from './pages/AuthDebug';
+import AdminTest from './pages/AdminTest';
 
 // Create global query client with ultra-aggressive caching for instant loading
 const queryClient = new QueryClient({
@@ -252,14 +253,16 @@ function App() {
                       
                       {/* Admin Routes */}
                       <Route path="/admin" element={<AdminDashboard />} />
+                      <Route path="/admin/dashboard" element={<AdminDashboard />} />
                       <Route path="/admin/products" element={<AdminProducts />} />
                       <Route path="/admin/orders" element={<AdminOrders />} />
                       <Route path="/admin/users" element={<AdminUsers />} />
                       <Route path="/admin/categories" element={<AdminCategories />} />
                       <Route path="/admin/sellers" element={<AdminSellers />} />
                       
-                      {/* Debug Route */}
+                      {/* Debug Routes */}
                       <Route path="/auth-debug" element={<AuthDebugPage />} />
+                      <Route path="/admin-test" element={<AdminTest />} />
                       
                       {/* Catch all route */}
                       <Route path="*" element={<Navigate to="/" replace />} />

@@ -499,7 +499,7 @@ const Home: React.FC = () => {
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
-                        className={`w-full h-24 md:h-48 object-cover ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
+                        className={`w-full h-24 md:h-48 object-contain p-1 md:p-2 ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -613,7 +613,7 @@ const Home: React.FC = () => {
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-20 sm:h-24 md:h-36 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -715,7 +715,7 @@ const Home: React.FC = () => {
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
-                        className={`w-full h-24 md:h-48 object-cover ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
+                        className={`w-full h-24 md:h-48 object-contain p-1 md:p-2 ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -789,7 +789,7 @@ const Home: React.FC = () => {
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
                     ) : (

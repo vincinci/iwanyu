@@ -127,29 +127,43 @@ const SellerProducts: React.FC = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">My Products</h1>
               <p className="text-gray-600">
-                Manage your product catalog
+                Manage your product catalog ({products?.length || 0}/10 products)
               </p>
             </div>
           
             {isApproved ? (
-            <button
-              onClick={() => navigate('/seller/products/add')}
-              className="btn-primary flex items-center gap-2"
-            >
-              <Plus size={20} />
-              Add Product
-            </button>
-          ) : (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-yellow-600" />
-                <span className="font-medium text-yellow-800">Account Pending Approval</span>
+              <div className="flex flex-col gap-2">
+                {(products?.length || 0) >= 10 ? (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-5 h-5 text-orange-600" />
+                      <span className="font-medium text-orange-800">Product Limit Reached</span>
+                    </div>
+                    <p className="text-orange-700 text-sm mt-1">
+                      You've reached the maximum limit of 10 products. Delete a product to add a new one.
+                    </p>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => navigate('/seller/products/add')}
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    <Plus size={20} />
+                    Add Product ({10 - (products?.length || 0)} slots remaining)
+                  </button>
+                )}
               </div>
-              <p className="text-yellow-700 text-sm mt-1">
-                You can add products once your seller account is approved.
-              </p>
-            </div>
-          )}
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5 text-yellow-600" />
+                  <span className="font-medium text-yellow-800">Account Pending Approval</span>
+                </div>
+                <p className="text-yellow-700 text-sm mt-1">
+                  You can add products once your seller account is approved.
+                </p>
+              </div>
+            )}
           </div>
         </motion.div>
 

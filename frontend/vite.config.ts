@@ -8,9 +8,9 @@ export default defineConfig({
     port: 5173,
     host: true, // Allow external connections
   },
-  // Ensure environment variables are available
+  // Environment variables configuration
   define: {
-    // Add production API URL
+    // Use production API for both development and production
     'import.meta.env.VITE_API_URL': JSON.stringify('https://iwanyu-backend.onrender.com/api'),
   },
 })

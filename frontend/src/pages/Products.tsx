@@ -492,7 +492,7 @@ const Products: React.FC = () => {
             ) : (
               <>
                 <div className={viewMode === 'grid' 
-                  ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4" 
+                  ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4" 
                   : "space-y-4"
                 }>
                   {products.map((product: Product, index: number) => (
@@ -502,7 +502,7 @@ const Products: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.02 }}
                       className={viewMode === 'grid' 
-                        ? "bg-white rounded-lg border hover:shadow-lg transition-all duration-200 overflow-hidden group"
+                        ? "bg-white rounded-lg border hover:shadow-md transition-all duration-200 overflow-hidden group max-w-[200px] mx-auto"
                         : "bg-white rounded-lg border hover:shadow-lg transition-all duration-200 overflow-hidden group flex"
                       }
                     >
@@ -510,21 +510,23 @@ const Products: React.FC = () => {
                         // Grid View
                         <>
                           <Link to={`/products/${product.id}`} className="block relative">
-                            {getProductImageUrl(product) ? (
-                              <img
-                                src={getProductImageUrl(product)!}
-                                alt={product.name}
-                                className="w-full h-28 sm:h-32 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                                loading="lazy"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  target.nextElementSibling?.classList.remove('hidden');
-                                }}
-                              />
-                            ) : null}
-                            <div className={`w-full h-28 sm:h-32 md:h-48 bg-gray-100 flex items-center justify-center ${getProductImageUrl(product) ? 'hidden' : ''}`}>
-                              <Package className="text-gray-400" size={32} />
+                            <div className="h-36 bg-gray-50 relative">
+                              {getProductImageUrl(product) ? (
+                                <img
+                                  src={getProductImageUrl(product)!}
+                                  alt={product.name}
+                                  className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                                  loading="lazy"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    target.nextElementSibling?.classList.remove('hidden');
+                                  }}
+                                />
+                              ) : null}
+                              <div className={`absolute inset-0 flex items-center justify-center ${getProductImageUrl(product) ? 'hidden' : ''}`}>
+                                <Package className="text-gray-400" size={32} />
+                              </div>
                             </div>
                             
                             {product.featured && (
@@ -553,26 +555,26 @@ const Products: React.FC = () => {
                             </div>
                           </Link>
                           
-                          <div className="p-3 sm:p-4">
+                          <div className="p-2 sm:p-3">
                             <Link to={`/products/${product.id}`}>
-                              <h3 className="font-medium text-gray-900 line-clamp-2 text-base sm:text-sm mb-2">
+                              <h3 className="font-medium text-gray-900 line-clamp-2 text-sm mb-2">
                                 {product.name}
                               </h3>
                               
                               {/* Price and Discount */}
                               <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-1">
                                   {product.salePrice ? (
                                     <>
-                                      <span className="text-orange-600 font-bold text-lg sm:text-base">
+                                      <span className="text-orange-600 font-bold text-sm sm:text-base">
                                         {formatPrice(product.salePrice)}
                                       </span>
-                                      <span className="text-gray-400 line-through text-sm">
+                                      <span className="text-gray-400 line-through text-xs">
                                         {formatPrice(product.price)}
                                       </span>
                                     </>
                                   ) : (
-                                    <span className="text-orange-600 font-bold text-lg sm:text-base">
+                                    <span className="text-orange-600 font-bold text-sm sm:text-base">
                                       {formatPrice(product.price)}
                                     </span>
                                   )}
@@ -580,7 +582,7 @@ const Products: React.FC = () => {
                                 
                                 {/* Discount Badge */}
                                 {product.salePrice && product.salePrice < product.price && (
-                                  <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
+                                  <span className="bg-red-100 text-red-600 text-xs px-1.5 py-0.5 rounded-full">
                                     -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
                                   </span>
                                 )}
@@ -588,12 +590,12 @@ const Products: React.FC = () => {
 
                               {/* Rating - Only show if product has rating */}
                               {product.avgRating > 0 && (
-                                <div className="flex items-center space-x-2 mb-2">
+                                <div className="flex items-center space-x-1 mb-2">
                                   <div className="flex items-center">
                                     {[...Array(5)].map((_, i) => (
                                       <Star
                                         key={i}
-                                        size={12}
+                                        size={10}
                                         className={i < Math.floor(product.avgRating) 
                                           ? "text-yellow-400 fill-current" 
                                           : "text-gray-300"
@@ -601,18 +603,16 @@ const Products: React.FC = () => {
                                       />
                                     ))}
                                   </div>
-                                  <span className="text-gray-500 text-sm">
-                                    ({product.avgRating.toFixed(1)}) {product.totalReviews} reviews
+                                  <span className="text-gray-500 text-xs">
+                                    ({product.avgRating.toFixed(1)}) {product.totalReviews}
                                   </span>
                                 </div>
                               )}
 
                               {/* Shipping info */}
-                              <div className="flex items-center justify-between text-sm text-gray-500">
-                                <span className="flex items-center">
-                                  <Truck size={12} className="mr-1" />
-                                  Free shipping
-                                </span>
+                              <div className="flex items-center text-xs text-gray-500">
+                                <Truck size={10} className="mr-1" />
+                                Free shipping
                               </div>
                             </Link>
                           </div>

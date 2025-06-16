@@ -3,28 +3,29 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
 import { formatPrice } from '../utils/currency';
+import { getProductImageUrl } from '../utils/imageUtils';
 import type { Product } from '../types/api';
 
 interface ProductCardProps {
   product: Product;
+  compact?: boolean;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) => {
   const {
     id,
     name,
     slug,
-    image,
     price,
     salePrice,
     avgRating,
     totalReviews,
-    totalSales,
     stock
   } = product;
 
   const discount = salePrice ? Math.round(((price - salePrice) / price) * 100) : null;
   const finalPrice = salePrice || price;
+  const imageUrl = getProductImageUrl(product);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -37,59 +38,75 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      whileHover={{ y: -5 }}
-      className="bg-white rounded-lg shadow-md overflow-hidden"
+      whileHover={{ y: -2 }}
+      className={`bg-white rounded-lg shadow-sm hover:shadow-md border border-gray-100 overflow-hidden transition-all duration-200 ${
+        compact ? 'max-w-[180px]' : 'max-w-[220px]'
+      }`}
     >
-      <Link to={`/products/${slug}`} className="block">
-        <div className="relative aspect-square">
-          <img
-            src={image}
-            alt={name}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
+      <Link to={`/products/${slug || id}`} className="block">
+        <div className={`relative ${compact ? 'h-32' : 'h-40'} bg-gray-50`}>
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={name}
+              className="w-full h-full object-contain p-2"
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="text-gray-300 text-4xl">📦</div>
+            </div>
+          )}
           {discount && (
-            <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm">
+            <div className="absolute top-1 right-1 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-xs font-medium">
               -{discount}%
             </div>
           )}
           {stock === 0 && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <span className="text-white font-semibold">Out of Stock</span>
+              <span className="text-white font-medium text-sm">Out of Stock</span>
             </div>
           )}
         </div>
-        <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2 line-clamp-2">{name}</h3>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-1">
-              <span className="text-yellow-400">★</span>
-              <span className="text-sm text-gray-600">
-                {avgRating?.toFixed(1) || 'New'}
+        <div className={`p-3 ${compact ? 'p-2' : 'p-3'}`}>
+          <h3 className={`font-medium text-gray-900 line-clamp-2 mb-2 ${
+            compact ? 'text-xs leading-tight' : 'text-sm'
+          }`}>
+            {name}
+          </h3>
+          {!compact && avgRating > 0 && (
+            <div className="flex items-center space-x-1 mb-2">
+              <span className="text-yellow-400 text-sm">★</span>
+              <span className="text-xs text-gray-600">
+                {avgRating?.toFixed(1)}
               </span>
               {totalReviews > 0 && (
-                <span className="text-sm text-gray-500">({totalReviews})</span>
+                <span className="text-xs text-gray-500">({totalReviews})</span>
               )}
             </div>
-          </div>
-          <div className="flex items-center space-x-2 mb-4">
-            <span className="text-xl font-bold">{formatPrice(finalPrice)}</span>
+          )}
+          <div className="flex items-center space-x-2 mb-3">
+            <span className={`font-bold text-orange-600 ${compact ? 'text-sm' : 'text-base'}`}>
+              {formatPrice(finalPrice)}
+            </span>
             {salePrice && (
-              <span className="text-sm text-gray-500 line-through">
+              <span className={`text-gray-500 line-through ${compact ? 'text-xs' : 'text-sm'}`}>
                 {formatPrice(price)}
               </span>
             )}
           </div>
         </div>
       </Link>
-      <div className="px-4 pb-4">
+      <div className={`px-3 pb-3 ${compact ? 'px-2 pb-2' : 'px-3 pb-3'}`}>
         <button
           onClick={handleAddToCart}
           disabled={stock === 0}
-          className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`w-full bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
+            compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
+          }`}
         >
-          <ShoppingCart size={16} className="mr-2" />
-          Add to Cart
+          <ShoppingCart size={compact ? 12 : 14} className="mr-1" />
+          {compact ? 'Add' : 'Add to Cart'}
         </button>
       </div>
     </motion.div>
