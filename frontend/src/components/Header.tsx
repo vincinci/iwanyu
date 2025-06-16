@@ -23,7 +23,8 @@ import {
   Bell,
   Star,
   TrendingUp,
-  Phone
+  Phone,
+  ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -221,7 +222,7 @@ const Header: React.FC = () => {
                         <CategorySkeleton />
                       ) : (
                         <div className="px-3 space-y-1">
-                          {categories.map((category: Category) => (
+                          {categories.map((category: Category, index: number) => (
                             <Link
                               key={category.id}
                               to={`/products?category=${category.slug}`}
@@ -488,233 +489,345 @@ const Header: React.FC = () => {
           )}
 
           {/* Enhanced Mobile Menu */}
-          {isMenuOpen && (
-            <>
-              {/* Mobile Menu Backdrop */}
-              <div
-                className="fixed inset-0 bg-black/50 md:hidden"
-                onClick={() => {
-                  console.log('Backdrop clicked, closing menu');
-                  setIsMenuOpen(false);
-                }}
-                style={{ 
-                  zIndex: 2147483647,
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0
-                }}
-              />
-              
-              {/* Mobile Menu Content */}
-              <div
-                className="fixed top-0 right-0 h-full w-80 max-w-[90vw] bg-white shadow-2xl md:hidden overflow-y-auto"
-                style={{ 
-                  zIndex: 2147483647,
-                  position: 'fixed',
-                  top: 0,
-                  right: 0,
-                  height: '100vh',
-                  width: '320px',
-                  maxWidth: '90vw'
-                }}
-              >
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center space-x-3">
-                      <img src="/iwanyu-logo.png" alt="Iwanyu" className="h-8 w-auto" />
-                      <span className="font-bold text-orange-500">Iwanyu</span>
-                    </div>
-                    <button
-                      onClick={() => {
-                        console.log('Close button clicked');
-                        setIsMenuOpen(false);
-                      }}
-                      aria-label="Close mobile menu"
-                      className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
-                  
-                  {user ? (
-                    <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-4 mb-6 border border-orange-200">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-medium shadow-md">
-                          {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
+          <AnimatePresence mode="wait">
+            {isMenuOpen && (
+              <>
+                {/* Mobile Menu Backdrop */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] lg:hidden"
+                  onClick={() => {
+                    console.log('Backdrop clicked, closing menu');
+                    setIsMenuOpen(false);
+                  }}
+                />
+                
+                {/* Mobile Menu Content */}
+                <motion.div
+                  initial={{ opacity: 0, x: '100%' }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: '100%' }}
+                  transition={{ 
+                    type: 'spring',
+                    damping: 25,
+                    stiffness: 300,
+                    duration: 0.3
+                  }}
+                  className="fixed top-0 right-0 h-full w-[340px] max-w-[85vw] sm:max-w-[400px] bg-white/95 backdrop-blur-xl shadow-2xl z-[101] lg:hidden overflow-hidden"
+                  style={{ 
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  <div className="h-full overflow-y-auto">
+                    {/* Header */}
+                    <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-pink-500 text-white p-6 border-b border-white/20">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <img src="/iwanyu-logo.png" alt="Iwanyu" className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <h2 className="font-bold text-lg">Iwanyu Store</h2>
+                            <p className="text-xs text-white/80">Your shopping destination</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900">{user.firstName || 'User'}</p>
-                          <p className="text-sm text-gray-600">{user.email}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        {user.role === 'ADMIN' && (
-                          <Link
-                            to="/admin/dashboard"
-                            className="flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors duration-200"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            <Settings size={16} />
-                            <span className="font-medium">Admin Dashboard</span>
-                          </Link>
-                        )}
-                        
-                        {user.role === 'SELLER' ? (
-                          <Link
-                            to="/seller/dashboard"
-                            className="flex items-center space-x-3 p-3 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors duration-200"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            <Store size={16} />
-                            <span className="font-medium">Seller Dashboard</span>
-                          </Link>
-                        ) : user.role !== 'ADMIN' && (
-                          <Link
-                            to="/become-seller"
-                            className="flex items-center space-x-3 p-3 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors duration-200"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            <Store size={16} />
-                            <span className="font-medium">Become a Seller</span>
-                          </Link>
-                        )}
+                        <button
+                          onClick={() => {
+                            console.log('Close button clicked');
+                            setIsMenuOpen(false);
+                          }}
+                          aria-label="Close mobile menu"
+                          className="p-2 text-white/90 hover:text-white hover:bg-white/20 rounded-xl transition-all duration-200 active:scale-95"
+                        >
+                          <X size={22} strokeWidth={2.5} />
+                        </button>
                       </div>
                     </div>
-                  ) : (
-                    <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-3 mb-4 border border-orange-200">
-                      <p className="text-xs text-gray-600 mb-2">Join Iwanyu Store!</p>
-                      <div className="flex space-x-2">
-                        <Link
-                          to="/login"
-                          className="flex-1 text-center py-1.5 px-3 border border-orange-300 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors duration-200 text-xs font-medium"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          Login
-                        </Link>
-                        <Link
-                          to="/register"
-                          className="flex-1 text-center py-1.5 px-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 text-xs font-medium shadow-md"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          Sign Up
-                        </Link>
-                      </div>
-                    </div>
-                  )}
 
-                  {/* Mobile Categories */}
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                      <Grid size={18} className="mr-2 text-orange-500" />
-                      Categories
-                      <span className="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
-                        {categories.length}
-                      </span>
-                    </h3>
-                    
-                    {isLoading ? (
-                      <div className="space-y-3">
-                        {[...Array(6)].map((_, i) => (
-                          <div key={i} className="h-12 bg-gray-200 rounded-lg animate-pulse"></div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        {categories.map((category: Category) => (
+                    <div className="p-6 space-y-6">
+                      {/* User Profile Section */}
+                      {user ? (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 }}
+                          className="bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 rounded-2xl p-5 border border-orange-100/50 shadow-sm"
+                        >
+                          <div className="flex items-center space-x-4 mb-4">
+                            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white/50">
+                              {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-gray-900 truncate text-base">
+                                {user.firstName || 'User'}
+                              </p>
+                              <p className="text-sm text-gray-600 truncate">{user.email}</p>
+                              <div className="flex items-center mt-1">
+                                <div className={`w-2 h-2 rounded-full mr-2 ${
+                                  user.role === 'ADMIN' ? 'bg-blue-500' :
+                                  user.role === 'SELLER' ? 'bg-green-500' : 'bg-gray-400'
+                                }`}></div>
+                                <span className="text-xs font-medium text-gray-500 capitalize">
+                                  {user.role?.toLowerCase() || 'Customer'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="grid gap-2">
+                            {user.role === 'ADMIN' && (
+                              <Link
+                                to="/admin/dashboard"
+                                className="flex items-center space-x-3 p-3 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all duration-200 group border border-blue-100"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                  <Settings size={16} />
+                                </div>
+                                <span className="font-medium">Admin Dashboard</span>
+                              </Link>
+                            )}
+                            
+                            {user.role === 'SELLER' ? (
+                              <Link
+                                to="/seller/dashboard"
+                                className="flex items-center space-x-3 p-3 rounded-xl bg-green-50 text-green-700 hover:bg-green-100 transition-all duration-200 group border border-green-100"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                  <Store size={16} />
+                                </div>
+                                <span className="font-medium">Seller Dashboard</span>
+                              </Link>
+                            ) : user.role !== 'ADMIN' && (
+                              <Link
+                                to="/become-seller"
+                                className="flex items-center space-x-3 p-3 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 transition-all duration-200 group border border-purple-100"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                                  <Store size={16} />
+                                </div>
+                                <span className="font-medium">Become a Seller</span>
+                              </Link>
+                            )}
+                          </div>
+                        </motion.div>
+                      ) : (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 }}
+                          className="bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 rounded-2xl p-5 border border-orange-100/50 shadow-sm"
+                        >
+                          <div className="text-center mb-4">
+                            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                              <User size={24} className="text-white" />
+                            </div>
+                            <h3 className="font-semibold text-gray-900 mb-1">Join Iwanyu Store!</h3>
+                            <p className="text-sm text-gray-600">Sign up to access exclusive features</p>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <Link
+                              to="/login"
+                              className="text-center py-3 px-4 border-2 border-orange-200 text-orange-700 rounded-xl hover:bg-orange-50 hover:border-orange-300 transition-all duration-200 font-medium active:scale-95"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              Login
+                            </Link>
+                            <Link
+                              to="/register"
+                              className="text-center py-3 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg active:scale-95"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              Sign Up
+                            </Link>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {/* Categories Section */}
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="space-y-4"
+                      >
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                              <Grid size={16} className="text-white" />
+                            </div>
+                            Categories
+                          </h3>
+                          <span className="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">
+                            {categories.length}
+                          </span>
+                        </div>
+                        
+                        {isLoading ? (
+                          <div className="space-y-3">
+                            {[...Array(6)].map((_, i) => (
+                              <div key={i} className="h-14 bg-gray-100 rounded-xl animate-pulse"></div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-2 max-h-64 overflow-y-auto">
+                            {categories.map((category: Category, index: number) => (
+                              <motion.div
+                                key={category.id}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3 + index * 0.05 }}
+                              >
+                                <Link
+                                  to={`/products?category=${category.slug}`}
+                                  className="flex items-center justify-between p-4 rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200 group active:scale-[0.98]"
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+                                      {renderCategoryIcon(category.name, 18)}
+                                    </div>
+                                    <span className="text-gray-700 group-hover:text-orange-600 font-medium">
+                                      {category.name}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-xs text-gray-400 group-hover:text-orange-500 font-medium bg-gray-100 group-hover:bg-orange-100 px-2 py-1 rounded-full">
+                                      {category._count?.products || 0}
+                                    </span>
+                                    <ChevronRight size={14} className="text-gray-400 group-hover:text-orange-500" />
+                                  </div>
+                                </Link>
+                              </motion.div>
+                            ))}
+                            
+                            <motion.div
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.3 + categories.length * 0.05 }}
+                            >
+                              <Link
+                                to="/products"
+                                className="flex items-center justify-center p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-200 text-blue-600 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 transition-all duration-200 group active:scale-[0.98]"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <Package size={18} className="mr-2" />
+                                <span className="font-semibold">View All Products</span>
+                              </Link>
+                            </motion.div>
+                          </div>
+                        )}
+                      </motion.div>
+
+                      {/* Quick Actions */}
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="space-y-3"
+                      >
+                        <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+                            <Star size={16} className="text-white" />
+                          </div>
+                          Quick Actions
+                        </h3>
+
+                        {user && (
                           <Link
-                            key={category.id}
-                            to={`/products?category=${category.slug}`}
-                            className="flex items-center justify-between p-3 rounded-lg hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200 group"
+                            to="/orders"
+                            className="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-100 hover:bg-blue-100 hover:border-blue-200 transition-all duration-200 group active:scale-[0.98]"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             <div className="flex items-center space-x-3">
-                              {renderCategoryIcon(category.name, 18)}
-                              <span className="text-gray-700 group-hover:text-orange-600 font-medium">{category.name}</span>
+                              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                <Package size={18} className="text-blue-600" />
+                              </div>
+                              <span className="font-semibold text-blue-700">My Orders</span>
                             </div>
-                            <span className="text-xs text-gray-400 group-hover:text-orange-500 font-medium">
-                              {category._count?.products || 0}
-                            </span>
+                            <ChevronRight size={16} className="text-blue-500" />
                           </Link>
-                        ))}
-                        
+                        )}
+
                         <Link
-                          to="/products"
-                          className="flex items-center justify-center p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-200 text-blue-600 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200 group"
+                          to="/cart"
+                          className="flex items-center justify-between p-4 rounded-xl bg-orange-50 border border-orange-100 hover:bg-orange-100 hover:border-orange-200 transition-all duration-200 group active:scale-[0.98]"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          <Package size={16} className="mr-2" />
-                          <span className="font-medium">View All Products</span>
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors relative">
+                              <ShoppingCart size={18} className="text-orange-600" />
+                              {itemCount > 0 && (
+                                <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                                  {itemCount > 9 ? '9+' : itemCount}
+                                </div>
+                              )}
+                            </div>
+                            <span className="font-semibold text-orange-700">Shopping Cart</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {itemCount > 0 && (
+                              <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                                {itemCount}
+                              </span>
+                            )}
+                            <ChevronRight size={16} className="text-orange-500" />
+                          </div>
                         </Link>
-                      </div>
-                    )}
-                  </div>
 
-                  {/* Mobile Actions */}
-                  <div className="space-y-3">
-                    {user && (
-                      <Link
-                        to="/orders"
-                        className="flex items-center justify-between p-4 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors duration-200"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <Package size={18} className="text-blue-600" />
-                          <span className="font-medium text-blue-700">My Orders</span>
-                        </div>
-                      </Link>
-                    )}
+                        <Link
+                          to="/wishlist"
+                          className="flex items-center justify-between p-4 rounded-xl bg-red-50 border border-red-100 hover:bg-red-100 hover:border-red-200 transition-all duration-200 group active:scale-[0.98]"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                              <Heart size={18} className="text-red-600" />
+                            </div>
+                            <span className="font-semibold text-red-700">Wishlist</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                              0
+                            </span>
+                            <ChevronRight size={16} className="text-red-500" />
+                          </div>
+                        </Link>
+                      </motion.div>
 
-                    <Link
-                      to="/cart"
-                      className="flex items-center justify-between p-4 rounded-lg bg-orange-50 border border-orange-200 hover:bg-orange-100 transition-colors duration-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <ShoppingCart size={18} className="text-orange-600" />
-                        <span className="font-medium text-orange-700">Shopping Cart</span>
-                      </div>
-                      {itemCount > 0 && (
-                        <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
-                          {itemCount}
-                        </span>
+                      {/* Logout Section */}
+                      {user && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.5 }}
+                          className="pt-6 border-t border-gray-200"
+                        >
+                          <button
+                            onClick={() => {
+                              logout();
+                              setIsMenuOpen(false);
+                            }}
+                            className="w-full flex items-center justify-center space-x-3 p-4 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 border border-red-100 hover:border-red-200 active:scale-[0.98] group"
+                          >
+                            <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                              <X size={16} />
+                            </div>
+                            <span className="font-semibold">Sign Out</span>
+                          </button>
+                        </motion.div>
                       )}
-                    </Link>
-
-                    <Link
-                      to="/wishlist"
-                      className="flex items-center justify-between p-4 rounded-lg bg-red-50 border border-red-200 hover:bg-red-100 transition-colors duration-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <Heart size={18} className="text-red-600" />
-                        <span className="font-medium text-red-700">Wishlist</span>
-                      </div>
-                      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                        0
-                      </span>
-                    </Link>
-                  </div>
-
-                  {user && (
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <button
-                        onClick={() => {
-                          logout();
-                          setIsMenuOpen(false);
-                        }}
-                        className="w-full flex items-center justify-center space-x-2 p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                      >
-                        <span className="font-medium">Logout</span>
-                      </button>
                     </div>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </header>
     </>
