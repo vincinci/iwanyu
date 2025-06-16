@@ -449,9 +449,14 @@ const Header: React.FC = () => {
               onClick={() => {
                 console.log('Mobile menu button clicked, current state:', isMenuOpen);
                 setIsMenuOpen(!isMenuOpen);
+                console.log('Mobile menu button clicked, new state:', !isMenuOpen);
               }}
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-              className="md:hidden p-2 text-gray-600 hover:text-orange-500 transition-colors duration-200 rounded-lg hover:bg-orange-50 z-50"
+              className={`md:hidden p-3 rounded-lg transition-all duration-200 z-50 ${
+                isMenuOpen 
+                  ? 'text-orange-500 bg-orange-50' 
+                  : 'text-gray-600 hover:text-orange-500 hover:bg-orange-50'
+              }`}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -475,8 +480,15 @@ const Header: React.FC = () => {
             </form>
           </div>
 
+          {/* Debug Menu State - Remove in production */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="fixed top-20 left-4 bg-red-500 text-white p-2 rounded z-[10000] text-xs">
+              Menu: {isMenuOpen ? 'OPEN' : 'CLOSED'}
+            </div>
+          )}
+
           {/* Enhanced Mobile Menu */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {isMenuOpen && (
               <>
                 {/* Mobile Menu Backdrop */}
@@ -484,8 +496,12 @@ const Header: React.FC = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[9998] md:hidden"
-                  onClick={() => setIsMenuOpen(false)}
+                  transition={{ duration: 0.2 }}
+                  className="fixed inset-0 bg-black/30 z-[9998] md:hidden"
+                  onClick={() => {
+                    console.log('Backdrop clicked, closing menu');
+                    setIsMenuOpen(false);
+                  }}
                 />
                 
                 {/* Mobile Menu Content */}
@@ -493,16 +509,20 @@ const Header: React.FC = () => {
                   initial={{ opacity: 0, x: '100%' }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: '100%' }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                  className="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[9999] md:hidden overflow-y-auto"
+                  transition={{ type: 'tween', duration: 0.3 }}
+                  className="fixed top-0 right-0 h-full w-80 max-w-[90vw] bg-white shadow-2xl z-[9999] md:hidden overflow-y-auto"
                 >
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center space-x-3">
                         <img src="/iwanyu-logo.png" alt="Iwanyu" className="h-8 w-auto" />
+                        <span className="font-bold text-orange-500">Iwanyu</span>
                       </div>
                       <button
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={() => {
+                          console.log('Close button clicked');
+                          setIsMenuOpen(false);
+                        }}
                         aria-label="Close mobile menu"
                         className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
                       >
