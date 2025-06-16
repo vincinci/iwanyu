@@ -56,13 +56,23 @@ const BecomeSeller: React.FC = () => {
     setLoading(true);
 
     try {
+      // Debug logging
+      console.log('Form submission started');
+      console.log('API Base URL:', import.meta.env.VITE_API_URL);
+      console.log('Form data:', formData);
+      console.log('National ID file:', nationalIdFile);
+      console.log('User token exists:', !!localStorage.getItem('token'));
+
       const submitData: BecomeSellerData = {
         ...formData,
         ...(nationalIdFile && { nationalId: nationalIdFile }),
       };
-      await sellerApi.becomeSeller(submitData);
+      
+      const result = await sellerApi.becomeSeller(submitData);
+      console.log('API response:', result);
       setSuccess(true);
     } catch (err) {
+      console.error('Seller application error:', err);
       setError(err instanceof Error ? err.message : 'Failed to submit application');
     } finally {
       setLoading(false);
@@ -140,6 +150,19 @@ const BecomeSeller: React.FC = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Debug Panel - Only show in development */}
+            {import.meta.env.DEV && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+                <h4 className="font-medium text-blue-900 mb-2">Debug Info:</h4>
+                <ul className="text-blue-700 space-y-1">
+                  <li>API URL: {import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}</li>
+                  <li>User logged in: {user ? 'Yes' : 'No'}</li>
+                  <li>Token exists: {!!localStorage.getItem('token') ? 'Yes' : 'No'}</li>
+                  <li>Form valid: {!!(formData.businessName && nationalIdFile) ? 'Yes' : 'No'}</li>
+                </ul>
+              </div>
+            )}
+
             {error && (
               <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
                 <AlertCircle className="w-5 h-5" />

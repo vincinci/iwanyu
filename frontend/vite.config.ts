@@ -10,6 +10,7 @@ export default defineConfig({
   },
   // Ensure environment variables are available
   define: {
-    // Add any global constants here if needed
+    // Add production API URL
+    'import.meta.env.VITE_API_URL': JSON.stringify('https://iwanyu-backend.onrender.com/api'),
   },
 })
