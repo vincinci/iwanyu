@@ -1,0 +1,233 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mobile-first responsive improvements */
+@layer base {
+  html {
+    /* Prevent zoom on input focus on iOS */
+    -webkit-text-size-adjust: 100%;
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-gray-900 font-medium;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    /* Better font rendering on mobile */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Better touch targets for mobile */
+  button, 
+  [role="button"], 
+  input[type="submit"], 
+  input[type="button"] {
+    min-height: 44px; /* iOS recommended minimum */
+    min-width: 44px;
+  }
+
+  /* Improve form inputs on mobile */
+  input, 
+  textarea, 
+  select {
+    /* Prevent zoom on focus on iOS */
+    font-size: 16px;
+  }
+
+  /* Better focus states for accessibility */
+  *:focus {
+    outline: 2px solid #f97316;
+    outline-offset: 2px;
+  }
+
+  /* Remove focus outline for mouse users */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+    /* Better mobile touch target */
+    min-height: 48px;
+    /* Prevent text selection */
+    user-select: none;
+    -webkit-user-select: none;
+    /* Better tap highlight */
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-yellow-600 font-semibold py-3 px-6 rounded-lg border-2 border-yellow-500 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+    /* Better mobile touch target */
+    min-height: 48px;
+    /* Prevent text selection */
+    user-select: none;
+    -webkit-user-select: none;
+    /* Better tap highlight */
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors duration-200;
+    /* Prevent zoom on iOS */
+    font-size: 16px;
+    /* Better touch target */
+    min-height: 48px;
+  }
+
+  /* Mobile-optimized components */
+  .mobile-card {
+    @apply bg-white rounded-lg border border-gray-200 overflow-hidden;
+    /* Add subtle shadow for depth on mobile */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  /* Mobile navigation improvements */
+  .mobile-nav-item {
+    @apply flex items-center px-4 py-3 text-gray-700;
+    @apply hover:bg-gray-50 hover:text-orange-600;
+    @apply transition-colors duration-200;
+    /* Better touch target */
+    min-height: 48px;
+  }
+
+  /* Mobile-optimized input styles */
+  .mobile-input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg;
+    @apply focus:ring-2 focus:ring-orange-500 focus:border-orange-500;
+    @apply transition-colors duration-200;
+    /* Prevent zoom on iOS */
+    font-size: 16px;
+    /* Better touch target */
+    min-height: 48px;
+  }
+
+  /* Mobile-friendly modal/drawer */
+  .mobile-drawer {
+    @apply fixed inset-0 z-50;
+    /* Smooth slide animation */
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .mobile-drawer.open {
+    transform: translateX(0);
+  }
+
+  /* Mobile-optimized typography */
+  .mobile-heading-1 {
+    @apply text-2xl font-bold text-gray-900;
+  }
+
+  @screen md {
+    .mobile-heading-1 {
+      @apply text-3xl;
+    }
+  }
+
+  .mobile-heading-2 {
+    @apply text-xl font-semibold text-gray-900;
+  }
+
+  @screen md {
+    .mobile-heading-2 {
+      @apply text-2xl;
+    }
+  }
+
+  .mobile-body {
+    @apply text-sm text-gray-600;
+  }
+
+  @screen md {
+    .mobile-body {
+      @apply text-base;
+    }
+  }
+
+  /* Mobile-specific utilities */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  .no-tap-highlight {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Better scrolling on mobile */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Mobile-optimized sticky elements */
+  .mobile-sticky-header {
+    @apply sticky top-0 z-40 bg-white border-b border-gray-200;
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+}
+
+/* Mobile-specific media queries */
+@media (max-width: 640px) {
+  /* Reduce padding on small screens */
+  .container {
+    @apply px-4;
+  }
+
+  /* Hide elements on mobile */
+  .mobile-hidden {
+    @apply hidden;
+  }
+
+  /* Show only on mobile */
+  .mobile-only {
+    @apply block;
+  }
+}
+
+@media (min-width: 641px) {
+  .mobile-only {
+    @apply hidden;
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Fix iOS Safari viewport height issue */
+  .ios-vh-fix {
+    height: -webkit-fill-available;
+  }
+
+  /* Better iOS button styling */
+  button {
+    -webkit-appearance: none;
+  }
+
+  /* Fix iOS input styling */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea {
+    -webkit-appearance: none;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
