@@ -199,11 +199,6 @@ const Header: React.FC = () => {
                   <Grid size={16} className="group-hover:text-orange-500 transition-colors duration-200" />
                   <span className="whitespace-nowrap">Categories</span>
                   <ChevronDown size={14} className="group-hover:text-orange-500 transition-colors duration-200" />
-                  {isFetched && (
-                    <span className="ml-1 text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full">
-                      {categories.length}
-                    </span>
-                  )}
                 </button>
 
                 {/* Enhanced Categories Dropdown Menu */}
@@ -240,9 +235,6 @@ const Header: React.FC = () => {
                                 {renderCategoryIcon(category.name, 18)}
                                 <span className="text-sm text-gray-700 group-hover:text-orange-600 font-medium">{category.name}</span>
                               </div>
-                              <span className="text-xs text-gray-400 group-hover:text-orange-500 font-medium">
-                                {category._count?.products || 0} items
-                              </span>
                             </Link>
                           ))}
                           
@@ -679,9 +671,7 @@ const Header: React.FC = () => {
                                   {category.name}
                                 </span>
                               </div>
-                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                {category._count?.products || 0}
-                              </span>
+
                             </Link>
                           ))}
                           

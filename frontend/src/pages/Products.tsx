@@ -378,7 +378,7 @@ const Products: React.FC = () => {
                           className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                         />
                         <span className="ml-2 text-sm text-gray-700">
-                          {category.name} ({category._count?.products || 0})
+                          {category.name}
                         </span>
                         </label>
                       ))}

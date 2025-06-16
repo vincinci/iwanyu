@@ -115,7 +115,7 @@ const Categories: React.FC = () => {
                   <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
                     <span className="flex items-center">
                       <Package size={12} className="mr-1" />
-                      {category._count?.products || 0} products
+                      Browse Products
                     </span>
                   </div>
                   

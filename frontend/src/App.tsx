@@ -88,6 +88,7 @@ import Orders from './pages/Orders';
 import Wishlist from './pages/Wishlist';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import BecomeSeller from './pages/BecomeSeller';
 import SellerDashboard from './pages/SellerDashboard';
 import SellerProducts from './pages/SellerProducts';
 import AdminDashboard from './pages/AdminDashboard';
@@ -239,6 +240,7 @@ function App() {
                       <Route path="/wishlist" element={<Wishlist />} />
                       <Route path="/login" element={<Login />} />
                       <Route path="/register" element={<Register />} />
+                      <Route path="/become-seller" element={<BecomeSeller />} />
                       <Route path="/checkout" element={<Checkout />} />
                       <Route path="/orders" element={<Orders />} />
                       
