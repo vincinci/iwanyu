@@ -492,23 +492,16 @@ const Header: React.FC = () => {
             <>
               {/* Mobile Menu Backdrop */}
               <div
-                className="fixed inset-0 bg-black/50 z-[999998] md:hidden"
+                className="mobile-menu-backdrop md:hidden"
                 onClick={() => {
                   console.log('Backdrop clicked, closing menu');
                   setIsMenuOpen(false);
                 }}
-                style={{ zIndex: 999998 }}
               />
               
               {/* Mobile Menu Content */}
               <div
-                className="fixed top-0 right-0 h-full w-80 max-w-[90vw] bg-red-500 shadow-2xl z-[999999] md:hidden overflow-y-auto border-4 border-yellow-400"
-                style={{ 
-                  zIndex: 999999, 
-                  position: 'fixed',
-                  backgroundColor: '#ef4444',
-                  border: '4px solid #facc15'
-                }}
+                className="mobile-menu-override md:hidden overflow-y-auto"
               >
                 <div className="p-6 bg-white h-full">
                   <div className="flex items-center justify-between mb-6 bg-green-200 p-4 rounded">
