@@ -60,10 +60,16 @@ const InstantLoadingInitializer: React.FC = () => {
   const { prefetchEverything } = useGlobalPrefetch();
 
   useEffect(() => {
-    // Prefetch critical data immediately when app starts
+    // Check if mobile to reduce prefetching load
+    const isMobile = window.innerWidth < 768;
+    
+    // Prefetch critical data immediately when app starts - reduced for mobile
     const timer = setTimeout(() => {
-      prefetchEverything();
-    }, 100); // Small delay to not block initial render
+      // Only prefetch everything on desktop to prevent mobile crashes
+      if (!isMobile) {
+        prefetchEverything();
+      }
+    }, isMobile ? 2000 : 100); // Longer delay on mobile
 
     return () => clearTimeout(timer);
   }, [prefetchEverything]);
@@ -74,33 +80,38 @@ const InstantLoadingInitializer: React.FC = () => {
 // Performance monitoring
 const PerformanceMonitor: React.FC = () => {
   useEffect(() => {
-    // Preload critical resources
+    // Check if mobile to reduce preloading
+    const isMobile = window.innerWidth < 768;
+    
+    // Preload critical resources - reduced for mobile
     const preloadCriticalResources = () => {
-      // Preconnect to external domains for faster loading
-      const preconnectDomains = [
-        'https://fonts.googleapis.com',
-        'https://fonts.gstatic.com'
-      ];
+      // Only preconnect on desktop to avoid mobile overhead
+      if (!isMobile) {
+        const preconnectDomains = [
+          'https://fonts.googleapis.com',
+          'https://fonts.gstatic.com'
+        ];
 
-      preconnectDomains.forEach(domain => {
-        const link = document.createElement('link');
-        link.rel = 'preconnect';
-        link.href = domain;
-        document.head.appendChild(link);
-      });
+        preconnectDomains.forEach(domain => {
+          const link = document.createElement('link');
+          link.rel = 'preconnect';
+          link.href = domain;
+          document.head.appendChild(link);
+        });
 
-      // Prefetch DNS for external resources
-      const dnsPrefetchDomains = [
-        'https://cdn.jsdelivr.net',
-        'https://unpkg.com'
-      ];
+        // Prefetch DNS for external resources - desktop only
+        const dnsPrefetchDomains = [
+          'https://cdn.jsdelivr.net',
+          'https://unpkg.com'
+        ];
 
-      dnsPrefetchDomains.forEach(domain => {
-        const link = document.createElement('link');
-        link.rel = 'dns-prefetch';
-        link.href = domain;
-        document.head.appendChild(link);
-      });
+        dnsPrefetchDomains.forEach(domain => {
+          const link = document.createElement('link');
+          link.rel = 'dns-prefetch';
+          link.href = domain;
+          document.head.appendChild(link);
+        });
+      }
     };
 
     preloadCriticalResources();
@@ -122,22 +133,14 @@ function App() {
         document.head.appendChild(meta);
       }
 
-      // Add performance hints
-      const resourceHints = [
-        { rel: 'preload', href: '/fonts/inter.woff2', as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
-      ];
-
-      resourceHints.forEach(hint => {
-        const link = document.createElement('link');
-        Object.entries(hint).forEach(([key, value]) => {
-          if (key === 'crossOrigin') {
-            link.crossOrigin = value as string;
-          } else {
-            link.setAttribute(key, value as string);
-          }
-        });
-        document.head.appendChild(link);
-      });
+      // Remove font preload since fonts don't exist - this was causing warnings
+      // Only add performance hints that actually exist
+      const isMobile = window.innerWidth < 768;
+      
+      if (!isMobile) {
+        // Only add resource hints on desktop to prevent mobile performance issues
+        // Remove the non-existent font preload that was causing warnings
+      }
     };
 
     optimizePerformance();
