@@ -213,6 +213,9 @@ export interface OrdersResponse {
 class AdminApi {
   private getAuthHeaders() {
     const token = localStorage.getItem('token');
+    console.log('AdminApi.getAuthHeaders: Token exists:', !!token);
+    console.log('AdminApi.getAuthHeaders: Token length:', token ? token.length : 0);
+    
     return {
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
@@ -221,27 +224,29 @@ class AdminApi {
 
   // Dashboard
   async getDashboard(): Promise<AdminDashboard> {
-    const url = `${API_BASE_URL}/admin/dashboard`;
-    console.log('AdminApi.getDashboard: URL:', url);
+    console.log('AdminApi.getDashboard: Starting...');
     console.log('AdminApi.getDashboard: API_BASE_URL:', API_BASE_URL);
-    console.log('AdminApi.getDashboard: Headers:', this.getAuthHeaders());
     
-    const response = await fetch(url, {
-      headers: this.getAuthHeaders(),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/dashboard`, {
+        headers: this.getAuthHeaders(),
+      });
 
-    console.log('AdminApi.getDashboard: Response status:', response.status);
-    console.log('AdminApi.getDashboard: Response ok:', response.ok);
+      console.log('AdminApi.getDashboard: Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('AdminApi.getDashboard: Error response:', errorText);
+        throw new Error(`Failed to fetch dashboard: ${response.status} ${response.statusText}`);
+      }
 
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('AdminApi.getDashboard: Error response:', error);
-      throw new Error(error.error || 'Failed to get dashboard data');
+      const data = await response.json();
+      console.log('AdminApi.getDashboard: Success data:', data);
+      return data;
+    } catch (error) {
+      console.error('AdminApi.getDashboard: Network error:', error);
+      throw error;
     }
-
-    const data = await response.json();
-    console.log('AdminApi.getDashboard: Success data:', data);
-    return data;
   }
 
   // User Management
@@ -251,22 +256,53 @@ class AdminApi {
     search?: string;
     role?: string;
   } = {}): Promise<UsersResponse> {
+    console.log('AdminApi.getUsers: Starting with params:', params);
+    console.log('AdminApi.getUsers: API_BASE_URL:', API_BASE_URL);
+    
     const searchParams = new URLSearchParams();
     if (params.page) searchParams.set('page', params.page.toString());
     if (params.limit) searchParams.set('limit', params.limit.toString());
     if (params.search) searchParams.set('search', params.search);
     if (params.role) searchParams.set('role', params.role);
 
-    const response = await fetch(`${API_BASE_URL}/admin/users?${searchParams}`, {
-      headers: this.getAuthHeaders(),
-    });
+    const url = `${API_BASE_URL}/admin/users?${searchParams}`;
+    console.log('AdminApi.getUsers: Final URL:', url);
+    
+    try {
+      const headers = this.getAuthHeaders();
+      console.log('AdminApi.getUsers: Headers:', headers);
+      
+      const response = await fetch(url, { headers });
+      
+      console.log('AdminApi.getUsers: Response status:', response.status);
+      console.log('AdminApi.getUsers: Response headers:', Object.fromEntries(response.headers.entries()));
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to get users');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('AdminApi.getUsers: Error response text:', errorText);
+        
+        try {
+          const errorJson = JSON.parse(errorText);
+          console.error('AdminApi.getUsers: Error JSON:', errorJson);
+          throw new Error(errorJson.error || `HTTP ${response.status}: ${response.statusText}`);
+        } catch (parseError) {
+          console.error('AdminApi.getUsers: Error parsing error response:', parseError);
+          throw new Error(`Failed to get users: HTTP ${response.status} ${response.statusText}`);
+        }
+      }
+
+      const data = await response.json();
+      console.log('AdminApi.getUsers: Success data received, users count:', data?.users?.length || 0);
+      return data;
+    } catch (error) {
+      console.error('AdminApi.getUsers: Caught error:', error);
+      
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        throw new Error('Network error: Unable to connect to the server. Please check your internet connection.');
+      }
+      
+      throw error;
     }
-
-    return response.json();
   }
 
   async updateUser(id: string, data: {
