@@ -514,7 +514,7 @@ const Products: React.FC = () => {
                               <img
                                 src={getProductImageUrl(product)!}
                                 alt={product.name}
-                                className="w-full h-40 sm:h-44 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-28 sm:h-32 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                                 loading="lazy"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
@@ -523,7 +523,7 @@ const Products: React.FC = () => {
                                 }}
                               />
                             ) : null}
-                            <div className={`w-full h-40 sm:h-44 md:h-48 bg-gray-100 flex items-center justify-center ${getProductImageUrl(product) ? 'hidden' : ''}`}>
+                            <div className={`w-full h-28 sm:h-32 md:h-48 bg-gray-100 flex items-center justify-center ${getProductImageUrl(product) ? 'hidden' : ''}`}>
                               <Package className="text-gray-400" size={32} />
                             </div>
                             
@@ -625,7 +625,7 @@ const Products: React.FC = () => {
                               <img
                                 src={getProductImageUrl(product)!}
                                 alt={product.name}
-                                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-28 sm:h-32 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                                 loading="lazy"
                               />
                             ) : (

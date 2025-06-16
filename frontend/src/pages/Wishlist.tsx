@@ -166,11 +166,11 @@ const Wishlist: React.FC = () => {
                     <img
                       src={item.product.images[0]}
                       alt={item.product.name}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-32 sm:h-40 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-48 bg-gray-100 flex items-center justify-center">
+                    <div className="w-full h-32 sm:h-40 md:h-48 bg-gray-100 flex items-center justify-center">
                       <Package className="text-gray-400" size={32} />
                     </div>
                   )}
@@ -189,9 +189,9 @@ const Wishlist: React.FC = () => {
                   </button>
                 </Link>
                 
-                <div className="p-4">
+                <div className="p-2 sm:p-3 md:p-4">
                   <Link to={`/products/${item.product.id}`}>
-                    <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                    <h3 className="text-xs sm:text-sm font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
                       {item.product.name}
                     </h3>
                     

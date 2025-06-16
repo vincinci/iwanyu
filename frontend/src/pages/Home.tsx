@@ -499,7 +499,7 @@ const Home: React.FC = () => {
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
-                        className={`w-full h-40 sm:h-44 md:h-48 object-cover ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
+                        className={`w-full h-24 md:h-48 object-cover ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -613,7 +613,7 @@ const Home: React.FC = () => {
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-28 sm:h-32 md:h-36 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-20 sm:h-24 md:h-36 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -622,30 +622,30 @@ const Home: React.FC = () => {
                         }}
                       />
                     ) : null}
-                    <div className={`w-full h-28 sm:h-32 md:h-36 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
-                      <Package className="text-gray-400" size={20} />
+                    <div className={`w-full h-20 sm:h-24 md:h-36 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
+                      <Package className="text-gray-400" size={16} />
                     </div>
                     
                     {/* Flash Sale Badge */}
                     {(product.salePrice && product.salePrice < product.price) ? (
-                      <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                      <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold text-[10px]">
                         -{calculateDiscount(product.price, product.salePrice)}%
                       </div>
                     ) : (
-                      <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                      <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold text-[10px]">
                         FLASH
                       </div>
                     )}
                   </Link>
                   
-                  <div className="p-3">
+                  <div className="p-1.5 md:p-3">
                     <Link to={`/products/${product.id}`}>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                      <h3 className="text-xs sm:text-sm font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
                         {product.name}
                       </h3>
                       {/* Seller name - remove 'Unknown Seller' fallback */}
                       {product.seller && (
-                        <p className="text-xs text-gray-500 mb-1">
+                        <p className="text-xs text-gray-500 mb-1 hidden sm:block">
                           by {product.seller.businessName || 
                               (product.seller.user?.firstName && product.seller.user?.lastName 
                                 ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
@@ -654,7 +654,7 @@ const Home: React.FC = () => {
                       )}
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="text-lg font-bold text-red-600">
+                          <span className="text-sm sm:text-lg font-bold text-red-600">
                             {formatPrice(product.salePrice || product.price)}
                           </span>
                           {product.salePrice && (
@@ -666,10 +666,10 @@ const Home: React.FC = () => {
                       </div>
                       <button
                         onClick={(e) => quickAddToCart(product, e)}
-                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-3 rounded-lg mt-2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-sm font-medium"
+                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-1.5 px-2 rounded-lg mt-2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-xs font-medium"
                         aria-label="Add to cart"
                       >
-                        <ShoppingCart size={16} className="mr-2" />
+                        <ShoppingCart size={14} className="mr-1" />
                         Add to Cart
                       </button>
                     </Link>
@@ -715,7 +715,7 @@ const Home: React.FC = () => {
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
-                        className={`w-full h-32 md:h-48 object-cover ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
+                        className={`w-full h-24 md:h-48 object-cover ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -805,44 +805,38 @@ const Home: React.FC = () => {
                     )}
                   </Link>
                   
-                  <div className="p-2">
+                  <div className="p-1.5 md:p-3">
                     <Link to={`/products/${product.id}`}>
-                      <div className="mb-1">
-                        <h3 className="text-xs font-medium text-gray-900 line-clamp-2 group-hover:text-red-600 transition-colors leading-tight">
+                      <h3 className="text-xs sm:text-sm font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
                         {product.name}
                       </h3>
-                      </div>
-                      
                       {/* Seller name - remove 'Unknown Seller' fallback */}
                       {product.seller && (
-                        <div className="mb-1 hidden sm:block">
-                          <p className="text-[10px] text-gray-500 truncate">
-                            by {product.seller.businessName || 
-                                (product.seller.user?.firstName && product.seller.user?.lastName 
-                                  ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                                  : (product.seller.user?.name || 'Seller'))}
-                          </p>
-                        </div>
+                        <p className="text-xs text-gray-500 mb-1 hidden sm:block">
+                          by {product.seller.businessName || 
+                              (product.seller.user?.firstName && product.seller.user?.lastName 
+                                ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
+                                : (product.seller.user?.name || 'Seller'))}
+                        </p>
                       )}
-                      
-                      <div className="mb-1">
-                        <div className="flex-1">
-                          <span className="text-sm font-bold text-red-600">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-sm sm:text-lg font-bold text-red-600">
                             {formatPrice(product.salePrice || product.price)}
-                              </span>
-                          {product.salePrice && product.salePrice < product.price && (
-                            <div className="text-[10px] text-gray-500 line-through">
-                                {formatPrice(product.price)}
+                          </span>
+                          {product.salePrice && (
+                            <div className="text-xs text-gray-500 line-through">
+                              {formatPrice(product.price)}
                             </div>
                           )}
                         </div>
                       </div>
                       <button
                         onClick={(e) => quickAddToCart(product, e)}
-                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-xs font-medium"
+                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-1.5 px-2 rounded-lg mt-2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-xs font-medium"
                         aria-label="Add to cart"
                       >
-                        <ShoppingCart size={12} className="mr-1" />
+                        <ShoppingCart size={14} className="mr-1" />
                         Add to Cart
                       </button>
                     </Link>

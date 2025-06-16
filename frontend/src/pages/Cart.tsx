@@ -84,7 +84,7 @@ const Cart: React.FC = () => {
                         {/* Top row on mobile: Image + Details + Remove */}
                         <div className="flex items-start space-x-3 flex-1">
                           {/* Product Image */}
-                          <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-lg overflow-hidden">
+                          <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gray-100 rounded-lg overflow-hidden">
                             {item.image ? (
                               <img
                                 src={item.image}
@@ -93,7 +93,7 @@ const Cart: React.FC = () => {
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <Package className="text-gray-400" size={24} />
+                                <Package className="text-gray-400" size={16} />
                               </div>
                             )}
                           </div>
