@@ -481,7 +481,7 @@ const Header: React.FC = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+                  className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[9998] md:hidden"
                   onClick={() => setIsMenuOpen(false)}
                 />
                 
@@ -491,7 +491,7 @@ const Header: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: '100%' }}
                   transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                  className="fixed top-0 right-0 h-full w-80 bg-white/95 backdrop-blur-md shadow-2xl z-50 md:hidden overflow-y-auto"
+                  className="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[9999] md:hidden overflow-y-auto"
                 >
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
