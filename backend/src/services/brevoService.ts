@@ -12,6 +12,15 @@ interface EmailRecipient {
   name?: string;
 }
 
+interface SMSTemplate {
+  content: string;
+}
+
+interface SMSRecipient {
+  phone: string;
+  name?: string;
+}
+
 class BrevoService {
   private apiKey: string | undefined;
 
@@ -40,6 +49,104 @@ class BrevoService {
       console.error('❌ Email service error:', error);
       throw error;
     }
+  }
+
+  /**
+   * Send SMS (placeholder implementation)
+   */
+  async sendSMS(
+    to: SMSRecipient | SMSRecipient[],
+    template: SMSTemplate,
+    sender?: string
+  ): Promise<any> {
+    try {
+      console.log('📱 SMS would be sent:', {
+        to,
+        content: template.content,
+        sender: sender || 'IwanyuStore'
+      });
+      
+      return { success: true, messageId: 'mock-sms-id' };
+    } catch (error) {
+      console.error('❌ SMS service error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get email templates
+   */
+  getEmailTemplates() {
+    return {
+      // User Registration
+      welcomeUser: (userName: string): EmailTemplate => ({
+        subject: 'Welcome to Iwanyu Store! 🎉',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #f97316; text-align: center;">Welcome to Iwanyu Store!</h1>
+            <p>Hi ${userName},</p>
+            <p>Thank you for joining Iwanyu Store! We're excited to have you as part of our community.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://iwanyu.vercel.app/products" style="background: #f97316; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Start Shopping</a>
+            </div>
+          </div>
+        `,
+        textContent: `Welcome to Iwanyu Store! Hi ${userName}, thank you for joining us. Start shopping at https://iwanyu.vercel.app/products`
+      }),
+
+      // Order Confirmation
+      orderConfirmation: (orderData: any): EmailTemplate => ({
+        subject: `Order Confirmation #${orderData.id} - Iwanyu Store`,
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #10b981; text-align: center;">Order Confirmed! 🎉</h1>
+            <p>Hi ${orderData.customerName},</p>
+            <p>Thank you for your order! We've received your payment and are preparing your items for shipment.</p>
+            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <h3>Order Details</h3>
+              <p><strong>Order ID:</strong> #${orderData.id}</p>
+              <p><strong>Total Amount:</strong> ${orderData.totalAmount} RWF</p>
+            </div>
+          </div>
+        `,
+        textContent: `Order Confirmed! Your order #${orderData.id} has been confirmed. Total: ${orderData.totalAmount} RWF.`
+      }),
+
+      // Cart Abandonment
+      cartAbandonment: (cartData: any): EmailTemplate => ({
+        subject: 'Complete Your Purchase - Iwanyu Store',
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #f97316;">Don't Forget Your Items! 🛒</h1>
+            <p>Hi ${cartData.customerName},</p>
+            <p>You have items waiting in your cart. Complete your purchase now!</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://iwanyu.vercel.app/cart" style="background: #f97316; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Complete Purchase</a>
+            </div>
+          </div>
+        `,
+        textContent: `Complete your purchase at Iwanyu Store! Visit: https://iwanyu.vercel.app/cart`
+      })
+    };
+  }
+
+  /**
+   * Get SMS templates
+   */
+  getSMSTemplates() {
+    return {
+      orderConfirmation: (orderData: any): SMSTemplate => ({
+        content: `Order #${orderData.id} confirmed! Total: ${orderData.totalAmount} RWF. Track at: https://iwanyu.vercel.app/orders`
+      }),
+      
+      orderShipped: (orderData: any): SMSTemplate => ({
+        content: `Your order #${orderData.id} has been shipped! Track your package at: https://iwanyu.vercel.app/orders`
+      }),
+      
+      paymentSuccess: (paymentData: any): SMSTemplate => ({
+        content: `Payment successful! Amount: ${paymentData.amount} ${paymentData.currency}. Thank you for shopping with Iwanyu Store!`
+      })
+    };
   }
 
   /**
