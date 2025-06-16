@@ -135,6 +135,10 @@ class BrevoService {
    */
   getSMSTemplates() {
     return {
+      welcomeUser: (userData: any): SMSTemplate => ({
+        content: `Welcome to Iwanyu Store, ${userData.name}! Start shopping at https://iwanyu.vercel.app`
+      }),
+
       orderConfirmation: (orderData: any): SMSTemplate => ({
         content: `Order #${orderData.id} confirmed! Total: ${orderData.totalAmount} RWF. Track at: https://iwanyu.vercel.app/orders`
       }),
@@ -145,6 +149,10 @@ class BrevoService {
       
       paymentSuccess: (paymentData: any): SMSTemplate => ({
         content: `Payment successful! Amount: ${paymentData.amount} ${paymentData.currency}. Thank you for shopping with Iwanyu Store!`
+      }),
+
+      sellerPayout: (payoutData: any): SMSTemplate => ({
+        content: `Payout processed! Amount: ${payoutData.amount} RWF has been sent to your account. Thank you for selling with Iwanyu Store!`
       })
     };
   }

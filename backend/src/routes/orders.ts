@@ -64,9 +64,15 @@ router.post('/', optionalAuth, async (req: AuthRequest, res: Response) => {
       }
     }
 
-    // Calculate order totals
+    // Validate items and calculate totals
+    const orderItems: Array<{
+      productId: string;
+      quantity: number;
+      price: number;
+      variantId?: string;
+    }> = [];
+    
     let subtotal = 0;
-    const orderItems = [];
 
     for (const item of items) {
       const product = await prisma.product.findUnique({
@@ -74,12 +80,12 @@ router.post('/', optionalAuth, async (req: AuthRequest, res: Response) => {
       });
 
       if (!product) {
-        return res.status(404).json({ error: `Product ${item.productId} not found` });
+        return res.status(400).json({ error: `Product ${item.productId} not found` });
       }
 
       if (product.stock < item.quantity) {
         return res.status(400).json({ 
-          error: `Insufficient stock for product ${product.name}. Available: ${product.stock}, Requested: ${item.quantity}` 
+          error: `Insufficient stock for ${product.name}. Available: ${product.stock}` 
         });
       }
 
@@ -89,7 +95,8 @@ router.post('/', optionalAuth, async (req: AuthRequest, res: Response) => {
       orderItems.push({
         productId: item.productId,
         quantity: item.quantity,
-        price: product.price
+        price: product.price,
+        variantId: item.variantId || undefined
       });
     }
 
