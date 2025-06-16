@@ -488,226 +488,223 @@ const Header: React.FC = () => {
           )}
 
           {/* Enhanced Mobile Menu */}
-          <AnimatePresence mode="wait">
-            {isMenuOpen && (
-              <>
-                {/* Mobile Menu Backdrop */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="fixed inset-0 bg-black/30 z-[9998] md:hidden"
-                  onClick={() => {
-                    console.log('Backdrop clicked, closing menu');
-                    setIsMenuOpen(false);
-                  }}
-                />
-                
-                {/* Mobile Menu Content */}
-                <motion.div
-                  initial={{ opacity: 0, x: '100%' }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: '100%' }}
-                  transition={{ type: 'tween', duration: 0.3 }}
-                  className="fixed top-0 right-0 h-full w-80 max-w-[90vw] bg-white shadow-2xl z-[9999] md:hidden overflow-y-auto"
-                >
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center space-x-3">
-                        <img src="/iwanyu-logo.png" alt="Iwanyu" className="h-8 w-auto" />
-                        <span className="font-bold text-orange-500">Iwanyu</span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          console.log('Close button clicked');
-                          setIsMenuOpen(false);
-                        }}
-                        aria-label="Close mobile menu"
-                        className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
-                      >
-                        <X size={20} />
-                      </button>
+          {isMenuOpen && (
+            <>
+              {/* Mobile Menu Backdrop */}
+              <div
+                className="fixed inset-0 bg-black/50 z-[999998] md:hidden"
+                onClick={() => {
+                  console.log('Backdrop clicked, closing menu');
+                  setIsMenuOpen(false);
+                }}
+                style={{ zIndex: 999998 }}
+              />
+              
+              {/* Mobile Menu Content */}
+              <div
+                className="fixed top-0 right-0 h-full w-80 max-w-[90vw] bg-red-500 shadow-2xl z-[999999] md:hidden overflow-y-auto border-4 border-yellow-400"
+                style={{ 
+                  zIndex: 999999, 
+                  position: 'fixed',
+                  backgroundColor: '#ef4444',
+                  border: '4px solid #facc15'
+                }}
+              >
+                <div className="p-6 bg-white h-full">
+                  <div className="flex items-center justify-between mb-6 bg-green-200 p-4 rounded">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-orange-500 rounded"></div>
+                      <span className="font-bold text-orange-500">TEST MENU</span>
                     </div>
+                    <button
+                      onClick={() => {
+                        console.log('Close button clicked');
+                        setIsMenuOpen(false);
+                      }}
+                      aria-label="Close mobile menu"
+                      className="p-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
 
-                    {user ? (
-                      <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-4 mb-6 border border-orange-200">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-medium shadow-md">
-                            {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{user.firstName || 'User'}</p>
-                            <p className="text-sm text-gray-600">{user.email}</p>
-                          </div>
+                  {user ? (
+                    <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-4 mb-6 border border-orange-200">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-medium shadow-md">
+                          {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
                         </div>
-                        
-                        <div className="space-y-2">
-                          {user.role === 'ADMIN' && (
-                            <Link
-                              to="/admin/dashboard"
-                              className="flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors duration-200"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              <Settings size={16} />
-                              <span className="font-medium">Admin Dashboard</span>
-                            </Link>
-                          )}
-                          
-                          {user.role === 'SELLER' ? (
-                            <Link
-                              to="/seller/dashboard"
-                              className="flex items-center space-x-3 p-3 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors duration-200"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              <Store size={16} />
-                              <span className="font-medium">Seller Dashboard</span>
-                            </Link>
-                          ) : user.role !== 'ADMIN' && (
-                            <Link
-                              to="/become-seller"
-                              className="flex items-center space-x-3 p-3 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors duration-200"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              <Store size={16} />
-                              <span className="font-medium">Become a Seller</span>
-                            </Link>
-                          )}
+                        <div>
+                          <p className="font-medium text-gray-900">{user.firstName || 'User'}</p>
+                          <p className="text-sm text-gray-600">{user.email}</p>
                         </div>
                       </div>
-                    ) : (
-                      <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-3 mb-4 border border-orange-200">
-                        <p className="text-xs text-gray-600 mb-2">Join Iwanyu Store!</p>
-                        <div className="flex space-x-2">
-                          <Link
-                            to="/login"
-                            className="flex-1 text-center py-1.5 px-3 border border-orange-300 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors duration-200 text-xs font-medium"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            Login
-                          </Link>
-                          <Link
-                            to="/register"
-                            className="flex-1 text-center py-1.5 px-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 text-xs font-medium shadow-md"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            Sign Up
-                          </Link>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Mobile Categories */}
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <Grid size={18} className="mr-2 text-orange-500" />
-                        Categories
-                        <span className="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
-                          {categories.length}
-                        </span>
-                      </h3>
                       
-                      {isLoading ? (
-                        <div className="space-y-3">
-                          {[...Array(6)].map((_, i) => (
-                            <div key={i} className="h-12 bg-gray-200 rounded-lg animate-pulse"></div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          {categories.map((category: Category) => (
-                            <Link
-                              key={category.id}
-                              to={`/products?category=${category.slug}`}
-                              className="flex items-center justify-between p-3 rounded-lg hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200 group"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              <div className="flex items-center space-x-3">
-                                {renderCategoryIcon(category.name, 18)}
-                                <span className="text-gray-700 group-hover:text-orange-600 font-medium">{category.name}</span>
-                              </div>
-                              <span className="text-xs text-gray-400 group-hover:text-orange-500 font-medium">
-                                {category._count?.products || 0}
-                              </span>
-                            </Link>
-                          ))}
-                          
+                      <div className="space-y-2">
+                        {user.role === 'ADMIN' && (
                           <Link
-                            to="/products"
-                            className="flex items-center justify-center p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-200 text-blue-600 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200 group"
+                            to="/admin/dashboard"
+                            className="flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors duration-200"
                             onClick={() => setIsMenuOpen(false)}
                           >
-                            <Package size={16} className="mr-2" />
-                            <span className="font-medium">View All Products</span>
+                            <Settings size={16} />
+                            <span className="font-medium">Admin Dashboard</span>
                           </Link>
-                        </div>
-                      )}
+                        )}
+                        
+                        {user.role === 'SELLER' ? (
+                          <Link
+                            to="/seller/dashboard"
+                            className="flex items-center space-x-3 p-3 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors duration-200"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <Store size={16} />
+                            <span className="font-medium">Seller Dashboard</span>
+                          </Link>
+                        ) : user.role !== 'ADMIN' && (
+                          <Link
+                            to="/become-seller"
+                            className="flex items-center space-x-3 p-3 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors duration-200"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <Store size={16} />
+                            <span className="font-medium">Become a Seller</span>
+                          </Link>
+                        )}
+                      </div>
                     </div>
-
-                    {/* Mobile Actions */}
-                    <div className="space-y-3">
-                      {user && (
+                  ) : (
+                    <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-xl p-3 mb-4 border border-orange-200">
+                      <p className="text-xs text-gray-600 mb-2">Join Iwanyu Store!</p>
+                      <div className="flex space-x-2">
                         <Link
-                          to="/orders"
-                          className="flex items-center justify-between p-4 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors duration-200"
+                          to="/login"
+                          className="flex-1 text-center py-1.5 px-3 border border-orange-300 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors duration-200 text-xs font-medium"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          <div className="flex items-center space-x-3">
-                            <Package size={18} className="text-blue-600" />
-                            <span className="font-medium text-blue-700">My Orders</span>
-                          </div>
+                          Login
                         </Link>
-                      )}
-
-                      <Link
-                        to="/cart"
-                        className="flex items-center justify-between p-4 rounded-lg bg-orange-50 border border-orange-200 hover:bg-orange-100 transition-colors duration-200"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <ShoppingCart size={18} className="text-orange-600" />
-                          <span className="font-medium text-orange-700">Shopping Cart</span>
-                        </div>
-                        {itemCount > 0 && (
-                          <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
-                            {itemCount}
-                          </span>
-                        )}
-                      </Link>
-
-                      <Link
-                        to="/wishlist"
-                        className="flex items-center justify-between p-4 rounded-lg bg-red-50 border border-red-200 hover:bg-red-100 transition-colors duration-200"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <Heart size={18} className="text-red-600" />
-                          <span className="font-medium text-red-700">Wishlist</span>
-                        </div>
-                        <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                          0
-                        </span>
-                      </Link>
-                    </div>
-
-                    {user && (
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <button
-                          onClick={() => {
-                            logout();
-                            setIsMenuOpen(false);
-                          }}
-                          className="w-full flex items-center justify-center space-x-2 p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                        <Link
+                          to="/register"
+                          className="flex-1 text-center py-1.5 px-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 text-xs font-medium shadow-md"
+                          onClick={() => setIsMenuOpen(false)}
                         >
-                          <span className="font-medium">Logout</span>
-                        </button>
+                          Sign Up
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mobile Categories */}
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <Grid size={18} className="mr-2 text-orange-500" />
+                      Categories
+                      <span className="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
+                        {categories.length}
+                      </span>
+                    </h3>
+                    
+                    {isLoading ? (
+                      <div className="space-y-3">
+                        {[...Array(6)].map((_, i) => (
+                          <div key={i} className="h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {categories.map((category: Category) => (
+                          <Link
+                            key={category.id}
+                            to={`/products?category=${category.slug}`}
+                            className="flex items-center justify-between p-3 rounded-lg hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200 group"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <div className="flex items-center space-x-3">
+                              {renderCategoryIcon(category.name, 18)}
+                              <span className="text-gray-700 group-hover:text-orange-600 font-medium">{category.name}</span>
+                            </div>
+                            <span className="text-xs text-gray-400 group-hover:text-orange-500 font-medium">
+                              {category._count?.products || 0}
+                            </span>
+                          </Link>
+                        ))}
+                        
+                        <Link
+                          to="/products"
+                          className="flex items-center justify-center p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-200 text-blue-600 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200 group"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <Package size={16} className="mr-2" />
+                          <span className="font-medium">View All Products</span>
+                        </Link>
                       </div>
                     )}
                   </div>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
+
+                  {/* Mobile Actions */}
+                  <div className="space-y-3">
+                    {user && (
+                      <Link
+                        to="/orders"
+                        className="flex items-center justify-between p-4 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <Package size={18} className="text-blue-600" />
+                          <span className="font-medium text-blue-700">My Orders</span>
+                        </div>
+                      </Link>
+                    )}
+
+                    <Link
+                      to="/cart"
+                      className="flex items-center justify-between p-4 rounded-lg bg-orange-50 border border-orange-200 hover:bg-orange-100 transition-colors duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <ShoppingCart size={18} className="text-orange-600" />
+                        <span className="font-medium text-orange-700">Shopping Cart</span>
+                      </div>
+                      {itemCount > 0 && (
+                        <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                          {itemCount}
+                        </span>
+                      )}
+                    </Link>
+
+                    <Link
+                      to="/wishlist"
+                      className="flex items-center justify-between p-4 rounded-lg bg-red-50 border border-red-200 hover:bg-red-100 transition-colors duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <Heart size={18} className="text-red-600" />
+                        <span className="font-medium text-red-700">Wishlist</span>
+                      </div>
+                      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                        0
+                      </span>
+                    </Link>
+                  </div>
+
+                  {user && (
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <button
+                        onClick={() => {
+                          logout();
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full flex items-center justify-center space-x-2 p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                      >
+                        <span className="font-medium">Logout</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </header>
     </>
