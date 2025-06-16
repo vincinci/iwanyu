@@ -45,17 +45,28 @@ const Home: React.FC = () => {
   
   // Flash sale timer with localStorage persistence
   const getFlashSaleEndTime = () => {
-    const stored = localStorage.getItem('flashSaleEndTime');
-    if (stored) {
-      const endTime = new Date(stored);
-      if (endTime > new Date()) {
-        return endTime;
+    try {
+      const stored = localStorage.getItem('flashSaleEndTime');
+      if (stored) {
+        const endTime = new Date(stored);
+        if (endTime > new Date()) {
+          return endTime;
+        }
       }
+    } catch (error) {
+      console.warn('localStorage access failed:', error);
     }
+    
     // Create new end time (24 hours from now)
     const newEndTime = new Date();
     newEndTime.setHours(newEndTime.getHours() + 24);
-    localStorage.setItem('flashSaleEndTime', newEndTime.toISOString());
+    
+    try {
+      localStorage.setItem('flashSaleEndTime', newEndTime.toISOString());
+    } catch (error) {
+      console.warn('localStorage write failed:', error);
+    }
+    
     return newEndTime;
   };
 
@@ -67,7 +78,13 @@ const Home: React.FC = () => {
       // Sale ended, create new one
       const newEndTime = new Date();
       newEndTime.setHours(newEndTime.getHours() + 24);
-      localStorage.setItem('flashSaleEndTime', newEndTime.toISOString());
+      
+      try {
+        localStorage.setItem('flashSaleEndTime', newEndTime.toISOString());
+      } catch (error) {
+        console.warn('localStorage write failed:', error);
+      }
+      
       return { hours: 23, minutes: 59, seconds: 59 };
     }
     
@@ -79,8 +96,13 @@ const Home: React.FC = () => {
   };
 
   const [flashSaleTime, setFlashSaleTime] = useState(() => {
-    const endTime = getFlashSaleEndTime();
-    return calculateTimeRemaining(endTime);
+    try {
+      const endTime = getFlashSaleEndTime();
+      return calculateTimeRemaining(endTime);
+    } catch (error) {
+      console.warn('Flash sale timer initialization failed:', error);
+      return { hours: 23, minutes: 59, seconds: 59 };
+    }
   });
 
   const { prefetchEverything } = useGlobalPrefetch();
@@ -88,46 +110,69 @@ const Home: React.FC = () => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
 
-  // Prefetch everything for instant navigation
-  useEffect(() => {
-    prefetchEverything();
-  }, [prefetchEverything]);
+  // Check if mobile for reduced loads
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-  // Banner rotation effect
+  // Prefetch everything for instant navigation - disabled on mobile to prevent crashes
   useEffect(() => {
+    if (!isMobile) {
+      prefetchEverything();
+    }
+  }, [prefetchEverything, isMobile]);
+
+  // Banner rotation effect - reduce frequency on mobile
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    const interval = isMobile ? 6000 : 4000; // Slower on mobile
+    
     const timer = setInterval(() => {
       setCurrentBanner((prev) => (prev + 1) % 4);
-    }, 4000);
+    }, interval);
+    
     return () => clearInterval(timer);
   }, []);
 
-  // Flash sale countdown with persistence
+  // Flash sale countdown with persistence - reduce frequency on mobile
   useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    const interval = isMobile ? 5000 : 1000; // Update every 5 seconds on mobile vs 1 second on desktop
+    
     const timer = setInterval(() => {
-      const endTime = getFlashSaleEndTime();
-      const newTime = calculateTimeRemaining(endTime);
-      setFlashSaleTime(newTime);
-    }, 1000);
+      try {
+        const endTime = getFlashSaleEndTime();
+        const newTime = calculateTimeRemaining(endTime);
+        setFlashSaleTime(newTime);
+      } catch (error) {
+        console.warn('Flash sale timer update failed:', error);
+      }
+    }, interval);
+    
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch promoted products for home page
+  // Fetch promoted products for home page - with error handling
   useEffect(() => {
     const fetchPromotedProducts = async () => {
       setPromotedLoading(true);
       try {
         const response = await advertisementApi.getHomePageAds('HOME_FEATURED', 6);
-        if (response.success) {
+        if (response?.success && response?.data) {
           setPromotedProducts(response.data);
         }
       } catch (error) {
         console.error('Error fetching promoted products:', error);
+        setPromotedProducts([]); // Set empty array on error
       } finally {
         setPromotedLoading(false);
       }
     };
 
-    fetchPromotedProducts();
+    // Add delay for mobile to prevent overwhelming
+    const isMobile = window.innerWidth < 768;
+    const delay = isMobile ? 1000 : 0;
+    
+    const timeoutId = setTimeout(fetchPromotedProducts, delay);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // Categories with instant loading
@@ -142,36 +187,36 @@ const Home: React.FC = () => {
 
   const categories = categoriesData?.data?.categories || [];
 
-  // Flash sale products with instant loading
+  // Flash sale products with instant loading - reduced limit for mobile
   const { 
     products: flashProducts, 
     isInstantLoading: flashLoading,
     hasInstantData: hasFlashData
   } = useInstantProducts({
-    limit: 8,
+    limit: isMobile ? 4 : 8,
     sortBy: 'totalSales',
     sortOrder: 'desc',
   });
 
-  // Best sellers with instant loading
+  // Best sellers with instant loading - reduced limit for mobile
   const { 
     products: bestSellers, 
     isInstantLoading: bestLoading,
     hasInstantData: hasBestData
   } = useInstantProducts({
-    limit: 12,
+    limit: isMobile ? 6 : 12,
     sortBy: 'featured',
     sortOrder: 'desc',
   });
 
-  // Latest products with instant loading
+  // Latest products with instant loading - reduced limit for mobile
   const { 
     products: latestProducts, 
     isInstantLoading: latestLoading,
     hasInstantData: hasLatestData,
     prefetchCategory
   } = useInstantProducts({
-    limit: 20,
+    limit: isMobile ? 10 : 20,
     sortBy: 'createdAt',
     sortOrder: 'desc',
   });
@@ -221,7 +266,12 @@ const Home: React.FC = () => {
   const quickAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(product);
+    
+    try {
+      addToCart(product);
+    } catch (error) {
+      console.error('Add to cart failed:', error);
+    }
   };
 
   const quickAddToWishlist = async (product: Product, e: React.MouseEvent) => {
@@ -241,6 +291,32 @@ const Home: React.FC = () => {
       }
     } catch (error) {
       console.error('Wishlist error:', error);
+      // Don't show alert on mobile to prevent crashes
+      if (!isMobile) {
+        alert('Failed to update wishlist. Please try again.');
+      }
+    }
+  };
+
+  // Helper function to get product rating safely
+  const getProductRating = (productId: string) => {
+    try {
+      // Simulate rating calculation or return default
+      return Math.random() * 5;
+    } catch (error) {
+      console.warn('Rating calculation failed:', error);
+      return 4.0; // Default rating
+    }
+  };
+
+  // Helper function to calculate discount safely
+  const calculateDiscount = (originalPrice: number, salePrice?: number) => {
+    try {
+      if (!salePrice || salePrice >= originalPrice) return 0;
+      return Math.round(((originalPrice - salePrice) / originalPrice) * 100);
+    } catch (error) {
+      console.warn('Discount calculation failed:', error);
+      return 0;
     }
   };
 
@@ -273,7 +349,7 @@ const Home: React.FC = () => {
                       key={category.id}
                       to={`/products?category=${category.slug}`}
                       className="group flex items-center justify-between p-2 rounded hover:bg-red-50 transition-colors duration-200"
-                      onMouseEnter={() => prefetchCategory(category.slug)}
+                      onMouseEnter={isMobile ? undefined : () => prefetchCategory(category.slug)}
                     >
                       <div className="flex items-center space-x-3">
                         {React.createElement(getCategoryIcon(category.name), { 
@@ -352,9 +428,9 @@ const Home: React.FC = () => {
               {promotedProducts.map((product: PromotedProduct, index: number) => (
                 <motion.div
                   key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  initial={isMobile ? {} : { opacity: 0, y: 20 }}
+                  whileInView={isMobile ? {} : { opacity: 1, y: 0 }}
+                  transition={isMobile ? {} : { duration: 0.4, delay: index * 0.1 }}
                   viewport={{ once: true }}
                   className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-orange-200 overflow-hidden"
                 >
@@ -367,11 +443,14 @@ const Home: React.FC = () => {
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
-                        className="w-full h-40 sm:h-44 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className={`w-full h-40 sm:h-44 md:h-48 object-cover ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = '/placeholder-product.jpg';
+                        }}
+                        onLoad={() => {
+                          // Image loaded successfully - no action needed
                         }}
                       />
                       
@@ -567,9 +646,9 @@ const Home: React.FC = () => {
               {bestSellers.slice(0, 8).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  initial={isMobile ? {} : { opacity: 0, y: 20 }}
+                  whileInView={isMobile ? {} : { opacity: 1, y: 0 }}
+                  transition={isMobile ? {} : { duration: 0.4, delay: index * 0.1 }}
                   viewport={{ once: true }}
                   className="group bg-white rounded-lg md:rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden"
                 >
@@ -578,11 +657,14 @@ const Home: React.FC = () => {
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
-                        className="w-full h-32 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className={`w-full h-32 md:h-48 object-cover ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = '/placeholder-product.jpg';
+                        }}
+                        onLoad={() => {
+                          // Image loaded successfully - no action needed
                         }}
                       />
                       
