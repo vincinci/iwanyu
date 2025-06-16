@@ -22,6 +22,7 @@ import brevoTestRoutes from './routes/brevoTest';
 import cartRoutes from './routes/cart';
 import emailManagementRoutes from './routes/emailManagement';
 import advertisementRoutes from './routes/advertisements';
+import healthRoutes from './routes/health';
 
 dotenv.config();
 
@@ -83,9 +84,46 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(path.join(__dirname, '../uploads')));
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Ecommerce API is running' });
+// Enhanced Health check with database connectivity
+app.get('/health', async (req, res) => {
+  try {
+    const startTime = Date.now();
+    
+    // Test database connection
+    const { PrismaClient } = await import('@prisma/client');
+    const prisma = new PrismaClient();
+    await prisma.$queryRaw`SELECT 1`;
+    await prisma.$disconnect();
+    
+    const dbResponseTime = Date.now() - startTime;
+    
+    res.json({ 
+      status: 'healthy', 
+      message: 'Ecommerce API is running',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      database: {
+        status: 'connected',
+        responseTime: `${dbResponseTime}ms`
+      },
+      memory: {
+        used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+        total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+        unit: 'MB'
+      }
+    });
+    
+    console.log(`🏥 Health check - DB response: ${dbResponseTime}ms`);
+  } catch (error) {
+    console.error('🏥 Health check failed:', error);
+    res.status(503).json({
+      status: 'unhealthy',
+      message: 'Database connection failed',
+      timestamp: new Date().toISOString(),
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 // Routes
@@ -106,6 +144,7 @@ app.use('/api/brevo-test', brevoTestRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/email-management', emailManagementRoutes);
 app.use('/api/advertisements', advertisementRoutes);
+app.use('/health', healthRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

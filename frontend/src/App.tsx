@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -193,8 +193,297 @@ const PerformanceMonitor: React.FC = () => {
   return null;
 };
 
+// Connection Status Component
+const ConnectionStatus: React.FC = () => {
+  const [isOnline, setIsOnline] = useState(true);
+  const [isChecking, setIsChecking] = useState(false);
+  const [lastCheck, setLastCheck] = useState<Date>(new Date());
+
+  const checkConnection = async () => {
+    setIsChecking(true);
+    try {
+      console.log('🔗 Checking backend connection...');
+      
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+      const response = await fetch(`${apiUrl}/../health`, {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        },
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        setIsOnline(true);
+        console.log('✅ Backend connection healthy');
+      } else {
+        setIsOnline(false);
+        console.warn(`⚠️ Backend unhealthy - Status: ${response.status}`);
+      }
+    } catch (error) {
+      setIsOnline(false);
+      console.error('❌ Backend connection failed:', error);
+    } finally {
+      setIsChecking(false);
+      setLastCheck(new Date());
+    }
+  };
+
+  useEffect(() => {
+    // Initial check
+    checkConnection();
+
+    // Regular health checks every 30 seconds
+    const interval = setInterval(checkConnection, 30000);
+
+    // Check on page visibility change
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('👁️ Page visible - checking connection');
+        checkConnection();
+      }
+    };
+
+    // Check on window focus
+    const handleFocus = () => {
+      console.log('🎯 Window focused - checking connection');
+      checkConnection();
+    };
+
+    // Handle browser online/offline events
+    const handleOnline = () => {
+      console.log('🌐 Browser online');
+      checkConnection();
+    };
+
+    const handleOffline = () => {
+      console.log('🌐 Browser offline');
+      setIsOnline(false);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  const getStatusColor = () => {
+    if (isChecking) return 'bg-yellow-500';
+    return isOnline ? 'bg-green-500' : 'bg-red-500';
+  };
+
+  const getStatusText = () => {
+    if (isChecking) return 'Checking...';
+    return isOnline ? 'Connected' : 'Disconnected';
+  };
+
+  const formatTime = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).format(date);
+  };
+
+  return (
+    <div className="fixed top-4 right-4 z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-3 min-w-[160px]">
+        <div className="flex items-center gap-2 mb-1">
+          <div className={`w-3 h-3 rounded-full ${getStatusColor()} ${isChecking ? 'animate-pulse' : ''}`} />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {getStatusText()}
+          </span>
+        </div>
+        <div className="text-xs text-gray-500 dark:text-gray-400">
+          Last: {formatTime(lastCheck)}
+        </div>
+        {!isOnline && (
+          <button
+            onClick={checkConnection}
+            disabled={isChecking}
+            className="mt-2 w-full px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+          >
+            {isChecking ? 'Checking...' : 'Retry'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 function App() {
   useEffect(() => {
+    // Initialize persistent connection monitoring
+    const initializeConnectionMonitoring = () => {
+      console.log('🔗 Initializing all-time frontend-backend connection...');
+      
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      let isConnectionHealthy = true;
+      
+      const showConnectionNotification = (message: string, type: 'success' | 'warning' | 'error') => {
+        let notification = document.getElementById('connection-notification');
+        
+        if (!notification) {
+          notification = document.createElement('div');
+          notification.id = 'connection-notification';
+          notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: system-ui, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            max-width: 300px;
+            word-wrap: break-word;
+          `;
+          document.body.appendChild(notification);
+        }
+
+        const colors = {
+          success: { bg: '#10B981', text: '#FFFFFF' },
+          warning: { bg: '#F59E0B', text: '#FFFFFF' },
+          error: { bg: '#EF4444', text: '#FFFFFF' }
+        };
+
+        const color = colors[type];
+        notification.style.backgroundColor = color.bg;
+        notification.style.color = color.text;
+        notification.textContent = message;
+
+        if (type === 'success') {
+          setTimeout(() => {
+            if (notification && notification.parentNode) {
+              notification.remove();
+            }
+          }, 3000);
+        }
+      };
+
+      const performHealthCheck = async (): Promise<boolean> => {
+        try {
+          console.log('🏥 Checking backend connection...');
+          
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+          const response = await fetch(`${API_BASE_URL}/../health`, {
+            method: 'GET',
+            headers: {
+              'Cache-Control': 'no-cache',
+              'Pragma': 'no-cache'
+            },
+            signal: controller.signal
+          });
+
+          clearTimeout(timeoutId);
+
+          const healthy = response.ok;
+          console.log(`🏥 Health check ${healthy ? 'PASSED' : 'FAILED'} - Status: ${response.status}`);
+
+          if (healthy && !isConnectionHealthy) {
+            isConnectionHealthy = true;
+            showConnectionNotification('✅ Connection restored', 'success');
+            console.log('✅ Backend connection restored');
+          } else if (!healthy && isConnectionHealthy) {
+            isConnectionHealthy = false;
+            showConnectionNotification('❌ Connection lost - retrying...', 'error');
+            console.warn('⚠️ Backend connection lost');
+          }
+
+          return healthy;
+        } catch (error) {
+          console.error('🏥 Health check failed:', error);
+          
+          if (isConnectionHealthy) {
+            isConnectionHealthy = false;
+            showConnectionNotification('❌ Connection lost - retrying...', 'error');
+            console.warn('⚠️ Backend connection lost due to error');
+          }
+          
+          return false;
+        }
+      };
+
+      // Initial health check
+      performHealthCheck();
+
+      // Regular health checks every 30 seconds
+      const healthCheckInterval = setInterval(performHealthCheck, 30000);
+
+      // Check connection on page visibility change
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === 'visible') {
+          console.log('👁️ Page visible - checking backend connection');
+          performHealthCheck();
+        }
+      };
+
+      // Check connection on window focus
+      const handleFocus = () => {
+        console.log('🎯 Window focused - checking backend connection');
+        performHealthCheck();
+      };
+
+      // Handle browser online/offline events
+      const handleOnline = () => {
+        console.log('🌐 Browser online - checking backend connection');
+        showConnectionNotification('🌐 Internet connected - checking server...', 'warning');
+        performHealthCheck();
+      };
+
+      const handleOffline = () => {
+        console.log('🌐 Browser offline');
+        isConnectionHealthy = false;
+        showConnectionNotification('🌐 No internet connection', 'error');
+      };
+
+      // Add event listeners
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.addEventListener('focus', handleFocus);
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+
+      console.log('✅ Persistent connection monitoring initialized');
+      console.log(`🔗 Monitoring API: ${API_BASE_URL}`);
+      console.log(`🔗 Health checks every 30 seconds`);
+
+      // Cleanup function
+      return () => {
+        clearInterval(healthCheckInterval);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        window.removeEventListener('focus', handleFocus);
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+        
+        const notification = document.getElementById('connection-notification');
+        if (notification) {
+          notification.remove();
+        }
+      };
+    };
+
+    // Start connection monitoring
+    const cleanupConnection = initializeConnectionMonitoring();
+
     // Optimize loading performance
     const optimizePerformance = () => {
       // Add viewport meta tag for mobile optimization
@@ -206,7 +495,6 @@ function App() {
         document.head.appendChild(meta);
       }
 
-      // Remove font preload since fonts don't exist - this was causing warnings
       // Only add performance hints that actually exist - with safety check
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
       
@@ -217,6 +505,11 @@ function App() {
     };
 
     optimizePerformance();
+    
+    // Log connection info
+    console.log('🔗 Initializing all-time frontend-backend connection...');
+    console.log('🔗 API URL:', import.meta.env.VITE_API_URL);
+    console.log('🔗 Environment:', import.meta.env.MODE);
   }, []);
 
   return (
@@ -230,6 +523,10 @@ function App() {
                   {/* Only initialize on desktop to prevent mobile crashes */}
                   {typeof window !== 'undefined' && window.innerWidth >= 768 && <InstantLoadingInitializer />}
                   <PerformanceMonitor />
+                  
+                  {/* Connection Status Monitor */}
+                  <ConnectionStatus />
+                  
                   <Header />
                   <main className="flex-1">
                     <Routes>
