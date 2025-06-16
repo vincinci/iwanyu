@@ -41,7 +41,7 @@ const Home: React.FC = () => {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [promotedProducts, setPromotedProducts] = useState<PromotedProduct[]>([]);
-  const [promotedLoading, setPromotedLoading] = useState(false);
+  const [promotedLoading, setPromotedLoading] = useState(true);
   
   // Flash sale timer with localStorage persistence
   const getFlashSaleEndTime = () => {
@@ -110,7 +110,7 @@ const Home: React.FC = () => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
 
-  // Check if mobile for reduced loads
+  // Mobile detection with safety check
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   // Prefetch everything for instant navigation - disabled on mobile to prevent crashes
@@ -122,7 +122,7 @@ const Home: React.FC = () => {
 
   // Banner rotation effect - reduce frequency on mobile
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const interval = isMobile ? 6000 : 4000; // Slower on mobile
     
     const timer = setInterval(() => {
@@ -134,7 +134,7 @@ const Home: React.FC = () => {
 
   // Flash sale countdown with persistence - reduce frequency on mobile
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const interval = isMobile ? 5000 : 1000; // Update every 5 seconds on mobile vs 1 second on desktop
     
     const timer = setInterval(() => {
@@ -168,7 +168,7 @@ const Home: React.FC = () => {
     };
 
     // Add delay for mobile to prevent overwhelming
-    const isMobile = window.innerWidth < 768;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const delay = isMobile ? 1000 : 0;
     
     const timeoutId = setTimeout(fetchPromotedProducts, delay);
@@ -319,6 +319,59 @@ const Home: React.FC = () => {
       return 0;
     }
   };
+
+  // Loading state component for mobile
+  const MobileLoadingFallback = () => (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center p-4">
+        <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">Loading Iwanyu Store...</h2>
+        <p className="text-sm text-gray-600">Please wait while we prepare your shopping experience</p>
+      </div>
+    </div>
+  );
+
+  // Error fallback component
+  const ErrorFallback = ({ error }: { error: Error }) => (
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+      <div className="text-center max-w-md">
+        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span className="text-red-500 text-2xl">⚠️</span>
+        </div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h2>
+        <p className="text-sm text-gray-600 mb-4">We're having trouble loading the store. Please try again.</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600"
+        >
+          Reload Page
+        </button>
+      </div>
+    </div>
+  );
+
+  // Add error boundary wrapper using React Error Boundaries pattern
+  const [hasError, setHasError] = useState(false);
+
+  // Catch any errors during rendering
+  React.useEffect(() => {
+    const handleError = (error: ErrorEvent) => {
+      console.error('Home page error:', error);
+      setHasError(true);
+    };
+
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  if (hasError) {
+    return <ErrorFallback error={new Error('Component rendering error')} />;
+  }
+
+  // Show loading fallback on mobile if critical data is still loading
+  if (isMobile && (promotedLoading || (!categories.length && !flashProducts.length && !bestSellers.length))) {
+    return <MobileLoadingFallback />;
+  }
 
   return (
     <div className="min-h-screen bg-white">

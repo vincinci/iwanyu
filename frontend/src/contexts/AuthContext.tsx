@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('AuthContext: Initializing auth', {
         hasStoredToken: !!storedToken,
         hasStoredUser: !!storedUser,
-        currentPath: window.location.pathname
+        currentPath: typeof window !== 'undefined' ? window.location.pathname : '/'
       });
       
       if (storedToken && storedUser) {
