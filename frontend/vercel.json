@@ -4,6 +4,12 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
+  "env": {
+    "VITE_API_URL": "https://iwanyu-backend.onrender.com/api",
+    "VITE_APP_NAME": "Iwanyu Store",
+    "VITE_APP_DESCRIPTION": "Your Premier Ecommerce Destination",
+    "VITE_FRONTEND_URL": "https://iwanyu.vercel.app"
+  },
   "rewrites": [
     {
       "source": "/(.*)",

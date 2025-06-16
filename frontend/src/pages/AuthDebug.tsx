@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 const AuthDebug: React.FC = () => {
   const { user, token, isLoading, refreshUser } = useAuth();
   const [testResult, setTestResult] = useState<any>(null);
@@ -12,7 +14,7 @@ const AuthDebug: React.FC = () => {
 
     try {
       const storedToken = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/auth/validate', {
+      const response = await fetch(`${API_BASE_URL}/auth/validate`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${storedToken}`,
