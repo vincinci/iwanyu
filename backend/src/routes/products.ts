@@ -16,9 +16,13 @@ router.get('/', async (req: Request, res: Response) => {
     // Create cache key
     const cacheKey = `products:${page}:${limit}:${category || ''}:${search || ''}:${sortBy}:${sortOrder}`;
     
-    // Check cache first
+    // Check cache first, but skip cache if no search/category filters and we might have stale empty results
     const cached = cache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    const shouldUseCache = cached && Date.now() - cached.timestamp < CACHE_TTL;
+    
+    // Skip cache for basic queries that might be stale empty results
+    const isBasicQuery = !search && !category;
+    if (shouldUseCache && !(isBasicQuery && cached.data?.data?.products?.length === 0)) {
       return res.json(cached.data);
     }
 
