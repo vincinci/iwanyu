@@ -168,50 +168,60 @@ const SellerDashboard: React.FC = () => {
           transition={{ delay: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
         >
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Products</p>
-                <p className="text-2xl font-bold text-gray-900">{dashboard?.productCount || 0}</p>
+                <p className="text-2xl font-bold text-gray-900">{dashboard?.totalProducts || 0}</p>
               </div>
-              <Package className="w-8 h-8 text-orange-500" />
+              <Package className="h-8 w-8 text-blue-500" />
             </div>
           </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Sales</p>
-                <p className="text-2xl font-bold text-gray-900">{dashboard?.totalSales || 0}</p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-green-500" />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Orders</p>
                 <p className="text-2xl font-bold text-gray-900">{dashboard?.totalOrders || 0}</p>
               </div>
-              <ShoppingBag className="w-8 h-8 text-blue-500" />
+              <ShoppingBag className="h-8 w-8 text-green-500" />
             </div>
           </div>
-
-          {/* Wallet Balance Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+          
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Available Balance</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {formatPrice(walletSummary?.availableBalance || 0)}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">Ready to withdraw</p>
+                <p className="text-sm font-medium text-gray-600">Revenue</p>
+                <p className="text-2xl font-bold text-gray-900">${dashboard?.totalRevenue?.toFixed(2) || '0.00'}</p>
               </div>
-              <Wallet className="w-8 h-8 text-green-500" />
+              <DollarSign className="h-8 w-8 text-yellow-500" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Active Products</p>
+                <p className="text-2xl font-bold text-gray-900">{dashboard?.totalProducts || 0}</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-purple-500" />
             </div>
           </div>
         </motion.div>
+
+        {/* Wallet Balance Card */}
+        <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Available Balance</p>
+              <p className="text-2xl font-bold text-green-600">
+                {formatPrice(walletSummary?.availableBalance || 0)}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">Ready to withdraw</p>
+            </div>
+            <Wallet className="w-8 h-8 text-green-500" />
+          </div>
+        </div>
 
         {/* Flash Sales Management Link */}
         <div className="mb-8 flex flex-wrap gap-4">

@@ -40,15 +40,6 @@ const ProductDetail: React.FC = () => {
   const { addToCart, isInCart, getItemQuantity } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
-  // Helper function to get consistent sold count based on product ID
-  const getSoldCount = (productId: string) => {
-    const hash = productId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    return Math.abs(hash) % 1900 + 100;
-  };
-
   // Helper function to get consistent rating based on product ID
   const getProductRating = (productId: string) => {
     const hash = productId.split('').reduce((a, b) => {
@@ -468,11 +459,12 @@ const ProductDetail: React.FC = () => {
                     />
                   ))}
                 </div>
-                <span className="text-gray-600 text-sm">({getProductRating(product.id)})</span>
-              </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <span className="hidden sm:inline text-gray-400">•</span>
-                <span>{getSoldCount(product.id)} sold</span>
+                <div className="flex items-center space-x-4 text-sm text-gray-600">
+                  <span className="flex items-center">
+                    <Star size={14} className="text-yellow-400 fill-current mr-1" />
+                    {getProductRating(product.id).toFixed(1)} ({product.reviews.length} reviews)
+                  </span>
+                </div>
               </div>
             </div>
 

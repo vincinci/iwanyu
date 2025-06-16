@@ -34,7 +34,7 @@ import ProductSkeleton from '../components/ProductSkeleton';
 import { advertisementApi } from '../services/advertisementApi';
 import type { Category, Product } from '../types/api';
 import type { PromotedProduct } from '../services/advertisementApi';
-import { getSoldCount, getProductRating, calculateDiscount } from '../utils/productHelpers';
+import { getProductRating, calculateDiscount } from '../utils/productHelpers';
 
 const Home: React.FC = () => {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
@@ -350,99 +350,75 @@ const Home: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4">
               {promotedProducts.map((product: PromotedProduct, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="bg-white rounded-lg border-2 border-blue-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200 overflow-hidden group relative"
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-orange-200 overflow-hidden"
                 >
                   <Link 
                     to={`/products/${product.id}`} 
-                    className="block relative"
+                    className="block"
                     onClick={() => advertisementApi.trackClick(product.adId)}
                   >
-                    {product.images?.[0] ? (
+                    <div className="relative overflow-hidden">
                       <img
-                        src={product.images[0]}
+                        src={getProductImageUrl(product.images?.[0])}
                         alt={product.name}
-                        className="w-full h-44 sm:h-40 md:h-44 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-40 sm:h-44 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.nextElementSibling?.classList.remove('hidden');
+                          target.src = '/placeholder-product.jpg';
                         }}
                       />
-                    ) : null}
-                    <div className={`w-full h-44 sm:h-40 md:h-44 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
-                      <Package className="text-gray-400" size={32} />
+                      
+                      {/* Discount Badge */}
+                      {product.salePrice && product.salePrice < product.price && (
+                        <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                          -{calculateDiscount(product.price, product.salePrice)}%
+                        </div>
+                      )}
+                      
+                      {/* Quick Action Buttons */}
+                      <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <button className="p-2 bg-white rounded-full shadow-md hover:bg-orange-50 transition-colors">
+                          <Heart size={16} className="text-gray-600 hover:text-orange-500" />
+                        </button>
+                      </div>
                     </div>
                     
-                    {/* Sponsored Badge */}
-                    <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                      Sponsored
-                    </div>
-                  </Link>
-                  
-                  <div className="p-3">
-                    <Link 
-                      to={`/products/${product.id}`}
-                      onClick={() => advertisementApi.trackClick(product.adId)}
-                    >
-                      <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    <div className="p-3 sm:p-4">
+                      <h3 className="font-medium text-base sm:text-sm text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
                         {product.name}
                       </h3>
-                      {/* Seller name */}
-                      {product.seller && (
-                        <p className="text-xs text-gray-500 mb-2">
-                          by {product.seller.businessName || 
-                              (product.seller.user?.firstName && product.seller.user?.lastName 
-                                ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                                : product.seller.user?.name || 'Unknown Seller')}
-                        </p>
-                      )}
-                      <div className="flex items-center mb-2">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} size={12} className={i < Math.floor(getProductRating(product.id)) ? "text-yellow-400 fill-current" : "text-gray-300"} />
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500 ml-2">({getProductRating(product.id)})</span>
-                      </div>
+                      
                       <div className="flex items-center justify-between mb-2">
-                        <div>
-                          <span className="text-lg font-bold text-blue-600">
-                            {formatPrice(product.salePrice || product.price)}
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg sm:text-base font-bold text-gray-900">
+                            ${product.price.toFixed(2)}
                           </span>
-                          {product.salePrice && (
-                            <div className="text-xs text-gray-500 line-through">
-                              {formatPrice(product.price)}
-                            </div>
-                          )}
                         </div>
-                        <span className="text-xs text-gray-500 flex items-center">
-                          <Users size={10} className="mr-1" />
-                          {getSoldCount(product.id)} sold
-                        </span>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          advertisementApi.trackClick(product.adId);
-                          quickAddToCart(product as any, e);
-                        }}
-                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-sm font-medium"
-                        aria-label="Add to cart"
-                      >
-                        <ShoppingCart size={16} className="mr-2" />
-                        Add to Cart
-                      </button>
-                    </Link>
-                  </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i} 
+                              size={12} 
+                              className={i < Math.floor(getProductRating(product.id)) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
+                            />
+                          ))}
+                          <span className="text-xs text-gray-500 ml-1">({getProductRating(product.id).toFixed(1)})</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
                 </motion.div>
               ))}
             </div>
@@ -590,97 +566,71 @@ const Home: React.FC = () => {
 
           {/* Best Sellers - Always show if data exists */}
           {bestSellers.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-4">
-              {bestSellers.slice(0, 12).map((product: Product, index: number) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4">
+              {bestSellers.slice(0, 8).map((product, index) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="bg-white rounded-lg border hover:shadow-lg transition-all duration-200 overflow-hidden group"
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-orange-200 overflow-hidden"
                 >
-                  <Link to={`/products/${product.id}`} className="block relative">
-                    {product.images?.[0] ? (
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                        className="w-full h-32 sm:h-36 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                  <Link to={`/products/${product.id}`} className="block">
+                    <div className="relative overflow-hidden">
+                      <img
+                        src={product.images?.[0]?.url}
+                        alt={product.name}
+                        className="w-full h-40 sm:h-44 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.nextElementSibling?.classList.remove('hidden');
+                          target.src = '/placeholder-product.jpg';
                         }}
-                        />
-                      ) : null}
-                      <div className={`w-full h-32 sm:h-36 md:h-40 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
-                        <Package className="text-gray-400" size={24} />
+                      />
+                      
+                      {/* Discount Badge */}
+                      {calculateDiscount(product) > 0 && (
+                        <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                          -{calculateDiscount(product)}%
+                        </div>
+                      )}
+                      
+                      {/* Quick Action Buttons */}
+                      <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <button className="p-2 bg-white rounded-full shadow-md hover:bg-orange-50 transition-colors">
+                          <Heart size={16} className="text-gray-600 hover:text-orange-500" />
+                        </button>
                       </div>
-                    
-                    {/* Bestseller Badge */}
-                    <div className="absolute top-2 left-2 bg-yellow-400 text-gray-900 text-xs px-2 py-1 rounded-full font-bold">
-                      #1 Choice
                     </div>
                     
-                    {/* Quick Actions */}
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <button className="bg-white/80 hover:bg-white p-2 rounded-full mb-2 block" aria-label="Add to wishlist">
-                        <Heart size={14} className="text-gray-600 hover:text-red-500" />
-                      </button>
-                      <button className="bg-white/80 hover:bg-white p-2 rounded-full block" aria-label="Quick view">
-                        <Eye size={14} className="text-gray-600" />
-                      </button>
-                        </div>
-                  </Link>
-                  
-                  <div className="p-4">
-                    <Link to={`/products/${product.id}`}>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                    <div className="p-3 sm:p-4">
+                      <h3 className="font-medium text-base sm:text-sm text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
                         {product.name}
                       </h3>
-                      {/* Seller name */}
-                      {product.seller && (
-                        <p className="text-xs text-gray-500 mb-2">
-                          by {product.seller.businessName || 
-                              (product.seller.user?.firstName && product.seller.user?.lastName 
-                                ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                                : product.seller.user?.name || 'Unknown Seller')}
-                        </p>
-                      )}
-                      <div className="flex items-center mb-2">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} size={12} className={i < Math.floor(getProductRating(product.id)) ? "text-yellow-400 fill-current" : "text-gray-300"} />
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500 ml-2">({getProductRating(product.id)})</span>
-                      </div>
+                      
                       <div className="flex items-center justify-between mb-2">
-                        <div>
-                          <span className="text-lg font-bold text-red-600">
-                            {formatPrice(product.salePrice || product.price)}
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg sm:text-base font-bold text-gray-900">
+                            ${product.price.toFixed(2)}
                           </span>
-                          {product.salePrice && (
-                            <div className="text-xs text-gray-500 line-through">
-                              {formatPrice(product.price)}
-                            </div>
-                          )}
                         </div>
-                        <span className="text-xs text-gray-500 flex items-center">
-                          <Users size={10} className="mr-1" />
-                          {getSoldCount(product.id)} sold
-                        </span>
                       </div>
-                      <button
-                        onClick={(e) => quickAddToCart(product, e)}
-                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-sm font-medium"
-                        aria-label="Add to cart"
-                      >
-                        <ShoppingCart size={16} className="mr-2" />
-                        Add to Cart
-                      </button>
-                    </Link>
-                  </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i} 
+                              size={12} 
+                              className={i < Math.floor(getProductRating(product.id)) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
+                            />
+                          ))}
+                          <span className="text-xs text-gray-500 ml-1">({getProductRating(product.id).toFixed(1)})</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
                 </motion.div>
               ))}
             </div>

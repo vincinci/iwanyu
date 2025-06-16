@@ -196,11 +196,11 @@ const Products: React.FC = () => {
   };
 
   const sortOptions = [
-    { value: 'featured', label: 'Featured' },
-    { value: 'price', label: 'Price' },
-    { value: 'totalSales', label: 'Best Selling' },
-    { value: 'createdAt', label: 'Newest' },
-    { value: 'avgRating', label: 'Rating' },
+    { value: 'newest', label: 'Newest First' },
+    { value: 'price-low', label: 'Price: Low to High' },
+    { value: 'price-high', label: 'Price: High to Low' },
+    { value: 'rating', label: 'Highest Rated' },
+    { value: 'name', label: 'Name: A to Z' },
   ];
 
   // Helper function to calculate discount percentage
@@ -606,11 +606,8 @@ const Products: React.FC = () => {
                                 </span>
                               </div>
 
+                              {/* Rating */}
                               <div className="flex items-center justify-between text-sm text-gray-500">
-                                <span className="flex items-center">
-                                  <Users size={12} className="mr-1" />
-                                  {getSoldCount(product.id)} sold
-                                </span>
                                 <span className="flex items-center">
                                   <Truck size={12} className="mr-1" />
                                   Free shipping
@@ -657,7 +654,7 @@ const Products: React.FC = () => {
                                     <Star key={i} size={16} className={i < Math.floor(getProductRating(product.id)) ? "text-yellow-400 fill-current" : "text-gray-300"} />
                                   ))}
                                 </div>
-                                <span className="text-sm text-gray-500 ml-2">({getProductRating(product.id)}) • {getSoldCount(product.id)} sold</span>
+                                <span className="text-sm text-gray-500 ml-2">({getProductRating(product.id)})</span>
                               </div>
                               <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                                 {product.description || "High quality product with excellent features and amazing value."}

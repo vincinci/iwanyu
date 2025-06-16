@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Heart, 
@@ -20,15 +20,7 @@ const Wishlist: React.FC = () => {
   const { user } = useAuth();
   const { items, isLoading, removeFromWishlist, moveToCart, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
-
-  // Helper function to get consistent sold count based on product ID
-  const getSoldCount = (productId: string) => {
-    const hash = productId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    return Math.abs(hash) % 1900 + 100;
-  };
+  const navigate = useNavigate();
 
   // Helper function to get consistent rating based on product ID
   const getProductRating = (productId: string) => {
@@ -233,10 +225,6 @@ const Wishlist: React.FC = () => {
                           </div>
                         )}
                       </div>
-                      <span className="text-xs text-gray-500 flex items-center">
-                        <Users size={10} className="mr-1" />
-                        {getSoldCount(item.product.id)} sold
-                      </span>
                     </div>
                   </Link>
                   

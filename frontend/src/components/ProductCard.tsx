@@ -70,9 +70,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 <span className="text-sm text-gray-500">({totalReviews})</span>
               )}
             </div>
-            {totalSales > 0 && (
-              <span className="text-sm text-gray-500">{totalSales} sold</span>
-            )}
           </div>
           <div className="flex items-center space-x-2 mb-4">
             <span className="text-xl font-bold">${finalPrice.toFixed(2)}</span>
