@@ -115,16 +115,13 @@ const Navbar: React.FC = React.memo(() => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
             <img 
-              src="/iwanyu-logo.png" 
-              alt="Iwanyu" 
-              className="h-8 w-auto"
+              src="/iwanyu-logo.svg" 
+              alt="Iwanyu Store" 
+              className="h-10 w-auto"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
               }}
             />
-            <span className="text-xl font-bold text-red-600">
-              Iwanyu
-            </span>
           </Link>
 
           {/* Search Bar - Desktop */}

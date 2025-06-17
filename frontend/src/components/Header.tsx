@@ -162,25 +162,25 @@ const Header: React.FC = () => {
             {/* Enhanced Logo with Fallback */}
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="relative">
-                              <img
-                src="/iwanyu-logo.png"
-                alt="Iwanyu Store Logo" 
-                  className="h-12 w-auto group-hover:scale-105 transition-transform duration-200"
+                <img
+                  src="/iwanyu-logo.svg"
+                  alt="Iwanyu Store Logo" 
+                  className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
                   loading="eager"
                   decoding="async"
                   onError={(e) => {
-                    // Fallback if logo doesn't load
+                    // Simple fallback if logo doesn't load
                     e.currentTarget.style.display = 'none';
                     const fallback = e.currentTarget.nextElementSibling as HTMLElement;
                     if (fallback) fallback.style.display = 'flex';
                   }}
                 />
-                {/* Fallback Text Logo */}
+                {/* Simplified Fallback */}
                 <div 
-                  className="h-12 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold text-xl rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200"
+                  className="h-10 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold text-lg rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200"
                   style={{ display: 'none' }}
                 >
-                  IWANYU
+                  IWANYU.store
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
               </div>
@@ -527,7 +527,7 @@ const Header: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                          <img src="/iwanyu-logo.png" alt="Iwanyu" className="w-5 h-5" />
+                          <img src="/iwanyu-logo.svg" alt="Iwanyu" className="w-5 h-5" />
                         </div>
                         <div>
                           <h2 className="font-bold text-lg">Iwanyu Store</h2>

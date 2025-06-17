@@ -227,10 +227,10 @@ const AdminDashboard: React.FC = () => {
             </button>
 
             <div className="flex items-center gap-4 mb-6">
-              <img 
-                src="/iwanyu-logo.png" 
-                alt="Iwanyu Logo" 
-                className="h-12 w-auto"
+              <img
+                src="/iwanyu-logo.svg"
+                alt="Iwanyu Logo"
+                className="h-8 w-auto"
               />
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>

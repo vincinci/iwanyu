@@ -6,11 +6,11 @@ const Footer: React.FC = () => {
     <footer className="bg-gray-800 text-white py-8">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center space-y-4">
-          <div className="flex justify-center">
+          <div className="flex items-center space-x-2 mb-4">
             <img 
-              src="/iwanyu-logo.png" 
-              alt="Logo" 
-              className="h-8 w-auto filter brightness-0 invert"
+              src="/iwanyu-logo.svg" 
+              alt="Iwanyu Store" 
+              className="h-8 w-auto"
             />
           </div>
           <p className="text-gray-400 max-w-md mx-auto">
