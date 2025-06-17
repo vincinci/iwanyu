@@ -308,9 +308,6 @@ const Header: React.FC = () => {
                         <h3 className="font-semibold text-gray-900 text-sm flex items-center">
                           <Grid size={16} className="mr-2 text-orange-500" />
                           Shop by Category
-                          <span className="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full font-medium">
-                            {categories.length} categories
-                          </span>
                         </h3>
                       </div>
                       
@@ -320,9 +317,11 @@ const Header: React.FC = () => {
                         <div className="px-3 py-3 max-h-96 overflow-y-auto">
                           <div className="space-y-2">
                             {categories
-                              .filter((category: Category) => category.level === 0) // Show only main categories
+                              .filter((category: Category) => category.level === 0 && (category._count?.products || 0) > 0) // Show only main categories with products
                               .map((category: Category) => {
-                                const subcategories = categories.filter((subcat: Category) => subcat.parentId === category.id);
+                                const subcategories = categories.filter((subcat: Category) => 
+                                  subcat.parentId === category.id && (subcat._count?.products || 0) > 0
+                                ); // Only show subcategories with products
                                 return (
                                   <div key={category.id} className="mb-4">
                                     <Link
@@ -337,9 +336,11 @@ const Header: React.FC = () => {
                                         <span className="text-sm text-gray-700 group-hover:text-orange-600 font-semibold truncate block">
                                           {category.name}
                                         </span>
-                                        <span className="text-xs text-gray-500 group-hover:text-orange-500">
-                                          {subcategories.length} subcategories
-                                        </span>
+                                        {subcategories.length > 0 && (
+                                          <span className="text-xs text-gray-500 group-hover:text-orange-500">
+                                            {subcategories.length} subcategories
+                                          </span>
+                                        )}
                                       </div>
                                     </Link>
                                     
@@ -361,11 +362,6 @@ const Header: React.FC = () => {
                                                 <span className="text-xs text-gray-600 group-hover:text-orange-600 font-medium truncate block">
                                                   {subcategory.name}
                                                 </span>
-                                                {subcategory._count?.products && (
-                                                  <span className="text-xs text-gray-400 group-hover:text-orange-400">
-                                                    {subcategory._count.products} products
-                                                  </span>
-                                                )}
                                               </div>
                                             </Link>
                                           ))

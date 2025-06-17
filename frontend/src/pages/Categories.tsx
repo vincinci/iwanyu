@@ -186,9 +186,11 @@ const Categories: React.FC = () => {
         ) : (
           <div className="space-y-8">
             {categories
-              .filter((category: Category) => category.level === 0) // Show only main categories
+              .filter((category: Category) => category.level === 0 && (category._count?.products || 0) > 0) // Show only main categories with products
               .map((category: Category, index: number) => {
-                const subcategories = categories.filter((subcat: Category) => subcat.parentId === category.id);
+                const subcategories = categories.filter((subcat: Category) => 
+                  subcat.parentId === category.id && (subcat._count?.products || 0) > 0
+                ); // Only show subcategories with products
                 return (
                   <div key={category.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                     {/* Main Category Header */}
@@ -204,8 +206,6 @@ const Categories: React.FC = () => {
                           </p>
                           <div className="mt-2 flex items-center space-x-4 text-sm text-white/90">
                             <span>{subcategories.length} subcategories</span>
-                            <span>•</span>
-                            <span>{category._count?.products || 0} products</span>
                           </div>
                         </div>
                         <Link
@@ -244,10 +244,7 @@ const Categories: React.FC = () => {
                                   {subcategory.description || 'Browse products in this category'}
                                 </div>
                                 
-                                <div className="flex items-center justify-between">
-                                  <span className="text-xs text-gray-600 group-hover:text-orange-600 transition-colors">
-                                    {subcategory._count?.products || 0} products
-                                  </span>
+                                <div className="flex items-center justify-end">
                                   <ArrowRight size={12} className="text-gray-400 group-hover:text-orange-500 transition-colors" />
                                 </div>
                               </Link>
