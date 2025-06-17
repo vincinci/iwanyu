@@ -23,6 +23,8 @@ const storage = multer.diskStorage({
       uploadPath = 'uploads/national-ids/';
     } else if (file.fieldname === 'productImage') {
       uploadPath = 'uploads/products/';
+    } else if (file.fieldname === 'csvFile') {
+      uploadPath = 'uploads/csv/';
     } else {
       uploadPath = 'uploads/';
     }
@@ -37,6 +39,8 @@ const storage = multer.diskStorage({
       cb(null, 'national-id-' + uniqueSuffix + path.extname(file.originalname));
     } else if (file.fieldname === 'productImage') {
       cb(null, 'product-' + uniqueSuffix + path.extname(file.originalname));
+    } else if (file.fieldname === 'csvFile') {
+      cb(null, 'import-' + uniqueSuffix + path.extname(file.originalname));
     } else {
       cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
@@ -44,7 +48,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
-  // Allow images and PDFs for national ID, only images for products
+  // Allow images and PDFs for national ID, only images for products, CSV files for import
   if (file.fieldname === 'nationalId') {
     if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') {
       cb(null, true);
@@ -56,6 +60,12 @@ const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
       cb(null, true);
     } else {
       cb(new Error('Only image files are allowed for products'), false);
+    }
+  } else if (file.fieldname === 'csvFile') {
+    if (file.mimetype === 'text/csv' || file.mimetype === 'application/csv' || file.originalname.endsWith('.csv')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only CSV files are allowed for import'), false);
     }
   } else {
     cb(new Error('Unknown field'), false);
@@ -916,8 +926,8 @@ router.post('/products/import', authenticateToken, upload.single('csvFile'), asy
               categoryId: categoryId as string,
               sellerId: seller.id,
               stock: totalStock,
-              image: allImages[0] || null,
-              images: allImages,
+              imageUrl: allImages[0] || null,
+              imageUrls: allImages.length > 1 ? allImages.slice(1) : [],
               brand: mainProduct.brand || null,
               sku: mainProduct.sku || `SKU-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
               featured: false,
