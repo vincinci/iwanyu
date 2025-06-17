@@ -550,7 +550,7 @@ const Products: React.FC = () => {
             ) : (
               <>
                 <div className={viewMode === 'grid' 
-                  ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" 
+                  ? "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3" 
                   : "space-y-4"
                 }>
                   {products.map((product: Product, index: number) => (
@@ -560,20 +560,20 @@ const Products: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.02 }}
                       className={viewMode === 'grid' 
-                        ? "bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group border border-gray-100"
+                        ? "bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group border border-gray-100"
                         : "bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group flex border border-gray-100"
                       }
                     >
                       {viewMode === 'grid' ? (
-                        // Grid View - Clean and Modern
+                        // Grid View - Small uniform cards
                         <Link to={`/products/${product.id}`} className="block">
                           <div className="relative">
-                            <div className="h-48 bg-gray-50 relative overflow-hidden">
+                            <div className="h-20 md:h-24 bg-gray-50 relative overflow-hidden">
                               {getProductImageUrl(product) ? (
                                 <img
                                   src={getProductImageUrl(product)!}
                                   alt={product.name}
-                                  className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+                                  className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                                   loading="lazy"
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement;
@@ -583,103 +583,41 @@ const Products: React.FC = () => {
                                 />
                               ) : null}
                               <div className={`absolute inset-0 flex items-center justify-center ${getProductImageUrl(product) ? 'hidden' : ''}`}>
-                                <Package className="text-gray-300" size={48} />
+                                <Package className="text-gray-300" size={16} />
                               </div>
                             </div>
                             
-                            {/* Badges - Clean positioning */}
+                            {/* Badges */}
                             {product.featured && (
-                              <div className="absolute top-3 left-3 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold shadow-sm">
+                              <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
                                 Featured
                               </div>
                             )}
                             
                             {/* Discount Badge */}
                             {product.salePrice && product.salePrice < product.price && (
-                              <div className="absolute top-3 right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-semibold shadow-sm">
+                              <div className="absolute top-1 right-1 bg-orange-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
                                 -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
                               </div>
                             )}
-                            
-                            {/* Action Buttons - Cleaner positioning */}
-                            <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col gap-2">
-                              <button 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  quickAddToWishlist(product, e);
-                                }}
-                                className="bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-full shadow-md transition-colors" 
-                                aria-label={isInWishlist(product.id) ? "Remove from wishlist" : "Add to wishlist"}
-                              >
-                                <Heart 
-                                  size={16} 
-                                  className={isInWishlist(product.id) 
-                                    ? "text-red-500 fill-current" 
-                                    : "text-gray-600 hover:text-red-500"
-                                  } 
-                                />
-                              </button>
-                              <button 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  quickAddToCart(product, e);
-                                }}
-                                className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full shadow-md transition-colors" 
-                                aria-label="Add to cart"
-                              >
-                                <ShoppingCart size={16} />
-                              </button>
-                            </div>
                           </div>
                           
-                          <div className="p-4">
-                            <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm mb-2 min-h-[2.5rem]">
+                          <div className="p-2">
+                            <h3 className="font-medium text-xs text-gray-900 line-clamp-2 mb-1">
                               {product.name}
                             </h3>
                             
-                            {/* Price Display - Improved */}
-                            <div className="mb-3">
+                            {/* Price Display */}
+                            <div className="mb-1">
                               {product.salePrice ? (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-orange-600 font-bold text-lg">
-                                    {formatPrice(product.salePrice)}
-                                  </span>
-                                  <span className="text-gray-400 line-through text-sm">
-                                    {formatPrice(product.price)}
-                                  </span>
+                                <div className="text-sm font-bold text-orange-600">
+                                  {formatPrice(product.salePrice)}
                                 </div>
                               ) : (
-                                <span className="text-orange-600 font-bold text-lg">
+                                <div className="text-sm font-bold text-orange-600">
                                   {formatPrice(product.price)}
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Rating - Only show if available */}
-                            {product.avgRating > 0 && (
-                              <div className="flex items-center gap-1 mb-2">
-                                <div className="flex items-center">
-                                  {[...Array(5)].map((_, i) => (
-                                    <Star
-                                      key={i}
-                                      size={12}
-                                      className={i < Math.floor(product.avgRating) 
-                                        ? "text-yellow-400 fill-current" 
-                                        : "text-gray-300"
-                                      }
-                                    />
-                                  ))}
                                 </div>
-                                <span className="text-gray-500 text-xs">
-                                  ({product.avgRating.toFixed(1)})
-                                </span>
-                              </div>
-                            )}
-
-                            {/* Free Shipping Badge */}
-                            <div className="flex items-center text-xs text-green-600 font-medium">
-                              <Truck size={12} className="mr-1" />
-                              Free Shipping
+                              )}
                             </div>
                           </div>
                         </Link>

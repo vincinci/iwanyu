@@ -236,101 +236,53 @@ const Deals: React.FC = () => {
         </div>
 
         {/* Deals Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
           {activeDeals.map((product, index) => (
             <motion.div
               key={product.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+              transition={{ duration: 0.4, delay: index * 0.05 }}
+              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group"
             >
               {/* Product Image */}
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-20 md:h-24 overflow-hidden">
                 <img
                   src={product.images[0]}
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                 />
                 
                 {/* Discount Badge */}
-                <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">
+                <div className="absolute top-1 left-1 bg-red-500 text-white px-1 py-0.5 rounded text-xs font-bold text-[10px]">
                   -{product.discount}%
                 </div>
 
                 {/* Wishlist Button */}
                 <button
                   onClick={() => handleToggleWishlist(product)}
-                  className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${
+                  className={`absolute top-1 right-1 p-1 rounded-full transition-all duration-200 ${
                     isInWishlist(product.id)
                       ? 'bg-red-500 text-white'
-                      : 'bg-white text-gray-600 hover:text-red-500'
+                      : 'bg-white/80 text-gray-600 hover:text-red-500'
                   }`}
                 >
-                  <Heart size={16} className={isInWishlist(product.id) ? 'fill-current' : ''} />
+                  <Heart size={12} className={isInWishlist(product.id) ? 'fill-current' : ''} />
                 </button>
-
-                {/* Flash Sale Timer */}
-                {activeTab === 'flash' && 'timeLeft' in product && (
-                  <div className="absolute bottom-3 left-3 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs">
-                    <Clock size={12} className="inline mr-1" />
-                    {(product as FlashDealProduct).timeLeft}
-                  </div>
-                )}
               </div>
 
               {/* Product Info */}
-              <div className="p-4">
+              <div className="p-2">
                 <Link to={`/products/${product.id}`}>
-                  <h3 className="font-semibold text-gray-900 mb-2 hover:text-red-500 transition-colors line-clamp-2">
+                  <h3 className="font-medium text-xs text-gray-900 mb-1 hover:text-red-500 transition-colors line-clamp-2">
                     {product.name}
                   </h3>
                 </Link>
 
-                {/* Rating */}
-                <div className="flex items-center mb-3">
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="text-sm text-gray-600 ml-1">
-                      {product.rating} ({product.reviews})
-                    </span>
-                  </div>
+                {/* Price */}
+                <div className="text-sm font-bold text-red-500">
+                  {formatPrice(product.salePrice)}
                 </div>
-
-                {/* Prices */}
-                <div className="flex items-center space-x-2 mb-3">
-                  <span className="text-xl font-bold text-red-500">
-                    {formatPrice(product.salePrice)}
-                  </span>
-                  <span className="text-sm text-gray-500 line-through">
-                    {formatPrice(product.originalPrice)}
-                  </span>
-                </div>
-
-                {/* Flash Sale Progress */}
-                {activeTab === 'flash' && 'soldCount' in product && 'totalStock' in product && (
-                  <div className="mb-3">
-                    <div className="flex justify-between text-xs text-gray-600 mb-1">
-                      <span>Sold: {(product as FlashDealProduct).soldCount}</span>
-                      <span>Available: {(product as FlashDealProduct).totalStock - (product as FlashDealProduct).soldCount}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-red-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${((product as FlashDealProduct).soldCount / (product as FlashDealProduct).totalStock) * 100}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Add to Cart Button */}
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2"
-                >
-                  <ShoppingCart size={16} />
-                  <span>Add to Cart</span>
-                </button>
               </div>
             </motion.div>
           ))}

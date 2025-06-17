@@ -63,10 +63,10 @@ const SingleProductSkeleton = ({ variant = 'card' }: { variant?: string }) => {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-lg border border-gray-200 overflow-hidden animate-pulse"
       >
-        <div className="w-full h-32 bg-gray-200"></div>
-        <div className="p-3 space-y-2">
+        <div className="w-full h-20 md:h-24 bg-gray-200"></div>
+        <div className="p-2 space-y-1">
           <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
         </div>
       </motion.div>
     );
@@ -113,8 +113,8 @@ const ProductSkeleton: React.FC<ProductSkeletonProps> = ({
 
   const getGridClass = () => {
     if (variant === 'list') return 'space-y-4';
-    if (variant === 'compact') return 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4';
-    return 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6';
+    if (variant === 'compact') return 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3';
+    return 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3';
   };
 
   return (

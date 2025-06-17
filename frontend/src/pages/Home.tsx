@@ -525,15 +525,16 @@ const Home: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4">
-              {promotedProducts.slice(0, 12).map((product: PromotedProduct, index: number) => (
+            {/* Sponsored Products - 3 rows of 6 */}
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
+              {promotedProducts.slice(0, 18).map((product: PromotedProduct, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={isMobile ? {} : { opacity: 0, y: 20 }}
                   whileInView={isMobile ? {} : { opacity: 1, y: 0 }}
-                  transition={isMobile ? {} : { duration: 0.4, delay: index * 0.1 }}
+                  transition={isMobile ? {} : { duration: 0.4, delay: index * 0.05 }}
                   viewport={{ once: true }}
-                  className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-orange-200 overflow-hidden"
+                  className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-orange-200 overflow-hidden"
                 >
                   <Link 
                     to={`/products/${product.id}`} 
@@ -544,58 +545,30 @@ const Home: React.FC = () => {
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
-                        className={`w-full h-24 md:h-48 object-contain p-1 md:p-2 ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
+                        className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = '/placeholder-product.jpg';
                         }}
-                        onLoad={() => {
-                          // Image loaded successfully - no action needed
-                        }}
                       />
                       
-                      {/* Discount Badge - Show on all devices */}
+                      {/* Discount Badge */}
                       {calculateDiscount(product.price, product.salePrice) > 0 && (
-                        <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                        <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[10px]">
                           -{calculateDiscount(product.price, product.salePrice)}%
                         </div>
                       )}
-                      
-                      {/* Quick Action Buttons - Desktop only */}
-                      <div className="hidden md:flex absolute top-2 right-2 flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <button className="p-2 bg-white rounded-full shadow-md hover:bg-orange-50 transition-colors">
-                          <Heart size={16} className="text-gray-600 hover:text-orange-500" />
-                        </button>
-                      </div>
                     </div>
                     
-                    <div className="p-3 sm:p-4">
-                      <h3 className="font-medium text-base sm:text-sm text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                    <div className="p-2">
+                      <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2 group-hover:text-orange-600 transition-colors">
                         {product.name}
                       </h3>
                       
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg sm:text-base font-bold text-gray-900">
-                            {formatPrice(product.price)}
-                          </span>
-                        </div>
+                      <div className="text-sm font-bold text-gray-900">
+                        {formatPrice(product.price)}
                       </div>
-                      
-                      {/* Stars - Show only if product has ratings */}
-                      {(product as any).avgRating > 0 && (
-                        <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i} 
-                              size={10} 
-                              className={i < Math.floor((product as any).avgRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'} 
-                            />
-                          ))}
-                          <span className="text-xs text-gray-500 ml-1">(({(product as any).avgRating.toFixed(1)}) {(product as any).totalReviews} reviews</span>
-                        </div>
-                      )}
                     </div>
                   </Link>
                 </motion.div>
@@ -642,23 +615,23 @@ const Home: React.FC = () => {
             </div>
           </div>
 
-          {/* Flash Sale Products - Always show if data exists */}
+          {/* Flash Sale Products - 3 rows of 6 */}
           {flashProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-              {flashProducts.slice(0, 12).map((product: Product, index: number) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
+              {flashProducts.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white rounded-lg border hover:shadow-lg transition-all duration-200 overflow-hidden group relative"
+                  transition={{ delay: index * 0.05 }}
+                  className="bg-white rounded-lg border hover:shadow-md transition-all duration-200 overflow-hidden group relative"
                 >
                   <Link to={`/products/${product.id}`}>
                     {product.images?.[0] ? (
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -667,63 +640,37 @@ const Home: React.FC = () => {
                         }}
                       />
                     ) : null}
-                    <div className={`w-full h-20 sm:h-24 md:h-36 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
+                    <div className={`w-full h-20 md:h-24 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
                       <Package className="text-gray-400" size={16} />
                     </div>
                     
                     {/* Flash Sale Badge */}
                     {(product.salePrice && product.salePrice < product.price) ? (
-                      <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold text-[10px]">
+                      <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
                         -{calculateDiscount(product.price, product.salePrice)}%
                       </div>
                     ) : (
-                      <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold text-[10px]">
+                      <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
                         FLASH
                       </div>
                     )}
                   </Link>
                   
-                  <div className="p-1.5 md:p-3">
+                  <div className="p-2">
                     <Link to={`/products/${product.id}`}>
-                      <h3 className="text-xs sm:text-sm font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
+                      <h3 className="text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
                         {product.name}
                       </h3>
-                      {/* Seller name - remove 'Unknown Seller' fallback */}
-                      {product.seller && (
-                        <p className="text-xs text-gray-500 mb-1 hidden sm:block">
-                          by {product.seller.businessName || 
-                              (product.seller.user?.firstName && product.seller.user?.lastName 
-                                ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                                : (product.seller.user?.name || 'Seller'))}
-                        </p>
-                      )}
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-sm sm:text-lg font-bold text-red-600">
-                            {formatPrice(product.salePrice || product.price)}
-                          </span>
-                          {product.salePrice && (
-                            <div className="text-xs text-gray-500 line-through">
-                              {formatPrice(product.price)}
-                            </div>
-                          )}
-                        </div>
+                      <div className="text-sm font-bold text-red-600">
+                        {formatPrice(product.salePrice || product.price)}
                       </div>
-                      <button
-                        onClick={(e) => quickAddToCart(product, e)}
-                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-1.5 px-2 rounded-lg mt-2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-xs font-medium"
-                        aria-label="Add to cart"
-                      >
-                        <ShoppingCart size={14} className="mr-1" />
-                        Add to Cart
-                      </button>
                     </Link>
                   </div>
                 </motion.div>
               ))}
             </div>
           ) : flashLoading ? (
-            <ProductSkeleton count={8} variant="compact" />
+            <ProductSkeleton count={18} variant="compact" />
           ) : (
             <div className="text-center text-gray-500 py-8">No flash sale products available</div>
           )}
@@ -743,56 +690,45 @@ const Home: React.FC = () => {
             </Link>
           </div>
 
-          {/* Best Sellers - Clean Mobile Grid */}
+          {/* Best Sellers - 3 rows of 6 */}
           {bestSellers.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-              {bestSellers.slice(0, 12).map((product: Product, index: number) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
+              {bestSellers.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={isMobile ? {} : { opacity: 0, y: 20 }}
                   whileInView={isMobile ? {} : { opacity: 1, y: 0 }}
-                  transition={isMobile ? {} : { duration: 0.4, delay: index * 0.1 }}
+                  transition={isMobile ? {} : { duration: 0.4, delay: index * 0.05 }}
                   viewport={{ once: true }}
-                  className="group bg-white rounded-lg md:rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden"
+                  className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden"
                 >
                   <Link to={`/products/${product.id}`} className="block">
                     <div className="relative overflow-hidden">
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
-                        className={`w-full h-24 md:h-48 object-contain p-1 md:p-2 ${isMobile ? '' : 'group-hover:scale-105'} transition-transform duration-300`}
+                        className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = '/placeholder-product.jpg';
                         }}
-                        onLoad={() => {
-                          // Image loaded successfully - no action needed
-                        }}
                       />
                       
-                      {/* Discount Badge - Show on all devices */}
+                      {/* Discount Badge */}
                       {calculateDiscount(product.price, product.salePrice) > 0 && (
-                        <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                        <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[10px]">
                           -{calculateDiscount(product.price, product.salePrice)}%
                         </div>
                       )}
-                      
-                      {/* Quick Action Buttons - Desktop only */}
-                      <div className="hidden md:flex absolute top-2 right-2 flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <button className="p-2 bg-white rounded-full shadow-md hover:bg-orange-50 transition-colors">
-                          <Heart size={16} className="text-gray-600 hover:text-orange-500" />
-                        </button>
-                      </div>
                     </div>
                     
-                    <div className="p-2 md:p-4">
-                      <h3 className="font-medium text-sm md:text-base text-gray-900 mb-1 md:mb-2 line-clamp-2">
+                    <div className="p-2">
+                      <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2">
                         {product.name}
                       </h3>
                       
-                      {/* Price display */}
-                      <div className="text-sm md:text-lg font-bold text-red-600">
+                      <div className="text-sm font-bold text-red-600">
                         {formatPrice(product.salePrice || product.price)}
                       </div>
                     </div>
@@ -801,7 +737,7 @@ const Home: React.FC = () => {
               ))}
             </div>
           ) : bestLoading ? (
-            <ProductSkeleton count={12} />
+            <ProductSkeleton count={18} />
           ) : (
             <div className="text-center text-gray-500 py-8">No best seller products available</div>
           )}
@@ -818,79 +754,53 @@ const Home: React.FC = () => {
             </h2>
           </div>
 
-          {/* Latest Products - Always show if data exists */}
+          {/* Latest Products - 3 rows of 6 */}
           {latestProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-3">
-              {latestProducts.slice(0, 12).map((product: Product, index: number) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
+              {latestProducts.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.02 }}
-                  className="bg-white rounded-lg border hover:shadow-lg transition-all duration-200 overflow-hidden group"
+                  className="bg-white rounded-lg border hover:shadow-md transition-all duration-200 overflow-hidden group"
                 >
                   <Link to={`/products/${product.id}`} className="block relative">
                     {product.images?.[0] ? (
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-24 bg-gray-100 flex items-center justify-center">
-                        <Package className="text-gray-400" size={20} />
+                      <div className="w-full h-20 md:h-24 bg-gray-100 flex items-center justify-center">
+                        <Package className="text-gray-400" size={16} />
                       </div>
                     )}
                     
                     {product.featured && (
-                      <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-1 py-0.5 rounded-full font-bold text-[10px]">
+                      <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
                         Featured
                       </div>
                     )}
                   </Link>
                   
-                  <div className="p-1.5 md:p-3">
+                  <div className="p-2">
                     <Link to={`/products/${product.id}`}>
-                      <h3 className="text-xs sm:text-sm font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
+                      <h3 className="text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
                         {product.name}
                       </h3>
-                      {/* Seller name - remove 'Unknown Seller' fallback */}
-                      {product.seller && (
-                        <p className="text-xs text-gray-500 mb-1 hidden sm:block">
-                          by {product.seller.businessName || 
-                              (product.seller.user?.firstName && product.seller.user?.lastName 
-                                ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
-                                : (product.seller.user?.name || 'Seller'))}
-                        </p>
-                      )}
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-sm sm:text-lg font-bold text-red-600">
-                            {formatPrice(product.salePrice || product.price)}
-                          </span>
-                          {product.salePrice && (
-                            <div className="text-xs text-gray-500 line-through">
-                              {formatPrice(product.price)}
-                            </div>
-                          )}
-                        </div>
+                      <div className="text-sm font-bold text-red-600">
+                        {formatPrice(product.salePrice || product.price)}
                       </div>
-                      <button
-                        onClick={(e) => quickAddToCart(product, e)}
-                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-1.5 px-2 rounded-lg mt-2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center text-xs font-medium"
-                        aria-label="Add to cart"
-                      >
-                        <ShoppingCart size={14} className="mr-1" />
-                        Add to Cart
-                      </button>
                     </Link>
                   </div>
                 </motion.div>
               ))}
             </div>
           ) : latestLoading ? (
-            <ProductSkeleton count={20} />
+            <ProductSkeleton count={18} />
           ) : (
             <div className="text-center text-gray-500 py-8">No products available</div>
           )}

@@ -151,7 +151,7 @@ const Wishlist: React.FC = () => {
         </div>
 
         {/* Wishlist Items - Mobile responsive grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
           <AnimatePresence>
             {items.map((item) => (
               <motion.div
@@ -166,12 +166,12 @@ const Wishlist: React.FC = () => {
                     <img
                       src={item.product.images[0]}
                       alt={item.product.name}
-                      className="w-full h-32 sm:h-40 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-32 sm:h-40 md:h-48 bg-gray-100 flex items-center justify-center">
-                      <Package className="text-gray-400" size={32} />
+                    <div className="w-full h-20 md:h-24 bg-gray-100 flex items-center justify-center">
+                      <Package className="text-gray-400" size={16} />
                     </div>
                   )}
                   
@@ -182,64 +182,24 @@ const Wishlist: React.FC = () => {
                       e.stopPropagation();
                       handleRemoveFromWishlist(item.productId);
                     }}
-                    className="absolute top-2 right-2 p-2 bg-white/80 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200"
+                    className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200"
                     aria-label="Remove from wishlist"
                   >
-                    <Trash2 size={14} className="text-red-500" />
+                    <Trash2 size={12} className="text-red-500" />
                   </button>
                 </Link>
                 
-                <div className="p-2 sm:p-3 md:p-4">
+                <div className="p-2">
                   <Link to={`/products/${item.product.id}`}>
-                    <h3 className="text-xs sm:text-sm font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
+                    <h3 className="text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
                       {item.product.name}
                     </h3>
                     
-                    {/* Seller name */}
-                    {item.product.seller && (
-                      <p className="text-xs text-gray-500 mb-2">
-                        by {item.product.seller.businessName || 'Seller'}
-                      </p>
-                    )}
-                    
-                    {/* Rating - Only show if product has rating */}
-                    {item.product.avgRating > 0 && (
-                      <div className="flex items-center mb-2">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} size={12} className={i < Math.floor(item.product.avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"} />
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500 ml-2">({item.product.avgRating.toFixed(1)}) {item.product.totalReviews} reviews</span>
-                      </div>
-                    )}
-                    
                     {/* Price */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <span className="text-lg font-bold text-red-600">
-                          {formatPrice(item.product.salePrice || item.product.price)}
-                        </span>
-                        {item.product.salePrice && item.product.salePrice < item.product.price && (
-                          <div className="text-xs text-gray-500 line-through">
-                            {formatPrice(item.product.price)}
-                          </div>
-                        )}
-                      </div>
+                    <div className="text-sm font-bold text-red-600">
+                      {formatPrice(item.product.salePrice || item.product.price)}
                     </div>
                   </Link>
-                  
-                  {/* Action buttons */}
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleMoveToCart(item)}
-                      disabled={!item.product.isActive || item.product.stock === 0}
-                      className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 text-white py-2 px-3 rounded text-sm font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed"
-                    >
-                      <ShoppingCart size={14} className="mr-1" />
-                      {item.product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-                    </button>
-                  </div>
                 </div>
               </motion.div>
             ))}
