@@ -102,6 +102,13 @@ import SellerWallet from './pages/SellerWallet';
 import AdCampaigns from './pages/seller/AdCampaigns';
 import AuthDebugPage from './pages/AuthDebug';
 import AdminTest from './pages/AdminTest';
+import Deals from './pages/Deals';
+import Account from './pages/Account';
+import Dashboard from './pages/Dashboard';
+import AboutUs from './pages/AboutUs';
+import Contact from './pages/Contact';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 // Create global query client with ultra-aggressive caching for instant loading
 const queryClient = new QueryClient({
@@ -244,6 +251,15 @@ function App() {
                       <Route path="/become-seller" element={<BecomeSeller />} />
                       <Route path="/checkout" element={<Checkout />} />
                       <Route path="/orders" element={<Orders />} />
+                      
+                      {/* New Pages */}
+                      <Route path="/deals" element={<Deals />} />
+                      <Route path="/about" element={<AboutUs />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/account" element={<Account />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/terms-of-service" element={<TermsOfService />} />
                       
                       {/* Seller Routes */}
                       <Route path="/seller/dashboard" element={<SellerDashboard />} />
