@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
         <div className="text-center space-y-4">
           <div className="flex items-center space-x-2 mb-4">
             <img 
-              src="/iwanyu-logo.svg" 
+              src="/iwanyu-logo.png" 
               alt="Iwanyu Store" 
               className="h-8 w-auto"
             />

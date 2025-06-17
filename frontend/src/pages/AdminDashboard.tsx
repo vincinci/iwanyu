@@ -228,7 +228,7 @@ const AdminDashboard: React.FC = () => {
 
             <div className="flex items-center gap-4 mb-6">
               <img
-                src="/iwanyu-logo.svg"
+                src="/iwanyu-logo.png"
                 alt="Iwanyu Logo"
                 className="h-8 w-auto"
               />

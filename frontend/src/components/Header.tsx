@@ -164,8 +164,8 @@ const Header: React.FC = () => {
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="relative">
                 <img
-                  src="/iwanyu-logo.svg"
-                  alt="Iwanyu Store Logo" 
+                                  src="/iwanyu-logo.png"
+                alt="Iwanyu Store Logo" 
                   className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
                   loading="eager"
                   decoding="async"
