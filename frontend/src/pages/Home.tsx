@@ -36,6 +36,11 @@ import { advertisementApi } from '../services/advertisementApi';
 import type { Category, Product } from '../types/api';
 import type { PromotedProduct } from '../services/advertisementApi';
 import { getProductRating, calculateDiscount } from '../utils/productHelpers';
+import banner1 from '../assets/banners/banner-1.png';
+import banner2 from '../assets/banners/banner-2.png';
+import banner3 from '../assets/banners/banner-3.png';
+import banner4 from '../assets/banners/banner-4.png';
+import banner5 from '../assets/banners/banner-5.png';
 
 const Home: React.FC = () => {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
@@ -126,7 +131,7 @@ const Home: React.FC = () => {
     const interval = isMobile ? 6000 : 4000; // Slower on mobile
     
     const timer = setInterval(() => {
-      setCurrentBanner((prev) => (prev + 1) % 4);
+      setCurrentBanner((prev) => (prev + 1) % 5);
     }, interval);
     
     return () => clearInterval(timer);
@@ -238,28 +243,34 @@ const Home: React.FC = () => {
 
   const banners = [
     {
-      title: "Super Sale Week",
-      subtitle: "Up to 70% OFF on Electronics",
-      bg: "from-red-500 to-pink-500",
+      title: "New Arrivals",
+      subtitle: "Latest fashion and lifestyle essentials",
+      image: banner1,
       cta: "Shop Now"
     },
     {
-      title: "New Arrivals",
-      subtitle: "Latest Fashion & Trends",
-      bg: "from-purple-500 to-indigo-500",
+      title: "Winter Collection",
+      subtitle: "Stay warm with premium outerwear",
+      image: banner2,
       cta: "Explore"
     },
     {
-      title: "Fast Shipping",
-              subtitle: "Free shipping nationwide",
-      bg: "from-green-500 to-teal-500",
-      cta: "Order Now"
+      title: "Essential Style",
+      subtitle: "Premium quality everyday fashion",
+      image: banner3,
+      cta: "Discover"
     },
     {
-      title: "Flash Deals",
-      subtitle: "Limited time offers",
-      bg: "from-orange-500 to-yellow-500",
-      cta: "Grab Now"
+      title: "Active Lifestyle",
+      subtitle: "Performance gear for every adventure",
+      image: banner4,
+      cta: "Shop Collection"
+    },
+    {
+      title: "Premium Audio",
+      subtitle: "Experience superior sound quality",
+      image: banner5,
+      cta: "Listen Now"
     }
   ];
 
@@ -381,12 +392,54 @@ const Home: React.FC = () => {
       {/* Minimalistic Hero Section - Mobile First */}
       <section className="relative">
         <div className="container mx-auto px-4 py-4 md:py-8">
-          {/* Mobile: Simple product grid, Desktop: Hero + Categories */}
+          {/* Mobile: Banner carousel */}
           <div className="block md:hidden">
-            {/* Mobile: Just a simple welcome message */}
-            <div className="text-center py-6 bg-gray-50 rounded-lg mb-6">
-              <h1 className="text-xl font-bold text-gray-900 mb-2">Welcome to Iwanyu Store</h1>
-              <p className="text-sm text-gray-600">Quality products at great prices</p>
+            <div className="relative h-48 rounded-lg overflow-hidden mb-6">
+              {banners.map((banner, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: currentBanner === index ? 1 : 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0"
+                >
+                  <div className="relative w-full h-full">
+                    <img
+                      src={banner.image}
+                      alt={banner.title}
+                      className="w-full h-full object-cover"
+                      loading={index === 0 ? "eager" : "lazy"}
+                    />
+                    {/* Mobile overlay with smaller text */}
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                      <div className="text-center text-white p-3">
+                        <h1 className="text-lg font-bold mb-1 drop-shadow-lg">{banner.title}</h1>
+                        <p className="text-xs mb-3 drop-shadow-md">{banner.subtitle}</p>
+                        <Link 
+                          to="/products" 
+                          className="inline-flex items-center bg-white text-gray-900 px-3 py-1.5 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200 text-xs"
+                        >
+                          {banner.cta} <ArrowRight className="ml-1" size={12} />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+              
+              {/* Mobile Banner Indicators */}
+              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                {banners.map((_, index: number) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentBanner(index)}
+                    className={`w-2 h-2 rounded-full transition-colors duration-200 ${
+                      currentBanner === index ? 'bg-white shadow-lg' : 'bg-white/50'
+                    }`}
+                    aria-label={`Go to banner ${index + 1}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
@@ -432,17 +485,28 @@ const Home: React.FC = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: currentBanner === index ? 1 : 0 }}
                     transition={{ duration: 0.5 }}
-                    className={`absolute inset-0 bg-gradient-to-r ${banner.bg} flex items-center justify-center text-white`}
+                    className="absolute inset-0"
                   >
-                    <div className="text-center">
-                      <h1 className="text-4xl md:text-6xl font-bold mb-4">{banner.title}</h1>
-                      <p className="text-xl mb-8">{banner.subtitle}</p>
-                      <Link 
-                        to="/products" 
-                        className="inline-flex items-center bg-white text-gray-900 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200"
-                      >
-                        {banner.cta} <ArrowRight className="ml-2" size={20} />
-                      </Link>
+                    <div className="relative w-full h-full">
+                      <img
+                        src={banner.image}
+                        alt={banner.title}
+                        className="w-full h-full object-cover"
+                        loading={index === 0 ? "eager" : "lazy"}
+                      />
+                      {/* Optional overlay for better text readability */}
+                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                        <div className="text-center text-white p-4">
+                          <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold mb-2 md:mb-4 drop-shadow-lg">{banner.title}</h1>
+                          <p className="text-sm md:text-xl mb-4 md:mb-8 drop-shadow-md">{banner.subtitle}</p>
+                          <Link 
+                            to="/products" 
+                            className="inline-flex items-center bg-white text-gray-900 px-4 md:px-8 py-2 md:py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200 text-sm md:text-base"
+                          >
+                            {banner.cta} <ArrowRight className="ml-2" size={16} />
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
@@ -454,7 +518,7 @@ const Home: React.FC = () => {
                       key={index}
                       onClick={() => setCurrentBanner(index)}
                       className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                        currentBanner === index ? 'bg-white' : 'bg-white/50'
+                        currentBanner === index ? 'bg-white shadow-lg' : 'bg-white/50'
                       }`}
                       aria-label={`Go to banner ${index + 1}`}
                     />
