@@ -2,15 +2,17 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { Package, ShoppingBag, TrendingUp, Clock, User, AlertCircle, ArrowLeft, Wallet, Megaphone, DollarSign } from 'lucide-react';
+import { Package, ShoppingBag, TrendingUp, Clock, User, AlertCircle, ArrowLeft, Wallet, Megaphone, DollarSign, Upload } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { sellerApi } from '../services/sellerApi';
 import { formatPrice } from '../utils/currency';
 import { walletApi } from '../services/walletApi';
+import ProductImport from '../components/ProductImport';
 
 const SellerDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [showImportModal, setShowImportModal] = React.useState(false);
 
   React.useEffect(() => {
     // Check localStorage immediately for instant response
@@ -238,6 +240,13 @@ const SellerDashboard: React.FC = () => {
             <Megaphone className="w-4 h-4" />
             Ad Campaigns
           </button>
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-md transition-colors flex items-center gap-2"
+          >
+            <Upload className="w-4 h-4" />
+            Import Products
+          </button>
         </div>
 
         {/* Recent Orders */}
@@ -369,6 +378,18 @@ const SellerDashboard: React.FC = () => {
           </button>
         </motion.div>
       </div>
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <ProductImport
+          onClose={() => setShowImportModal(false)}
+          onSuccess={() => {
+            setShowImportModal(false);
+            // Optionally refresh dashboard data
+            window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 };

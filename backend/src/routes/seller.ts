@@ -634,4 +634,326 @@ router.delete('/products/:id', authenticateToken, async (req: AuthRequest, res: 
   }
 });
 
+// Bulk import products from CSV
+router.post('/products/import', authenticateToken, upload.single('csvFile'), async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
+    }
+
+    // Get seller info
+    const seller = await prisma.seller.findFirst({
+      where: { userId }
+    });
+
+    if (!seller) {
+      res.status(404).json({ error: 'Seller profile not found' });
+      return;
+    }
+
+    if (seller.status !== 'APPROVED') {
+      res.status(403).json({ error: 'Only approved sellers can import products' });
+      return;
+    }
+
+    if (!req.file) {
+      res.status(400).json({ error: 'CSV file is required' });
+      return;
+    }
+
+    // Read and parse CSV file
+    const fs = require('fs');
+    const csv = require('csv-parser');
+    const results: any[] = [];
+    
+    try {
+      // Read CSV file
+      const fileContent = fs.readFileSync(req.file.path, 'utf8');
+      const lines = fileContent.split('\n');
+      
+      if (lines.length < 2) {
+        res.status(400).json({ error: 'CSV file must contain headers and at least one product row' });
+        return;
+      }
+
+      // Parse CSV manually (simple implementation)
+      const headers = lines[0].split(',').map((h: string) => h.trim().replace(/"/g, ''));
+      const importResults = {
+        successful: 0,
+        failed: 0,
+        errors: [] as string[]
+      };
+
+      // Group products by handle for Shopify format
+      const productGroups = new Map<string, any[]>();
+
+      // Process each data row and group by handle
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        try {
+          const values = line.split(',').map((v: string) => v.trim().replace(/"/g, ''));
+          const productData: any = {};
+          
+          // Map CSV columns to product fields
+          headers.forEach((header: string, index: number) => {
+            const value = values[index] || '';
+            
+            switch (header.toLowerCase().trim()) {
+              case 'handle':
+                productData.handle = value;
+                break;
+              case 'title':
+                productData.name = value;
+                break;
+              case 'body (html)':
+              case 'body':
+                productData.description = value.replace(/<[^>]*>/g, ''); // Strip HTML tags
+                break;
+              case 'vendor':
+                productData.brand = value;
+                break;
+              case 'product category':
+                productData.categoryName = value;
+                break;
+              case 'type':
+                productData.type = value;
+                break;
+              case 'variant price':
+                productData.price = parseFloat(value) || 0;
+                break;
+              case 'variant compare at price':
+                productData.salePrice = value ? parseFloat(value) : null;
+                break;
+              case 'variant inventory qty':
+                productData.stock = parseInt(value) || 0;
+                break;
+              case 'variant sku':
+                productData.sku = value;
+                break;
+              case 'image src':
+                if (value && !productData.images) {
+                  productData.images = [];
+                }
+                if (value) {
+                  productData.images.push(value);
+                }
+                break;
+              case 'variant image':
+                if (value && !productData.variantImages) {
+                  productData.variantImages = [];
+                }
+                if (value) {
+                  productData.variantImages.push(value);
+                }
+                break;
+              case 'tags':
+                productData.tags = value;
+                break;
+              case 'published':
+                productData.published = value.toLowerCase() === 'true';
+                break;
+              case 'status':
+                productData.status = value;
+                break;
+              // Legacy format support
+              case 'name':
+                if (!productData.name) productData.name = value;
+                break;
+              case 'description':
+                if (!productData.description) productData.description = value;
+                break;
+              case 'price':
+                if (!productData.price) productData.price = parseFloat(value) || 0;
+                break;
+              case 'sale_price':
+              case 'saleprice':
+              case 'sale price':
+                if (!productData.salePrice) productData.salePrice = value ? parseFloat(value) : null;
+                break;
+              case 'category':
+              case 'category_name':
+                if (!productData.categoryName) productData.categoryName = value;
+                break;
+              case 'stock':
+              case 'quantity':
+                if (!productData.stock) productData.stock = parseInt(value) || 0;
+                break;
+              case 'brand':
+                if (!productData.brand) productData.brand = value;
+                break;
+              case 'sku':
+                if (!productData.sku) productData.sku = value;
+                break;
+              case 'image':
+              case 'image_url':
+                if (value && !productData.image) productData.image = value;
+                break;
+              case 'images':
+                if (value && !productData.images) {
+                  productData.images = value.split('|').map((img: string) => img.trim());
+                }
+                break;
+            }
+          });
+
+          // Group by handle (for Shopify format) or create unique handle
+          const handle = productData.handle || `product-${i}-${Date.now()}`;
+          if (!productGroups.has(handle)) {
+            productGroups.set(handle, []);
+          }
+          productGroups.get(handle)!.push(productData);
+
+        } catch (error) {
+          console.error(`Error processing row ${i + 1}:`, error);
+          importResults.errors.push(`Row ${i + 1}: ${(error as Error).message}`);
+          importResults.failed++;
+        }
+      }
+
+      // Process each product group
+      for (const [handle, variants] of productGroups) {
+        try {
+          // Use the first variant as the main product data
+          const mainProduct = variants[0];
+
+          // Validate required fields
+          if (!mainProduct.name) {
+            importResults.errors.push(`Product ${handle}: Product name is required`);
+            importResults.failed++;
+            continue;
+          }
+
+          if (!mainProduct.price || mainProduct.price <= 0) {
+            importResults.errors.push(`Product ${handle}: Valid price is required`);
+            importResults.failed++;
+            continue;
+          }
+
+          // Find or create category
+          let categoryId: string | null = null;
+          if (mainProduct.categoryName) {
+            // Handle hierarchical categories (e.g., "Apparel & Accessories > Clothing > T-Shirts")
+            const categoryParts = mainProduct.categoryName.split('>').map((part: string) => part.trim());
+            const finalCategory = categoryParts[categoryParts.length - 1]; // Use the most specific category
+
+            let category = await prisma.category.findFirst({
+              where: { 
+                name: { 
+                  contains: finalCategory,
+                  mode: 'insensitive'
+                }
+              }
+            });
+
+            if (!category) {
+              // Create new category
+              const categorySlug = finalCategory.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-');
+              
+              category = await prisma.category.create({
+                data: {
+                  name: finalCategory,
+                  slug: categorySlug + '-' + Date.now()
+                }
+              });
+            }
+            categoryId = category.id;
+          }
+
+          if (!categoryId) {
+            // Default to a general category
+            let defaultCategory = await prisma.category.findFirst({
+              where: { name: 'General' }
+            });
+
+            if (!defaultCategory) {
+              defaultCategory = await prisma.category.create({
+                data: {
+                  name: 'General',
+                  slug: 'general'
+                }
+              });
+            }
+            categoryId = defaultCategory.id;
+          }
+
+          // Create product slug
+          const slug = mainProduct.name.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-') + '-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+
+          // Collect all images from variants
+          let allImages: string[] = [];
+          variants.forEach(variant => {
+            if (variant.images && Array.isArray(variant.images)) {
+              allImages = allImages.concat(variant.images);
+            }
+            if (variant.variantImages && Array.isArray(variant.variantImages)) {
+              allImages = allImages.concat(variant.variantImages);
+            }
+          });
+          
+          // Remove duplicates
+          allImages = [...new Set(allImages)];
+
+          // Calculate total stock from all variants
+          const totalStock = variants.reduce((sum, variant) => sum + (variant.stock || 0), 0);
+
+          // Create product
+          await prisma.product.create({
+            data: {
+              name: mainProduct.name,
+              slug,
+              description: mainProduct.description || '',
+              price: mainProduct.price,
+              salePrice: mainProduct.salePrice || null,
+              categoryId: categoryId as string,
+              sellerId: seller.id,
+              stock: totalStock,
+              image: allImages[0] || null,
+              images: allImages,
+              brand: mainProduct.brand || null,
+              sku: mainProduct.sku || `SKU-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+              featured: false,
+              status: mainProduct.status === 'draft' ? 'inactive' : 'active',
+              isActive: mainProduct.status !== 'archived' && mainProduct.published !== false
+            }
+          });
+
+          importResults.successful++;
+        } catch (error) {
+          console.error(`Error creating product ${handle}:`, error);
+          importResults.errors.push(`Product ${handle}: ${(error as Error).message}`);
+          importResults.failed++;
+        }
+      }
+
+      // Clean up uploaded file
+      fs.unlinkSync(req.file.path);
+
+      res.json({
+        message: 'Import completed',
+        results: importResults
+      });
+
+    } catch (error) {
+      // Clean up uploaded file on error
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      throw error;
+    }
+
+  } catch (error) {
+    console.error('Import products error:', error);
+    res.status(500).json({ error: 'Failed to import products' });
+  }
+});
+
 export default router; 

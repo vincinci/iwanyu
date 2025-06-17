@@ -283,6 +283,34 @@ class SellerApi {
 
     return response.json();
   }
+
+  importProducts = async (csvFile: File): Promise<{ 
+    message: string; 
+    results: { 
+      successful: number; 
+      failed: number; 
+      errors: string[] 
+    } 
+  }> => {
+    const formData = new FormData();
+    formData.append('csvFile', csvFile);
+
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/seller/products/import`, {
+      method: 'POST',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to import products');
+    }
+
+    return response.json();
+  }
 }
 
 export const sellerApi = new SellerApi(); 
