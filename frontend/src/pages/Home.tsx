@@ -21,7 +21,31 @@ import {
   Users,
   Eye,
   Heart,
-  Plus
+  Plus,
+  Monitor,
+  Headphones,
+  Camera,
+  Watch,
+  Laptop,
+  Tablet,
+  Baby,
+  PawPrint,
+  Hammer,
+  Palette,
+  Music,
+  Dumbbell,
+  Apple,
+  UtensilsCrossed,
+  Flower,
+  Briefcase,
+  MapPin,
+  Coffee,
+  Footprints,
+  Glasses,
+  Gem,
+  Bike,
+  Plane,
+  Mountain
 } from 'lucide-react';
 import { categoriesApi } from '../services/api';
 import { useInstantProducts, useGlobalPrefetch } from '../hooks/useInstantProducts';
@@ -249,20 +273,82 @@ const Home: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, []);
 
-  const getCategoryIcon = (categoryName: string) => {
+  const getCategoryIcon = useCallback((categoryName: string) => {
     const name = categoryName.toLowerCase();
-    if (name.includes('electronics') || name.includes('mobile') || name.includes('phone') || name.includes('computer') || name.includes('laptop')) return Smartphone;
-    if (name.includes('fashion') || name.includes('clothing') || name.includes('shoes') || name.includes('sneakers')) return Shirt;
-    if (name.includes('automotive')) return Car;
-    if (name.includes('beauty')) return Sparkles;
-    if (name.includes('home') || name.includes('garden')) return HomeIcon;
-    if (name.includes('sports') || name.includes('jersey') || name.includes('athletic')) return Trophy;
-    if (name.includes('books')) return BookOpen;
-    if (name.includes('gaming') || name.includes('console') || name.includes('toys')) return Gamepad2;
-    if (name.includes('watch') || name.includes('jewelry')) return Star;
-    if (name.includes('audio') || name.includes('headphone')) return Sparkles;
+    
+    // Electronics & Technology
+    if (name.includes('electronics') || name.includes('electronic')) return Monitor;
+    if (name.includes('mobile') || name.includes('phone') || name.includes('smartphone')) return Smartphone;
+    if (name.includes('computer') || name.includes('pc') || name.includes('desktop')) return Monitor;
+    if (name.includes('laptop') || name.includes('notebook')) return Laptop;
+    if (name.includes('tablet') || name.includes('ipad')) return Tablet;
+    if (name.includes('headphone') || name.includes('earphone') || name.includes('audio')) return Headphones;
+    if (name.includes('camera') || name.includes('photo')) return Camera;
+    if (name.includes('watch') || name.includes('smartwatch')) return Watch;
+    if (name.includes('gaming') || name.includes('console') || name.includes('game')) return Gamepad2;
+    
+    // Fashion & Apparel
+    if (name.includes('fashion') || name.includes('clothing') || name.includes('apparel')) return Shirt;
+    if (name.includes('shirt') || name.includes('top') || name.includes('blouse')) return Shirt;
+    if (name.includes('dress') || name.includes('gown')) return Shirt;
+    if (name.includes('pants') || name.includes('jeans') || name.includes('trouser')) return Shirt;
+    if (name.includes('shoes') || name.includes('sneakers') || name.includes('footwear')) return Footprints;
+    if (name.includes('bag') || name.includes('handbag') || name.includes('purse')) return Briefcase;
+    if (name.includes('jewelry') || name.includes('jewellery') || name.includes('accessory')) return Gem;
+    if (name.includes('watch') && name.includes('fashion')) return Watch;
+    if (name.includes('glasses') || name.includes('sunglasses')) return Glasses;
+    
+    // Home & Garden
+    if (name.includes('home') || name.includes('house') || name.includes('furniture')) return HomeIcon;
+    if (name.includes('garden') || name.includes('outdoor') || name.includes('plant')) return Flower;
+    if (name.includes('kitchen') || name.includes('cooking') || name.includes('utensil')) return UtensilsCrossed;
+    if (name.includes('tool') || name.includes('hardware') || name.includes('diy')) return Hammer;
+    
+    // Sports & Fitness
+    if (name.includes('sports') || name.includes('sport') || name.includes('fitness')) return Trophy;
+    if (name.includes('gym') || name.includes('workout') || name.includes('exercise')) return Dumbbell;
+    if (name.includes('bike') || name.includes('bicycle') || name.includes('cycling')) return Bike;
+    if (name.includes('outdoor') || name.includes('hiking') || name.includes('camping')) return Mountain;
+    
+    // Automotive
+    if (name.includes('automotive') || name.includes('auto') || name.includes('car')) return Car;
+    if (name.includes('motor') || name.includes('vehicle')) return Car;
+    
+    // Beauty & Health
+    if (name.includes('beauty') || name.includes('cosmetic') || name.includes('makeup')) return Sparkles;
+    if (name.includes('health') || name.includes('medical') || name.includes('wellness')) return Shield;
+    
+    // Books & Media
+    if (name.includes('books') || name.includes('book') || name.includes('reading')) return BookOpen;
+    if (name.includes('music') || name.includes('instrument') || name.includes('audio')) return Music;
+    
+    // Food & Beverage
+    if (name.includes('food') || name.includes('grocery') || name.includes('snack')) return Apple;
+    if (name.includes('drink') || name.includes('beverage') || name.includes('coffee')) return Coffee;
+    
+    // Baby & Kids
+    if (name.includes('baby') || name.includes('infant') || name.includes('toddler')) return Baby;
+    if (name.includes('kids') || name.includes('children') || name.includes('toy')) return Gamepad2;
+    
+    // Pets
+    if (name.includes('pet') || name.includes('dog') || name.includes('cat') || name.includes('animal')) return PawPrint;
+    
+    // Art & Crafts
+    if (name.includes('art') || name.includes('craft') || name.includes('paint') || name.includes('creative')) return Palette;
+    
+    // Business & Office
+    if (name.includes('office') || name.includes('business') || name.includes('work')) return Briefcase;
+    
+    // Travel & Luggage
+    if (name.includes('travel') || name.includes('luggage') || name.includes('suitcase')) return Plane;
+    if (name.includes('map') || name.includes('location') || name.includes('gps')) return MapPin;
+    
+    // General categories
+    if (name.includes('general') || name.includes('misc') || name.includes('other')) return Package;
+    
+    // Default fallback
     return Package;
-  };
+  }, []);
 
   const banners = [
     {
@@ -425,7 +511,7 @@ const Home: React.FC = () => {
                   Categories
                 </h3>
                 <div className="space-y-2">
-                  {categories.slice(0, 8).map((category: Category) => (
+                  {categories.map((category: Category) => (
                     <Link
                       key={category.id}
                       to={`/products?category=${category.slug}`}
