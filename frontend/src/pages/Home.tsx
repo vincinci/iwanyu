@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, 
   Star, 
@@ -121,6 +121,52 @@ const Home: React.FC = () => {
 
   // Add loading timeout for mobile
   const [showContent, setShowContent] = useState(false);
+
+  // Categories with instant loading
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => categoriesApi.getAll(),
+    staleTime: 60 * 60 * 1000,
+    gcTime: 2 * 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+
+  const categories = categoriesData?.data?.categories || [];
+
+  // Flash sale products with instant loading - reduced limit for mobile
+  const { 
+    products: flashProducts, 
+    isInstantLoading: flashLoading,
+    hasInstantData: hasFlashData
+  } = useInstantProducts({
+    limit: isMobile ? 4 : 8,
+    sortBy: 'totalSales',
+    sortOrder: 'desc',
+  });
+
+  // Best sellers with instant loading - reduced limit for mobile
+  const { 
+    products: bestSellers, 
+    isInstantLoading: bestLoading,
+    hasInstantData: hasBestData
+  } = useInstantProducts({
+    limit: isMobile ? 6 : 12,
+    sortBy: 'featured',
+    sortOrder: 'desc',
+  });
+
+  // Latest products with instant loading - reduced limit for mobile
+  const { 
+    products: latestProducts, 
+    isInstantLoading: latestLoading,
+    hasInstantData: hasLatestData,
+    prefetchCategory
+  } = useInstantProducts({
+    limit: isMobile ? 10 : 20,
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
+  });
   
   // Force show content after timeout to prevent infinite loading
   useEffect(() => {
@@ -202,52 +248,6 @@ const Home: React.FC = () => {
     const timeoutId = setTimeout(fetchPromotedProducts, delay);
     return () => clearTimeout(timeoutId);
   }, []);
-
-  // Categories with instant loading
-  const { data: categoriesData } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => categoriesApi.getAll(),
-    staleTime: 60 * 60 * 1000,
-    gcTime: 2 * 60 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-  });
-
-  const categories = categoriesData?.data?.categories || [];
-
-  // Flash sale products with instant loading - reduced limit for mobile
-  const { 
-    products: flashProducts, 
-    isInstantLoading: flashLoading,
-    hasInstantData: hasFlashData
-  } = useInstantProducts({
-    limit: isMobile ? 4 : 8,
-    sortBy: 'totalSales',
-    sortOrder: 'desc',
-  });
-
-  // Best sellers with instant loading - reduced limit for mobile
-  const { 
-    products: bestSellers, 
-    isInstantLoading: bestLoading,
-    hasInstantData: hasBestData
-  } = useInstantProducts({
-    limit: isMobile ? 6 : 12,
-    sortBy: 'featured',
-    sortOrder: 'desc',
-  });
-
-  // Latest products with instant loading - reduced limit for mobile
-  const { 
-    products: latestProducts, 
-    isInstantLoading: latestLoading,
-    hasInstantData: hasLatestData,
-    prefetchCategory
-  } = useInstantProducts({
-    limit: isMobile ? 10 : 20,
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
-  });
 
   const getCategoryIcon = (categoryName: string) => {
     const name = categoryName.toLowerCase();
