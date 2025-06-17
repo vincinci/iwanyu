@@ -407,7 +407,7 @@ const Home: React.FC = () => {
                     <img
                       src={banner.image}
                       alt={banner.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain bg-gray-100"
                       loading={index === 0 ? "eager" : "lazy"}
                     />
                     {/* Mobile overlay with smaller text */}
@@ -491,7 +491,7 @@ const Home: React.FC = () => {
                       <img
                         src={banner.image}
                         alt={banner.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain bg-gray-100"
                         loading={index === 0 ? "eager" : "lazy"}
                       />
                       {/* Optional overlay for better text readability */}
