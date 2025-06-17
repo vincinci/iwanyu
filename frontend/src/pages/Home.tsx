@@ -41,6 +41,7 @@ import banner2 from '../assets/banners/banner-2.png';
 import banner3 from '../assets/banners/banner-3.png';
 import banner4 from '../assets/banners/banner-4.png';
 import banner5 from '../assets/banners/banner-5.png';
+import ModernBanner from '../components/ModernBanner';
 
 const Home: React.FC = () => {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
@@ -389,65 +390,19 @@ const Home: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Minimalistic Hero Section - Mobile First */}
+      {/* Enhanced Hero Section with Modern Banner */}
       <section className="relative">
         <div className="container mx-auto px-4 py-4 md:py-8">
-          {/* Mobile: Banner carousel */}
+          {/* Mobile: Modern Banner */}
           <div className="block md:hidden">
-            <div className="relative h-48 rounded-lg overflow-hidden mb-6">
-              {banners.map((banner, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: currentBanner === index ? 1 : 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="absolute inset-0"
-                >
-                  <div className="relative w-full h-full">
-                    <img
-                      src={banner.image}
-                      alt={banner.title}
-                      className="w-full h-full object-contain bg-gray-100"
-                      loading={index === 0 ? "eager" : "lazy"}
-                    />
-                    {/* Mobile overlay with smaller text */}
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                      <div className="text-center text-white p-3">
-                        <h1 className="text-lg font-bold mb-1 drop-shadow-lg">{banner.title}</h1>
-                        <p className="text-xs mb-3 drop-shadow-md">{banner.subtitle}</p>
-                        <Link 
-                          to="/products" 
-                          className="inline-flex items-center bg-white text-gray-900 px-3 py-1.5 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200 text-xs"
-                        >
-                          {banner.cta} <ArrowRight className="ml-1" size={12} />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-              
-              {/* Mobile Banner Indicators */}
-              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
-                {banners.map((_, index: number) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentBanner(index)}
-                    className={`w-2 h-2 rounded-full transition-colors duration-200 ${
-                      currentBanner === index ? 'bg-white shadow-lg' : 'bg-white/50'
-                    }`}
-                    aria-label={`Go to banner ${index + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
+            <ModernBanner banners={banners} isMobile={true} className="mb-6" />
           </div>
 
-          {/* Desktop: Original layout */}
+          {/* Desktop: Layout with Categories and Modern Banner */}
           <div className="hidden md:grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Categories Sidebar */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm border p-4">
+              <div className="bg-white rounded-xl shadow-sm border p-4 hover:shadow-lg transition-shadow duration-300">
                 <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
                   <Package size={18} className="mr-2 text-red-500" />
                   Categories
@@ -457,74 +412,28 @@ const Home: React.FC = () => {
                     <Link
                       key={category.id}
                       to={`/products?category=${category.slug}`}
-                      className="group flex items-center justify-between p-2 rounded hover:bg-red-50 transition-colors duration-200"
+                      className="group flex items-center justify-between p-2 rounded-lg hover:bg-red-50 transition-colors duration-200"
                       onMouseEnter={isMobile ? undefined : () => prefetchCategory(category.slug)}
                     >
                       <div className="flex items-center space-x-3">
                         {React.createElement(getCategoryIcon(category.name), { 
                           size: 16, 
-                          className: "text-gray-500 group-hover:text-red-500" 
+                          className: "text-gray-500 group-hover:text-red-500 transition-colors" 
                         })}
-                        <span className="text-sm text-gray-700 group-hover:text-red-600">
+                        <span className="text-sm text-gray-700 group-hover:text-red-600 transition-colors">
                           {category.name}
                         </span>
                       </div>
-                      <ArrowRight size={12} className="text-gray-400 group-hover:text-red-500" />
+                      <ArrowRight size={12} className="text-gray-400 group-hover:text-red-500 transition-colors" />
                     </Link>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Main Banner */}
+            {/* Main Modern Banner */}
             <div className="lg:col-span-3">
-              <div className="relative h-80 rounded-lg overflow-hidden">
-                {banners.map((banner, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: currentBanner === index ? 1 : 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="absolute inset-0"
-                  >
-                    <div className="relative w-full h-full">
-                      <img
-                        src={banner.image}
-                        alt={banner.title}
-                        className="w-full h-full object-contain bg-gray-100"
-                        loading={index === 0 ? "eager" : "lazy"}
-                      />
-                      {/* Optional overlay for better text readability */}
-                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                        <div className="text-center text-white p-4">
-                          <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold mb-2 md:mb-4 drop-shadow-lg">{banner.title}</h1>
-                          <p className="text-sm md:text-xl mb-4 md:mb-8 drop-shadow-md">{banner.subtitle}</p>
-                          <Link 
-                            to="/products" 
-                            className="inline-flex items-center bg-white text-gray-900 px-4 md:px-8 py-2 md:py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200 text-sm md:text-base"
-                          >
-                            {banner.cta} <ArrowRight className="ml-2" size={16} />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-                
-                {/* Banner Indicators */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  {banners.map((_, index: number) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentBanner(index)}
-                      className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                        currentBanner === index ? 'bg-white shadow-lg' : 'bg-white/50'
-                      }`}
-                      aria-label={`Go to banner ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              </div>
+              <ModernBanner banners={banners} isMobile={false} />
             </div>
           </div>
         </div>
