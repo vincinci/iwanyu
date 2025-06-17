@@ -34,11 +34,18 @@ export interface Category {
   slug: string;
   description?: string;
   image?: string;
+  icon?: string;
+  parentId?: string;
+  level: number;
+  sortOrder: number;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
   _count?: {
     products: number;
   };
+  parent?: Category;
+  children?: Category[];
 }
 
 export interface Review {

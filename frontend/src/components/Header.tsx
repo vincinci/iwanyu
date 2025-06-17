@@ -318,29 +318,63 @@ const Header: React.FC = () => {
                         <CategorySkeleton />
                       ) : (
                         <div className="px-3 py-3 max-h-96 overflow-y-auto">
-                          <div className="grid grid-cols-2 gap-1">
-                            {categories.map((category: Category) => (
-                              <Link
-                                key={category.id}
-                                to={`/products?category=${category.slug}`}
-                                className="group flex items-center space-x-3 p-3 rounded-lg hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200"
-                                onClick={() => setShowCategoriesDropdown(false)}
-                              >
-                                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                                  {renderCategoryIcon(category.name, 16)}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <span className="text-sm text-gray-700 group-hover:text-orange-600 font-medium truncate block">
-                                    {category.name}
-                                  </span>
-                                  {category._count?.products && (
-                                    <span className="text-xs text-gray-500 group-hover:text-orange-500">
-                                      {category._count.products} products
-                                    </span>
-                                  )}
-                                </div>
-                              </Link>
-                            ))}
+                          <div className="space-y-2">
+                            {categories
+                              .filter((category: Category) => category.level === 0) // Show only main categories
+                              .map((category: Category) => {
+                                const subcategories = categories.filter((subcat: Category) => subcat.parentId === category.id);
+                                return (
+                                  <div key={category.id} className="mb-4">
+                                    <Link
+                                      to={`/products?category=${category.slug}`}
+                                      className="group flex items-center space-x-3 p-3 rounded-lg hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200 mb-2"
+                                      onClick={() => setShowCategoriesDropdown(false)}
+                                    >
+                                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+                                        {renderCategoryIcon(category.name, 16)}
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <span className="text-sm text-gray-700 group-hover:text-orange-600 font-semibold truncate block">
+                                          {category.name}
+                                        </span>
+                                        <span className="text-xs text-gray-500 group-hover:text-orange-500">
+                                          {subcategories.length} subcategories
+                                        </span>
+                                      </div>
+                                    </Link>
+                                    
+                                    {subcategories.length > 0 && (
+                                      <div className="ml-4 space-y-1">
+                                        {subcategories
+                                          .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder)
+                                          .map((subcategory: Category) => (
+                                            <Link
+                                              key={subcategory.id}
+                                              to={`/products?category=${subcategory.slug}`}
+                                              className="group flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50 transition-all duration-200"
+                                              onClick={() => setShowCategoriesDropdown(false)}
+                                            >
+                                              <div className="w-6 h-6 bg-gray-50 rounded flex items-center justify-center group-hover:bg-orange-50 transition-colors">
+                                                {renderCategoryIcon(subcategory.name, 12)}
+                                              </div>
+                                              <div className="flex-1 min-w-0">
+                                                <span className="text-xs text-gray-600 group-hover:text-orange-600 font-medium truncate block">
+                                                  {subcategory.name}
+                                                </span>
+                                                {subcategory._count?.products && (
+                                                  <span className="text-xs text-gray-400 group-hover:text-orange-400">
+                                                    {subcategory._count.products} products
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </Link>
+                                          ))
+                                        }
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
                           </div>
                           
                           <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">

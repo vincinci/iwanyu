@@ -502,40 +502,9 @@ const Home: React.FC = () => {
           </div>
 
           {/* Desktop: Layout with Categories and Modern Banner */}
-          <div className="hidden md:grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Categories Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-sm border p-4 hover:shadow-lg transition-shadow duration-300">
-                <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
-                  <Package size={18} className="mr-2 text-red-500" />
-                  Categories
-                </h3>
-                <div className="space-y-2">
-                  {categories.map((category: Category) => (
-                    <Link
-                      key={category.id}
-                      to={`/products?category=${category.slug}`}
-                      className="group flex items-center justify-between p-2 rounded-lg hover:bg-red-50 transition-colors duration-200"
-                      onMouseEnter={isMobile ? undefined : () => prefetchCategory(category.slug)}
-                    >
-                      <div className="flex items-center space-x-3">
-                        {React.createElement(getCategoryIcon(category.name), { 
-                          size: 16, 
-                          className: "text-gray-500 group-hover:text-red-500 transition-colors" 
-                        })}
-                        <span className="text-sm text-gray-700 group-hover:text-red-600 transition-colors">
-                          {category.name}
-                        </span>
-                      </div>
-                      <ArrowRight size={12} className="text-gray-400 group-hover:text-red-500 transition-colors" />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
+          <div className="hidden md:grid grid-cols-1 gap-6">
             {/* Main Modern Banner */}
-            <div className="lg:col-span-3">
+            <div className="col-span-1">
               <ModernBanner banners={banners} isMobile={false} />
             </div>
           </div>

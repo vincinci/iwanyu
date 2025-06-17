@@ -184,41 +184,96 @@ const Categories: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {categories.map((category: Category, index: number) => (
-              <Link
-                key={category.id}
-                to={`/products?category=${category.slug}`}
-                className="block bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200 overflow-hidden"
-              >
-                {/* Category Header */}
-                <div className={`bg-gradient-to-br ${getCategoryColor(index)} p-4 text-white text-center`}>
-                  <div className="mb-2">
-                    {renderCategoryIcon(category.name)}
-                  </div>
-                  <h3 className="text-sm font-semibold">{category.name}</h3>
-                </div>
+          <div className="space-y-8">
+            {categories
+              .filter((category: Category) => category.level === 0) // Show only main categories
+              .map((category: Category, index: number) => {
+                const subcategories = categories.filter((subcat: Category) => subcat.parentId === category.id);
+                return (
+                  <div key={category.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    {/* Main Category Header */}
+                    <div className={`bg-gradient-to-br ${getCategoryColor(index)} p-6 text-white`}>
+                      <div className="flex items-center space-x-4">
+                        <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center">
+                          {renderCategoryIcon(category.name, 40)}
+                        </div>
+                        <div className="flex-1">
+                          <h2 className="text-xl font-bold mb-2">{category.name}</h2>
+                          <p className="text-white/80 text-sm">
+                            {category.description || 'Explore our collection in this category'}
+                          </p>
+                          <div className="mt-2 flex items-center space-x-4 text-sm text-white/90">
+                            <span>{subcategories.length} subcategories</span>
+                            <span>•</span>
+                            <span>{category._count?.products || 0} products</span>
+                          </div>
+                        </div>
+                        <Link
+                          to={`/products?category=${category.slug}`}
+                          className="bg-white/20 hover:bg-white/30 transition-colors px-4 py-2 rounded-lg font-medium"
+                        >
+                          View All
+                        </Link>
+                      </div>
+                    </div>
 
-                {/* Category Content */}
-                <div className="p-4">
-                  <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
-                    <span className="flex items-center">
-                      <Package size={12} className="mr-1" />
-                      Browse Products
-                    </span>
+                    {/* Subcategories Grid */}
+                    {subcategories.length > 0 && (
+                      <div className="p-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {subcategories
+                            .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder)
+                            .map((subcategory: Category) => (
+                              <Link
+                                key={subcategory.id}
+                                to={`/products?category=${subcategory.slug}`}
+                                className="group p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50/50 transition-all duration-200"
+                              >
+                                <div className="flex items-center space-x-3 mb-3">
+                                  <div className="w-10 h-10 bg-gray-100 group-hover:bg-orange-100 rounded-lg flex items-center justify-center transition-colors">
+                                    {renderCategoryIcon(subcategory.name, 20)}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h3 className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors truncate">
+                                      {subcategory.name}
+                                    </h3>
+                                  </div>
+                                </div>
+                                
+                                <div className="text-xs text-gray-500 group-hover:text-orange-500 transition-colors mb-3">
+                                  {subcategory.description || 'Browse products in this category'}
+                                </div>
+                                
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs text-gray-600 group-hover:text-orange-600 transition-colors">
+                                    {subcategory._count?.products || 0} products
+                                  </span>
+                                  <ArrowRight size={12} className="text-gray-400 group-hover:text-orange-500 transition-colors" />
+                                </div>
+                              </Link>
+                            ))
+                          }
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Empty state for categories with no subcategories */}
+                    {subcategories.length === 0 && (
+                      <div className="p-6 text-center text-gray-500">
+                        <Package size={24} className="mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No subcategories yet</p>
+                        <Link
+                          to={`/products?category=${category.slug}`}
+                          className="inline-flex items-center mt-2 text-sm text-orange-600 hover:text-orange-700 font-medium"
+                        >
+                          Browse Products
+                          <ArrowRight size={12} className="ml-1" />
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                  
-                  <div className="text-xs text-gray-500 mb-3 line-clamp-2">
-                    {category.description || 'Explore our collection in this category'}
-                  </div>
-                  
-                  <div className="flex items-center justify-center text-orange-500 text-xs font-medium">
-                    Browse Products
-                    <ArrowRight size={12} className="ml-1" />
-                  </div>
-                </div>
-              </Link>
-            ))}
+                );
+              })}
           </div>
         )}
 
