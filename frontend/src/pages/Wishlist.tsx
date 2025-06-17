@@ -196,17 +196,19 @@ const Wishlist: React.FC = () => {
                     </h3>
                     
                     {/* Price and Add to Cart */}
-                    <div className="flex items-center justify-between">
+                    <div className="text-center mb-2">
                       <div className="text-sm font-bold text-red-600">
                         {formatPrice(item.product.salePrice || item.product.price)}
                       </div>
+                    </div>
+                    <div className="flex justify-center">
                       <button
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           handleMoveToCart(item);
                         }}
-                        className="opacity-0 group-hover:opacity-100 transition-all duration-200 bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-full shadow-md hover:shadow-lg transform hover:scale-105"
+                        className="bg-orange-500 hover:bg-orange-600 text-white p-1.5 rounded-full shadow-sm hover:shadow-md transition-all duration-200"
                         aria-label="Add to cart"
                       >
                         <ShoppingCart size={12} />
