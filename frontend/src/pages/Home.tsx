@@ -119,6 +119,28 @@ const Home: React.FC = () => {
   // Mobile detection with safety check
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
+  // Add loading timeout for mobile
+  const [showContent, setShowContent] = useState(false);
+  
+  // Force show content after timeout to prevent infinite loading
+  useEffect(() => {
+    if (isMobile) {
+      // Show content immediately if we have any data
+      if (categories.length > 0 || flashProducts.length > 0 || bestSellers.length > 0) {
+        setShowContent(true);
+        return;
+      }
+      
+      const timer = setTimeout(() => {
+        setShowContent(true);
+      }, 1500); // Reduced to 1.5 seconds max
+      
+      return () => clearTimeout(timer);
+    } else {
+      setShowContent(true);
+    }
+  }, [isMobile, categories.length, flashProducts.length, bestSellers.length]);
+
   // Prefetch everything for instant navigation - disabled on mobile to prevent crashes
   useEffect(() => {
     if (!isMobile) {
@@ -381,11 +403,6 @@ const Home: React.FC = () => {
 
   if (hasError) {
     return <ErrorFallback error={new Error('Component rendering error')} />;
-  }
-
-  // Show loading fallback on mobile if critical data is still loading
-  if (isMobile && (promotedLoading || (!categories.length && !flashProducts.length && !bestSellers.length))) {
-    return <MobileLoadingFallback />;
   }
 
   return (
