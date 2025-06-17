@@ -23,6 +23,20 @@ const requireAdmin = (req: AuthRequest, res: Response, next: any) => {
   next();
 };
 
+// Clear cache endpoint
+router.post('/clear-cache', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    clearProductCaches();
+    res.json({ 
+      message: 'Cache cleared successfully',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Clear cache error:', error);
+    res.status(500).json({ error: 'Failed to clear cache' });
+  }
+});
+
 // Admin Dashboard Stats
 router.get('/dashboard', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {
