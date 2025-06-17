@@ -661,8 +661,21 @@ const Home: React.FC = () => {
                       <h3 className="text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
                         {product.name}
                       </h3>
-                      <div className="text-sm font-bold text-red-600">
-                        {formatPrice(product.salePrice || product.price)}
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm font-bold text-red-600">
+                          {formatPrice(product.salePrice || product.price)}
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            quickAddToCart(product, e);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-all duration-200 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-md hover:shadow-lg transform hover:scale-105"
+                          aria-label="Add to cart"
+                        >
+                          <ShoppingCart size={12} />
+                        </button>
                       </div>
                     </Link>
                   </div>
@@ -728,8 +741,21 @@ const Home: React.FC = () => {
                         {product.name}
                       </h3>
                       
-                      <div className="text-sm font-bold text-red-600">
-                        {formatPrice(product.salePrice || product.price)}
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm font-bold text-red-600">
+                          {formatPrice(product.salePrice || product.price)}
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            quickAddToCart(product, e);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-all duration-200 bg-yellow-500 hover:bg-yellow-600 text-white p-1.5 rounded-full shadow-md hover:shadow-lg transform hover:scale-105"
+                          aria-label="Add to cart"
+                        >
+                          <ShoppingCart size={12} />
+                        </button>
                       </div>
                     </div>
                   </Link>
@@ -791,8 +817,21 @@ const Home: React.FC = () => {
                       <h3 className="text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
                         {product.name}
                       </h3>
-                      <div className="text-sm font-bold text-red-600">
-                        {formatPrice(product.salePrice || product.price)}
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm font-bold text-red-600">
+                          {formatPrice(product.salePrice || product.price)}
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            quickAddToCart(product, e);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-all duration-200 bg-blue-500 hover:bg-blue-600 text-white p-1.5 rounded-full shadow-md hover:shadow-lg transform hover:scale-105"
+                          aria-label="Add to cart"
+                        >
+                          <ShoppingCart size={12} />
+                        </button>
                       </div>
                     </Link>
                   </div>

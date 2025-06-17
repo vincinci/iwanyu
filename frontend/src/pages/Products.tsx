@@ -608,7 +608,7 @@ const Products: React.FC = () => {
                             </h3>
                             
                             {/* Price Display */}
-                            <div className="mb-1">
+                            <div className="flex items-center justify-between">
                               {product.salePrice ? (
                                 <div className="text-sm font-bold text-orange-600">
                                   {formatPrice(product.salePrice)}
@@ -618,6 +618,17 @@ const Products: React.FC = () => {
                                   {formatPrice(product.price)}
                                 </div>
                               )}
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  quickAddToCart(product, e);
+                                }}
+                                className="opacity-0 group-hover:opacity-100 transition-all duration-200 bg-orange-500 hover:bg-orange-600 text-white p-1.5 rounded-full shadow-md hover:shadow-lg transform hover:scale-105"
+                                aria-label="Add to cart"
+                              >
+                                <ShoppingCart size={12} />
+                              </button>
                             </div>
                           </div>
                         </Link>
