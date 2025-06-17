@@ -208,10 +208,11 @@ const Wishlist: React.FC = () => {
                           e.stopPropagation();
                           handleMoveToCart(item);
                         }}
-                        className="bg-orange-500 hover:bg-orange-600 text-white p-1.5 rounded-full shadow-sm hover:shadow-md transition-all duration-200"
+                        className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                         aria-label="Add to cart"
                       >
                         <ShoppingCart size={12} />
+                        <span>Add</span>
                       </button>
                     </div>
                   </Link>
