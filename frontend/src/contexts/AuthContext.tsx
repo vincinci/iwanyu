@@ -44,69 +44,78 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const storedToken = localStorage.getItem('token');
-      const storedUser = localStorage.getItem('user');
-      
-      console.log('AuthContext: Initializing auth', {
-        hasStoredToken: !!storedToken,
-        hasStoredUser: !!storedUser,
-        currentPath: typeof window !== 'undefined' ? window.location.pathname : '/'
-      });
-      
-      if (storedToken && storedUser) {
-        try {
-          console.log('AuthContext: Validating stored token');
-          // Validate token by making a test request
-          const response = await fetch(`${API_BASE_URL}/auth/validate`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${storedToken}`,
-              'Content-Type': 'application/json',
-            },
-          });
+      try {
+        // Add timeout for mobile performance - force stop loading after 5 seconds
+        const timeoutId = setTimeout(() => {
+          console.warn('Auth initialization timeout - forcing stop loading');
+          setIsLoading(false);
+        }, 5000);
 
-          console.log('AuthContext: Token validation response', {
-            ok: response.ok,
-            status: response.status
-          });
-
-          if (response.ok) {
-            // Token is valid, restore user session
-            const validationData = await response.json();
-            console.log('AuthContext: Token validation successful', validationData);
+        const storedToken = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
+        
+        console.log('AuthContext: Initializing auth', {
+          hasStoredToken: !!storedToken,
+          hasStoredUser: !!storedUser
+        });
+        
+        if (storedToken && storedUser) {
+          try {
+            // Simplified validation - just trust stored data for faster mobile loading
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
             
-            // Use new token if provided (with extended expiration)
-            const tokenToUse = validationData.token || storedToken;
-            setToken(tokenToUse);
-            localStorage.setItem('token', tokenToUse);
-            
-            // Use fresh user data from validation if available, otherwise use stored data
-            if (validationData.user) {
-              setUser(validationData.user);
-              localStorage.setItem('user', JSON.stringify(validationData.user));
-            } else {
+            if (isMobile) {
+              // On mobile, just use stored data without validation for speed
+              console.log('AuthContext: Mobile detected - using stored auth data');
               setUser(JSON.parse(storedUser));
+              setToken(storedToken);
+              clearTimeout(timeoutId);
+              setIsLoading(false);
+              return;
             }
-          } else {
-            // Token is invalid or expired, clear storage
-            console.log('AuthContext: Token validation failed, clearing storage');
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-          }
-        } catch (error) {
-          // Network error or token validation failed
-          console.warn('AuthContext: Token validation failed with error:', error);
-          // Don't clear storage on network errors, just log the warning
-          // The user might be offline or the server might be down temporarily
-          
-          // Only clear storage if it's clearly an auth error
-          if (error instanceof Error && error.message.includes('401')) {
-            console.log('AuthContext: Clearing storage due to 401 error');
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-          } else {
-            // For network errors, try to use stored data
-            console.log('AuthContext: Using stored user data due to network error');
+            
+            // Desktop validation with shorter timeout
+            console.log('AuthContext: Validating stored token');
+            const controller = new AbortController();
+            const validationTimeout = setTimeout(() => controller.abort(), 3000);
+            
+            const response = await fetch(`${API_BASE_URL}/auth/validate`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${storedToken}`,
+                'Content-Type': 'application/json',
+              },
+              signal: controller.signal
+            });
+
+            clearTimeout(validationTimeout);
+            console.log('AuthContext: Token validation response', {
+              ok: response.ok,
+              status: response.status
+            });
+
+            if (response.ok) {
+              const validationData = await response.json();
+              console.log('AuthContext: Token validation successful', validationData);
+              
+              const tokenToUse = validationData.token || storedToken;
+              setToken(tokenToUse);
+              localStorage.setItem('token', tokenToUse);
+              
+              if (validationData.user) {
+                setUser(validationData.user);
+                localStorage.setItem('user', JSON.stringify(validationData.user));
+              } else {
+                setUser(JSON.parse(storedUser));
+              }
+            } else {
+              console.log('AuthContext: Token validation failed, clearing storage');
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+            }
+          } catch (error) {
+            console.warn('AuthContext: Token validation failed, using stored data:', error);
+            // On any error, use stored data for mobile compatibility
             try {
               setUser(JSON.parse(storedUser));
               setToken(storedToken);
@@ -116,71 +125,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               localStorage.removeItem('user');
             }
           }
+        } else {
+          console.log('AuthContext: No stored auth data found');
         }
-      } else {
-        console.log('AuthContext: No stored token or user found');
+        
+        clearTimeout(timeoutId);
+        setIsLoading(false);
+        console.log('AuthContext: Auth initialization complete');
+      } catch (error) {
+        console.error('AuthContext: Critical auth initialization error:', error);
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
-      console.log('AuthContext: Auth initialization complete');
     };
 
     initializeAuth();
   }, []);
-
-  // Periodic token refresh to keep session alive
-  useEffect(() => {
-    if (!user || !token) {
-      return;
-    }
-
-    // Refresh user data every 30 minutes to keep session active
-    const refreshInterval = setInterval(() => {
-      refreshUser();
-    }, 30 * 60 * 1000); // 30 minutes
-
-    return () => clearInterval(refreshInterval);
-  }, [user, token]);
-
-  // Refresh token on user activity
-  useEffect(() => {
-    if (!user || !token) {
-      return;
-    }
-
-    const handleUserActivity = () => {
-      // Refresh user data on activity (but throttle to avoid too many requests)
-      const lastRefresh = localStorage.getItem('lastTokenRefresh');
-      const now = Date.now();
-      
-      // Only refresh if it's been more than 5 minutes since last refresh
-      if (!lastRefresh || now - parseInt(lastRefresh) > 5 * 60 * 1000) {
-        refreshUser();
-        localStorage.setItem('lastTokenRefresh', now.toString());
-      }
-    };
-
-    // Listen for user activity
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-    
-    // Throttle activity detection
-    let activityTimeout: NodeJS.Timeout;
-    const throttledActivity = () => {
-      clearTimeout(activityTimeout);
-      activityTimeout = setTimeout(handleUserActivity, 1000); // Wait 1 second after activity stops
-    };
-
-    events.forEach(event => {
-      document.addEventListener(event, throttledActivity, true);
-    });
-
-    return () => {
-      clearTimeout(activityTimeout);
-      events.forEach(event => {
-        document.removeEventListener(event, throttledActivity, true);
-      });
-    };
-  }, [user, token]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -193,16 +152,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Login failed');
+        const errorData = await response.json().catch(() => ({ message: 'Login failed' }));
+        throw new Error(errorData.message || 'Login failed');
       }
 
       const data = await response.json();
       setToken(data.token);
       setUser(data.user);
-      
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
     } catch (error) {
+      console.error('Login error:', error);
       throw error;
     }
   };
@@ -218,16 +178,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Registration failed');
+        const errorData = await response.json().catch(() => ({ message: 'Registration failed' }));
+        throw new Error(errorData.message || 'Registration failed');
       }
 
       const data = await response.json();
       setToken(data.token);
       setUser(data.user);
-      
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
     } catch (error) {
+      console.error('Registration error:', error);
       throw error;
     }
   };
@@ -237,62 +198,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('lastTokenRefresh');
   };
 
   const refreshUser = async () => {
-    const currentToken = token || localStorage.getItem('token');
-    
-    if (!currentToken) {
-      console.log('AuthContext: No token available for refresh');
-      return;
-    }
+    if (!token) return;
 
     try {
-      console.log('AuthContext: Refreshing user data');
+      // Shorter timeout for mobile
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 2000);
+      
       const response = await fetch(`${API_BASE_URL}/auth/validate`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${currentToken}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        signal: controller.signal
       });
 
-      console.log('AuthContext: Refresh response', {
-        ok: response.ok,
-        status: response.status
-      });
+      clearTimeout(timeout);
 
       if (response.ok) {
-        const validationData = await response.json();
-        console.log('AuthContext: User refresh successful');
-        
-        // Update token if a new one is provided
-        if (validationData.token) {
-          setToken(validationData.token);
-          localStorage.setItem('token', validationData.token);
+        const data = await response.json();
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
         }
-        
-        // Update user data
-        if (validationData.user) {
-          setUser(validationData.user);
-          localStorage.setItem('user', JSON.stringify(validationData.user));
-        }
-      } else {
-        // Token is invalid, logout only if it's a clear auth error
-        if (response.status === 401) {
-          console.log('AuthContext: Token invalid during refresh, logging out');
-          logout();
-        } else {
-          console.warn('AuthContext: Refresh failed with status:', response.status);
+        if (data.token) {
+          setToken(data.token);
+          localStorage.setItem('token', data.token);
         }
       }
     } catch (error) {
-      console.warn('AuthContext: Failed to refresh user data:', error);
-      // Don't logout on network errors, just log the warning
+      console.warn('Failed to refresh user data:', error);
+      // Don't logout on refresh failure - might be temporary network issue
     }
   };
 
-  const value = {
+  const contextValue: AuthContextType = {
     user,
     token,
     login,
@@ -302,5 +247,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}; 
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

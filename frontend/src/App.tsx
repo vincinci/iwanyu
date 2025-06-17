@@ -69,13 +69,14 @@ class MobileErrorBoundary extends React.Component<
 }
 
 // Context Providers
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { WishlistProvider } from './contexts/WishlistContext';
 
 // Layout Components
 import Header from './components/Header';
 import Footer from './components/Footer';
+import LoadingSpinner from './components/LoadingSpinner';
 
 // Page Components
 import Home from './pages/Home';
@@ -109,121 +110,136 @@ import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import NotFound from './pages/NotFound';
 
-// Create global query client with ultra-aggressive caching for instant loading
+// Create global query client with mobile-optimized settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30 * 60 * 1000, // 30 minutes - very aggressive caching
-      gcTime: 60 * 60 * 1000, // 1 hour in cache
+      staleTime: 5 * 60 * 1000, // 5 minutes - reduced for mobile
+      gcTime: 10 * 60 * 1000, // 10 minutes in cache - reduced for mobile
       refetchOnWindowFocus: false,
-      refetchOnMount: false, // Don't refetch if data exists
+      refetchOnMount: false,
       refetchOnReconnect: false,
-      retry: 1, // Quick failure for instant UX
-      retryDelay: 500, // Fast retry
-      networkMode: 'online', // Only fetch when online
+      retry: 1, // Quick failure for mobile
+      retryDelay: 1000, // Fast retry
+      networkMode: 'online',
     },
     mutations: {
-      retry: 2,
+      retry: 1, // Reduced for mobile
       retryDelay: 1000,
     },
   },
 });
 
-// Global instant loading initializer
-const InstantLoadingInitializer: React.FC = () => {
-  const { prefetchEverything } = useGlobalPrefetch();
+// App Content with Loading Guard
+const AppContent: React.FC = () => {
+  const { isLoading } = useAuth();
 
-  useEffect(() => {
-    // Check if mobile to reduce prefetching load - with safety check
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    
-    // Prefetch critical data immediately when app starts - reduced for mobile
-    const timer = setTimeout(() => {
-      // Only prefetch everything on desktop to prevent mobile crashes
-      if (!isMobile) {
-        try {
-          prefetchEverything();
-        } catch (error) {
-          console.warn('Prefetching failed, continuing without prefetch:', error);
-          // Don't crash the app, just log the warning
-        }
-      }
-    }, isMobile ? 2000 : 100); // Longer delay on mobile
+  // Mobile-specific loading timeout
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const loadingTimeout = isMobile ? 5000 : 8000; // Shorter timeout on mobile
 
-    return () => clearTimeout(timer);
-  }, [prefetchEverything]);
+  if (isLoading) {
+    return (
+      <LoadingSpinner 
+        message="Loading Iwanyu Store..."
+        timeout={loadingTimeout}
+        onTimeout={() => {
+          console.warn('Auth loading timeout - forcing app to continue');
+          window.location.reload();
+        }}
+        className="min-h-screen"
+      />
+    );
+  }
 
-  return null;
-};
-
-// Performance monitoring
-const PerformanceMonitor: React.FC = () => {
-  useEffect(() => {
-    // Check if mobile to reduce preloading - with safety check
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    
-    // Preload critical resources - reduced for mobile
-    const preloadCriticalResources = () => {
-      // Only preconnect on desktop to avoid mobile overhead
-      if (!isMobile) {
-        const preconnectDomains = [
-          'https://fonts.googleapis.com',
-          'https://fonts.gstatic.com'
-        ];
-
-        preconnectDomains.forEach(domain => {
-          const link = document.createElement('link');
-          link.rel = 'preconnect';
-          link.href = domain;
-          document.head.appendChild(link);
-        });
-
-        // Prefetch DNS for external resources - desktop only
-        const dnsPrefetchDomains = [
-          'https://cdn.jsdelivr.net',
-          'https://unpkg.com'
-        ];
-
-        dnsPrefetchDomains.forEach(domain => {
-          const link = document.createElement('link');
-          link.rel = 'dns-prefetch';
-          link.href = domain;
-          document.head.appendChild(link);
-        });
-      }
-    };
-
-    preloadCriticalResources();
-  }, []);
-
-  return null;
+  return (
+    <Router>
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <Header />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/become-seller" element={<BecomeSeller />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/orders" element={<Orders />} />
+            
+            {/* New Pages */}
+            <Route path="/deals" element={<Deals />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            
+            {/* Seller Routes */}
+            <Route path="/seller/dashboard" element={<SellerDashboard />} />
+            <Route path="/seller/products" element={<SellerProducts />} />
+            <Route path="/seller/wallet" element={<SellerWallet />} />
+            <Route path="/seller/ad-campaigns" element={<AdCampaigns />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
+            <Route path="/admin/sellers" element={<AdminSellers />} />
+            
+            {/* Debug Routes */}
+            <Route path="/auth-debug" element={<AuthDebugPage />} />
+            <Route path="/admin-test" element={<AdminTest />} />
+            
+            {/* 404 Route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
+  );
 };
 
 function App() {
   useEffect(() => {
-    // Optimize loading performance
-    const optimizePerformance = () => {
-      // Add viewport meta tag for mobile optimization
+    // Mobile viewport optimization
+    const optimizeForMobile = () => {
       const viewport = document.querySelector('meta[name="viewport"]');
       if (!viewport) {
         const meta = document.createElement('meta');
         meta.name = 'viewport';
-        meta.content = 'width=device-width, initial-scale=1.0, viewport-fit=cover';
+        meta.content = 'width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no';
         document.head.appendChild(meta);
       }
 
-      // Remove font preload since fonts don't exist - this was causing warnings
-      // Only add performance hints that actually exist - with safety check
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-      
-      if (!isMobile) {
-        // Only add resource hints on desktop to prevent mobile performance issues
-        // Remove the non-existent font preload that was causing warnings
-      }
+      // Prevent zoom on input focus (mobile safari)
+      const style = document.createElement('style');
+      style.textContent = `
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+          select, textarea, input[type="text"], input[type="password"],
+          input[type="datetime"], input[type="datetime-local"],
+          input[type="date"], input[type="month"], input[type="time"],
+          input[type="week"], input[type="number"], input[type="email"],
+          input[type="url"], input[type="search"], input[type="tel"],
+          input[type="color"] {
+            font-size: 16px !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
     };
 
-    optimizePerformance();
+    optimizeForMobile();
   }, []);
 
   return (
@@ -232,61 +248,7 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
-              <Router>
-                <div className="min-h-screen bg-gray-50 flex flex-col">
-                  {/* Only initialize on desktop to prevent mobile crashes */}
-                  {typeof window !== 'undefined' && window.innerWidth >= 768 && <InstantLoadingInitializer />}
-                  <PerformanceMonitor />
-                  <Header />
-                  <main className="flex-1">
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/products" element={<Products />} />
-                      <Route path="/products/:id" element={<ProductDetail />} />
-                      <Route path="/categories" element={<Categories />} />
-                      <Route path="/cart" element={<Cart />} />
-                      <Route path="/wishlist" element={<Wishlist />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<Register />} />
-                      <Route path="/become-seller" element={<BecomeSeller />} />
-                      <Route path="/checkout" element={<Checkout />} />
-                      <Route path="/orders" element={<Orders />} />
-                      
-                      {/* New Pages */}
-                      <Route path="/deals" element={<Deals />} />
-                      <Route path="/about" element={<AboutUs />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/account" element={<Account />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                      <Route path="/terms-of-service" element={<TermsOfService />} />
-                      
-                      {/* Seller Routes */}
-                      <Route path="/seller/dashboard" element={<SellerDashboard />} />
-                      <Route path="/seller/products" element={<SellerProducts />} />
-                      <Route path="/seller/wallet" element={<SellerWallet />} />
-                      <Route path="/seller/ad-campaigns" element={<AdCampaigns />} />
-                      
-                      {/* Admin Routes */}
-                      <Route path="/admin" element={<AdminDashboard />} />
-                      <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                      <Route path="/admin/products" element={<AdminProducts />} />
-                      <Route path="/admin/orders" element={<AdminOrders />} />
-                      <Route path="/admin/users" element={<AdminUsers />} />
-                      <Route path="/admin/categories" element={<AdminCategories />} />
-                      <Route path="/admin/sellers" element={<AdminSellers />} />
-                      
-                      {/* Debug Routes */}
-                      <Route path="/auth-debug" element={<AuthDebugPage />} />
-                      <Route path="/admin-test" element={<AdminTest />} />
-                      
-                      {/* Catch all route */}
-                      <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                </div>
-              </Router>
+              <AppContent />
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>
