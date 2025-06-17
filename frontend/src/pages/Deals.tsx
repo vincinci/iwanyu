@@ -17,20 +17,44 @@ import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { formatPrice } from '../utils/currency';
 
+// Deal product interfaces
+interface BaseDealProduct {
+  id: string;
+  name: string;
+  originalPrice: number;
+  salePrice: number;
+  discount: number;
+  images: string[];
+  rating: number;
+  reviews: number;
+}
+
+interface FlashDealProduct extends BaseDealProduct {
+  timeLeft: string;
+  soldCount: number;
+  totalStock: number;
+}
+
+interface DailyDealProduct extends BaseDealProduct {}
+
+interface WeeklyDealProduct extends BaseDealProduct {}
+
+type DealProduct = FlashDealProduct | DailyDealProduct | WeeklyDealProduct;
+
 const Deals: React.FC = () => {
   const { addToCart } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [activeTab, setActiveTab] = useState('flash');
 
   // Mock deals data - in real app, this would come from API
-  const flashDeals = [
+  const flashDeals: FlashDealProduct[] = [
     {
       id: '1',
       name: 'Premium Wireless Headphones',
       originalPrice: 45000,
       salePrice: 29000,
       discount: 36,
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80',
+      images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'],
       rating: 4.5,
       reviews: 128,
       timeLeft: '02:45:30',
@@ -43,7 +67,7 @@ const Deals: React.FC = () => {
       originalPrice: 35000,
       salePrice: 24500,
       discount: 30,
-      image: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&q=80',
+      images: ['https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&q=80'],
       rating: 4.7,
       reviews: 89,
       timeLeft: '01:12:45',
@@ -56,7 +80,7 @@ const Deals: React.FC = () => {
       originalPrice: 125000,
       salePrice: 87500,
       discount: 30,
-      image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&q=80',
+      images: ['https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&q=80'],
       rating: 4.8,
       reviews: 203,
       timeLeft: '03:20:15',
@@ -65,14 +89,14 @@ const Deals: React.FC = () => {
     }
   ];
 
-  const dailyDeals = [
+  const dailyDeals: DailyDealProduct[] = [
     {
       id: '4',
       name: 'Coffee Maker Pro',
       originalPrice: 55000,
       salePrice: 42000,
       discount: 24,
-      image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&q=80',
+      images: ['https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&q=80'],
       rating: 4.6,
       reviews: 156
     },
@@ -82,7 +106,7 @@ const Deals: React.FC = () => {
       originalPrice: 38000,
       salePrice: 28500,
       discount: 25,
-      image: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&q=80',
+      images: ['https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&q=80'],
       rating: 4.4,
       reviews: 94
     },
@@ -92,20 +116,20 @@ const Deals: React.FC = () => {
       originalPrice: 18000,
       salePrice: 12600,
       discount: 30,
-      image: 'https://images.unsplash.com/photo-1609592043945-64e3d8e4ffd4?w=400&q=80',
+      images: ['https://images.unsplash.com/photo-1609592043945-64e3d8e4ffd4?w=400&q=80'],
       rating: 4.3,
       reviews: 67
     }
   ];
 
-  const weeklyDeals = [
+  const weeklyDeals: WeeklyDealProduct[] = [
     {
       id: '7',
       name: 'Professional Camera Lens',
       originalPrice: 180000,
       salePrice: 144000,
       discount: 20,
-      image: 'https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=400&q=80',
+      images: ['https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=400&q=80'],
       rating: 4.9,
       reviews: 45
     },
@@ -115,7 +139,7 @@ const Deals: React.FC = () => {
       originalPrice: 65000,
       salePrice: 45500,
       discount: 30,
-      image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=80',
+      images: ['https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=80'],
       rating: 4.5,
       reviews: 123
     }
@@ -129,26 +153,27 @@ const Deals: React.FC = () => {
 
   const activeDeals = tabs.find(tab => tab.id === activeTab)?.data || [];
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: DealProduct) => {
     addToCart({
       id: product.id,
       name: product.name,
-      price: product.salePrice,
-      image: product.image,
-      stock: 50,
-      slug: product.name.toLowerCase().replace(/\s+/g, '-')
+      price: product.originalPrice,
+      salePrice: product.salePrice,
+      images: product.images,
+      stock: 50
     });
   };
 
-  const handleToggleWishlist = (product: any) => {
-    toggleWishlist({
-      id: product.id,
-      name: product.name,
-      price: product.salePrice,
-      image: product.image,
-      stock: 50,
-      slug: product.name.toLowerCase().replace(/\s+/g, '-')
-    });
+  const handleToggleWishlist = async (product: DealProduct) => {
+    try {
+      if (isInWishlist(product.id)) {
+        await removeFromWishlist(product.id);
+      } else {
+        await addToWishlist(product.id);
+      }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+    }
   };
 
   return (
@@ -223,7 +248,7 @@ const Deals: React.FC = () => {
               {/* Product Image */}
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src={product.image}
+                  src={product.images[0]}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -249,7 +274,7 @@ const Deals: React.FC = () => {
                 {activeTab === 'flash' && 'timeLeft' in product && (
                   <div className="absolute bottom-3 left-3 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs">
                     <Clock size={12} className="inline mr-1" />
-                    {product.timeLeft}
+                    {(product as FlashDealProduct).timeLeft}
                   </div>
                 )}
               </div>
@@ -286,13 +311,13 @@ const Deals: React.FC = () => {
                 {activeTab === 'flash' && 'soldCount' in product && 'totalStock' in product && (
                   <div className="mb-3">
                     <div className="flex justify-between text-xs text-gray-600 mb-1">
-                      <span>Sold: {product.soldCount}</span>
-                      <span>Available: {product.totalStock - product.soldCount}</span>
+                      <span>Sold: {(product as FlashDealProduct).soldCount}</span>
+                      <span>Available: {(product as FlashDealProduct).totalStock - (product as FlashDealProduct).soldCount}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-red-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${(product.soldCount / product.totalStock) * 100}%` }}
+                        style={{ width: `${((product as FlashDealProduct).soldCount / (product as FlashDealProduct).totalStock) * 100}%` }}
                       ></div>
                     </div>
                   </div>
