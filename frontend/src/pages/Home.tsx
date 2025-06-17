@@ -454,7 +454,7 @@ const Home: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-4">
-              {promotedProducts.map((product: PromotedProduct, index: number) => (
+              {promotedProducts.slice(0, 12).map((product: PromotedProduct, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={isMobile ? {} : { opacity: 0, y: 20 }}
@@ -573,7 +573,7 @@ const Home: React.FC = () => {
           {/* Flash Sale Products - Always show if data exists */}
           {flashProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-              {flashProducts.slice(0, 8).map((product: Product, index: number) => (
+              {flashProducts.slice(0, 12).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -674,7 +674,7 @@ const Home: React.FC = () => {
           {/* Best Sellers - Clean Mobile Grid */}
           {bestSellers.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-              {bestSellers.slice(0, 8).map((product: Product, index: number) => (
+              {bestSellers.slice(0, 12).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={isMobile ? {} : { opacity: 0, y: 20 }}
@@ -748,8 +748,8 @@ const Home: React.FC = () => {
 
           {/* Latest Products - Always show if data exists */}
           {latestProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-3">
-              {latestProducts.map((product: Product, index: number) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-3">
+              {latestProducts.slice(0, 12).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
