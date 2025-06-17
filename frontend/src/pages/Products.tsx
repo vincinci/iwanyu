@@ -234,7 +234,7 @@ const Products: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* AliExpress-style Header */}
-      <div className="bg-white border-b sticky top-0 z-40 shadow-sm">
+      <div className="bg-white border-b sticky top-16 z-30 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {/* Search Bar */}
