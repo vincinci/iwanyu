@@ -112,7 +112,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import NotFound from './pages/NotFound';
 import SellerFlashSales from './pages/SellerFlashSales';
-import SellerProfile from './pages/SellerProfile';
+import SellerProfile from './pages/seller/SellerProfile';
 
 // Create global query client with mobile-optimized settings
 const queryClient = new QueryClient({
