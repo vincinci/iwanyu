@@ -254,8 +254,8 @@ const Header: React.FC = () => {
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="relative">
                 <img
-                                  src="/iwanyu-logo.png"
-                alt="Iwanyu Store Logo" 
+                  src="/iwanyu-logo.png"
+                  alt="Iwanyu Store Logo" 
                   className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
                   loading="eager"
                   decoding="async"
@@ -273,7 +273,12 @@ const Header: React.FC = () => {
                 >
                   IWANYU.store
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
+                {/* Iwanyu logo overlay on hover */}
+                <img
+                  src="/iwanyu-logo.png"
+                  alt="Iwanyu Store Logo Overlay"
+                  className="absolute inset-0 w-full h-full object-contain opacity-0 group-hover:opacity-20 rounded-lg transition-opacity duration-200"
+                />
               </div>
             </Link>
 
@@ -402,7 +407,7 @@ const Header: React.FC = () => {
             {/* Desktop Search */}
             <div className="hidden md:flex flex-1 max-w-2xl mx-8">
               <form onSubmit={handleSearch} className="relative w-full group">
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 rounded-xl opacity-0 group-focus-within:opacity-10 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors duration-200" size={20} />
                 <input
                   type="text"
@@ -599,7 +604,7 @@ const Header: React.FC = () => {
           {/* Enhanced Mobile Search Bar */}
           <div className="md:hidden py-3 border-t border-gray-100">
             <form onSubmit={handleSearch} className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 rounded-xl opacity-0 group-focus-within:opacity-10 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors duration-200" size={18} />
               <input
                 type="text"
