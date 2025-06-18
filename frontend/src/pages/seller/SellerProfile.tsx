@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { User, ArrowLeft, Save, Upload, Mail, Phone, MapPin, Building, Clipboard } from 'lucide-react';
+import { User, ArrowLeft, Save, Mail, Phone, MapPin, Building, Clipboard } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { sellerApi } from '../../services/sellerApi';
+import type { SellerProfile as SellerProfileType } from '../../services/sellerApi';
+
+interface FormData {
+  businessName: string;
+  businessEmail: string;
+  businessPhone: string;
+  businessAddress: string;
+  businessDescription: string;
+  businessType: string;
+}
 
 const SellerProfile: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     businessName: '',
     businessEmail: '',
     businessPhone: '',
@@ -19,7 +29,7 @@ const SellerProfile: React.FC = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Check localStorage immediately for instant response
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
@@ -44,24 +54,26 @@ const SellerProfile: React.FC = () => {
   // Fetch seller profile
   const { data: profile, isLoading, error, refetch } = useQuery({
     queryKey: ['seller-profile'],
-    queryFn: sellerApi.getProfile,
-    enabled: !!user && user.role === 'SELLER',
-    onSuccess: (data) => {
-      // Initialize form with current profile data
+    queryFn: sellerApi.getProfile
+  });
+
+  // Update form data when profile is loaded
+  useEffect(() => {
+    if (profile) {
       setFormData({
-        businessName: data.businessName || '',
-        businessEmail: data.businessEmail || '',
-        businessPhone: data.businessPhone || '',
-        businessAddress: data.businessAddress || '',
-        businessDescription: data.businessDescription || '',
-        businessType: data.businessType || ''
+        businessName: profile.businessName || '',
+        businessEmail: profile.businessEmail || '',
+        businessPhone: profile.businessPhone || '',
+        businessAddress: profile.businessAddress || '',
+        businessDescription: profile.businessDescription || '',
+        businessType: profile.businessType || ''
       });
     }
-  });
+  }, [profile]);
 
   // Update profile mutation
   const updateProfileMutation = useMutation({
-    mutationFn: (data: typeof formData) => sellerApi.updateProfile(data),
+    mutationFn: (data: FormData) => sellerApi.updateProfile(data),
     onSuccess: () => {
       setIsEditing(false);
       refetch(); // Refresh profile data
@@ -143,7 +155,7 @@ const SellerProfile: React.FC = () => {
         </motion.div>
 
         {/* Profile Status */}
-        {profile?.status && (
+        {profile && (
           <div className={`mb-6 p-4 rounded-lg ${
             profile.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
             profile.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
