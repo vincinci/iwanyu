@@ -111,6 +111,8 @@ import Contact from './pages/Contact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import NotFound from './pages/NotFound';
+import SellerFlashSales from './pages/SellerFlashSales';
+import SellerProfile from './pages/SellerProfile';
 
 // Create global query client with mobile-optimized settings
 const queryClient = new QueryClient({
@@ -186,6 +188,8 @@ const AppContent: React.FC = () => {
             <Route path="/seller/products" element={<SellerProducts />} />
             <Route path="/seller/wallet" element={<SellerWallet />} />
             <Route path="/seller/ad-campaigns" element={<AdCampaigns />} />
+            <Route path="/dashboard/flash-sales" element={<SellerFlashSales />} />
+            <Route path="/seller/profile" element={<SellerProfile />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminDashboard />} />
