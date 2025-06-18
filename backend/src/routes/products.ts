@@ -25,18 +25,29 @@ export { clearProductCaches };
 // Get all products with ultra-optimized query
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 12, category, search, sortBy = 'createdAt', sortOrder = 'desc' } = req.query;
+    const { 
+      page = 1, 
+      limit = 12, 
+      category, 
+      categoryId,
+      search, 
+      sortBy = 'createdAt', 
+      sortOrder = 'desc',
+      priceMin,
+      priceMax,
+      exclude
+    } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
     // Create cache key
-    const cacheKey = `products:${page}:${limit}:${category || ''}:${search || ''}:${sortBy}:${sortOrder}`;
+    const cacheKey = `products:${page}:${limit}:${category || ''}:${categoryId || ''}:${search || ''}:${sortBy}:${sortOrder}:${priceMin || ''}:${priceMax || ''}:${exclude || ''}`;
     
     // Check cache first, but skip cache if no search/category filters and we might have stale empty results
     const cached = cache.get(cacheKey);
     const shouldUseCache = cached && Date.now() - cached.timestamp < CACHE_TTL;
     
     // Skip cache for basic queries that might be stale empty results
-    const isBasicQuery = !search && !category;
+    const isBasicQuery = !search && !category && !categoryId && !priceMin && !priceMax;
     if (shouldUseCache && !(isBasicQuery && cached.data?.data?.products?.length === 0)) {
       return res.json(cached.data);
     }
@@ -46,10 +57,34 @@ router.get('/', async (req: Request, res: Response) => {
       isActive: true
     };
 
+    // Exclude specific product (for similar products)
+    if (exclude) {
+      where.id = {
+        not: exclude as string
+      };
+    }
+
+    // Filter by category slug
     if (category) {
       where.category = {
         slug: category
       };
+    }
+
+    // Filter by category ID (for similar products)
+    if (categoryId) {
+      where.categoryId = categoryId as string;
+    }
+
+    // Price range filtering
+    if (priceMin || priceMax) {
+      where.price = {};
+      if (priceMin) {
+        where.price.gte = parseFloat(priceMin as string);
+      }
+      if (priceMax) {
+        where.price.lte = parseFloat(priceMax as string);
+      }
     }
 
     if (search) {
@@ -57,6 +92,14 @@ router.get('/', async (req: Request, res: Response) => {
         { name: { contains: search as string, mode: 'insensitive' } },
         { description: { contains: search as string, mode: 'insensitive' } }
       ];
+    }
+
+    // Determine sort order
+    let orderBy: any = { [sortBy as string]: sortOrder };
+    
+    // Special sorting for rating
+    if (sortBy === 'rating') {
+      orderBy = { avgRating: sortOrder };
     }
 
     // Ultra-optimized query - only essential fields for listing
@@ -77,6 +120,7 @@ router.get('/', async (req: Request, res: Response) => {
           totalReviews: true,
           totalSales: true,
           createdAt: true,
+          categoryId: true,
           category: {
             select: {
               name: true,
@@ -91,9 +135,7 @@ router.get('/', async (req: Request, res: Response) => {
         },
         skip,
         take: Number(limit),
-        orderBy: {
-          [sortBy as string]: sortOrder
-        }
+        orderBy
       }),
       prisma.product.count({ where })
     ]);
