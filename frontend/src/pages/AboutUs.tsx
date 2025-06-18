@@ -28,7 +28,7 @@ const AboutUs: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             className="bg-white rounded-lg shadow-md p-6"
           >
-            <Store className="w-12 h-12 mb-4 text-yellow-500" />
+            <Store className="w-12 h-12 mb-4 text-gray-500" />
             <h3 className="text-xl font-semibold mb-2">Quality Products</h3>
             <p className="text-gray-600">
               We carefully select our products to ensure they meet the highest standards of quality and reliability.
@@ -39,7 +39,7 @@ const AboutUs: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             className="bg-white rounded-lg shadow-md p-6"
           >
-            <Users className="w-12 h-12 mb-4 text-yellow-500" />
+            <Users className="w-12 h-12 mb-4 text-gray-500" />
             <h3 className="text-xl font-semibold mb-2">Customer First</h3>
             <p className="text-gray-600">
               Your satisfaction is our priority. We're committed to providing exceptional customer service.
@@ -50,7 +50,7 @@ const AboutUs: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             className="bg-white rounded-lg shadow-md p-6"
           >
-            <Award className="w-12 h-12 mb-4 text-yellow-500" />
+            <Award className="w-12 h-12 mb-4 text-gray-500" />
             <h3 className="text-xl font-semibold mb-2">Trust & Reliability</h3>
             <p className="text-gray-600">
               We build trust through transparent operations and reliable delivery of our promises.
@@ -61,7 +61,7 @@ const AboutUs: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             className="bg-white rounded-lg shadow-md p-6"
           >
-            <Heart className="w-12 h-12 mb-4 text-yellow-500" />
+            <Heart className="w-12 h-12 mb-4 text-gray-500" />
             <h3 className="text-xl font-semibold mb-2">Community Impact</h3>
             <p className="text-gray-600">
               We're proud to contribute to Rwanda's growing e-commerce ecosystem and economic development.

@@ -42,7 +42,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           <p className="text-gray-600 mb-4">The page is taking longer than expected to load.</p>
           <button 
             onClick={() => window.location.reload()}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
             Reload Page
           </button>
@@ -62,7 +62,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       {/* Simplified spinner for better mobile performance */}
       <div className={`${sizeClasses[size]} animate-spin mb-4`}>
         <svg 
-          className="w-full h-full text-orange-500" 
+          className="w-full h-full text-gray-600" 
           fill="none" 
           viewBox="0 0 24 24"
         >

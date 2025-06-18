@@ -279,7 +279,7 @@ const ProductDetail: React.FC = () => {
             <p className="text-gray-600 mb-8">The product you're looking for doesn't exist or has been removed.</p>
             <Link
               to="/products"
-              className="inline-flex items-center bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors duration-200"
+              className="inline-flex items-center bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors duration-200"
             >
               <ArrowLeft className="mr-2" size={20} />
               Back to Products
@@ -302,9 +302,9 @@ const ProductDetail: React.FC = () => {
       <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Breadcrumb - Hidden on mobile to save space */}
         <div className="hidden md:flex items-center space-x-2 text-sm text-gray-600 mb-6">
-          <Link to="/" className="hover:text-orange-500">Home</Link>
+          <Link to="/" className="hover:text-gray-600">Home</Link>
           <span>/</span>
-          <Link to="/products" className="hover:text-orange-500">Products</Link>
+          <Link to="/products" className="hover:text-gray-600">Products</Link>
           <span>/</span>
           <span className="text-gray-900">{product.name}</span>
         </div>
@@ -346,7 +346,7 @@ const ProductDetail: React.FC = () => {
                       onClick={() => setSelectedImageIndex(index)}
                       className={`aspect-square rounded border-2 overflow-hidden transition-all duration-200 ${
                         selectedImageIndex === index 
-                          ? 'border-orange-500 ring-2 ring-orange-500 ring-opacity-50' 
+                          ? 'border-gray-400 ring-2 ring-orange-500 ring-opacity-50' 
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -366,7 +366,7 @@ const ProductDetail: React.FC = () => {
           <div>
             {/* Category & Stock Status */}
             <div className="flex items-center justify-between mb-4">
-              <span className="inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">
+              <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
                 {product.category?.name || 'Uncategorized'}
               </span>
               <div className="flex items-center space-x-2">
@@ -390,7 +390,7 @@ const ProductDetail: React.FC = () => {
                 <div className="relative share-dropdown-container">
                   <button 
                     onClick={handleShare}
-                    className="p-2 text-gray-600 hover:text-orange-500 border border-gray-300 rounded-full hover:bg-orange-50 transition-colors duration-200"
+                    className="p-2 text-gray-600 hover:text-gray-600 border border-gray-300 rounded-full hover:bg-gray-100 transition-colors duration-200"
                     aria-label="Share product"
                     title="Share product"
                   >
@@ -556,7 +556,7 @@ const ProductDetail: React.FC = () => {
                             onClick={() => handleVariantSelect(variantName, variant.value)}
                             className={`relative w-12 h-12 rounded-full border-2 transition-all duration-200 ${
                               selectedVariants[variantName] === variant.value
-                                ? 'border-orange-500 ring-2 ring-orange-500 ring-opacity-50'
+                                ? 'border-gray-400 ring-2 ring-orange-500 ring-opacity-50'
                                 : 'border-gray-300 hover:border-gray-400'
                             } ${variant.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                             disabled={variant.stock === 0}
@@ -598,7 +598,7 @@ const ProductDetail: React.FC = () => {
                             disabled={variant.stock === 0}
                             className={`px-4 py-2 border rounded-lg text-sm font-medium transition-colors duration-200 ${
                               selectedVariants[variantName] === variant.value
-                                ? 'border-orange-500 bg-orange-50 text-orange-700'
+                                ? 'border-gray-400 bg-gray-50 text-gray-700'
                                 : variant.stock === 0
                                 ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                                 : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
@@ -679,7 +679,7 @@ const ProductDetail: React.FC = () => {
                   <button
                     onClick={handleAddToCart}
                     disabled={isAddingToCart || (hasVariants && !areAllVariantsSelected())}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed"
+                    className="flex-1 bg-gray-600 hover:bg-gray-700 disabled:bg-orange-300 text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed"
                   >
                     <ShoppingCart className="mr-2" size={18} />
                     {isAddingToCart ? 'Adding...' : 'Add to Cart'}
@@ -741,7 +741,7 @@ const ProductDetail: React.FC = () => {
             <button
               onClick={handleAddToCart}
               disabled={isAddingToCart || (hasVariants && !areAllVariantsSelected())}
-              className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed text-sm"
+              className="flex-1 bg-gray-600 hover:bg-gray-700 disabled:bg-orange-300 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed text-sm"
             >
               <ShoppingCart className="mr-2" size={16} />
               {isAddingToCart ? 'Adding...' : 'Add to Cart'}

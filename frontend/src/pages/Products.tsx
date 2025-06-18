@@ -303,7 +303,7 @@ const Products: React.FC = () => {
                     {selectedCategories.map(categorySlug => {
                       const category = categories.find((c: Category) => c.slug === categorySlug);
                       return category ? (
-                        <span key={categorySlug} className="inline-flex items-center px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">
+                        <span key={categorySlug} className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
                           {category.name}
                           <button 
                             onClick={() => handleCategoryFilter(categorySlug)} 
@@ -330,7 +330,7 @@ const Products: React.FC = () => {
                   </div>
                   <button
                     onClick={clearAllFilters}
-                    className="text-black hover:text-orange-700 text-xs font-semibold uppercase tracking-wide transition-colors"
+                    className="text-black hover:text-gray-800 text-xs font-semibold uppercase tracking-wide transition-colors"
                   >
                     Clear all
                   </button>
@@ -454,8 +454,8 @@ const Products: React.FC = () => {
                       <span className="font-medium">Buyer Protection</span>
                     </button>
                     <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 text-sm flex items-center transition-colors border border-transparent hover:border-gray-200" aria-label="Filter by 4+ star rating">
-                      <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
-                        <Star size={16} className="text-yellow-600" />
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                        <Star size={16} className="text-gray-600" />
                       </div>
                       <span className="font-medium">4+ Stars</span>
                     </button>
@@ -489,7 +489,7 @@ const Products: React.FC = () => {
                         onClick={() => handleSort(option.value)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                           sortBy === option.value
-                            ? 'bg-orange-500 text-white shadow-sm'
+                            ? 'bg-gray-600 text-white shadow-sm'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
@@ -519,7 +519,7 @@ const Products: React.FC = () => {
             {/* Products Grid/List */}
             {isLoading && !hasInstantData ? (
               <div className="flex flex-col justify-center items-center min-h-[500px]">
-                <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent mb-4"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-400 border-t-transparent mb-4"></div>
                 <p className="text-gray-600 font-medium">Loading products...</p>
                 <p className="text-gray-500 text-sm mt-1">Finding the best deals for you</p>
               </div>
@@ -535,7 +535,7 @@ const Products: React.FC = () => {
                 <div className="flex justify-center gap-3">
                   <button
                     onClick={clearAllFilters}
-                    className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-medium transition-colors"
+                    className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium transition-colors"
                   >
                     Clear All Filters
                   </button>
@@ -596,7 +596,7 @@ const Products: React.FC = () => {
                             
                             {/* Discount Badge */}
                             {product.salePrice && product.salePrice < product.price && (
-                              <div className="absolute top-1 right-1 bg-orange-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
+                              <div className="absolute top-1 right-1 bg-gray-600 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
                                 -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
                               </div>
                             )}
@@ -626,7 +626,7 @@ const Products: React.FC = () => {
                                   e.stopPropagation();
                                   quickAddToCart(product, e);
                                 }}
-                                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                                className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                                 aria-label="Add to cart"
                               >
                                 <ShoppingCart size={12} />
@@ -702,7 +702,7 @@ const Products: React.FC = () => {
                                     e.stopPropagation();
                                     quickAddToCart(product, e);
                                   }}
-                                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                                  className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                                   aria-label="Add to cart"
                                 >
                                   <ShoppingCart size={12} />
@@ -745,7 +745,7 @@ const Products: React.FC = () => {
                             onClick={() => handlePageChange(pageNum)}
                             className={`w-10 h-10 rounded-lg font-medium text-sm transition-all ${
                               currentPage === pageNum
-                                ? 'bg-orange-500 text-white shadow-sm'
+                                ? 'bg-gray-600 text-white shadow-sm'
                                 : 'border border-gray-300 hover:bg-gray-50 text-gray-700'
                             }`}
                           >

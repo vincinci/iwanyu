@@ -172,7 +172,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
         <div className="text-center mt-6">
           <Link
             to={`/products?category=${currentProduct.categoryId}`}
-            className="inline-flex items-center text-orange-600 hover:text-orange-700 font-medium transition-colors"
+            className="inline-flex items-center text-gray-600 hover:text-gray-800 font-medium transition-colors"
           >
             View All in {currentProduct.category?.name}
             <ChevronRight size={16} className="ml-1" />
@@ -275,7 +275,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
 
         {/* Product Info */}
         <div className="p-3">
-          <h3 className={`font-medium text-gray-900 group-hover:text-orange-600 transition-colors ${
+          <h3 className={`font-medium text-gray-900 group-hover:text-gray-700 transition-colors ${
             compact ? 'text-sm line-clamp-2' : 'text-base line-clamp-1'
           } mb-1`}>
             {product.name}
@@ -317,7 +317,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
           {product.stock > 0 && (
             <button
               onClick={handleAddToCart}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center"
+              className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center"
             >
               <ShoppingCart size={14} className="mr-1" />
               Add to Cart

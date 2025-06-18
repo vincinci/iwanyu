@@ -86,11 +86,11 @@ const AdminTest: React.FC = () => {
           </div>
           
           {(!user || user.role !== 'ADMIN') && (
-            <div className="mt-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
-              <p className="text-yellow-700 mb-2">
+            <div className="mt-4 p-4 bg-gray-100 border border-yellow-400 rounded">
+              <p className="text-gray-700 mb-2">
                 <strong>Admin access required!</strong>
               </p>
-              <p className="text-sm text-yellow-600 mb-3">
+              <p className="text-sm text-gray-600 mb-3">
                 Available admin accounts:
                 <br />• admin@iwanyu.com
                 <br />• admin@iwanyu.store

@@ -57,8 +57,8 @@ const MobileBottomNav: React.FC = () => {
               to={item.path}
               className={`flex flex-col items-center justify-center space-y-1 transition-colors duration-200 relative touch-manipulation ${
                 item.isActive 
-                  ? 'text-orange-500' 
-                  : 'text-gray-500 active:text-orange-500'
+                  ? 'text-gray-600' 
+                  : 'text-gray-500 active:text-gray-600'
               }`}
               style={{ minHeight: '48px', minWidth: '48px' }}
             >
@@ -72,7 +72,7 @@ const MobileBottomNav: React.FC = () => {
               </div>
               <span className="text-xs font-medium">{item.label}</span>
               {item.isActive && (
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-orange-500 rounded-full"></div>
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-600 rounded-full"></div>
               )}
             </Link>
           );

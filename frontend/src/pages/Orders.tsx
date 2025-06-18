@@ -82,13 +82,13 @@ const Orders: React.FC = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'PENDING':
-        return <Clock className="text-yellow-500" size={16} />;
+        return <Clock className="text-gray-500" size={16} />;
       case 'CONFIRMED':
         return <CheckCircle className="text-blue-500" size={16} />;
       case 'PROCESSING':
         return <Package className="text-purple-500" size={16} />;
       case 'SHIPPED':
-        return <Truck className="text-orange-500" size={16} />;
+        return <Truck className="text-gray-600" size={16} />;
       case 'DELIVERED':
         return <CheckCircle className="text-green-500" size={16} />;
       case 'CANCELLED':
@@ -101,13 +101,13 @@ const Orders: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-gray-100 text-gray-800';
       case 'CONFIRMED':
         return 'bg-blue-100 text-blue-800';
       case 'PROCESSING':
         return 'bg-purple-100 text-purple-800';
       case 'SHIPPED':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-gray-100 text-gray-800';
       case 'DELIVERED':
         return 'bg-green-100 text-green-800';
       case 'CANCELLED':
@@ -137,7 +137,7 @@ const Orders: React.FC = () => {
           <p className="text-gray-600 mb-4">You need to be logged in to view your orders.</p>
           <Link
             to="/login"
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors"
           >
             Log In
           </Link>
@@ -176,7 +176,7 @@ const Orders: React.FC = () => {
           <p className="text-gray-600 mb-4">Failed to load your orders. Please try again.</p>
           <button
             onClick={() => refetch()}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors"
           >
             Retry
           </button>
@@ -209,7 +209,7 @@ const Orders: React.FC = () => {
                   placeholder="Search orders..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                 />
               </div>
             </div>
@@ -219,7 +219,7 @@ const Orders: React.FC = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
               >
                 <option value="">All Status</option>
                 <option value="PENDING">Pending</option>
@@ -241,7 +241,7 @@ const Orders: React.FC = () => {
             <p className="text-gray-600 mb-6">You haven't placed any orders yet.</p>
             <Link
               to="/products"
-              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors"
             >
               Start Shopping
             </Link>
@@ -279,7 +279,7 @@ const Orders: React.FC = () => {
                         <div className="flex space-x-2">
                           <button
                             onClick={() => fetchOrderDetails(order.id)}
-                            className="p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                            className="p-2 text-gray-600 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye size={16} />
@@ -348,7 +348,7 @@ const Orders: React.FC = () => {
               <button
                 onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="p-2 text-gray-600 hover:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 text-gray-600 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={20} />
               </button>
@@ -358,8 +358,8 @@ const Orders: React.FC = () => {
                   onClick={() => setCurrentPage(i + 1)}
                   className={`px-3 py-1 rounded ${
                     currentPage === i + 1
-                      ? 'bg-orange-500 text-white'
-                      : 'text-gray-600 hover:text-orange-600'
+                      ? 'bg-gray-600 text-white'
+                      : 'text-gray-600 hover:text-gray-700'
                   }`}
                 >
                   {i + 1}
@@ -368,7 +368,7 @@ const Orders: React.FC = () => {
               <button
                 onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={currentPage === pagination.pages}
-                className="p-2 text-gray-600 hover:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 text-gray-600 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronRight size={20} />
               </button>

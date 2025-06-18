@@ -26,7 +26,7 @@ const Cart: React.FC = () => {
           <p className="text-gray-600 mb-6">Add some products to get started</p>
           <Link
             to="/products"
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors duration-200"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors duration-200"
           >
             Shop Now
           </Link>
@@ -46,7 +46,7 @@ const Cart: React.FC = () => {
           </div>
           <Link
             to="/products"
-            className="flex items-center text-orange-500 hover:text-orange-600 transition-colors duration-200 text-sm md:text-base"
+            className="flex items-center text-gray-600 hover:text-gray-700 transition-colors duration-200 text-sm md:text-base"
           >
             <ArrowLeft className="mr-1" size={16} />
             Continue Shopping
@@ -118,7 +118,7 @@ const Cart: React.FC = () => {
                               )}
                             </div>
                             {item.stock <= 5 && (
-                              <p className="text-orange-500 text-xs mt-1">
+                              <p className="text-gray-600 text-xs mt-1">
                                 Only {item.stock} left in stock
                               </p>
                             )}
@@ -202,7 +202,7 @@ const Cart: React.FC = () => {
 
               <Link 
                 to="/checkout"
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg mt-6 transition-colors duration-200 flex items-center justify-center"
+                className="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg mt-6 transition-colors duration-200 flex items-center justify-center"
               >
                 <CreditCard className="mr-2" size={18} />
                 Proceed to Checkout
@@ -211,7 +211,7 @@ const Cart: React.FC = () => {
               <div className="mt-4 text-center">
                 <Link
                   to="/products"
-                  className="text-sm text-orange-500 hover:text-orange-600 flex items-center justify-center"
+                  className="text-sm text-gray-600 hover:text-gray-700 flex items-center justify-center"
                 >
                   <ArrowLeft className="mr-1" size={14} />
                   Continue Shopping

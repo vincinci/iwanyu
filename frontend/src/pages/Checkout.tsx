@@ -222,7 +222,7 @@ const Checkout: React.FC = () => {
           <p className="text-gray-600 mb-6">Add some products to your cart before checkout</p>
           <Link 
             to="/products" 
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors"
           >
             Shop Now
           </Link>
@@ -239,7 +239,7 @@ const Checkout: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center"
         >
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Redirecting to Payment</h2>
           <p className="text-gray-600 mb-6">
             Please wait while we redirect you to the secure payment page...
@@ -286,7 +286,7 @@ const Checkout: React.FC = () => {
                         name="checkout-type"
                         checked={checkoutAsGuest}
                         onChange={() => setCheckoutAsGuest(true)}
-                        className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300"
+                        className="h-4 w-4 text-gray-600 focus:ring-orange-500 border-gray-300"
                       />
                       <label htmlFor="guest-checkout" className="flex-1">
                         <span className="font-medium text-gray-900">Continue as Guest</span>
@@ -301,7 +301,7 @@ const Checkout: React.FC = () => {
                         name="checkout-type"
                         checked={!checkoutAsGuest}
                         onChange={() => setCheckoutAsGuest(false)}
-                        className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300"
+                        className="h-4 w-4 text-gray-600 focus:ring-orange-500 border-gray-300"
                       />
                       <label htmlFor="login-checkout" className="flex-1">
                         <span className="font-medium text-gray-900">Sign In to Your Account</span>
@@ -313,7 +313,7 @@ const Checkout: React.FC = () => {
                       <div className="ml-7 pt-2">
                         <Link
                           to="/login"
-                          className="inline-flex items-center text-orange-600 hover:text-orange-700 font-medium text-sm"
+                          className="inline-flex items-center text-gray-600 hover:text-gray-800 font-medium text-sm"
                         >
                           Sign In Now →
                         </Link>
@@ -359,7 +359,7 @@ const Checkout: React.FC = () => {
                       required
                       value={shippingAddress.firstName}
                       onChange={(e) => handleAddressChange('firstName', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     />
                   </div>
                   
@@ -373,7 +373,7 @@ const Checkout: React.FC = () => {
                       required
                       value={shippingAddress.lastName}
                       onChange={(e) => handleAddressChange('lastName', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     />
                   </div>
 
@@ -387,7 +387,7 @@ const Checkout: React.FC = () => {
                       required
                       value={shippingAddress.email}
                       onChange={(e) => handleAddressChange('email', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     />
                   </div>
 
@@ -401,7 +401,7 @@ const Checkout: React.FC = () => {
                       required
                       value={shippingAddress.phone}
                       onChange={(e) => handleAddressChange('phone', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     />
                   </div>
 
@@ -415,7 +415,7 @@ const Checkout: React.FC = () => {
                       required
                       value={shippingAddress.address}
                       onChange={(e) => handleAddressChange('address', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     />
                   </div>
 
@@ -429,7 +429,7 @@ const Checkout: React.FC = () => {
                       required
                       value={shippingAddress.city}
                       onChange={(e) => handleAddressChange('city', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     />
                   </div>
 
@@ -442,7 +442,7 @@ const Checkout: React.FC = () => {
                       type="text"
                       value={shippingAddress.state}
                       onChange={(e) => handleAddressChange('state', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     />
                   </div>
 
@@ -455,7 +455,7 @@ const Checkout: React.FC = () => {
                       type="text"
                       value={shippingAddress.postalCode}
                       onChange={(e) => handleAddressChange('postalCode', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     />
                   </div>
 
@@ -468,7 +468,7 @@ const Checkout: React.FC = () => {
                       required
                       value={shippingAddress.country}
                       onChange={(e) => handleAddressChange('country', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                       aria-label="Select country"
                     >
                       <option value="Rwanda">Rwanda</option>
@@ -539,7 +539,7 @@ const Checkout: React.FC = () => {
                     placeholder="Enter coupon code"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                   />
                   <button
                     type="button"
@@ -558,7 +558,7 @@ const Checkout: React.FC = () => {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                 />
               </div>
             </div>
@@ -624,7 +624,7 @@ const Checkout: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white py-3 px-4 rounded-lg mt-6 transition-colors duration-200 flex items-center justify-center"
+                  className="w-full bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white py-3 px-4 rounded-lg mt-6 transition-colors duration-200 flex items-center justify-center"
                 >
                   {isProcessing ? (
                     <>

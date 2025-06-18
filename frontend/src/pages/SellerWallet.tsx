@@ -159,7 +159,7 @@ const SellerWallet: React.FC = () => {
         return <CheckCircle className="w-4 h-4 text-green-500" />;
       case 'PENDING':
       case 'PROCESSING':
-        return <Clock className="w-4 h-4 text-yellow-500" />;
+        return <Clock className="w-4 h-4 text-gray-500" />;
       case 'FAILED':
       case 'CANCELLED':
         return <XCircle className="w-4 h-4 text-red-500" />;
@@ -173,7 +173,7 @@ const SellerWallet: React.FC = () => {
       case 'COMPLETED':
         return 'bg-green-100 text-green-800';
       case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-gray-100 text-gray-800';
       case 'PROCESSING':
         return 'bg-blue-100 text-blue-800';
       case 'FAILED':
@@ -188,7 +188,7 @@ const SellerWallet: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading wallet...</p>
         </div>
       </div>
@@ -342,7 +342,7 @@ const SellerWallet: React.FC = () => {
               </h2>
               <button
                 onClick={() => navigate('/seller/payouts')}
-                className="text-orange-600 hover:text-orange-700 font-medium text-sm"
+                className="text-gray-600 hover:text-gray-800 font-medium text-sm"
               >
                 View All
               </button>
@@ -469,7 +469,7 @@ const SellerWallet: React.FC = () => {
                         onClick={() => setPayoutMethod('BANK_TRANSFER')}
                         className={`p-3 border rounded-lg flex items-center gap-2 ${
                           payoutMethod === 'BANK_TRANSFER'
-                            ? 'border-orange-500 bg-orange-50 text-orange-700'
+                            ? 'border-gray-400 bg-gray-50 text-gray-700'
                             : 'border-gray-300 text-gray-700'
                         }`}
                       >
@@ -480,7 +480,7 @@ const SellerWallet: React.FC = () => {
                         onClick={() => setPayoutMethod('MOBILE_MONEY')}
                         className={`p-3 border rounded-lg flex items-center gap-2 ${
                           payoutMethod === 'MOBILE_MONEY'
-                            ? 'border-orange-500 bg-orange-50 text-orange-700'
+                            ? 'border-gray-400 bg-gray-50 text-gray-700'
                             : 'border-gray-300 text-gray-700'
                         }`}
                       >
@@ -586,7 +586,7 @@ const SellerWallet: React.FC = () => {
                     <button
                       onClick={handlePayout}
                       disabled={bankPayoutMutation.isPending || mobilePayoutMutation.isPending}
-                      className="flex-1 px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors disabled:opacity-50"
+                      className="flex-1 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 transition-colors disabled:opacity-50"
                     >
                       {(bankPayoutMutation.isPending || mobilePayoutMutation.isPending) ? 'Processing...' : 'Withdraw'}
                     </button>

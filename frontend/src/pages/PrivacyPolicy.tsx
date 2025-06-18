@@ -28,7 +28,7 @@ const PrivacyPolicy: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">Information We Collect</h2>
             <div className="space-y-4">
               <div className="flex items-start space-x-4">
-                <FileText className="w-6 h-6 text-yellow-500 mt-1" />
+                <FileText className="w-6 h-6 text-gray-500 mt-1" />
                 <div>
                   <h3 className="text-lg font-medium mb-2">Personal Information</h3>
                   <p className="text-gray-600">
@@ -38,7 +38,7 @@ const PrivacyPolicy: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-start space-x-4">
-                <Eye className="w-6 h-6 text-yellow-500 mt-1" />
+                <Eye className="w-6 h-6 text-gray-500 mt-1" />
                 <div>
                   <h3 className="text-lg font-medium mb-2">Usage Information</h3>
                   <p className="text-gray-600">
@@ -55,7 +55,7 @@ const PrivacyPolicy: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">How We Use Your Information</h2>
             <div className="space-y-4">
               <div className="flex items-start space-x-4">
-                <Shield className="w-6 h-6 text-yellow-500 mt-1" />
+                <Shield className="w-6 h-6 text-gray-500 mt-1" />
                 <div>
                   <h3 className="text-lg font-medium mb-2">Service Provision</h3>
                   <p className="text-gray-600">
@@ -64,7 +64,7 @@ const PrivacyPolicy: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-start space-x-4">
-                <Lock className="w-6 h-6 text-yellow-500 mt-1" />
+                <Lock className="w-6 h-6 text-gray-500 mt-1" />
                 <div>
                   <h3 className="text-lg font-medium mb-2">Security</h3>
                   <p className="text-gray-600">

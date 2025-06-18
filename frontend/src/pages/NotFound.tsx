@@ -47,7 +47,7 @@ const NotFound: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/"
-                className="inline-flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+                className="inline-flex items-center justify-center space-x-2 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
               >
                 <Home size={18} />
                 <span>Go Home</span>
@@ -64,7 +64,7 @@ const NotFound: React.FC = () => {
 
             <button
               onClick={() => window.history.back()}
-              className="inline-flex items-center justify-center space-x-2 text-gray-600 hover:text-orange-500 transition-colors duration-200"
+              className="inline-flex items-center justify-center space-x-2 text-gray-600 hover:text-gray-600 transition-colors duration-200"
             >
               <ArrowLeft size={16} />
               <span>Go Back</span>
@@ -90,25 +90,25 @@ const NotFound: React.FC = () => {
             <div className="flex flex-wrap justify-center gap-2">
               <Link
                 to="/products?category=electronics"
-                className="px-3 py-1 bg-gray-100 hover:bg-orange-100 text-gray-600 hover:text-orange-600 rounded-full text-sm transition-colors duration-200"
+                className="px-3 py-1 bg-gray-100 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-full text-sm transition-colors duration-200"
               >
                 Electronics
               </Link>
               <Link
                 to="/products?category=fashion"
-                className="px-3 py-1 bg-gray-100 hover:bg-orange-100 text-gray-600 hover:text-orange-600 rounded-full text-sm transition-colors duration-200"
+                className="px-3 py-1 bg-gray-100 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-full text-sm transition-colors duration-200"
               >
                 Fashion
               </Link>
               <Link
                 to="/products?category=home"
-                className="px-3 py-1 bg-gray-100 hover:bg-orange-100 text-gray-600 hover:text-orange-600 rounded-full text-sm transition-colors duration-200"
+                className="px-3 py-1 bg-gray-100 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-full text-sm transition-colors duration-200"
               >
                 Home & Garden
               </Link>
               <Link
                 to="/deals"
-                className="px-3 py-1 bg-gray-100 hover:bg-orange-100 text-gray-600 hover:text-orange-600 rounded-full text-sm transition-colors duration-200"
+                className="px-3 py-1 bg-gray-100 hover:bg-gray-100 text-gray-600 hover:text-gray-700 rounded-full text-sm transition-colors duration-200"
               >
                 Deals
               </Link>

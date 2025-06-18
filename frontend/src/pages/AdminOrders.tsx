@@ -54,7 +54,7 @@ const AdminOrders: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const colors = {
-      PENDING: 'bg-yellow-100 text-yellow-800',
+      PENDING: 'bg-gray-100 text-gray-800',
       CONFIRMED: 'bg-blue-100 text-blue-800',
       PROCESSING: 'bg-purple-100 text-purple-800',
       SHIPPED: 'bg-indigo-100 text-indigo-800',
@@ -69,7 +69,7 @@ const AdminOrders: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading orders...</p>
         </div>
       </div>
@@ -129,7 +129,7 @@ const AdminOrders: React.FC = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                 aria-label="Filter by order status"
               >
                 <option value="">All Status</option>
@@ -257,7 +257,7 @@ const AdminOrders: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button
                             onClick={() => setSelectedOrder(order)}
-                            className="text-orange-600 hover:text-orange-900"
+                            className="text-gray-600 hover:text-orange-900"
                             title="View order details"
                             aria-label={`View order ${order.orderNumber || order.id}`}
                           >
@@ -330,7 +330,7 @@ const AdminOrders: React.FC = () => {
                   <select
                     defaultValue={selectedOrder.status}
                     onChange={(e) => handleUpdateOrderStatus(selectedOrder.id, e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     aria-label="Order Status"
                   >
                     <option value="PENDING">Pending</option>

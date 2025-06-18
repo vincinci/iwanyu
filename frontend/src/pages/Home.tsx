@@ -447,7 +447,7 @@ const Home: React.FC = () => {
   const MobileLoadingFallback = () => (
     <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="text-center p-4">
-        <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <div className="w-16 h-16 border-4 border-gray-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <h2 className="text-lg font-semibold text-gray-900 mb-2">Loading Iwanyu Store...</h2>
         <p className="text-sm text-gray-600">Please wait while we prepare your shopping experience</p>
       </div>
@@ -465,7 +465,7 @@ const Home: React.FC = () => {
         <p className="text-sm text-gray-600 mb-4">We're having trouble loading the store. Please try again.</p>
         <button 
           onClick={() => window.location.reload()}
-          className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600"
+          className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
         >
           Reload Page
         </button>
@@ -534,7 +534,7 @@ const Home: React.FC = () => {
                   whileInView={isMobile ? {} : { opacity: 1, y: 0 }}
                   transition={isMobile ? {} : { duration: 0.4, delay: index * 0.05 }}
                   viewport={{ once: true }}
-                  className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-orange-200 overflow-hidden"
+                  className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-gray-300 overflow-hidden"
                 >
                   <Link 
                     to={`/products/${product.id}`} 
@@ -562,7 +562,7 @@ const Home: React.FC = () => {
                     </div>
                     
                     <div className="p-2">
-                      <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                      <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2 group-hover:text-gray-700 transition-colors">
                         {product.name}
                       </h3>
                       
@@ -671,7 +671,7 @@ const Home: React.FC = () => {
                             e.stopPropagation();
                             quickAddToCart(product, e);
                           }}
-                          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                           aria-label="Add to cart"
                         >
                           <ShoppingCart size={12} />
@@ -696,7 +696,7 @@ const Home: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-4 md:mb-6">
             <h2 className="text-lg md:text-2xl font-bold text-gray-900 flex items-center">
-              <Trophy className="mr-2 text-yellow-500 hidden md:block" size={24} />
+              <Trophy className="mr-2 text-gray-500 hidden md:block" size={24} />
               Best Sellers
             </h2>
             <Link to="/products" className="text-red-500 hover:text-red-600 font-medium text-sm md:text-base">
@@ -752,7 +752,7 @@ const Home: React.FC = () => {
                             e.stopPropagation();
                             quickAddToCart(product, e);
                           }}
-                          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                           aria-label="Add to cart"
                         >
                           <ShoppingCart size={12} />
@@ -829,7 +829,7 @@ const Home: React.FC = () => {
                             e.stopPropagation();
                             quickAddToCart(product, e);
                           }}
-                          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                           aria-label="Add to cart"
                         >
                           <ShoppingCart size={12} />

@@ -106,7 +106,7 @@ const ModernBanner: React.FC<ModernBannerProps> = ({
                   to="/products" 
                   className={`inline-flex items-center ${
                     isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4 text-lg'
-                  } bg-orange-500 hover:bg-orange-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105`}
+                  } bg-gray-600 hover:bg-gray-700 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105`}
                 >
                   {banners[currentBanner].cta}
                   <ArrowRight size={isMobile ? 16 : 20} className="ml-2" />
@@ -145,7 +145,7 @@ const ModernBanner: React.FC<ModernBannerProps> = ({
               onClick={() => goToSlide(index)}
               className={`${isMobile ? 'w-8 h-2' : 'w-12 h-3'} rounded-full transition-all duration-300 ${
                 currentBanner === index 
-                  ? 'bg-orange-500' 
+                  ? 'bg-gray-600' 
                   : 'bg-white/60 hover:bg-white/80'
               }`}
               aria-label={`Go to banner ${index + 1}`}

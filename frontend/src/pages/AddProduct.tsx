@@ -217,7 +217,7 @@ const AddProduct: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
-          <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
+          <AlertCircle className="w-12 h-12 text-gray-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Account Not Approved</h2>
           <p className="text-gray-600 mb-4">Your seller account must be approved before you can add products.</p>
           <button 
@@ -236,7 +236,7 @@ const AddProduct: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
-          <AlertCircle className="w-12 h-12 text-orange-500 mx-auto mb-4" />
+          <AlertCircle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Product Limit Reached</h2>
           <p className="text-gray-600 mb-4">
             You've reached the maximum limit of 10 products. Please delete a product to add a new one.
@@ -491,7 +491,7 @@ const AddProduct: React.FC = () => {
                     onClick={() => setUseImageUpload(true)}
                     className={`flex items-center space-x-1 px-3 py-1 text-sm rounded ${
                       useImageUpload 
-                        ? 'bg-orange-500 text-white' 
+                        ? 'bg-gray-600 text-white' 
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                   >
@@ -503,7 +503,7 @@ const AddProduct: React.FC = () => {
                     onClick={() => setUseImageUpload(false)}
                     className={`flex items-center space-x-1 px-3 py-1 text-sm rounded ${
                       !useImageUpload 
-                        ? 'bg-orange-500 text-white' 
+                        ? 'bg-gray-600 text-white' 
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                   >
@@ -519,7 +519,7 @@ const AddProduct: React.FC = () => {
                   <div
                     className={`relative border-2 border-dashed rounded-lg p-6 transition-colors ${
                       dragActive 
-                        ? 'border-orange-500 bg-orange-50' 
+                        ? 'border-gray-400 bg-gray-50' 
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
                     onDragEnter={handleDrag}
@@ -539,7 +539,7 @@ const AddProduct: React.FC = () => {
                       <Upload className="mx-auto h-12 w-12 text-gray-400" />
                       <div className="mt-4">
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium text-orange-500">Click to upload</span> or drag and drop
+                          <span className="font-medium text-gray-600">Click to upload</span> or drag and drop
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
                           PNG, JPG, GIF up to 5MB

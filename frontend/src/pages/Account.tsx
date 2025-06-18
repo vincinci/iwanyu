@@ -87,7 +87,7 @@ const Account: React.FC = () => {
     switch (status) {
       case 'Delivered': return 'text-green-600 bg-green-100';
       case 'Shipped': return 'text-blue-600 bg-blue-100';
-      case 'Processing': return 'text-yellow-600 bg-yellow-100';
+      case 'Processing': return 'text-gray-600 bg-gray-100';
       default: return 'text-gray-600 bg-gray-100';
     }
   };
@@ -154,8 +154,8 @@ const Account: React.FC = () => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
                         activeTab === tab.id
-                          ? 'bg-orange-500 text-white shadow-md'
-                          : 'text-gray-600 hover:text-orange-500 hover:bg-orange-50'
+                          ? 'bg-gray-600 text-white shadow-md'
+                          : 'text-gray-600 hover:text-gray-600 hover:bg-gray-100'
                       }`}
                     >
                       <Icon size={18} />
@@ -182,7 +182,7 @@ const Account: React.FC = () => {
                     <h2 className="text-xl font-bold text-gray-900">Profile Information</h2>
                     <button
                       onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-                      className="flex items-center space-x-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors duration-200"
+                      className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors duration-200"
                     >
                       {isEditing ? <Save size={16} /> : <Edit size={16} />}
                       <span>{isEditing ? 'Save Changes' : 'Edit Profile'}</span>
@@ -199,7 +199,7 @@ const Account: React.FC = () => {
                         value={formData.firstName}
                         onChange={(e) => handleInputChange('firstName', e.target.value)}
                         disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400 disabled:bg-gray-100"
                       />
                     </div>
 
@@ -212,7 +212,7 @@ const Account: React.FC = () => {
                         value={formData.lastName}
                         onChange={(e) => handleInputChange('lastName', e.target.value)}
                         disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400 disabled:bg-gray-100"
                       />
                     </div>
 
@@ -225,7 +225,7 @@ const Account: React.FC = () => {
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400 disabled:bg-gray-100"
                       />
                     </div>
 
@@ -238,7 +238,7 @@ const Account: React.FC = () => {
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
                         disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400 disabled:bg-gray-100"
                       />
                     </div>
 
@@ -251,7 +251,7 @@ const Account: React.FC = () => {
                         value={formData.address}
                         onChange={(e) => handleInputChange('address', e.target.value)}
                         disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400 disabled:bg-gray-100"
                       />
                     </div>
                   </div>
@@ -303,7 +303,7 @@ const Account: React.FC = () => {
                         <div className="text-gray-600">{formData.address}</div>
                         <div className="text-gray-600">{formData.city}, {formData.country}</div>
                       </div>
-                      <button className="text-orange-500 hover:text-orange-600">
+                      <button className="text-gray-600 hover:text-gray-700">
                         <Edit size={16} />
                       </button>
                     </div>
@@ -324,7 +324,7 @@ const Account: React.FC = () => {
                           <div className="text-sm text-gray-600">Receive updates about your orders</div>
                         </div>
                       </div>
-                      <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+                      <button className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
                         Enabled
                       </button>
                     </div>

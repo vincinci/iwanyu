@@ -101,7 +101,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
         <button
           onClick={handleAddToCart}
           disabled={stock === 0}
-          className={`w-full bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
+          className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
             compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
           }`}
         >

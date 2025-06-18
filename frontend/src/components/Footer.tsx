@@ -17,10 +17,10 @@ const Footer: React.FC = () => {
             Your premier online shopping destination for quality products at unbeatable prices.
           </p>
           <div className="flex justify-center space-x-6 text-sm">
-            <Link to="/about" className="hover:text-orange-400 transition-colors">About Us</Link>
-            <Link to="/contact" className="hover:text-orange-400 transition-colors">Contact</Link>
-            <Link to="/privacy-policy" className="hover:text-orange-400 transition-colors">Privacy Policy</Link>
-            <Link to="/terms-of-service" className="hover:text-orange-400 transition-colors">Terms of Service</Link>
+            <Link to="/about" className="hover:text-gray-500 transition-colors">About Us</Link>
+            <Link to="/contact" className="hover:text-gray-500 transition-colors">Contact</Link>
+            <Link to="/privacy-policy" className="hover:text-gray-500 transition-colors">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:text-gray-500 transition-colors">Terms of Service</Link>
           </div>
           <div className="pt-4 border-t border-gray-700">
             <p className="text-gray-400">&copy; {new Date().getFullYear()} Iwanyu Store. All rights reserved.</p>

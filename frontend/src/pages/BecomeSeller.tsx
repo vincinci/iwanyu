@@ -142,7 +142,7 @@ const BecomeSeller: React.FC = () => {
 
           {/* Header */}
           <div className="text-center mb-8">
-            <Store className="w-12 h-12 text-orange-500 mx-auto mb-4" />
+            <Store className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Become a Seller</h1>
             <p className="text-gray-600">
               Join our marketplace and start selling your products to thousands of customers.
@@ -150,19 +150,19 @@ const BecomeSeller: React.FC = () => {
           </div>
 
           {/* Benefits */}
-          <div className="grid md:grid-cols-3 gap-4 mb-8 p-4 bg-orange-50 rounded-lg">
+          <div className="grid md:grid-cols-3 gap-4 mb-8 p-4 bg-gray-50 rounded-lg">
             <div className="text-center">
-              <Building2 className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+              <Building2 className="w-8 h-8 text-gray-600 mx-auto mb-2" />
               <h3 className="font-semibold text-sm">Easy Setup</h3>
               <p className="text-gray-600 text-xs">Quick application process</p>
             </div>
             <div className="text-center">
-              <Store className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+              <Store className="w-8 h-8 text-gray-600 mx-auto mb-2" />
               <h3 className="font-semibold text-sm">Large Audience</h3>
               <p className="text-gray-600 text-xs">Reach thousands of customers</p>
             </div>
             <div className="text-center">
-              <CheckCircle className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+              <CheckCircle className="w-8 h-8 text-gray-600 mx-auto mb-2" />
               <h3 className="font-semibold text-sm">Secure Payments</h3>
               <p className="text-gray-600 text-xs">Safe and reliable transactions</p>
             </div>
@@ -303,11 +303,11 @@ const BecomeSeller: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 National ID Document *
               </label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-orange-400 transition-colors">
+              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-colors">
                 <div className="space-y-1 text-center">
                   {nationalIdFile ? (
                     <div className="flex items-center justify-center space-x-2">
-                      <File className="w-8 h-8 text-orange-500" />
+                      <File className="w-8 h-8 text-gray-600" />
                       <div>
                         <p className="text-sm font-medium text-gray-900">{nationalIdFile.name}</p>
                         <p className="text-xs text-gray-500">
@@ -321,7 +321,7 @@ const BecomeSeller: React.FC = () => {
                   <div className="flex text-sm text-gray-600">
                     <label
                       htmlFor="nationalId"
-                      className="relative cursor-pointer bg-white rounded-md font-medium text-orange-600 hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500"
+                      className="relative cursor-pointer bg-white rounded-md font-medium text-gray-600 hover:text-gray-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-orange-500"
                     >
                       <span>{nationalIdFile ? 'Change file' : 'Upload National ID'}</span>
                       <input
@@ -345,8 +345,8 @@ const BecomeSeller: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-800">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <p className="text-sm text-gray-800">
                 <strong>Note:</strong> Your application will be reviewed by our team. You'll receive an email confirmation once approved. This usually takes 2-3 business days.
               </p>
             </div>

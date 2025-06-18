@@ -45,13 +45,13 @@ const CategorySection: React.FC<CategorySectionProps> = ({
               <p className="text-gray-600 text-sm hidden md:block">{category.description}</p>
             )}
             <div className="flex items-center text-sm text-gray-500">
-              <Zap size={12} className="text-orange-500 mr-1" />
+              <Zap size={12} className="text-gray-600 mr-1" />
               <span>Instant</span>
             </div>
           </div>
           <Link
             to={`/products?category=${category.slug}`}
-            className="flex items-center text-orange-500 hover:text-orange-600 font-medium text-sm transition-colors"
+            className="flex items-center text-gray-600 hover:text-gray-700 font-medium text-sm transition-colors"
           >
             View All <ArrowRight size={16} className="ml-1" />
           </Link>
@@ -68,7 +68,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: index * 0.05 }}
-                className="bg-white rounded-lg border border-gray-200 hover:border-orange-300 hover:shadow-lg transition-all duration-200 overflow-hidden group"
+                className="bg-white rounded-lg border border-gray-200 hover:border-gray-400 hover:shadow-lg transition-all duration-200 overflow-hidden group"
               >
                 <div className="relative">
                   <Link to={`/products/${product.id}`}>
@@ -113,7 +113,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                   <button
                     onClick={(e) => handleAddToCart(product, e)}
                     disabled={product.stock === 0}
-                    className="absolute bottom-2 right-2 bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-110"
+                    className="absolute bottom-2 right-2 bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-110"
                     title={product.stock === 0 ? 'Out of stock' : 'Quick add to cart'}
                   >
                     {isInCart(product.id) ? (
@@ -131,7 +131,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                 
                 <div className="p-4">
                   <Link to={`/products/${product.id}`} className="block">
-                    <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2 leading-tight h-10 group-hover:text-orange-600 transition-colors">
+                    <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2 leading-tight h-10 group-hover:text-gray-700 transition-colors">
                       {product.name}
                     </h3>
                     
@@ -180,7 +180,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                         product.stock > 10 
                           ? 'bg-green-100 text-green-800' 
                           : product.stock > 0 
-                          ? 'bg-yellow-100 text-yellow-800' 
+                          ? 'bg-gray-100 text-gray-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
                         {product.stock > 10 ? '✓' : product.stock > 0 ? product.stock : '✗'}
@@ -198,7 +198,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           <div className="text-center mt-6">
             <Link
               to={`/products?category=${category.slug}`}
-              className="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium text-sm transition-colors"
+              className="inline-flex items-center text-gray-600 hover:text-gray-700 font-medium text-sm transition-colors"
             >
               <Plus size={14} className="mr-1" />
               View {products.length - 6} more products

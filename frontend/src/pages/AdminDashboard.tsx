@@ -122,7 +122,7 @@ const AdminDashboard: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading admin dashboard...</p>
         </div>
       </div>
@@ -196,7 +196,7 @@ const AdminDashboard: React.FC = () => {
       description: 'View and manage orders',
       icon: ShoppingCart,
       path: '/admin/orders',
-      color: 'bg-orange-500'
+      color: 'bg-gray-600'
     },
     {
       title: 'Category Management',
@@ -284,7 +284,7 @@ const AdminDashboard: React.FC = () => {
                   <p className="text-sm font-medium text-gray-600">Total Orders</p>
                   <p className="text-2xl font-bold text-gray-900">{dashboard?.overview.orderCount || 0}</p>
                 </div>
-                <ShoppingCart className="w-8 h-8 text-orange-500" />
+                <ShoppingCart className="w-8 h-8 text-gray-600" />
               </div>
             </div>
 
@@ -310,9 +310,9 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Pending Sellers</p>
-                  <p className="text-2xl font-bold text-yellow-600">{sellerStatusMap.PENDING || 0}</p>
+                  <p className="text-2xl font-bold text-gray-600">{sellerStatusMap.PENDING || 0}</p>
                 </div>
-                <Clock className="w-8 h-8 text-yellow-500" />
+                <Clock className="w-8 h-8 text-gray-500" />
               </div>
             </div>
 
@@ -359,7 +359,7 @@ const AdminDashboard: React.FC = () => {
                 <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
                 <button
                   onClick={() => navigate('/admin/orders')}
-                  className="text-orange-600 hover:text-orange-700 font-medium"
+                  className="text-gray-600 hover:text-gray-800 font-medium"
                 >
                   View All
                 </button>
@@ -396,7 +396,7 @@ const AdminDashboard: React.FC = () => {
                           {formatPrice(order.total || 0)}
                         </p>
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                          order.status === 'PENDING' ? 'bg-gray-100 text-gray-800' :
                           order.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
                           order.status === 'PROCESSING' ? 'bg-purple-100 text-purple-800' :
                           order.status === 'SHIPPED' ? 'bg-indigo-100 text-indigo-800' :
@@ -427,7 +427,7 @@ const AdminDashboard: React.FC = () => {
                   <button
                     key={action.path}
                     onClick={() => navigate(action.path)}
-                    className="p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-orange-300 transition-colors text-left group"
+                    className="p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-gray-400 transition-colors text-left group"
                   >
                     <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                       <Icon className="w-6 h-6 text-white" />

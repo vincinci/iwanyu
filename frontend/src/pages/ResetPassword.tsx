@@ -191,7 +191,7 @@ const ResetPassword: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <Lock className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
+          <Lock className="w-12 h-12 text-gray-600 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-900">Reset your password</h2>
           <p className="mt-2 text-sm text-gray-600">
             Enter your new password below

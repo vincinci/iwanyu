@@ -229,7 +229,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
         {user && (
           <button
             onClick={() => setShowReviewForm(!showReviewForm)}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 mb-6"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 mb-6"
           >
             Write a Review
           </button>
@@ -304,7 +304,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+                    className="bg-gray-600 hover:bg-gray-700 disabled:bg-orange-300 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
                   >
                     {submitting ? 'Submitting...' : 'Submit Review'}
                   </button>
@@ -326,7 +326,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
       <div className="space-y-6">
         {loading && reviews.length === 0 ? (
           <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto"></div>
             <p className="text-gray-600 mt-2">Loading reviews...</p>
           </div>
         ) : reviews.length === 0 ? (

@@ -140,7 +140,7 @@ const Categories: React.FC = () => {
       'from-green-500 to-green-600',
       'from-purple-500 to-purple-600',
       'from-red-500 to-red-600',
-      'from-orange-500 to-orange-600',
+      'from-gray-600 to-gray-700',
       'from-pink-500 to-pink-600',
       'from-indigo-500 to-indigo-600',
       'from-teal-500 to-teal-600',
@@ -227,25 +227,25 @@ const Categories: React.FC = () => {
                               <Link
                                 key={subcategory.id}
                                 to={`/products?category=${subcategory.slug}`}
-                                className="group p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50/50 transition-all duration-200"
+                                className="group p-4 border border-gray-200 rounded-lg hover:border-gray-400 hover:bg-gray-100/50 transition-all duration-200"
                               >
                                 <div className="flex items-center space-x-3 mb-3">
-                                  <div className="w-10 h-10 bg-gray-100 group-hover:bg-orange-100 rounded-lg flex items-center justify-center transition-colors">
+                                  <div className="w-10 h-10 bg-gray-100 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
                                     {renderCategoryIcon(subcategory.name, 20)}
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <h3 className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors truncate">
+                                    <h3 className="text-sm font-semibold text-gray-900 group-hover:text-gray-700 transition-colors truncate">
                                       {subcategory.name}
                                     </h3>
                                   </div>
                                 </div>
                                 
-                                <div className="text-xs text-gray-500 group-hover:text-orange-500 transition-colors mb-3">
+                                <div className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors mb-3">
                                   {subcategory.description || 'Browse products in this category'}
                                 </div>
                                 
                                 <div className="flex items-center justify-end">
-                                  <ArrowRight size={12} className="text-gray-400 group-hover:text-orange-500 transition-colors" />
+                                  <ArrowRight size={12} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
                                 </div>
                               </Link>
                             ))
@@ -261,7 +261,7 @@ const Categories: React.FC = () => {
                         <p className="text-sm">No subcategories yet</p>
                         <Link
                           to={`/products?category=${category.slug}`}
-                          className="inline-flex items-center mt-2 text-sm text-orange-600 hover:text-orange-700 font-medium"
+                          className="inline-flex items-center mt-2 text-sm text-gray-600 hover:text-gray-800 font-medium"
                         >
                           Browse Products
                           <ArrowRight size={12} className="ml-1" />

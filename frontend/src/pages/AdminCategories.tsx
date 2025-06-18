@@ -94,7 +94,7 @@ const AdminCategories: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading categories...</p>
         </div>
       </div>
@@ -140,7 +140,7 @@ const AdminCategories: React.FC = () => {
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+              className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
             >
               <Plus className="w-4 h-4" />
               Add Category
@@ -266,7 +266,7 @@ const AdminCategories: React.FC = () => {
                     type="text"
                     name="name"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     placeholder="Enter category name"
                   />
                 </div>
@@ -277,7 +277,7 @@ const AdminCategories: React.FC = () => {
                   <textarea
                     name="description"
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     placeholder="Enter category description"
                   />
                 </div>
@@ -288,7 +288,7 @@ const AdminCategories: React.FC = () => {
                   <input
                     type="url"
                     name="image"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     placeholder="Enter image URL"
                   />
                 </div>
@@ -304,7 +304,7 @@ const AdminCategories: React.FC = () => {
                 <button
                   type="submit"
                   disabled={createCategoryMutation.isPending}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50"
                 >
                   {createCategoryMutation.isPending ? 'Creating...' : 'Create Category'}
                 </button>
@@ -340,7 +340,7 @@ const AdminCategories: React.FC = () => {
                     name="name"
                     defaultValue={editingCategory.name}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                   />
                 </div>
                 <div>
@@ -351,7 +351,7 @@ const AdminCategories: React.FC = () => {
                     name="description"
                     defaultValue={editingCategory.description || ''}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                   />
                 </div>
                 <div>
@@ -362,7 +362,7 @@ const AdminCategories: React.FC = () => {
                     type="url"
                     name="image"
                     defaultValue={editingCategory.image || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                   />
                 </div>
               </div>
@@ -377,7 +377,7 @@ const AdminCategories: React.FC = () => {
                 <button
                   type="submit"
                   disabled={updateCategoryMutation.isPending}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50"
                 >
                   {updateCategoryMutation.isPending ? 'Saving...' : 'Save Changes'}
                 </button>

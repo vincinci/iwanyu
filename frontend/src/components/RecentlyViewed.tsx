@@ -269,7 +269,7 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
 
         {/* Product Info */}
         <div className="p-2">
-          <h3 className={`font-medium text-gray-900 group-hover:text-orange-600 transition-colors ${
+          <h3 className={`font-medium text-gray-900 group-hover:text-gray-700 transition-colors ${
             compact ? 'text-xs line-clamp-2' : 'text-sm line-clamp-1'
           } mb-1`}>
             {product.name}
@@ -311,7 +311,7 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
           {product.stock > 0 && (
             <button
               onClick={handleAddToCart}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white py-1.5 px-2 rounded text-xs font-medium transition-colors duration-200 flex items-center justify-center"
+              className="w-full bg-gray-600 hover:bg-gray-700 text-white py-1.5 px-2 rounded text-xs font-medium transition-colors duration-200 flex items-center justify-center"
             >
               <ShoppingCart size={12} className="mr-1" />
               Add

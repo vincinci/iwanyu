@@ -207,7 +207,7 @@ const PaymentCallback: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center"
         >
-          <Loader className="w-16 h-16 text-orange-500 mx-auto mb-4 animate-spin" />
+          <Loader className="w-16 h-16 text-gray-600 mx-auto mb-4 animate-spin" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Verifying Payment</h2>
           <p className="text-gray-600 mb-6">
             Please wait while we confirm your payment...
@@ -216,7 +216,7 @@ const PaymentCallback: React.FC = () => {
           {/* Progress bar */}
           <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
             <div 
-              className="bg-orange-500 h-2 rounded-full transition-all duration-200"
+              className="bg-gray-600 h-2 rounded-full transition-all duration-200"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -238,18 +238,18 @@ const PaymentCallback: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center"
         >
-          <Clock className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+          <Clock className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Verification Timeout</h2>
           <p className="text-gray-600 mb-6">
             {error}
           </p>
           
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
             <div className="flex items-start">
-              <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
+              <AlertTriangle className="w-5 h-5 text-gray-600 mt-0.5 mr-2 flex-shrink-0" />
               <div className="text-left">
-                <p className="text-yellow-800 font-medium">What to do next:</p>
-                <ul className="text-yellow-700 text-sm mt-1 space-y-1">
+                <p className="text-gray-800 font-medium">What to do next:</p>
+                <ul className="text-gray-700 text-sm mt-1 space-y-1">
                   <li>• Check your email for payment confirmation</li>
                   <li>• Check your orders if you have an account</li>
                   <li>• Contact support if payment was deducted</li>
@@ -262,14 +262,14 @@ const PaymentCallback: React.FC = () => {
             {localStorage.getItem('token') ? (
               <Link
                 to="/orders"
-                className="block w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg transition-colors"
+                className="block w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg transition-colors"
               >
                 Check My Orders
               </Link>
             ) : (
               <Link
                 to="/login"
-                className="block w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg transition-colors"
+                className="block w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg transition-colors"
               >
                 Sign In to Check Order
               </Link>
@@ -295,13 +295,13 @@ const PaymentCallback: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center"
         >
-          <XCircle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+          <XCircle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Cancelled</h2>
           <p className="text-gray-600 mb-4">
             Your payment was cancelled. You will be redirected to the home page shortly...
           </p>
           <div className="flex justify-center items-center">
-            <Loader className="w-6 h-6 text-orange-500 animate-spin mr-2" />
+            <Loader className="w-6 h-6 text-gray-600 animate-spin mr-2" />
             <span className="text-sm text-gray-500">Redirecting...</span>
           </div>
         </motion.div>
@@ -342,14 +342,14 @@ const PaymentCallback: React.FC = () => {
             {localStorage.getItem('token') ? (
               <Link
                 to="/orders"
-                className="block w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg transition-colors"
+                className="block w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg transition-colors"
               >
                 View My Orders
               </Link>
             ) : (
               <Link
                 to="/login"
-                className="block w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg transition-colors"
+                className="block w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg transition-colors"
               >
                 Sign In to Track Order
               </Link>
@@ -383,7 +383,7 @@ const PaymentCallback: React.FC = () => {
         <div className="space-y-3">
           <button
             onClick={() => navigate('/cart')}
-            className="block w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg transition-colors"
+            className="block w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg transition-colors"
           >
             Return to Cart
           </button>

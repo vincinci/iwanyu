@@ -77,7 +77,7 @@ const SellerProducts: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading products...</p>
         </div>
       </div>
@@ -134,12 +134,12 @@ const SellerProducts: React.FC = () => {
             {isApproved ? (
               <div className="flex flex-col gap-2">
                 {(products?.length || 0) >= 10 ? (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                  <div className="bg-gray-50 border border-orange-200 rounded-lg p-4">
                     <div className="flex items-center gap-2">
-                      <AlertCircle className="w-5 h-5 text-orange-600" />
-                      <span className="font-medium text-orange-800">Product Limit Reached</span>
+                      <AlertCircle className="w-5 h-5 text-gray-600" />
+                      <span className="font-medium text-gray-800">Product Limit Reached</span>
                     </div>
-                    <p className="text-orange-700 text-sm mt-1">
+                    <p className="text-gray-700 text-sm mt-1">
                       You've reached the maximum limit of 10 products. Delete a product to add a new one.
                     </p>
                   </div>
@@ -154,12 +154,12 @@ const SellerProducts: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5 text-yellow-600" />
-                  <span className="font-medium text-yellow-800">Account Pending Approval</span>
+                  <AlertCircle className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium text-gray-800">Account Pending Approval</span>
                 </div>
-                <p className="text-yellow-700 text-sm mt-1">
+                <p className="text-gray-700 text-sm mt-1">
                   You can add products once your seller account is approved.
                 </p>
               </div>
@@ -267,7 +267,7 @@ const SellerProducts: React.FC = () => {
                     
                     <button
                       onClick={() => navigate(`/seller/products/edit/${product.id}`)}
-                      className="flex items-center justify-center p-1.5 text-orange-600 hover:bg-orange-50 rounded transition-colors"
+                      className="flex items-center justify-center p-1.5 text-gray-600 hover:bg-gray-100 rounded transition-colors"
                       aria-label="Edit product"
                     >
                       <Edit3 size={16} />

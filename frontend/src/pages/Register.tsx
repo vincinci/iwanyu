@@ -66,7 +66,7 @@ const Register: React.FC = () => {
           <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
           <p className="mt-2 text-sm text-gray-600">
             Or{' '}
-            <Link to="/login" className="font-medium text-yellow-600 hover:text-yellow-500">
+            <Link to="/login" className="font-medium text-gray-600 hover:text-gray-500">
               sign in to your existing account
             </Link>
           </p>

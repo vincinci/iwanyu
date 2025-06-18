@@ -29,7 +29,7 @@ const TermsOfService: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">Use License</h2>
             <div className="space-y-4">
               <div className="flex items-start space-x-4">
-                <FileCheck className="w-6 h-6 text-yellow-500 mt-1" />
+                <FileCheck className="w-6 h-6 text-gray-500 mt-1" />
                 <div>
                   <h3 className="text-lg font-medium mb-2">Permission</h3>
                   <p className="text-gray-600">
@@ -39,7 +39,7 @@ const TermsOfService: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-start space-x-4">
-                <AlertCircle className="w-6 h-6 text-yellow-500 mt-1" />
+                <AlertCircle className="w-6 h-6 text-gray-500 mt-1" />
                 <div>
                   <h3 className="text-lg font-medium mb-2">Restrictions</h3>
                   <p className="text-gray-600">
@@ -71,7 +71,7 @@ const TermsOfService: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">Product Information</h2>
             <div className="space-y-4">
               <div className="flex items-start space-x-4">
-                <Scale className="w-6 h-6 text-yellow-500 mt-1" />
+                <Scale className="w-6 h-6 text-gray-500 mt-1" />
                 <div>
                   <h3 className="text-lg font-medium mb-2">Pricing and Availability</h3>
                   <p className="text-gray-600">

@@ -43,7 +43,7 @@ const AdCampaigns: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE': return 'bg-green-100 text-green-800';
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+      case 'PENDING': return 'bg-gray-100 text-gray-800';
       case 'PAUSED': return 'bg-gray-100 text-gray-800';
       case 'COMPLETED': return 'bg-blue-100 text-blue-800';
       case 'REJECTED': return 'bg-red-100 text-red-800';
@@ -56,7 +56,7 @@ const AdCampaigns: React.FC = () => {
       case 'HOME_BANNER': return <Zap className="text-purple-500" size={20} />;
       case 'HOME_FEATURED': return <Target className="text-blue-500" size={20} />;
       case 'SEARCH_TOP': return <TrendingUp className="text-green-500" size={20} />;
-      case 'CATEGORY_TOP': return <BarChart3 className="text-orange-500" size={20} />;
+      case 'CATEGORY_TOP': return <BarChart3 className="text-gray-600" size={20} />;
       default: return <Target className="text-gray-500" size={20} />;
     }
   };
@@ -151,7 +151,7 @@ const AdCampaigns: React.FC = () => {
                 )}%
               </p>
             </div>
-            <TrendingUp className="text-orange-500" size={24} />
+            <TrendingUp className="text-gray-600" size={24} />
           </div>
         </div>
       </div>

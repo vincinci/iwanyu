@@ -65,8 +65,8 @@ const ForgotPassword: React.FC = () => {
             
             {/* Development only - show reset token */}
             {resetToken && (
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800 mb-2">
+              <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-sm text-gray-800 mb-2">
                   <strong>Development Mode:</strong> Use this link to reset your password:
                 </p>
                 <Link
@@ -112,7 +112,7 @@ const ForgotPassword: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <Mail className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
+          <Mail className="w-12 h-12 text-gray-600 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-900">Forgot your password?</h2>
           <p className="mt-2 text-sm text-gray-600">
             No worries! Enter your email address and we'll send you a link to reset your password.

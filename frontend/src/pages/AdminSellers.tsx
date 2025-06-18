@@ -126,7 +126,7 @@ const AdminSellers: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-gray-100 text-gray-800';
       case 'APPROVED':
         return 'bg-green-100 text-green-800';
       case 'REJECTED':
@@ -157,7 +157,7 @@ const AdminSellers: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading sellers...</p>
         </div>
       </div>
@@ -330,7 +330,7 @@ const AdminSellers: React.FC = () => {
                             setSelectedSeller(seller);
                             setShowModal(true);
                           }}
-                          className="px-3 py-1.5 text-sm bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors"
+                          className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-300 transition-colors"
                         >
                           Manage
                         </button>
@@ -489,12 +489,12 @@ const AdminSellers: React.FC = () => {
                         </button>
                       </div>
                     ) : (
-                      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                         <div className="flex items-center gap-3">
-                          <AlertCircle className="w-6 h-6 text-yellow-600" />
+                          <AlertCircle className="w-6 h-6 text-gray-600" />
                           <div>
-                            <p className="font-medium text-yellow-900">No Document Submitted</p>
-                            <p className="text-sm text-yellow-700">This seller hasn't submitted verification documents</p>
+                            <p className="font-medium text-gray-900">No Document Submitted</p>
+                            <p className="text-sm text-gray-700">This seller hasn't submitted verification documents</p>
                           </div>
                         </div>
                       </div>

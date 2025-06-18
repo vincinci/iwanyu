@@ -58,7 +58,7 @@ const SellerDashboard: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
       </div>
@@ -74,14 +74,14 @@ const SellerDashboard: React.FC = () => {
       return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center max-w-md mx-auto p-6">
-            <User className="w-12 h-12 text-orange-500 mx-auto mb-4" />
+            <User className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Seller Profile Required</h2>
             <p className="text-gray-600 mb-4">
               You need to create a seller profile to access the seller dashboard.
             </p>
             <button 
               onClick={() => navigate('/become-seller')} 
-              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors mr-2"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors mr-2"
             >
               Become a Seller
             </button>
@@ -111,7 +111,7 @@ const SellerDashboard: React.FC = () => {
           <div className="space-y-2">
             <button 
               onClick={() => window.location.reload()} 
-              className="block w-full bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors"
+              className="block w-full bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors"
             >
               Try Again
             </button>
@@ -151,12 +151,12 @@ const SellerDashboard: React.FC = () => {
           </p>
           
           {profile?.status === 'PENDING' && (
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
               <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-yellow-600" />
-                <span className="font-medium text-yellow-800">Application Pending</span>
+                <Clock className="w-5 h-5 text-gray-600" />
+                <span className="font-medium text-gray-800">Application Pending</span>
               </div>
-              <p className="text-yellow-700 text-sm mt-1">
+              <p className="text-gray-700 text-sm mt-1">
                 Your seller application is being reviewed. You'll be notified once approved.
               </p>
             </div>
@@ -196,7 +196,7 @@ const SellerDashboard: React.FC = () => {
                 <p className="text-sm font-medium text-gray-600">Revenue</p>
                 <p className="text-2xl font-bold text-gray-900">${(dashboard as any)?.totalRevenue?.toFixed(2) || '0.00'}</p>
               </div>
-              <DollarSign className="h-8 w-8 text-yellow-500" />
+              <DollarSign className="h-8 w-8 text-gray-500" />
             </div>
           </div>
           
@@ -229,13 +229,13 @@ const SellerDashboard: React.FC = () => {
         <div className="mb-8 flex flex-wrap gap-4">
           <button
             onClick={() => navigate('/dashboard/flash-sales')}
-            className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded shadow-md transition-colors"
+            className="bg-yellow-400 hover:bg-gray-500 text-black font-bold py-2 px-4 rounded shadow-md transition-colors"
           >
             Manage Flash Sales
           </button>
           <button
             onClick={() => navigate('/seller/ad-campaigns')}
-            className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded shadow-md transition-colors flex items-center gap-2"
+            className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded shadow-md transition-colors flex items-center gap-2"
           >
             <Megaphone className="w-4 h-4" />
             Ad Campaigns
@@ -343,18 +343,18 @@ const SellerDashboard: React.FC = () => {
         >
           <button
             onClick={() => navigate('/seller/products')}
-            className="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-orange-300 transition-colors text-left"
+            className="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-gray-400 transition-colors text-left"
           >
-            <Package className="w-6 h-6 text-orange-500 mb-2" />
+            <Package className="w-6 h-6 text-gray-600 mb-2" />
             <h3 className="font-medium text-gray-900">Manage Products</h3>
             <p className="text-sm text-gray-600">Add, edit, or remove your products</p>
           </button>
 
           <button
             onClick={() => navigate('/seller/profile')}
-            className="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-orange-300 transition-colors text-left"
+            className="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-gray-400 transition-colors text-left"
           >
-            <User className="w-6 h-6 text-orange-500 mb-2" />
+            <User className="w-6 h-6 text-gray-600 mb-2" />
             <h3 className="font-medium text-gray-900">Seller Profile</h3>
             <p className="text-sm text-gray-600">Update your business information</p>
           </button>
@@ -370,9 +370,9 @@ const SellerDashboard: React.FC = () => {
 
           <button
             onClick={() => navigate('/seller/ad-campaigns')}
-            className="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-orange-300 transition-colors text-left"
+            className="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-gray-400 transition-colors text-left"
           >
-            <Megaphone className="w-6 h-6 text-orange-500 mb-2" />
+            <Megaphone className="w-6 h-6 text-gray-600 mb-2" />
             <h3 className="font-medium text-gray-900">Ad Campaigns</h3>
             <p className="text-sm text-gray-600">Promote your products with ads</p>
           </button>

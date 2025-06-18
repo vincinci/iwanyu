@@ -19,11 +19,11 @@ const Contact: React.FC = () => {
             whileHover={{ scale: 1.05 }}
             className="bg-white p-6 rounded-lg shadow-md text-center"
           >
-            <Phone className="w-12 h-12 mx-auto mb-4 text-yellow-500" />
+            <Phone className="w-12 h-12 mx-auto mb-4 text-gray-500" />
             <h2 className="text-xl font-semibold mb-2">Phone</h2>
             <a 
               href="tel:+250794306915" 
-              className="text-gray-600 hover:text-yellow-500 transition-colors"
+              className="text-gray-600 hover:text-gray-500 transition-colors"
             >
               +250 794 306 915
             </a>
@@ -34,11 +34,11 @@ const Contact: React.FC = () => {
             whileHover={{ scale: 1.05 }}
             className="bg-white p-6 rounded-lg shadow-md text-center"
           >
-            <Mail className="w-12 h-12 mx-auto mb-4 text-yellow-500" />
+            <Mail className="w-12 h-12 mx-auto mb-4 text-gray-500" />
             <h2 className="text-xl font-semibold mb-2">Email</h2>
             <a 
               href="mailto:iwanyustore@gmail.com" 
-              className="text-gray-600 hover:text-yellow-500 transition-colors"
+              className="text-gray-600 hover:text-gray-500 transition-colors"
             >
               iwanyustore@gmail.com
             </a>
@@ -49,7 +49,7 @@ const Contact: React.FC = () => {
             whileHover={{ scale: 1.05 }}
             className="bg-white p-6 rounded-lg shadow-md text-center"
           >
-            <MapPin className="w-12 h-12 mx-auto mb-4 text-yellow-500" />
+            <MapPin className="w-12 h-12 mx-auto mb-4 text-gray-500" />
             <h2 className="text-xl font-semibold mb-2">Address</h2>
             <p className="text-gray-600">
               Remera, Kabeza

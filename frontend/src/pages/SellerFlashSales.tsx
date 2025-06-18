@@ -164,7 +164,7 @@ const SellerFlashSales: React.FC = () => {
           />
           <button
             type="submit"
-            className="col-span-1 md:col-span-2 bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 rounded mt-2"
+            className="col-span-1 md:col-span-2 bg-yellow-400 hover:bg-gray-500 text-black font-bold py-2 rounded mt-2"
             disabled={loading}
           >
             Create Flash Sale
@@ -184,14 +184,14 @@ const SellerFlashSales: React.FC = () => {
               <li key={fs.id} className="border rounded p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-bold text-yellow-700">{fs.title}</div>
+                    <div className="font-bold text-gray-700">{fs.title}</div>
                     <div className="text-sm text-gray-500">{fs.description}</div>
                     <div className="text-xs text-gray-400">
                       {new Date(fs.startTime).toLocaleString()} - {new Date(fs.endTime).toLocaleString()}
                     </div>
                   </div>
                   <button
-                    className={`ml-4 px-3 py-1 rounded ${selectedFlashSale === fs.id ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    className={`ml-4 px-3 py-1 rounded ${selectedFlashSale === fs.id ? 'bg-gray-500 text-white' : 'bg-gray-200 text-gray-700'}`}
                     onClick={() => setSelectedFlashSale(fs.id)}
                   >
                     {selectedFlashSale === fs.id ? 'Selected' : 'Manage'}
@@ -234,7 +234,7 @@ const SellerFlashSales: React.FC = () => {
               <li key={product.id} className="flex items-center justify-between border rounded px-2 py-1">
                 <span>{product.name}</span>
                 <button
-                  className="text-xs bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-3 py-1 rounded"
+                  className="text-xs bg-yellow-400 hover:bg-gray-500 text-black font-bold px-3 py-1 rounded"
                   onClick={() => handleAddProduct(product.id)}
                   disabled={!selectedFlashSale || loading}
                 >

@@ -88,7 +88,7 @@ const AdminProducts: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading products...</p>
         </div>
       </div>
@@ -150,7 +150,7 @@ const AdminProducts: React.FC = () => {
                 placeholder="Search products by name, SKU, or description..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
               />
             </div>
             <div className="relative">
@@ -158,7 +158,7 @@ const AdminProducts: React.FC = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                 aria-label="Filter by status"
               >
                 <option value="">All Status</option>
@@ -239,7 +239,7 @@ const AdminProducts: React.FC = () => {
                               {product.featured && (
                                 <div className="flex items-center mt-1">
                                   <Star className="w-3 h-3 text-yellow-400 mr-1" />
-                                  <span className="text-xs text-yellow-600">Featured</span>
+                                  <span className="text-xs text-gray-600">Featured</span>
                                 </div>
                               )}
                             </div>
@@ -258,7 +258,7 @@ const AdminProducts: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className={`text-sm font-medium ${
                             product.stock > 10 ? 'text-green-600' : 
-                            product.stock > 0 ? 'text-yellow-600' : 'text-red-600'
+                            product.stock > 0 ? 'text-gray-600' : 'text-red-600'
                           }`}>
                             {product.stock} units
                           </div>
@@ -286,7 +286,7 @@ const AdminProducts: React.FC = () => {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setEditingProduct(product)}
-                              className="text-orange-600 hover:text-orange-900"
+                              className="text-gray-600 hover:text-orange-900"
                               title="Edit product"
                               aria-label={`Edit product ${product.name}`}
                             >
@@ -368,7 +368,7 @@ const AdminProducts: React.FC = () => {
                     type="text"
                     name="name"
                     defaultValue={editingProduct.name}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     required
                   />
                 </div>
@@ -380,7 +380,7 @@ const AdminProducts: React.FC = () => {
                     id="edit-product-category"
                     name="categoryId"
                     defaultValue={editingProduct.categoryId}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     required
                   >
                     {categoriesData?.data?.categories?.map((category: Category) => (
@@ -400,7 +400,7 @@ const AdminProducts: React.FC = () => {
                     name="price"
                     step="0.01"
                     defaultValue={editingProduct.price}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     required
                   />
                 </div>
@@ -413,7 +413,7 @@ const AdminProducts: React.FC = () => {
                     type="number"
                     name="stock"
                     defaultValue={editingProduct.stock}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     required
                   />
                 </div>
@@ -425,7 +425,7 @@ const AdminProducts: React.FC = () => {
                     id="edit-product-status"
                     name="isActive"
                     defaultValue={editingProduct.isActive.toString()}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                   >
                     <option value="true">Active</option>
                     <option value="false">Inactive</option>
@@ -455,7 +455,7 @@ const AdminProducts: React.FC = () => {
                 <button
                   type="submit"
                   disabled={updateProductMutation.isPending}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50"
                 >
                   {updateProductMutation.isPending ? 'Saving...' : 'Save Changes'}
                 </button>

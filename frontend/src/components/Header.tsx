@@ -195,7 +195,7 @@ const Header: React.FC = () => {
 
   const renderCategoryIcon = useCallback((categoryName: string, size: number = 16) => {
     const IconComponent = getCategoryIcon(categoryName);
-    return <IconComponent size={size} className="text-gray-500 group-hover:text-orange-500 transition-colors duration-200" />;
+    return <IconComponent size={size} className="text-gray-500 group-hover:text-gray-600 transition-colors duration-200" />;
   }, [getCategoryIcon]);
 
   const handleSearch = useCallback((e: React.FormEvent) => {
@@ -256,11 +256,11 @@ const Header: React.FC = () => {
                   onMouseEnter={() => setShowCategoriesDropdown(true)}
                   onMouseLeave={() => setShowCategoriesDropdown(false)}
                   onClick={(e) => e.stopPropagation()}
-                  className="group flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:text-orange-600 hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 rounded-lg transition-all duration-200 border border-transparent hover:border-orange-200 font-medium"
+                  className="group flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 rounded-lg transition-all duration-200 border border-transparent hover:border-gray-300 font-medium"
                 >
-                  <Grid size={16} className="group-hover:text-orange-500 transition-colors duration-200" />
+                  <Grid size={16} className="group-hover:text-gray-600 transition-colors duration-200" />
                   <span className="whitespace-nowrap">Categories</span>
-                  <ChevronDown size={12} className="group-hover:text-orange-500 transition-colors duration-200" />
+                  <ChevronDown size={12} className="group-hover:text-gray-600 transition-colors duration-200" />
                 </button>
 
                 <AnimatePresence>
@@ -277,7 +277,7 @@ const Header: React.FC = () => {
                     >
                       <div className="px-4 pb-3 border-b border-gray-100">
                         <h3 className="font-semibold text-gray-900 text-sm flex items-center">
-                          <Grid size={16} className="mr-2 text-orange-500" />
+                          <Grid size={16} className="mr-2 text-gray-600" />
                           Shop by Category
                         </h3>
                       </div>
@@ -297,18 +297,18 @@ const Header: React.FC = () => {
                                   <div key={category.id} className="mb-4">
                                     <Link
                                       to={`/products?category=${category.slug}`}
-                                      className="group flex items-center space-x-3 p-3 rounded-lg hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200 mb-2"
+                                      className="group flex items-center space-x-3 p-3 rounded-lg hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 transition-all duration-200 border border-transparent hover:border-gray-300 mb-2"
                                       onClick={() => setShowCategoriesDropdown(false)}
                                     >
-                                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+                                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-100 transition-colors">
                                         {renderCategoryIcon(category.name, 16)}
                                       </div>
                                       <div className="flex-1 min-w-0">
-                                        <span className="text-sm text-gray-700 group-hover:text-orange-600 font-semibold truncate block">
+                                        <span className="text-sm text-gray-700 group-hover:text-gray-700 font-semibold truncate block">
                                           {category.name}
                                         </span>
                                         {subcategories.length > 0 && (
-                                          <span className="text-xs text-gray-500 group-hover:text-orange-500">
+                                          <span className="text-xs text-gray-500 group-hover:text-gray-600">
                                             {subcategories.length} subcategories
                                           </span>
                                         )}
@@ -326,11 +326,11 @@ const Header: React.FC = () => {
                                               className="group flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50 transition-all duration-200"
                                               onClick={() => setShowCategoriesDropdown(false)}
                                             >
-                                              <div className="w-6 h-6 bg-gray-50 rounded flex items-center justify-center group-hover:bg-orange-50 transition-colors">
+                                              <div className="w-6 h-6 bg-gray-50 rounded flex items-center justify-center group-hover:bg-gray-100 transition-colors">
                                                 {renderCategoryIcon(subcategory.name, 12)}
                                               </div>
                                               <div className="flex-1 min-w-0">
-                                                <span className="text-xs text-gray-600 group-hover:text-orange-600 font-medium truncate block">
+                                                <span className="text-xs text-gray-600 group-hover:text-gray-700 font-medium truncate block">
                                                   {subcategory.name}
                                                 </span>
                                               </div>
@@ -374,13 +374,13 @@ const Header: React.FC = () => {
             <div className="hidden md:flex flex-1 max-w-2xl mx-8">
               <form onSubmit={handleSearch} className="relative w-full group">
                 <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors duration-200" size={20} />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-gray-600 transition-colors duration-200" size={20} />
                 <input
                   type="text"
                   placeholder="Search for products, brands, and more..."
                   value={searchTerm}
                   onChange={handleSearchInputChange}
-                  className="w-full pl-12 pr-20 py-3 text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                  className="w-full pl-12 pr-20 py-3 text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-orange-200 transition-all duration-200 bg-white/80 backdrop-blur-sm"
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
                   <kbd className="px-2 py-1 text-xs text-gray-500 bg-gray-100 rounded border">⌘K</kbd>
@@ -404,7 +404,7 @@ const Header: React.FC = () => {
               {/* Cart Button */}
               <Link
                 to="/cart"
-                className="relative p-2 text-gray-600 hover:text-orange-500 transition-all duration-200 rounded-lg hover:bg-orange-50 group"
+                className="relative p-2 text-gray-600 hover:text-gray-600 transition-all duration-200 rounded-lg hover:bg-gray-100 group"
               >
                 <ShoppingCart size={20} />
                 {itemCount > 0 && (
@@ -425,7 +425,7 @@ const Header: React.FC = () => {
                       e.stopPropagation();
                       setIsUserMenuOpen(!isUserMenuOpen);
                     }}
-                    className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 transition-all duration-200 border border-transparent hover:border-orange-200"
+                    className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 transition-all duration-200 border border-transparent hover:border-gray-300"
                   >
                     <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-md">
                       {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
@@ -482,7 +482,7 @@ const Header: React.FC = () => {
                         
                         <Link
                           to="/orders"
-                          className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 hover:text-orange-600 transition-all duration-200"
+                          className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 hover:text-gray-700 transition-all duration-200"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <Package size={16} />
@@ -508,7 +508,7 @@ const Header: React.FC = () => {
                 <div className="flex items-center space-x-3">
                   <Link
                     to="/login"
-                    className="text-sm text-gray-600 hover:text-orange-500 transition-colors duration-200 font-medium px-3 py-2 rounded-lg hover:bg-orange-50"
+                    className="text-sm text-gray-600 hover:text-gray-600 transition-colors duration-200 font-medium px-3 py-2 rounded-lg hover:bg-gray-100"
                   >
                     Login
                   </Link>
@@ -538,7 +538,7 @@ const Header: React.FC = () => {
               {/* Mobile Cart Button */}
               <Link
                 to="/cart"
-                className="relative p-2 text-gray-600 hover:text-orange-500 transition-all duration-200 rounded-lg hover:bg-orange-50"
+                className="relative p-2 text-gray-600 hover:text-gray-600 transition-all duration-200 rounded-lg hover:bg-gray-100"
               >
                 <ShoppingCart size={20} />
                 {itemCount > 0 && (
@@ -558,8 +558,8 @@ const Header: React.FC = () => {
                 aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
                 className={`p-2 rounded-lg transition-all duration-200 ${
                   isMenuOpen 
-                    ? 'text-orange-500 bg-orange-50' 
-                    : 'text-gray-600 hover:text-orange-500 hover:bg-orange-50'
+                    ? 'text-gray-600 bg-gray-50' 
+                    : 'text-gray-600 hover:text-gray-600 hover:bg-gray-100'
                 }`}
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -571,13 +571,13 @@ const Header: React.FC = () => {
           <div className="md:hidden py-3 border-t border-gray-100">
             <form onSubmit={handleSearch} className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors duration-200" size={18} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-gray-600 transition-colors duration-200" size={18} />
               <input
                 type="text"
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={handleSearchInputChange}
-                className="w-full pl-11 pr-16 py-3 text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                className="w-full pl-11 pr-16 py-3 text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-orange-200 transition-all duration-200 bg-white/80 backdrop-blur-sm"
               />
             </form>
           </div>
@@ -654,7 +654,7 @@ const Header: React.FC = () => {
                         
                         <Link
                           to="/orders"
-                          className="flex items-center space-x-2 p-2 rounded-lg bg-orange-100 text-orange-700"
+                          className="flex items-center space-x-2 p-2 rounded-lg bg-gray-100 text-gray-700"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           <Package size={16} />
@@ -669,14 +669,14 @@ const Header: React.FC = () => {
                       <div className="space-y-2">
                         <Link
                           to="/login"
-                          className="block w-full py-2 px-4 bg-orange-500 text-white rounded-lg"
+                          className="block w-full py-2 px-4 bg-gray-600 text-white rounded-lg"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           Login
                         </Link>
                         <Link
                           to="/register"
-                          className="block w-full py-2 px-4 border border-orange-500 text-orange-500 rounded-lg"
+                          className="block w-full py-2 px-4 border border-gray-400 text-gray-600 rounded-lg"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           Sign Up
@@ -713,7 +713,7 @@ const Header: React.FC = () => {
                       
                       <Link
                         to="/products"
-                        className="flex items-center justify-center space-x-2 p-3 rounded-lg bg-orange-500 text-white mt-2"
+                        className="flex items-center justify-center space-x-2 p-3 rounded-lg bg-gray-600 text-white mt-2"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <Package size={16} />

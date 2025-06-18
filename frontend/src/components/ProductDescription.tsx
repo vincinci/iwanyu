@@ -117,7 +117,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
           {shouldTruncate && (
             <button
               onClick={() => setShowFullDescription(!showFullDescription)}
-              className="inline-flex items-center text-orange-600 hover:text-orange-700 font-medium transition-colors duration-200"
+              className="inline-flex items-center text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200"
             >
               {showFullDescription ? (
                 <>
@@ -150,9 +150,9 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
               <Star className="text-purple-600" size={20} />
               <span className="text-purple-800 font-medium">Top Rated</span>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg">
-              <RotateCcw className="text-orange-600" size={20} />
-              <span className="text-orange-800 font-medium">Easy Returns</span>
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+              <RotateCcw className="text-gray-600" size={20} />
+              <span className="text-gray-800 font-medium">Easy Returns</span>
             </div>
           </div>
         </div>

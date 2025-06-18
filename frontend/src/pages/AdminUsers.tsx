@@ -143,7 +143,7 @@ const AdminUsers: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading users...</p>
         </div>
       </div>
@@ -230,7 +230,7 @@ const AdminUsers: React.FC = () => {
                 placeholder="Search users by email or name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
               />
             </div>
             <div className="relative">
@@ -238,7 +238,7 @@ const AdminUsers: React.FC = () => {
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                 aria-label="Filter by role"
               >
                 <option value="">All Roles</option>
@@ -348,7 +348,7 @@ const AdminUsers: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button
                             onClick={() => setEditingUser(userItem)}
-                            className="text-orange-600 hover:text-orange-900 mr-3"
+                            className="text-gray-600 hover:text-orange-900 mr-3"
                             title="Edit user"
                             aria-label={`Edit user ${userItem.email}`}
                           >
@@ -427,7 +427,7 @@ const AdminUsers: React.FC = () => {
                     type="text"
                     name="firstName"
                     defaultValue={editingUser.firstName || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     aria-label="First Name"
                   />
                 </div>
@@ -439,7 +439,7 @@ const AdminUsers: React.FC = () => {
                     type="text"
                     name="lastName"
                     defaultValue={editingUser.lastName || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     aria-label="Last Name"
                   />
                 </div>
@@ -450,7 +450,7 @@ const AdminUsers: React.FC = () => {
                   <select
                     name="role"
                     defaultValue={editingUser.role}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
                     aria-label="User Role"
                   >
                     <option value="USER">User</option>
@@ -471,7 +471,7 @@ const AdminUsers: React.FC = () => {
                 <button
                   type="submit"
                   disabled={updateUserMutation.isPending}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50"
                 >
                   {updateUserMutation.isPending ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -499,8 +499,8 @@ const AdminUsers: React.FC = () => {
                 <p className="text-sm text-gray-500">{deletingUser.email}</p>
                 <p className="text-sm text-gray-500">Role: {deletingUser.role}</p>
               </div>
-              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800">
+              <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-sm text-gray-800">
                   <strong>Warning:</strong> This will permanently delete the user account and all associated data, including reviews and cart items. Orders will be preserved for business records.
                 </p>
               </div>
