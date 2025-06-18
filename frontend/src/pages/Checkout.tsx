@@ -608,14 +608,14 @@ const Checkout: React.FC = () => {
                   
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping</span>
-                    <span className="text-gray-900">{formatPrice(0)}</span>
+                    <span className="text-gray-900">{formatPrice(1500)}</span>
                   </div>
                   
                   <div className="border-t border-gray-200 pt-3">
                     <div className="flex justify-between">
                       <span className="font-semibold text-gray-900">Total</span>
                       <span className="font-semibold text-gray-900 text-lg">
-                        {formatPrice(totalAmount)}
+                        {formatPrice(totalAmount + 1500)}
                       </span>
                     </div>
                   </div>

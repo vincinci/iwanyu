@@ -132,7 +132,7 @@ router.post('/', optionalAuth, async (req: AuthRequest, res: Response) => {
       }
     }
 
-    const shippingCost = 0; // Free shipping
+    const shippingCost = 1500; // Fixed delivery fee of 1500 RWF
     const tax = 0; // You can implement tax calculation logic here
     const total = subtotal - discount + shippingCost + tax;
 

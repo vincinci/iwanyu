@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Zap } from 'lucide-react';
 import { formatPrice } from '../utils/currency';
 import { getProductImageUrl } from '../utils/imageUtils';
 import type { Product } from '../types/api';
@@ -12,6 +12,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) => {
+  const navigate = useNavigate();
   const {
     id,
     name,
@@ -31,6 +32,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
     e.preventDefault();
     // TODO: Implement add to cart functionality
     console.log('Add to cart:', id);
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Navigate to checkout with this product
+    // Include the delivery fee information in the URL
+    navigate(`/checkout?product=${id}&quantity=1&deliveryFee=1500`);
   };
 
   return (
@@ -98,16 +106,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
         </div>
       </Link>
       <div className={`px-3 pb-3 ${compact ? 'px-2 pb-2' : 'px-3 pb-3'}`}>
-        <button
-          onClick={handleAddToCart}
-          disabled={stock === 0}
-          className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
-            compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
-          }`}
-        >
-          <ShoppingCart size={compact ? 12 : 14} className="mr-1" />
-          {compact ? 'Add' : 'Add to Cart'}
-        </button>
+        {!compact && stock > 0 ? (
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={handleAddToCart}
+              className="bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium py-2 text-sm"
+            >
+              <ShoppingCart size={14} className="mr-1" />
+              Cart
+            </button>
+            <button
+              onClick={handleBuyNow}
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium py-2 text-sm"
+            >
+              <Zap size={14} className="mr-1" />
+              Buy It
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleAddToCart}
+            disabled={stock === 0}
+            className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
+              compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
+            }`}
+          >
+            <ShoppingCart size={compact ? 12 : 14} className="mr-1" />
+            {compact ? 'Add' : 'Add to Cart'}
+          </button>
+        )}
       </div>
     </motion.div>
   );

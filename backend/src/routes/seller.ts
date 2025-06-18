@@ -966,4 +966,183 @@ router.post('/products/import', authenticateToken, upload.single('csvFile'), asy
   }
 });
 
+// Get seller's orders (only orders containing their products)
+router.get('/orders', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { page = 1, limit = 20, status = '' } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    if (!userId) {
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
+    }
+
+    // Get seller info
+    const seller = await prisma.seller.findFirst({
+      where: { userId }
+    });
+
+    if (!seller) {
+      res.status(404).json({ error: 'Seller profile not found' });
+      return;
+    }
+
+    // Find orders that contain the seller's products
+    const where: any = {
+      orderItems: {
+        some: {
+          product: {
+            sellerId: seller.id
+          }
+        }
+      }
+    };
+
+    if (status) {
+      where.status = status.toString();
+    }
+
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true
+            }
+          },
+          orderItems: {
+            where: {
+              product: {
+                sellerId: seller.id
+              }
+            },
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  image: true,
+                  images: true
+                }
+              }
+            }
+          }
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: Number(limit)
+      }),
+      prisma.order.count({ where })
+    ]);
+
+    // Calculate total amount for seller's products in each order
+    const ordersWithTotals = orders.map(order => {
+      const sellerTotal = order.orderItems.reduce((sum, item) => 
+        sum + (item.price * item.quantity), 0);
+      
+      return {
+        ...order,
+        sellerTotal,
+        // Only include items from this seller
+        totalItems: order.orderItems.length
+      };
+    });
+
+    res.json({
+      orders: ordersWithTotals,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        pages: Math.ceil(total / Number(limit))
+      }
+    });
+  } catch (error) {
+    console.error('Get seller orders error:', error);
+    res.status(500).json({ error: 'Failed to get orders' });
+  }
+});
+
+// Get details of a specific order for a seller
+router.get('/orders/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+
+    if (!userId) {
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
+    }
+
+    // Get seller info
+    const seller = await prisma.seller.findFirst({
+      where: { userId }
+    });
+
+    if (!seller) {
+      res.status(404).json({ error: 'Seller profile not found' });
+      return;
+    }
+
+    // Find the specific order that contains the seller's products
+    const order = await prisma.order.findFirst({
+      where: {
+        id,
+        orderItems: {
+          some: {
+            product: {
+              sellerId: seller.id
+            }
+          }
+        }
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true
+          }
+        },
+        orderItems: {
+          where: {
+            product: {
+              sellerId: seller.id
+            }
+          },
+          include: {
+            product: true
+          }
+        }
+      }
+    });
+
+    if (!order) {
+      res.status(404).json({ error: 'Order not found or does not contain your products' });
+      return;
+    }
+
+    // Calculate total amount for seller's products in the order
+    const sellerTotal = order.orderItems.reduce((sum, item) => 
+      sum + (item.price * item.quantity), 0);
+
+    res.json({
+      ...order,
+      sellerTotal,
+      totalItems: order.orderItems.length
+    });
+  } catch (error) {
+    console.error('Get seller order details error:', error);
+    res.status(500).json({ error: 'Failed to get order details' });
+  }
+});
+
 export default router; 
