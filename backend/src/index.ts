@@ -22,6 +22,7 @@ import brevoTestRoutes from './routes/brevoTest';
 import cartRoutes from './routes/cart';
 import emailManagementRoutes from './routes/emailManagement';
 import advertisementRoutes from './routes/advertisements';
+import usersRoutes from './routes/users';
 
 dotenv.config();
 
@@ -99,6 +100,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/users', usersRoutes);
 app.use('/api/user-activity', userActivityRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/payouts', payoutRoutes);

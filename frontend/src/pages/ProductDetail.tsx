@@ -23,7 +23,12 @@ import { formatPrice } from '../utils/currency';
 import { getProductImageUrls } from '../utils/imageUtils';
 import { useInstantProduct } from '../hooks/useInstantProducts';
 import ProductSkeleton from '../components/ProductSkeleton';
+import ReviewSection from '../components/ReviewSection';
+import ProductDescription from '../components/ProductDescription';
+import SimilarProducts from '../components/SimilarProducts';
+import RecentlyViewed from '../components/RecentlyViewed';
 import type { Product, ProductVariant } from '../types/api';
+import { addToRecentlyViewed } from '../utils/recentlyViewed';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -51,6 +56,13 @@ const ProductDetail: React.FC = () => {
 
   // Use instant loading for product
   const { product, isInstantLoading, hasInstantData, error } = useInstantProduct(id!, !!id);
+
+  // Track recently viewed
+  useEffect(() => {
+    if (product && id) {
+      addToRecentlyViewed(id, !!user);
+    }
+  }, [product, id, user]);
 
   // Check if product is in wishlist
   const productInWishlist = product ? isInWishlist(product.id) : false;
@@ -634,18 +646,6 @@ const ProductDetail: React.FC = () => {
               </div>
             )}
 
-            {/* Description */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
-              {product.description ? (
-                <p className="text-gray-700 leading-relaxed">
-                  {product.description}
-                </p>
-              ) : (
-                <p className="text-gray-500 italic">No description available for this product.</p>
-              )}
-            </div>
-
             {/* Quantity & Add to Cart - Desktop */}
             {currentStock > 0 && (
               <div className="space-y-4 hidden md:block">
@@ -721,8 +721,45 @@ const ProductDetail: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Description */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Quick Overview</h3>
+              {product.description ? (
+                <p className="text-gray-700 leading-relaxed line-clamp-3">
+                  {product.description}
+                </p>
+              ) : (
+                <p className="text-gray-500 italic">Premium quality product with excellent features.</p>
+              )}
+              <p className="text-sm text-gray-500 mt-2">See detailed description below</p>
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* Enhanced Product Description */}
+      <div className="container mx-auto px-4 py-8">
+        <ProductDescription product={product} />
+      </div>
+
+      {/* Reviews Section */}
+      <div className="container mx-auto px-4 py-8">
+        <ReviewSection 
+          productId={product.id} 
+          productName={product.name}
+          productPrice={getCurrentPrice()}
+        />
+      </div>
+
+      {/* Similar Products */}
+      <div className="container mx-auto px-4 py-8">
+        <SimilarProducts currentProduct={product} />
+      </div>
+
+      {/* Recently Viewed */}
+      <div className="container mx-auto px-4 py-8">
+        <RecentlyViewed currentProductId={product.id} />
       </div>
 
       {/* Mobile Sticky Bottom Bar */}
