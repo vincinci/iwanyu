@@ -112,7 +112,7 @@ const Header: React.FC = () => {
 
   // Memoize categories - show ALL categories, not limited to 8
   const categories = useMemo(() => 
-    categoriesData?.data?.categories || [],
+    categoriesData?.data?.categories || [], 
     [categoriesData?.data?.categories]
   );
 
@@ -218,11 +218,10 @@ const Header: React.FC = () => {
       setIsUserMenuOpen(false);
     };
 
-    if (showCategoriesDropdown || isUserMenuOpen) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [showCategoriesDropdown, isUserMenuOpen]);
+    // Always add the event listener to ensure mobile compatibility
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   return (
     <>
@@ -238,44 +237,47 @@ const Header: React.FC = () => {
       <header className={`sticky top-0 bg-white shadow-sm border-b border-gray-200 transition-all duration-300 z-40 ${isScrolled ? 'shadow-md' : ''}`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3 group">
-              <img
-                src="/iwanyu-logo.png"
-                alt="Iwanyu Store Logo"
-                className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
-                loading="eager"
-                decoding="async"
-              />
-            </Link>
+            {/* Logo and Categories - Mobile Optimized Layout */}
+            <div className="flex items-center space-x-3 flex-1">
+              {/* Logo */}
+              <Link to="/" className="flex items-center space-x-3 group mr-2">
+                  <img 
+                  src="/iwanyu logo.png"
+                    alt="Iwanyu Store Logo" 
+                  className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
+                    loading="eager"
+                    decoding="async"
+                />
+              </Link>
 
-            {/* Clean & Professional Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-6">
-              {/* Main Categories Dropdown Only */}
-              <div className="relative">
+              {/* Categories Button - Visible on all devices */}
+              <div className="relative z-50">
                 <button
-                  onMouseEnter={() => setShowCategoriesDropdown(true)}
-                  onMouseLeave={() => setShowCategoriesDropdown(false)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="group flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 rounded-lg transition-all duration-200 border border-transparent hover:border-gray-300 font-medium"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowCategoriesDropdown(!showCategoriesDropdown);
+                  }}
+                  className="group flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 font-medium focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  aria-expanded={showCategoriesDropdown}
+                  aria-label="Categories menu"
                 >
-                  <Grid size={16} className="group-hover:text-gray-600 transition-colors duration-200" />
+                  <Grid size={16} className="text-gray-600 transition-colors duration-200" />
                   <span className="whitespace-nowrap">Categories</span>
-                  <ChevronDown size={12} className="group-hover:text-gray-600 transition-colors duration-200" />
+                  <ChevronDown size={12} className="text-gray-600 transition-colors duration-200" />
                 </button>
 
-                <AnimatePresence>
-                  {showCategoriesDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      onMouseEnter={() => setShowCategoriesDropdown(true)}
-                      onMouseLeave={() => setShowCategoriesDropdown(false)}
-                      onClick={(e) => e.stopPropagation()}
-                      className="absolute left-0 mt-2 w-96 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-gray-200/50 py-4 z-50"
-                    >
+                                <AnimatePresence>
+                {showCategoriesDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="fixed md:absolute left-4 md:left-0 right-4 md:right-auto mt-2 md:w-96 bg-white shadow-xl border border-gray-200 rounded-xl py-4 z-50"
+                    style={{ top: "4rem" }}
+                    data-testid="categories-dropdown"
+                  >
                       <div className="px-4 pb-3 border-b border-gray-100">
                         <h3 className="font-semibold text-gray-900 text-sm flex items-center">
                           <Grid size={16} className="mr-2 text-gray-600" />
@@ -296,14 +298,14 @@ const Header: React.FC = () => {
                                 ); // Only show subcategories with products
                                 return (
                                   <div key={category.id} className="mb-4">
-                                    <Link
-                                      to={`/products?category=${category.slug}`}
+                            <Link
+                              to={`/products?category=${category.slug}`}
                                       className="group flex items-center space-x-3 p-3 rounded-lg hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 transition-all duration-200 border border-transparent hover:border-gray-300 mb-2"
-                                      onClick={() => setShowCategoriesDropdown(false)}
-                                    >
+                              onClick={() => setShowCategoriesDropdown(false)}
+                            >
                                       <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-100 transition-colors">
                                         {renderCategoryIcon(category.name, 16)}
-                                      </div>
+                              </div>
                                       <div className="flex-1 min-w-0">
                                         <span className="text-sm text-gray-700 group-hover:text-gray-700 font-semibold truncate block">
                                           {category.name}
@@ -311,10 +313,10 @@ const Header: React.FC = () => {
                                         {subcategories.length > 0 && (
                                           <span className="text-xs text-gray-500 group-hover:text-gray-600">
                                             {subcategories.length} subcategories
-                                          </span>
+                              </span>
                                         )}
                                       </div>
-                                    </Link>
+                            </Link>
                                     
                                     {subcategories.length > 0 && (
                                       <div className="ml-4 space-y-1">
@@ -338,8 +340,8 @@ const Header: React.FC = () => {
                                             </Link>
                                           ))
                                         }
-                                      </div>
-                                    )}
+                              </div>
+                            )}
                                   </div>
                                 );
                               })}
@@ -369,6 +371,11 @@ const Header: React.FC = () => {
                   )}
                 </AnimatePresence>
               </div>
+            </div>
+
+            {/* Clean & Professional Desktop Navigation */}
+            <nav className="hidden lg:flex items-center space-x-6">
+              {/* Other navigation items if needed */}
             </nav>
 
             {/* Desktop Search */}
@@ -553,18 +560,18 @@ const Header: React.FC = () => {
                 )}
               </Link>
 
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
                 className={`p-2 rounded-lg transition-all duration-200 ${
                   isMenuOpen 
                     ? 'text-gray-600 bg-gray-50' 
                     : 'text-gray-600 hover:text-gray-600 hover:bg-gray-100'
                 }`}
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
             </div>
           </div>
 
@@ -586,10 +593,10 @@ const Header: React.FC = () => {
           {/* Simplified Mobile Menu */}
           <AnimatePresence>
             {isMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, x: '100%' }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: '100%' }}
+                <motion.div
+                  initial={{ opacity: 0, x: '100%' }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: '100%' }}
                 transition={{ duration: 0.2 }}
                 className="md:hidden fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 overflow-y-auto"
               >
@@ -597,61 +604,61 @@ const Header: React.FC = () => {
                 <div className="sticky top-0 bg-white border-b border-gray-200 p-4">
                   <div className="flex items-center justify-between">
                     <h2 className="font-bold text-lg text-gray-900">Menu</h2>
-                    <button
-                      onClick={() => setIsMenuOpen(false)}
+                      <button
+                        onClick={() => setIsMenuOpen(false)}
                       className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
-                    >
-                      <X size={20} />
-                    </button>
+                      >
+                        <X size={20} />
+                      </button>
                   </div>
-                </div>
+                    </div>
 
                 <div className="p-4 space-y-4">
                   {/* User Section */}
-                  {user ? (
+                    {user ? (
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="flex items-center space-x-3 mb-3">
                         <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
                           {user.firstName?.charAt(0) || 'U'}
-                        </div>
-                        <div>
+                          </div>
+                          <div>
                           <p className="font-semibold text-gray-900">{user.firstName || 'User'}</p>
-                          <p className="text-sm text-gray-600">{user.email}</p>
+                            <p className="text-sm text-gray-600">{user.email}</p>
+                          </div>
                         </div>
-                      </div>
-                      
-                      {/* Quick Links */}
-                      <div className="space-y-2">
-                        {user.role === 'ADMIN' && (
-                          <Link
-                            to="/admin/dashboard"
-                            className="flex items-center space-x-2 p-2 rounded-lg bg-blue-100 text-blue-700"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            <Settings size={16} />
-                            <span>Admin Dashboard</span>
-                          </Link>
-                        )}
                         
-                        {user.role === 'SELLER' ? (
-                          <Link
-                            to="/seller/dashboard"
+                      {/* Quick Links */}
+                        <div className="space-y-2">
+                          {user.role === 'ADMIN' && (
+                            <Link
+                              to="/admin/dashboard"
+                            className="flex items-center space-x-2 p-2 rounded-lg bg-blue-100 text-blue-700"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <Settings size={16} />
+                            <span>Admin Dashboard</span>
+                            </Link>
+                          )}
+                          
+                          {user.role === 'SELLER' ? (
+                            <Link
+                              to="/seller/dashboard"
                             className="flex items-center space-x-2 p-2 rounded-lg bg-green-100 text-green-700"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            <Store size={16} />
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <Store size={16} />
                             <span>Seller Dashboard</span>
-                          </Link>
+                            </Link>
                         ) : (
-                          <Link
-                            to="/become-seller"
+                            <Link
+                              to="/become-seller"
                             className="flex items-center space-x-2 p-2 rounded-lg bg-purple-100 text-purple-700"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            <Store size={16} />
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <Store size={16} />
                             <span>Become Seller</span>
-                          </Link>
-                        )}
+                            </Link>
+                          )}
                         
                         <Link
                           to="/orders"
@@ -662,82 +669,57 @@ const Header: React.FC = () => {
                           <span>My Orders</span>
                         </Link>
                       </div>
-                    </div>
-                  ) : (
+                      </div>
+                    ) : (
                     <div className="bg-gray-50 rounded-lg p-4 text-center">
                       <User size={32} className="mx-auto mb-3 text-gray-400" />
                       <p className="text-gray-600 mb-3">Sign in to access your account</p>
                       <div className="space-y-2">
-                        <Link
-                          to="/login"
-                          className="block w-full py-2 px-4 bg-gray-600 text-white rounded-lg"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          Login
-                        </Link>
-                        <Link
-                          to="/register"
-                          className="block w-full py-2 px-4 border border-gray-400 text-gray-600 rounded-lg"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          Sign Up
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Categories */}
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">Categories</h3>
-                    <div className="space-y-1">
-                      {isLoading ? (
-                        <div className="space-y-2">
-                          {[...Array(4)].map((_, i) => (
-                            <div key={i} className="h-10 bg-gray-100 rounded animate-pulse"></div>
-                          ))}
-                        </div>
-                      ) : (
-                        categories.map((category: Category) => (
                           <Link
-                            key={category.id}
-                            to={`/products?category=${category.slug}`}
-                            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50"
+                            to="/login"
+                          className="block w-full py-2 px-4 bg-gray-600 text-white rounded-lg"
                             onClick={() => setIsMenuOpen(false)}
                           >
-                            <div className="w-6 h-6 flex items-center justify-center">
-                              {renderCategoryIcon(category.name, 16)}
-                            </div>
-                            <span className="text-gray-700">{category.name}</span>
+                            Login
                           </Link>
-                        ))
-                      )}
-                      
-                      <Link
-                        to="/products"
-                        className="flex items-center justify-center space-x-2 p-3 rounded-lg bg-gray-600 text-white mt-2"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Package size={16} />
-                        <span>All Products</span>
-                      </Link>
-                    </div>
+                          <Link
+                            to="/register"
+                          className="block w-full py-2 px-4 border border-gray-400 text-gray-600 rounded-lg"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            Sign Up
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Quick links */}
+                  <div>
+                    <Link
+                      to="/products"
+                      className="flex items-center justify-center space-x-2 p-3 rounded-lg bg-gray-600 text-white mt-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Package size={16} />
+                      <span>All Products</span>
+                    </Link>
                   </div>
 
                   {/* Logout */}
-                  {user && (
-                    <button
-                      onClick={() => {
-                        logout();
-                        setIsMenuOpen(false);
-                      }}
+                    {user && (
+                        <button
+                          onClick={() => {
+                            logout();
+                            setIsMenuOpen(false);
+                          }}
                       className="w-full flex items-center justify-center space-x-2 p-3 text-red-600 border border-red-200 rounded-lg hover:bg-red-50"
-                    >
+                        >
                       <X size={16} />
                       <span>Sign Out</span>
-                    </button>
-                  )}
-                </div>
-              </motion.div>
+                        </button>
+                    )}
+                  </div>
+                </motion.div>
             )}
           </AnimatePresence>
 
