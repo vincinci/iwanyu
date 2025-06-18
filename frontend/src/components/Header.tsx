@@ -61,6 +61,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { categoriesApi } from '../services/api';
 import type { Category } from '../types/api';
+import logoImage from '../assets/iwanyu-logo.png';
 
 // Memoized loading skeleton for instant feedback
 const CategorySkeleton = React.memo(() => (
@@ -80,6 +81,8 @@ const Header: React.FC = () => {
   const { itemCount } = useCart();
   const navigate = useNavigate();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   // Optimized scroll handler with throttling
   useEffect(() => {
@@ -239,13 +242,24 @@ const Header: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3 group">
-              <img
-                src="/iwanyu-logo.png"
-                alt="Iwanyu Store Logo" 
-                className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
-                loading="eager"
-                decoding="async"
-              />
+              {!logoError ? (
+                <img
+                  src={logoImage}
+                  alt="Iwanyu Store Logo" 
+                  className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
+                  loading="eager"
+                  decoding="async"
+                  onLoad={() => console.log('Logo loaded successfully')}
+                  onError={(e) => {
+                    console.log('Main logo failed to load, trying backup:', e);
+                    setLogoError(true);
+                  }}
+                />
+              ) : (
+                <div className="h-12 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-xl rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200 shadow-lg">
+                  IWANYU.store
+                </div>
+              )}
             </Link>
 
             {/* Clean & Professional Desktop Navigation */}
