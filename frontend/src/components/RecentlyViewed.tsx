@@ -91,20 +91,6 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
   };
 
 
-  const handleWishlistToggle = async (product: Product, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    try {
-      if (isInWishlist(product.id)) {
-        await removeFromWishlist(product.id);
-      } else {
-        await addToWishlist(product.id);
-      }
-    } catch (error) {
-      console.error('Error updating wishlist:', error);
-    }
-  };
 
   const itemsPerView = 3;
   const maxIndex = Math.max(0, recentProducts.length - itemsPerView);

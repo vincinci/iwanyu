@@ -84,20 +84,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
   };
 
 
-  const handleWishlistToggle = async (product: Product, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    try {
-      if (isInWishlist(product.id)) {
-        await removeFromWishlist(product.id);
-      } else {
-        await addToWishlist(product.id);
-      }
-    } catch (error) {
-      console.error('Error updating wishlist:', error);
-    }
-  };
 
   const itemsPerView = 4;
   const maxIndex = Math.max(0, similarProducts.length - itemsPerView);
