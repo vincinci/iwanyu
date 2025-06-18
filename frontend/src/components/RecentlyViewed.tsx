@@ -90,16 +90,6 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
     }
   };
 
-  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    try {
-      addToCart(product);
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-    }
-  };
 
   const handleWishlistToggle = async (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
