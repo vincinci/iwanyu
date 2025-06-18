@@ -114,14 +114,9 @@ const Navbar: React.FC = React.memo(() => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-            <img 
-              src="/iwanyu-logo.png" 
-              alt="Iwanyu Store" 
-              className="h-10 w-auto"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
+            <div className="text-xl font-bold text-gray-800 hover:text-gray-600 transition-colors">
+              IWANYU.store
+            </div>
           </Link>
 
           {/* Search Bar - Desktop */}
