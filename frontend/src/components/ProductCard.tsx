@@ -86,7 +86,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
             </div>
           )}
           <div className="flex items-center space-x-2 mb-3">
-            <span className={`font-bold text-orange-600 ${compact ? 'text-sm' : 'text-base'}`}>
+            <span className={`font-bold text-black ${compact ? 'text-sm' : 'text-base'}`}>
               {formatPrice(finalPrice)}
             </span>
             {salePrice && (

@@ -510,7 +510,7 @@ const ProductDetail: React.FC = () => {
                 )}
               </div>
               {hasDiscount && (
-                <p className="text-green-600 text-sm mt-1">
+                <p className="text-black text-sm mt-1">
                   You save {formatPrice(product.price - currentPrice)}
                 </p>
               )}
@@ -623,7 +623,7 @@ const ProductDetail: React.FC = () => {
                           : 0;
                         
                         return priceDiff !== 0 ? (
-                          <p className={`text-xs mt-2 ${priceDiff > 0 ? 'text-orange-600' : 'text-green-600'}`}>
+                          <p className={`text-xs mt-2 ${priceDiff > 0 ? 'text-black' : 'text-black'}`}>
                             {priceDiff > 0 ? '+' : ''}{formatPrice(priceDiff)} {priceDiff > 0 ? 'extra' : 'discount'}
                           </p>
                         ) : null;

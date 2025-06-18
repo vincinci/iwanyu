@@ -266,7 +266,7 @@ const Products: React.FC = () => {
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'grid' ? 'bg-white shadow-sm text-orange-600' : 'hover:bg-gray-200 text-gray-600'
+                    viewMode === 'grid' ? 'bg-white shadow-sm text-black' : 'hover:bg-gray-200 text-gray-600'
                   }`}
                   aria-label="Grid view"
                 >
@@ -275,7 +275,7 @@ const Products: React.FC = () => {
                 <button
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'list' ? 'bg-white shadow-sm text-orange-600' : 'hover:bg-gray-200 text-gray-600'
+                    viewMode === 'list' ? 'bg-white shadow-sm text-black' : 'hover:bg-gray-200 text-gray-600'
                   }`}
                   aria-label="List view"
                 >
@@ -330,7 +330,7 @@ const Products: React.FC = () => {
                   </div>
                   <button
                     onClick={clearAllFilters}
-                    className="text-orange-600 hover:text-orange-700 text-xs font-semibold uppercase tracking-wide transition-colors"
+                    className="text-black hover:text-orange-700 text-xs font-semibold uppercase tracking-wide transition-colors"
                   >
                     Clear all
                   </button>
@@ -389,7 +389,7 @@ const Products: React.FC = () => {
                           type="checkbox"
                           checked={selectedCategories.includes(category.slug)}
                           onChange={() => handleCategoryFilter(category.slug)}
-                          className="w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 focus:ring-2"
+                          className="w-4 h-4 rounded border-gray-300 text-black focus:ring-orange-500 focus:ring-2"
                         />
                         <span className="ml-3 text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
                           {category.name}
@@ -403,7 +403,7 @@ const Products: React.FC = () => {
                 <div className="mb-8">
                   <button
                     onClick={() => setShowPriceRange(!showPriceRange)}
-                    className="flex items-center justify-between w-full font-semibold text-gray-900 mb-4 text-sm uppercase tracking-wide hover:text-orange-600 transition-colors"
+                    className="flex items-center justify-between w-full font-semibold text-gray-900 mb-4 text-sm uppercase tracking-wide hover:text-black transition-colors"
                     aria-label="Toggle price range filter"
                   >
                     Price Range
@@ -610,11 +610,11 @@ const Products: React.FC = () => {
                             {/* Price Display */}
                             <div className="text-center mb-2">
                               {product.salePrice ? (
-                                <div className="text-sm font-bold text-orange-600">
+                                <div className="text-sm font-bold text-black">
                                   {formatPrice(product.salePrice)}
                                 </div>
                               ) : (
-                                <div className="text-sm font-bold text-orange-600">
+                                <div className="text-sm font-bold text-black">
                                   {formatPrice(product.price)}
                                 </div>
                               )}
@@ -655,7 +655,7 @@ const Products: React.FC = () => {
                           
                           <div className="flex-1 p-6">
                             <Link to={`/products/${product.id}`}>
-                              <h3 className="text-lg font-medium text-gray-900 mb-2 group-hover:text-red-600 transition-colors">
+                              <h3 className="text-lg font-medium text-gray-900 mb-2 group-hover:text-black transition-colors">
                                 {product.name}
                               </h3>
                               {/* Seller name */}
@@ -683,7 +683,7 @@ const Products: React.FC = () => {
                               </p>
                               <div className="flex items-center justify-between">
                                 <div>
-                                  <span className="text-2xl font-bold text-red-600">
+                                  <span className="text-2xl font-bold text-black">
                                     {formatPrice(product.salePrice || product.price)}
                                   </span>
                                   {product.salePrice && (

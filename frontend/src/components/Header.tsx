@@ -233,19 +233,6 @@ const Header: React.FC = () => {
           }
         `}
       </style>
-      {/* Enhanced Top Banner with Performance Info - Desktop Only */}
-      <div className="hidden md:block bg-gradient-to-r from-orange-500 to-pink-500 text-white text-center py-2 text-sm">
-        <div className="container mx-auto px-4">
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center justify-center space-x-2"
-          >
-            <span>Free shipping in Kigali and Rwanda! 🇷🇼</span>
-            <TrendingUp size={14} className="text-yellow-200" />
-          </motion.p>
-        </div>
-      </div>
 
       <header className={`sticky top-0 bg-white shadow-sm border-b border-gray-200 transition-all duration-300 z-40 ${isScrolled ? 'shadow-md' : ''}`}>
         <div className="container mx-auto px-4">
