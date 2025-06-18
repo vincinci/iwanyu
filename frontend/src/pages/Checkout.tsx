@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { 
   ArrowLeft, 
@@ -38,11 +38,18 @@ interface OrderItem {
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
-  const { items, totalAmount, itemCount } = useCart();
+  const { items, totalAmount, itemCount, addToCart } = useCart();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isRedirectingToPayment, setIsRedirectingToPayment] = useState(false);
   const [checkoutAsGuest, setCheckoutAsGuest] = useState(!user);
+  const [directPurchase, setDirectPurchase] = useState<{
+    productId: string;
+    quantity: number;
+    productData: any | null;
+  } | null>(null);
+  const [isLoadingProduct, setIsLoadingProduct] = useState(false);
 
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     firstName: user?.firstName || '',
@@ -97,6 +104,62 @@ const Checkout: React.FC = () => {
     },
   });
 
+  // Parse URL parameters for direct purchase (Buy It button)
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const productId = queryParams.get('product');
+    const quantity = parseInt(queryParams.get('quantity') || '1', 10);
+    
+    if (productId) {
+      setIsLoadingProduct(true);
+      // Fetch the product details
+      fetch(`${API_BASE_URL}/products/${productId}`)
+        .then(response => {
+          if (!response.ok) throw new Error('Product not found');
+          return response.json();
+        })
+        .then(data => {
+          setDirectPurchase({
+            productId,
+            quantity,
+            productData: data.data
+          });
+          setIsLoadingProduct(false);
+        })
+        .catch(error => {
+          console.error('Failed to fetch product:', error);
+          setIsLoadingProduct(false);
+          navigate('/cart');
+        });
+    }
+  }, [location.search, navigate]);
+  
+  // Calculate the correct total including any direct purchase
+  const calculatedTotal = directPurchase 
+    ? (directPurchase.productData?.salePrice || directPurchase.productData?.price || 0) * directPurchase.quantity 
+    : totalAmount;
+  
+  // Add delivery fee to total
+  const deliveryFee = 1500;
+  const finalTotal = calculatedTotal + deliveryFee;
+
+  // Add direct purchase product to cart as a backup when data loads
+  useEffect(() => {
+    if (directPurchase?.productData && !isLoadingProduct) {
+      // Only add to cart if it's not already there
+      if (!items.some(item => item.id === directPurchase.productId)) {
+        addToCart({
+          id: directPurchase.productId,
+          name: directPurchase.productData.name,
+          price: directPurchase.productData.price,
+          salePrice: directPurchase.productData.salePrice,
+          images: directPurchase.productData.images,
+          stock: directPurchase.productData.stock
+        });
+      }
+    }
+  }, [directPurchase, isLoadingProduct]);
+
   const handleAddressChange = (field: keyof ShippingAddress, value: string) => {
     setShippingAddress(prev => ({
       ...prev,
@@ -107,7 +170,7 @@ const Checkout: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (items.length === 0) {
+    if (items.length === 0 && !directPurchase) {
       alert('Your cart is empty');
       return;
     }
@@ -130,10 +193,22 @@ const Checkout: React.FC = () => {
 
     setIsProcessing(true);
 
-    const orderItems: OrderItem[] = items.map(item => ({
-      productId: item.id,
-      quantity: item.quantity
-    }));
+    // Prepare order items based on cart or direct purchase
+    let orderItems: OrderItem[];
+    
+    if (directPurchase) {
+      // For direct "Buy It" purchases
+      orderItems = [{
+        productId: directPurchase.productId,
+        quantity: directPurchase.quantity
+      }];
+    } else {
+      // For regular cart checkouts
+      orderItems = items.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      }));
+    }
 
     createOrderMutation.mutate({
       items: orderItems,
@@ -214,17 +289,23 @@ const Checkout: React.FC = () => {
     }
   };
 
-  if (items.length === 0) {
+  if (items.length === 0 && !directPurchase && !isLoadingProduct) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Cart is Empty</h2>
-          <p className="text-gray-600 mb-6">Add some products to your cart before checkout</p>
-          <Link 
-            to="/products" 
-            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors"
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+        <div className="text-center mb-8">
+          <div className="mb-4 text-gray-400">
+            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2">Your cart is empty</h2>
+          <p className="text-gray-600 mb-6">Looks like you haven't added anything to your cart yet.</p>
+          <Link
+            to="/"
+            className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-6 rounded-lg transition-colors duration-200 inline-flex items-center"
           >
-            Shop Now
+            <ArrowLeft className="mr-2" size={18} />
+            Continue Shopping
           </Link>
         </div>
       </div>
@@ -570,13 +651,18 @@ const Checkout: React.FC = () => {
                 
                 {/* Order Items */}
                 <div className="space-y-3 mb-4">
-                  {items.map((item) => (
-                    <div key={item.id} className="flex items-center space-x-3">
+                  {isLoadingProduct ? (
+                    <div className="flex items-center justify-center p-4">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div>
+                      <span className="ml-2 text-sm text-gray-500">Loading product...</span>
+                    </div>
+                  ) : directPurchase && directPurchase.productData ? (
+                    <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
-                        {item.image ? (
+                        {directPurchase.productData.image || directPurchase.productData.images?.[0] ? (
                           <img
-                            src={item.image}
-                            alt={item.name}
+                            src={directPurchase.productData.image || directPurchase.productData.images?.[0]}
+                            alt={directPurchase.productData.name}
                             className="w-full h-full object-cover"
                           />
                         ) : (
@@ -587,35 +673,64 @@ const Checkout: React.FC = () => {
                       </div>
                       <div className="flex-1">
                         <h4 className="text-sm font-medium text-gray-900 line-clamp-1">
-                          {item.name}
+                          {directPurchase.productData.name}
                         </h4>
                         <p className="text-sm text-gray-600">
-                          Qty: {item.quantity}
+                          Qty: {directPurchase.quantity}
                         </p>
                       </div>
                       <div className="text-sm font-medium text-gray-900">
-                        {formatPrice((item.salePrice || item.price) * item.quantity)}
+                        {formatPrice((directPurchase.productData.salePrice || directPurchase.productData.price) * directPurchase.quantity)}
                       </div>
                     </div>
-                  ))}
+                  ) : (
+                    items.map((item) => (
+                      <div key={item.id} className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <User className="text-gray-400" size={16} />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-sm font-medium text-gray-900 line-clamp-1">
+                            {item.name}
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            Qty: {item.quantity}
+                          </p>
+                        </div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {formatPrice((item.salePrice || item.price) * item.quantity)}
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
 
                 <div className="border-t border-gray-200 pt-4 space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="text-gray-900">{formatPrice(totalAmount)}</span>
+                    <span className="text-gray-900">{formatPrice(calculatedTotal)}</span>
                   </div>
                   
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping</span>
-                    <span className="text-gray-900">{formatPrice(1500)}</span>
+                    <span className="text-gray-900">{formatPrice(deliveryFee)}</span>
                   </div>
                   
                   <div className="border-t border-gray-200 pt-3">
                     <div className="flex justify-between">
                       <span className="font-semibold text-gray-900">Total</span>
                       <span className="font-semibold text-gray-900 text-lg">
-                        {formatPrice(totalAmount + 1500)}
+                        {formatPrice(finalTotal)}
                       </span>
                     </div>
                   </div>

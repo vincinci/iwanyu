@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ShoppingCart, Zap } from 'lucide-react';
 import { formatPrice } from '../utils/currency';
 import { getProductImageUrl } from '../utils/imageUtils';
+import { useCart } from '../contexts/CartContext';
 import type { Product } from '../types/api';
 
 interface ProductCardProps {
@@ -13,6 +14,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) => {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const {
     id,
     name,
@@ -30,15 +32,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    // TODO: Implement add to cart functionality
-    console.log('Add to cart:', id);
+    addToCart(product);
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {
     e.preventDefault();
     // Navigate to checkout with this product
-    // Include the delivery fee information in the URL
-    navigate(`/checkout?product=${id}&quantity=1&deliveryFee=1500`);
+    navigate(`/checkout?product=${id}&quantity=1`);
   };
 
   return (
