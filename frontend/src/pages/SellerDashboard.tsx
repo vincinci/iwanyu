@@ -174,7 +174,7 @@ const SellerDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Products</p>
-                <p className="text-2xl font-bold text-gray-900">{0}</p>
+                <p className="text-2xl font-bold text-gray-900">{dashboard?.productCount || 0}</p>
               </div>
               <Package className="h-8 w-8 text-blue-500" />
             </div>
@@ -193,8 +193,8 @@ const SellerDashboard: React.FC = () => {
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">${(dashboard as any)?.totalRevenue?.toFixed(2) || '0.00'}</p>
+                <p className="text-sm font-medium text-gray-600">Total Sales</p>
+                <p className="text-2xl font-bold text-gray-900">{dashboard?.totalSales || 0}</p>
               </div>
               <DollarSign className="h-8 w-8 text-gray-500" />
             </div>
@@ -204,7 +204,7 @@ const SellerDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Active Products</p>
-                <p className="text-2xl font-bold text-gray-900">{(dashboard as any)?.products?.length || 0}</p>
+                <p className="text-2xl font-bold text-gray-900">{dashboard?.productCount || 0}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-purple-500" />
             </div>
