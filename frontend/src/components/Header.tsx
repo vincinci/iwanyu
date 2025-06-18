@@ -240,9 +240,13 @@ const Header: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3 group">
-              <div className="text-2xl font-bold text-gray-800 group-hover:text-gray-600 transition-colors duration-200">
-                IWANYU.store
-              </div>
+              <img
+                src="/iwanyu-logo.png"
+                alt="Iwanyu Store Logo"
+                className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
+                loading="eager"
+                decoding="async"
+              />
             </Link>
 
             {/* Clean & Professional Desktop Navigation */}
