@@ -90,12 +90,12 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
     }
   };
 
-  const handleAddToCart = async (product: Product, e: React.MouseEvent) => {
+  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
     try {
-      await addToCart(product.id, 1);
+      addToCart(product);
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
@@ -222,12 +222,12 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
   const discountPercentage = hasDiscount ? Math.round(((product.price - product.salePrice!) / product.price) * 100) : 0;
   const finalPrice = product.salePrice || product.price;
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
+  const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
     try {
-      await addToCart(product.id, 1);
+      addToCart(product);
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
