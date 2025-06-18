@@ -250,36 +250,15 @@ const Header: React.FC = () => {
       <header className={`sticky top-0 bg-white shadow-sm border-b border-gray-200 transition-all duration-300 z-40 ${isScrolled ? 'shadow-md' : ''}`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Enhanced Logo with Fallback */}
+            {/* Logo */}
             <Link to="/" className="flex items-center space-x-3 group">
-              <div className="relative">
-                <img
-                  src="/iwanyu-logo.png"
-                  alt="Iwanyu Store Logo" 
-                  className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
-                  loading="eager"
-                  decoding="async"
-                  onError={(e) => {
-                    // Simple fallback if logo doesn't load
-                    e.currentTarget.style.display = 'none';
-                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                    if (fallback) fallback.style.display = 'flex';
-                  }}
-                />
-                {/* Simplified Fallback */}
-                <div 
-                  className="h-10 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold text-lg rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200"
-                  style={{ display: 'none' }}
-                >
-                  IWANYU.store
-                </div>
-                {/* Iwanyu logo overlay on hover */}
-                <img
-                  src="/iwanyu-logo.png"
-                  alt="Iwanyu Store Logo Overlay"
-                  className="absolute inset-0 w-full h-full object-contain opacity-0 group-hover:opacity-20 rounded-lg transition-opacity duration-200"
-                />
-              </div>
+              <img
+                src="/iwanyu-logo.png"
+                alt="Iwanyu Store Logo" 
+                className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
+                loading="eager"
+                decoding="async"
+              />
             </Link>
 
             {/* Clean & Professional Desktop Navigation */}

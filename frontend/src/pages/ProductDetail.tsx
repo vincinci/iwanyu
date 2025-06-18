@@ -24,9 +24,7 @@ import { getProductImageUrls } from '../utils/imageUtils';
 import { useInstantProduct } from '../hooks/useInstantProducts';
 import ProductSkeleton from '../components/ProductSkeleton';
 import ReviewSection from '../components/ReviewSection';
-import ProductDescription from '../components/ProductDescription';
 import SimilarProducts from '../components/SimilarProducts';
-import RecentlyViewed from '../components/RecentlyViewed';
 import type { Product, ProductVariant } from '../types/api';
 import { addToRecentlyViewed } from '../utils/recentlyViewed';
 
@@ -681,10 +679,10 @@ const ProductDetail: React.FC = () => {
                   <button
                     onClick={handleAddToCart}
                     disabled={isAddingToCart || (hasVariants && !areAllVariantsSelected())}
-                    className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed"
+                    className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed"
                   >
                     <ShoppingCart className="mr-2" size={18} />
-                    {isAddingToCart ? 'Adding...' : `Add to Cart${itemInCart > 0 ? ` (${itemInCart})` : ''}`}
+                    {isAddingToCart ? 'Adding...' : 'Add to Cart'}
                   </button>
                   <button
                     onClick={handleBuyNow}
@@ -696,51 +694,8 @@ const ProductDetail: React.FC = () => {
                 </div>
               </div>
             )}
-
-            {/* Features */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                <Truck className="text-orange-500" size={24} />
-                <div>
-                  <p className="font-medium text-gray-900 text-sm">Fast Shipping</p>
-                  <p className="text-gray-600 text-xs">Free shipping</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                <RotateCcw className="text-orange-500" size={24} />
-                <div>
-                  <p className="font-medium text-gray-900 text-sm">Easy Returns</p>
-                  <p className="text-gray-600 text-xs">30-day return policy</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                <Shield className="text-orange-500" size={24} />
-                <div>
-                  <p className="font-medium text-gray-900 text-sm">Warranty</p>
-                  <p className="text-gray-600 text-xs">1-year manufacturer</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Quick Overview</h3>
-              {product.description ? (
-                <p className="text-gray-700 leading-relaxed line-clamp-3">
-                  {product.description}
-                </p>
-              ) : (
-                <p className="text-gray-500 italic">Premium quality product with excellent features.</p>
-              )}
-              <p className="text-sm text-gray-500 mt-2">See detailed description below</p>
-            </div>
           </div>
         </div>
-      </div>
-
-      {/* Enhanced Product Description */}
-      <div className="container mx-auto px-4 py-8">
-        <ProductDescription product={product} />
       </div>
 
       {/* Reviews Section */}
@@ -755,11 +710,6 @@ const ProductDetail: React.FC = () => {
       {/* Similar Products */}
       <div className="container mx-auto px-4 py-8">
         <SimilarProducts currentProduct={product} />
-      </div>
-
-      {/* Recently Viewed */}
-      <div className="container mx-auto px-4 py-8">
-        <RecentlyViewed currentProductId={product.id} />
       </div>
 
       {/* Mobile Sticky Bottom Bar */}
@@ -791,7 +741,7 @@ const ProductDetail: React.FC = () => {
             <button
               onClick={handleAddToCart}
               disabled={isAddingToCart || (hasVariants && !areAllVariantsSelected())}
-              className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed text-sm"
+              className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed text-sm"
             >
               <ShoppingCart className="mr-2" size={16} />
               {isAddingToCart ? 'Adding...' : 'Add to Cart'}
