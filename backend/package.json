@@ -12,7 +12,8 @@
     "db:studio": "prisma studio",
     "test": "echo \"Error: no test specified\" && exit 1",
     "manage-users": "npx ts-node src/scripts/manageUsers.ts",
-    "approve-seller": "npx ts-node scripts/approveSeller.ts"
+    "approve-seller": "npx ts-node scripts/approveSeller.ts",
+    "test-pricing": "npx ts-node scripts/testPricing.ts"
   },
   "keywords": [
     "ecommerce",

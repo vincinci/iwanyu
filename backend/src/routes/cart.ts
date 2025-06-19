@@ -21,18 +21,37 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
             id: true,
             name: true,
             price: true,
+            salePrice: true,
             images: true,
             stock: true,
-            isActive: true
+            isActive: true,
+            variants: {
+              where: { isActive: true }
+            }
           }
         }
       },
       orderBy: { createdAt: 'desc' }
     });
 
-    // Calculate total
+    // Calculate total with proper pricing logic
     const total = cartItems.reduce((sum, item) => {
-      return sum + (item.product.price * item.quantity);
+      let itemPrice = item.product.price;
+      
+      // Check if variant is specified and get variant-specific price
+      if (item.variantId) {
+        const variant = item.product.variants.find(v => v.id === item.variantId);
+        if (variant && variant.price && variant.price > 0) {
+          itemPrice = variant.price;
+        }
+      }
+      
+      // Apply sale price if available and lower than current price
+      if (item.product.salePrice && item.product.salePrice < itemPrice) {
+        itemPrice = item.product.salePrice;
+      }
+      
+      return sum + (itemPrice * item.quantity);
     }, 0);
 
     res.json({
@@ -289,7 +308,11 @@ router.get('/summary', authenticateToken, async (req: AuthRequest, res: Response
       include: {
         product: {
           select: {
-            price: true
+            price: true,
+            salePrice: true,
+            variants: {
+              where: { isActive: true }
+            }
           }
         }
       }
@@ -297,7 +320,22 @@ router.get('/summary', authenticateToken, async (req: AuthRequest, res: Response
 
     const itemCount = cartItems.length;
     const total = cartItems.reduce((sum, item) => {
-      return sum + (item.product.price * item.quantity);
+      let itemPrice = item.product.price;
+      
+      // Check if variant is specified and get variant-specific price
+      if (item.variantId) {
+        const variant = item.product.variants.find(v => v.id === item.variantId);
+        if (variant && variant.price && variant.price > 0) {
+          itemPrice = variant.price;
+        }
+      }
+      
+      // Apply sale price if available and lower than current price
+      if (item.product.salePrice && item.product.salePrice < itemPrice) {
+        itemPrice = item.product.salePrice;
+      }
+      
+      return sum + (itemPrice * item.quantity);
     }, 0);
 
     res.json({

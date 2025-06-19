@@ -76,26 +76,58 @@ router.post('/', optionalAuth, async (req: AuthRequest, res: Response) => {
 
     for (const item of items) {
       const product = await prisma.product.findUnique({
-        where: { id: item.productId }
+        where: { id: item.productId },
+        include: {
+          variants: true
+        }
       });
 
       if (!product) {
         return res.status(400).json({ error: `Product ${item.productId} not found` });
       }
 
-      if (product.stock < item.quantity) {
+      // Determine the correct price to use
+      let itemPrice = product.price;
+      let itemStock = product.stock;
+      
+      // Check if variant is specified and get variant-specific price and stock
+      if (item.variantId) {
+        const variant = product.variants.find(v => v.id === item.variantId);
+        if (!variant) {
+          return res.status(400).json({ 
+            error: `Variant ${item.variantId} not found for product ${product.name}` 
+          });
+        }
+        
+        // Use variant price if specified, otherwise use product price
+        if (variant.price && variant.price > 0) {
+          itemPrice = variant.price;
+        }
+        
+        // Use variant stock for availability check
+        itemStock = variant.stock;
+      }
+      
+      // Use sale price if available and lower than regular price
+      if (product.salePrice && product.salePrice < itemPrice) {
+        itemPrice = product.salePrice;
+      }
+
+      // Check stock availability (variant stock if variant selected, otherwise product stock)
+      if (itemStock < item.quantity) {
+        const stockType = item.variantId ? 'variant' : 'product';
         return res.status(400).json({ 
-          error: `Insufficient stock for ${product.name}. Available: ${product.stock}` 
+          error: `Insufficient ${stockType} stock for ${product.name}. Available: ${itemStock}` 
         });
       }
 
-      const itemTotal = product.price * item.quantity;
+      const itemTotal = itemPrice * item.quantity;
       subtotal += itemTotal;
 
       orderItems.push({
         productId: item.productId,
         quantity: item.quantity,
-        price: product.price,
+        price: itemPrice, // Use the calculated price (base, variant, or sale price)
         variantId: item.variantId || undefined
       });
     }

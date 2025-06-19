@@ -156,16 +156,22 @@ const Checkout: React.FC = () => {
   // Calculate the correct total including any direct purchase
   const calculatedTotal = directPurchase 
     ? (() => {
-        let productPrice = directPurchase.productData?.salePrice || directPurchase.productData?.price || 0;
+        // Start with base product price
+        let productPrice = directPurchase.productData?.price || 0;
         
         // Check if a variant with different pricing is selected
         if (directPurchase.selectedVariants && directPurchase.selectedVariants.length > 0) {
           const selectedVariant = directPurchase.productData?.variants?.find((v: any) => 
             v.id === directPurchase.selectedVariants![0].variantId
           );
-          if (selectedVariant && selectedVariant.price) {
+          if (selectedVariant && selectedVariant.price && selectedVariant.price > 0) {
             productPrice = selectedVariant.price;
           }
+        }
+        
+        // Apply sale price if available and lower than current price
+        if (directPurchase.productData?.salePrice && directPurchase.productData.salePrice < productPrice) {
+          productPrice = directPurchase.productData.salePrice;
         }
         
         return productPrice * directPurchase.quantity;
