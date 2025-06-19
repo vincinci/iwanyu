@@ -117,7 +117,7 @@ const Navbar: React.FC = React.memo(() => {
             <img 
               src="/iwanyu-logo.png" 
               alt="Iwanyu Store Logo" 
-              className="h-10 w-auto hover:scale-105 transition-transform duration-200"
+              className="h-8 w-auto sm:h-9 md:h-10 hover:scale-105 transition-transform duration-200 max-w-[120px] sm:max-w-[140px] md:max-w-[160px]"
             />
           </Link>
 

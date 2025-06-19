@@ -250,13 +250,13 @@ const Header: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo and Categories - Mobile Optimized Layout */}
-            <div className="flex items-center space-x-3 flex-1">
+            <div className="flex items-center space-x-2 sm:space-x-3 flex-1">
               {/* Logo */}
-              <Link to="/" className="flex items-center space-x-3 group mr-2">
+              <Link to="/" className="flex items-center space-x-3 group mr-1 sm:mr-2 flex-shrink-0">
                   <img 
                   src="/iwanyu-logo.png"
                     alt="Iwanyu Store Logo" 
-                  className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
+                  className="h-8 w-auto sm:h-9 md:h-10 lg:h-11 group-hover:scale-105 transition-transform duration-200 max-w-[120px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[180px]"
                     loading="eager"
                     decoding="async"
                 />
@@ -269,13 +269,14 @@ const Header: React.FC = () => {
                     e.stopPropagation();
                     setShowCategoriesDropdown(!showCategoriesDropdown);
                   }}
-                  className="group flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 font-medium focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="group flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 text-xs sm:text-sm text-gray-700 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 font-medium focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-expanded={showCategoriesDropdown}
                   aria-label="Categories menu"
                 >
-                  <Grid size={16} className="text-gray-600 transition-colors duration-200" />
-                  <span className="whitespace-nowrap">Categories</span>
-                  <ChevronDown size={12} className="text-gray-600 transition-colors duration-200" />
+                  <Grid size={14} className="sm:w-4 sm:h-4 text-gray-600 transition-colors duration-200" />
+                  <span className="whitespace-nowrap hidden xs:inline">Categories</span>
+                  <span className="whitespace-nowrap xs:hidden">Cat</span>
+                  <ChevronDown size={10} className="sm:w-3 sm:h-3 text-gray-600 transition-colors duration-200" />
                 </button>
 
                                 <AnimatePresence>

@@ -238,7 +238,7 @@ const AdminDashboard: React.FC = () => {
               <img
                 src="/iwanyu-logo.png"
                 alt="Iwanyu Store Logo"
-                className="h-8 w-auto"
+                className="h-6 w-auto sm:h-7 md:h-8 max-w-[100px] sm:max-w-[120px] md:max-w-[140px]"
               />
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>

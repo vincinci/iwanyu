@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
             <img 
               src="/iwanyu-logo.png" 
               alt="Iwanyu Store Logo" 
-              className="h-8 w-auto"
+              className="h-6 w-auto sm:h-7 md:h-8 max-w-[100px] sm:max-w-[120px] md:max-w-[140px]"
             />
           </div>
           <p className="text-gray-400 max-w-md mx-auto">
