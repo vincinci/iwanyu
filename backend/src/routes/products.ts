@@ -103,6 +103,7 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     // Ultra-optimized query - only essential fields for listing
+    console.log('🔍 Products query with variants - timestamp:', new Date().toISOString());
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
