@@ -14,7 +14,10 @@ import {
   Heart,
   Share2,
   AlertCircle,
-  Zap
+  Zap,
+  Copy,
+  ExternalLink,
+  CreditCard
 } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
@@ -712,8 +715,9 @@ const ProductDetail: React.FC = () => {
                   <button
                     onClick={handleBuyNow}
                     disabled={hasVariants && !areAllVariantsSelected()}
-                    className="flex-1 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 disabled:cursor-not-allowed"
+                    className="flex-1 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 disabled:cursor-not-allowed flex items-center justify-center"
                   >
+                    <CreditCard className="mr-2" size={18} />
                     Buy Now
                   </button>
                 </div>
@@ -776,8 +780,9 @@ const ProductDetail: React.FC = () => {
             <button
               onClick={handleBuyNow}
               disabled={hasVariants && !areAllVariantsSelected()}
-              className="bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 disabled:cursor-not-allowed text-sm"
+              className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 disabled:cursor-not-allowed text-sm flex items-center justify-center"
             >
+              <CreditCard className="mr-1" size={16} />
               Buy Now
             </button>
           </div>

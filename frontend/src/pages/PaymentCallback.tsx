@@ -65,7 +65,7 @@ const PaymentCallback: React.FC = () => {
               setStatus('cancelled');
               setTimeout(() => {
                 if (isMounted.current) {
-                  navigate('/', { replace: true });
+                  navigate('/cart', { replace: true });
                 }
               }, 3000);
             }
@@ -298,7 +298,7 @@ const PaymentCallback: React.FC = () => {
           <XCircle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Cancelled</h2>
           <p className="text-gray-600 mb-4">
-            Your payment was cancelled. You will be redirected to the home page shortly...
+            Your payment was cancelled. You will be redirected to your cart shortly...
           </p>
           <div className="flex justify-center items-center">
             <Loader className="w-6 h-6 text-gray-600 animate-spin mr-2" />

@@ -919,4 +919,613 @@ router.put('/orders/:id/status', authenticateToken, requireAdmin, async (req: Au
   }
 });
 
+// PAYMENT MANAGEMENT ENDPOINTS
+
+/**
+ * Get all seller payouts for admin management
+ * GET /api/admin/payouts
+ */
+router.get('/payouts', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { 
+      page = 1, 
+      limit = 20, 
+      status = '', 
+      sellerId = '',
+      startDate = '',
+      endDate = '',
+      payoutMethod = '',
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const where: any = {};
+
+    // Apply filters
+    if (status) where.status = status;
+    if (sellerId) where.sellerId = sellerId;
+    if (payoutMethod) where.payoutMethod = payoutMethod;
+    
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = new Date(startDate as string);
+      if (endDate) where.createdAt.lte = new Date(endDate as string);
+    }
+
+    const orderBy: any = {};
+    orderBy[sortBy as string] = sortOrder;
+
+    const [payouts, total, stats] = await Promise.all([
+      prisma.sellerPayout.findMany({
+        where,
+        skip,
+        take: Number(limit),
+        orderBy,
+        include: {
+          seller: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  firstName: true,
+                  lastName: true
+                }
+              }
+            }
+          }
+        }
+      }),
+      prisma.sellerPayout.count({ where }),
+      // Get payout statistics
+      prisma.sellerPayout.groupBy({
+        by: ['status'],
+        _sum: {
+          amount: true
+        },
+        _count: {
+          _all: true
+        }
+      })
+    ]);
+
+    // Calculate summary statistics
+    const summary = {
+      totalPayouts: total,
+      totalAmount: await prisma.sellerPayout.aggregate({
+        _sum: { amount: true },
+        where
+      }),
+      statusBreakdown: stats.reduce((acc, stat) => {
+        acc[stat.status] = {
+          count: stat._count._all,
+          amount: stat._sum.amount || 0
+        };
+        return acc;
+      }, {} as any)
+    };
+
+    res.json({
+      success: true,
+      data: {
+        payouts,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total,
+          pages: Math.ceil(total / Number(limit))
+        },
+        summary
+      }
+    });
+  } catch (error) {
+    console.error('Get admin payouts error:', error);
+    res.status(500).json({ error: 'Failed to get payouts' });
+  }
+});
+
+/**
+ * Get seller wallet overview for admin
+ * GET /api/admin/seller-wallets
+ */
+router.get('/seller-wallets', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { page = 1, limit = 20, search = '' } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // Build search filter
+    const searchFilter = search ? {
+      OR: [
+        { businessName: { contains: search as string, mode: 'insensitive' as const } },
+        { user: { email: { contains: search as string, mode: 'insensitive' as const } } },
+        { user: { firstName: { contains: search as string, mode: 'insensitive' as const } } },
+        { user: { lastName: { contains: search as string, mode: 'insensitive' as const } } }
+      ]
+    } : {};
+
+    const sellers = await prisma.seller.findMany({
+      where: {
+        status: 'APPROVED',
+        ...searchFilter
+      },
+      skip,
+      take: Number(limit),
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true
+          }
+        },
+        payouts: {
+          where: { status: 'COMPLETED' },
+          select: { amount: true }
+        }
+      }
+    });
+
+    // Calculate wallet balances for each seller
+    const sellersWithWallets = await Promise.all(
+      sellers.map(async (seller) => {
+        // Calculate total revenue from completed orders
+        const completedOrders = await prisma.order.findMany({
+          where: {
+            paymentStatus: 'COMPLETED',
+            orderItems: {
+              some: {
+                product: { sellerId: seller.id }
+              }
+            }
+          },
+          include: {
+            orderItems: {
+              where: {
+                product: { sellerId: seller.id }
+              }
+            }
+          }
+        });
+
+        let totalRevenue = 0;
+        completedOrders.forEach(order => {
+          order.orderItems.forEach(item => {
+            totalRevenue += item.price * item.quantity;
+          });
+        });
+
+        const totalPaidOut = seller.payouts.reduce((sum, payout) => sum + payout.amount, 0);
+        const availableBalance = totalRevenue - totalPaidOut;
+
+        // Get pending payouts
+        const pendingPayouts = await prisma.sellerPayout.findMany({
+          where: {
+            sellerId: seller.id,
+            status: { in: ['PENDING', 'PROCESSING'] }
+          },
+          select: { amount: true, status: true }
+        });
+
+        const pendingAmount = pendingPayouts.reduce((sum, payout) => sum + payout.amount, 0);
+
+        return {
+          ...seller,
+          wallet: {
+            totalRevenue,
+            totalPaidOut,
+            availableBalance,
+            pendingAmount,
+            pendingPayouts: pendingPayouts.length
+          }
+        };
+      })
+    );
+
+    const total = await prisma.seller.count({
+      where: { status: 'APPROVED', ...searchFilter }
+    });
+
+    res.json({
+      success: true,
+      data: {
+        sellers: sellersWithWallets,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total,
+          pages: Math.ceil(total / Number(limit))
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Get seller wallets error:', error);
+    res.status(500).json({ error: 'Failed to get seller wallets' });
+  }
+});
+
+/**
+ * Get specific seller's detailed wallet information
+ * GET /api/admin/seller-wallets/:sellerId
+ */
+router.get('/seller-wallets/:sellerId', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { sellerId } = req.params;
+
+    const seller = await prisma.seller.findUnique({
+      where: { id: sellerId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true
+          }
+        },
+        payouts: {
+          orderBy: { createdAt: 'desc' },
+          take: 20
+        }
+      }
+    });
+
+    if (!seller) {
+      return res.status(404).json({ error: 'Seller not found' });
+    }
+
+    // Calculate detailed wallet information
+    const completedOrders = await prisma.order.findMany({
+      where: {
+        paymentStatus: 'COMPLETED',
+        orderItems: {
+          some: {
+            product: { sellerId: seller.id }
+          }
+        }
+      },
+      include: {
+        orderItems: {
+          where: {
+            product: { sellerId: seller.id }
+          },
+          include: {
+            product: {
+              select: { name: true, id: true }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    let totalRevenue = 0;
+    const revenueByMonth: any = {};
+    
+    completedOrders.forEach(order => {
+      const monthKey = order.createdAt.toISOString().slice(0, 7); // YYYY-MM
+      if (!revenueByMonth[monthKey]) revenueByMonth[monthKey] = 0;
+      
+      order.orderItems.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        totalRevenue += itemTotal;
+        revenueByMonth[monthKey] += itemTotal;
+      });
+    });
+
+    const totalPaidOut = seller.payouts
+      .filter(p => p.status === 'COMPLETED')
+      .reduce((sum, payout) => sum + payout.amount, 0);
+    
+    const pendingPayouts = seller.payouts.filter(p => 
+      p.status === 'PENDING' || p.status === 'PROCESSING'
+    );
+    
+    const pendingAmount = pendingPayouts.reduce((sum, payout) => sum + payout.amount, 0);
+    const availableBalance = totalRevenue - totalPaidOut - pendingAmount;
+
+    res.json({
+      success: true,
+      data: {
+        seller,
+        wallet: {
+          totalRevenue,
+          totalPaidOut,
+          availableBalance,
+          pendingAmount,
+          revenueByMonth,
+          totalOrders: completedOrders.length,
+          averageOrderValue: completedOrders.length > 0 ? totalRevenue / completedOrders.length : 0
+        },
+        recentOrders: completedOrders.slice(0, 10),
+        recentPayouts: seller.payouts.slice(0, 10)
+      }
+    });
+  } catch (error) {
+    console.error('Get seller wallet details error:', error);
+    res.status(500).json({ error: 'Failed to get seller wallet details' });
+  }
+});
+
+/**
+ * Approve or reject a payout request
+ * PUT /api/admin/payouts/:payoutId/status
+ */
+router.put('/payouts/:payoutId/status', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { payoutId } = req.params;
+    const { status, adminNotes } = req.body;
+
+    if (!['APPROVED', 'REJECTED'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status. Must be APPROVED or REJECTED' });
+    }
+
+    const payout = await prisma.sellerPayout.findUnique({
+      where: { id: payoutId },
+      include: {
+        seller: {
+          include: { user: true }
+        }
+      }
+    });
+
+    if (!payout) {
+      return res.status(404).json({ error: 'Payout request not found' });
+    }
+
+    if (payout.status !== 'PENDING') {
+      return res.status(400).json({ error: 'Can only approve/reject pending payouts' });
+    }
+
+    // Update payout status
+    const updatedPayout = await prisma.sellerPayout.update({
+      where: { id: payoutId },
+      data: {
+        status: status === 'APPROVED' ? 'PROCESSING' : 'FAILED',
+        failureReason: status === 'REJECTED' ? adminNotes : undefined,
+        updatedAt: new Date()
+      }
+    });
+
+    // Create notification for seller
+    await prisma.notification.create({
+      data: {
+        userId: payout.seller.userId,
+        type: status === 'APPROVED' ? 'PAYOUT_APPROVED' : 'PAYOUT_REJECTED',
+        title: status === 'APPROVED' ? 'Payout Approved' : 'Payout Rejected',
+        message: status === 'APPROVED' 
+          ? `Your payout request of ${payout.amount} ${payout.currency} has been approved and is being processed.`
+          : `Your payout request of ${payout.amount} ${payout.currency} has been rejected. ${adminNotes || ''}`,
+        isRead: false
+      }
+    });
+
+    // If approved, initiate the actual transfer (this would be handled by the existing payout system)
+    if (status === 'APPROVED') {
+      // The existing transfer logic would trigger here
+      // For now, we'll mark it as processing and let the webhook handle completion
+    }
+
+    res.json({
+      success: true,
+      message: `Payout ${status.toLowerCase()} successfully`,
+      data: updatedPayout
+    });
+  } catch (error) {
+    console.error('Update payout status error:', error);
+    res.status(500).json({ error: 'Failed to update payout status' });
+  }
+});
+
+/**
+ * Create manual payout for seller (admin initiated)
+ * POST /api/admin/payouts/manual
+ */
+router.post('/payouts/manual', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { 
+      sellerId, 
+      amount, 
+      payoutMethod, 
+      accountDetails, 
+      narration, 
+      adminNotes 
+    } = req.body;
+
+    if (!sellerId || !amount || !payoutMethod || !accountDetails) {
+      return res.status(400).json({ 
+        error: 'Seller ID, amount, payout method, and account details are required' 
+      });
+    }
+
+    const seller = await prisma.seller.findUnique({
+      where: { id: sellerId },
+      include: { user: true }
+    });
+
+    if (!seller) {
+      return res.status(404).json({ error: 'Seller not found' });
+    }
+
+    // Generate reference
+    const reference = `ADMIN_${Date.now()}_${sellerId.slice(-6)}`;
+
+    // Create manual payout record
+    const payout = await prisma.sellerPayout.create({
+      data: {
+        sellerId,
+        amount,
+        currency: 'RWF',
+        payoutMethod,
+        accountDetails,
+        reference,
+        status: 'PROCESSING', // Admin payouts start as processing
+        narration: narration || `Manual payout by admin to ${seller.businessName || seller.user.name}`,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    });
+
+    // Create notification for seller
+    await prisma.notification.create({
+      data: {
+        userId: seller.userId,
+        type: 'PAYOUT_INITIATED',
+        title: 'Manual Payout Initiated',
+        message: `A manual payout of ${amount} RWF has been initiated by admin. ${narration || ''}`,
+        isRead: false
+      }
+    });
+
+    // Log admin action
+    console.log(`Admin ${req.userId} initiated manual payout ${payout.id} for seller ${sellerId}: ${amount} RWF`);
+
+    res.json({
+      success: true,
+      message: 'Manual payout created successfully',
+      data: payout
+    });
+  } catch (error) {
+    console.error('Create manual payout error:', error);
+    res.status(500).json({ error: 'Failed to create manual payout' });
+  }
+});
+
+/**
+ * Get payout analytics and summary
+ * GET /api/admin/payouts/analytics
+ */
+router.get('/payouts/analytics', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { period = '30d' } = req.query;
+
+    // Calculate date range
+    const now = new Date();
+    let startDate = new Date();
+    
+    switch (period) {
+      case '7d':
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case '30d':
+        startDate.setDate(now.getDate() - 30);
+        break;
+      case '90d':
+        startDate.setDate(now.getDate() - 90);
+        break;
+      case '1y':
+        startDate.setFullYear(now.getFullYear() - 1);
+        break;
+      default:
+        startDate.setDate(now.getDate() - 30);
+    }
+
+    const [
+      totalPayouts,
+      payoutsByStatus,
+      payoutsByMethod,
+      payoutTrends,
+      topSellers
+    ] = await Promise.all([
+      // Total payouts summary
+      prisma.sellerPayout.aggregate({
+        _sum: { amount: true },
+        _count: { _all: true },
+        where: {
+          createdAt: { gte: startDate }
+        }
+      }),
+      
+      // Payouts grouped by status
+      prisma.sellerPayout.groupBy({
+        by: ['status'],
+        _sum: { amount: true },
+        _count: { _all: true },
+        where: {
+          createdAt: { gte: startDate }
+        }
+      }),
+      
+      // Payouts grouped by method
+      prisma.sellerPayout.groupBy({
+        by: ['payoutMethod'],
+        _sum: { amount: true },
+        _count: { _all: true },
+        where: {
+          createdAt: { gte: startDate }
+        }
+      }),
+      
+      // Daily payout trends
+      prisma.$queryRaw`
+        SELECT DATE(created_at) as date, 
+               SUM(amount) as amount, 
+               COUNT(*) as count
+        FROM seller_payouts 
+        WHERE created_at >= ${startDate}
+        GROUP BY DATE(created_at)
+        ORDER BY date ASC
+      `,
+      
+      // Top sellers by payout amount
+      prisma.sellerPayout.groupBy({
+        by: ['sellerId'],
+        _sum: { amount: true },
+        _count: { _all: true },
+        where: {
+          createdAt: { gte: startDate },
+          status: 'COMPLETED'
+        },
+        orderBy: {
+          _sum: {
+            amount: 'desc'
+          }
+        },
+        take: 10
+      })
+    ]);
+
+    // Get seller details for top sellers
+    const topSellerDetails = await Promise.all(
+      topSellers.map(async (seller: any) => {
+        const sellerData = await prisma.seller.findUnique({
+          where: { id: seller.sellerId },
+          include: {
+            user: {
+              select: { firstName: true, lastName: true, email: true }
+            }
+          }
+        });
+        return {
+          ...seller,
+          seller: sellerData
+        };
+      })
+    );
+
+    res.json({
+      success: true,
+      data: {
+        period,
+        summary: {
+          totalAmount: totalPayouts._sum.amount || 0,
+          totalCount: totalPayouts._count._all || 0,
+          averageAmount: totalPayouts._count._all > 0 
+            ? (totalPayouts._sum.amount || 0) / totalPayouts._count._all 
+            : 0
+        },
+        byStatus: payoutsByStatus,
+        byMethod: payoutsByMethod,
+        trends: payoutTrends,
+        topSellers: topSellerDetails
+      }
+    });
+  } catch (error) {
+    console.error('Get payout analytics error:', error);
+    res.status(500).json({ error: 'Failed to get payout analytics' });
+  }
+});
+
 export default router; 

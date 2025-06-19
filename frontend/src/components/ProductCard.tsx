@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Zap } from 'lucide-react';
+import { ShoppingCart, CreditCard } from 'lucide-react';
 import { formatPrice } from '../utils/currency';
 import { getProductImageUrl } from '../utils/imageUtils';
 import { useCart } from '../contexts/CartContext';
@@ -119,11 +119,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
             </button>
             <button
               onClick={handleBuyNow}
-              className={`${compact ? 'w-full' : ''} bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
+              className={`${compact ? 'w-full' : ''} bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
                 compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
               }`}
             >
-              <Zap size={compact ? 12 : 14} className="mr-1" />
+              <CreditCard size={compact ? 12 : 14} className="mr-1" />
               {compact ? 'Buy' : 'Buy It'}
             </button>
           </div>

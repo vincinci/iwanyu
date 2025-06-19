@@ -528,6 +528,132 @@ class AdminApi {
 
     return response.json();
   }
+
+  // PAYMENT MANAGEMENT FUNCTIONS
+
+  // Get all seller payouts with filtering and pagination
+  async getPayouts(params: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    sellerId?: string;
+    startDate?: string;
+    endDate?: string;
+    payoutMethod?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  } = {}): Promise<any> {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== '') {
+        searchParams.append(key, value.toString());
+      }
+    });
+
+    const response = await fetch(`${API_BASE_URL}/admin/payouts?${searchParams.toString()}`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to get payouts');
+    }
+
+    return response.json();
+  }
+
+  // Get seller wallet overview
+  async getSellerWallets(page = 1, limit = 20, search = ''): Promise<any> {
+    const searchParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      search: search
+    });
+
+    const response = await fetch(`${API_BASE_URL}/admin/seller-wallets?${searchParams.toString()}`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to get seller wallets');
+    }
+
+    return response.json();
+  }
+
+  // Get detailed seller wallet information
+  async getSellerWalletDetails(sellerId: string): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/admin/seller-wallets/${sellerId}`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to get seller wallet details');
+    }
+
+    return response.json();
+  }
+
+  // Approve or reject payout request
+  async updatePayoutStatus(payoutId: string, status: 'APPROVED' | 'REJECTED', adminNotes?: string): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/admin/payouts/${payoutId}/status`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ status, adminNotes }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to update payout status');
+    }
+
+    return response.json();
+  }
+
+  // Create manual payout for seller
+  async createManualPayout(payoutData: {
+    sellerId: string;
+    amount: number;
+    payoutMethod: 'BANK_TRANSFER' | 'MOBILE_MONEY';
+    accountDetails: any;
+    narration?: string;
+    adminNotes?: string;
+  }): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/admin/payouts/manual`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(payoutData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create manual payout');
+    }
+
+    return response.json();
+  }
+
+  // Get payout analytics and summary
+  async getPayoutAnalytics(period: '7d' | '30d' | '90d' | '1y' = '30d'): Promise<any> {
+    const searchParams = new URLSearchParams({ period });
+
+    const response = await fetch(`${API_BASE_URL}/admin/payouts/analytics?${searchParams.toString()}`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to get payout analytics');
+    }
+
+    return response.json();
+  }
 }
 
 export const adminApi = new AdminApi(); 

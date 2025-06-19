@@ -98,6 +98,7 @@ import AdminOrders from './pages/AdminOrders';
 import AdminUsers from './pages/AdminUsers';
 import AdminCategories from './pages/AdminCategories';
 import AdminSellers from './pages/AdminSellers';
+import AdminPayments from './pages/AdminPayments';
 import { useGlobalPrefetch } from './hooks/useInstantProducts';
 import SellerWallet from './pages/SellerWallet';
 import AdCampaigns from './pages/seller/AdCampaigns';
@@ -199,6 +200,7 @@ const AppContent: React.FC = () => {
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="/admin/sellers" element={<AdminSellers />} />
+            <Route path="/admin/payments" element={<AdminPayments />} />
             
             {/* Debug Routes */}
             <Route path="/auth-debug" element={<AuthDebugPage />} />

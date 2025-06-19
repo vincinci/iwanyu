@@ -675,6 +675,9 @@ enum NotificationType {
   PROMOTIONAL
   SYSTEM
   CART_ABANDONMENT
+  PAYOUT_APPROVED
+  PAYOUT_REJECTED
+  PAYOUT_INITIATED
 }
 
 enum TicketPriority {

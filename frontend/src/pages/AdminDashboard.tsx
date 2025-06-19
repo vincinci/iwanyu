@@ -13,7 +13,8 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  ArrowLeft
+  ArrowLeft,
+  CreditCard
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { adminApi } from '../services/adminApi';
@@ -204,6 +205,13 @@ const AdminDashboard: React.FC = () => {
       icon: Layers,
       path: '/admin/categories',
       color: 'bg-indigo-500'
+    },
+    {
+      title: 'Payment Management',
+      description: 'Manage seller withdrawals and wallets',
+      icon: CreditCard,
+      path: '/admin/payments',
+      color: 'bg-orange-500'
     }
   ];
 
