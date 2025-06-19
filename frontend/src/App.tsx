@@ -89,10 +89,13 @@ import Orders from './pages/Orders';
 import Wishlist from './pages/Wishlist';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import BecomeSeller from './pages/BecomeSeller';
 import SellerDashboard from './pages/SellerDashboard';
 import SellerProducts from './pages/SellerProducts';
 import AddProduct from './pages/AddProduct';
+import EditProduct from './pages/EditProduct';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProducts from './pages/AdminProducts';
 import AdminOrders from './pages/AdminOrders';
@@ -102,6 +105,7 @@ import AdminSellers from './pages/AdminSellers';
 import AdminPayments from './pages/AdminPayments';
 import { useGlobalPrefetch } from './hooks/useInstantProducts';
 import SellerWallet from './pages/SellerWallet';
+import SellerPayouts from './pages/SellerPayouts';
 import AdCampaigns from './pages/seller/AdCampaigns';
 import AuthDebugPage from './pages/AuthDebug';
 import AdminTest from './pages/AdminTest';
@@ -115,6 +119,7 @@ import TermsOfService from './pages/TermsOfService';
 import NotFound from './pages/NotFound';
 import SellerFlashSales from './pages/SellerFlashSales';
 import SellerProfile from './pages/seller/SellerProfile';
+import PaymentCallback from './pages/PaymentCallback';
 
 // Create global query client with mobile-optimized settings
 const queryClient = new QueryClient({
@@ -172,15 +177,22 @@ const AppContent: React.FC = () => {
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/become-seller" element={<BecomeSeller />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/orders" element={<Orders />} />
+            
+            {/* Payment Routes */}
+            <Route path="/payment/callback" element={<PaymentCallback />} />
+            <Route path="/payment-callback" element={<PaymentCallback />} />
             
             {/* New Pages */}
             <Route path="/deals" element={<Deals />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/profile" element={<Account />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
@@ -189,10 +201,13 @@ const AppContent: React.FC = () => {
             <Route path="/seller/dashboard" element={<SellerDashboard />} />
             <Route path="/seller/products" element={<SellerProducts />} />
             <Route path="/seller/products/add" element={<AddProduct />} />
+            <Route path="/seller/products/edit/:id" element={<EditProduct />} />
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/seller/wallet" element={<SellerWallet />} />
+            <Route path="/seller/payouts" element={<SellerPayouts />} />
             <Route path="/seller/ad-campaigns" element={<AdCampaigns />} />
             <Route path="/dashboard/flash-sales" element={<SellerFlashSales />} />
+            <Route path="/seller/flash-sales" element={<SellerFlashSales />} />
             <Route path="/seller/profile" element={<SellerProfile />} />
             
             {/* Admin Routes */}
