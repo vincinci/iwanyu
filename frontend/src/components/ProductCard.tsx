@@ -137,8 +137,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
               compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
             }`}
           >
-            <ShoppingCart size={compact ? 12 : 14} className="mr-1" />
-            {compact ? 'Add to Cart' : 'Add to Cart'}
+            <ShoppingCart size={compact ? 12 : 14} />
           </button>
         ) : (
           <button
@@ -148,8 +147,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
               compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
             }`}
           >
-            <ShoppingCart size={compact ? 12 : 14} className="mr-1" />
-            {compact ? 'Add' : 'Add to Cart'}
+            <ShoppingCart size={compact ? 12 : 14} />
           </button>
         )}
       </div>

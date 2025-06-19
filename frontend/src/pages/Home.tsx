@@ -673,15 +673,13 @@ const Home: React.FC = () => {
                           aria-label="Add to cart"
                         >
                           <ShoppingCart size={12} />
-                          <span>Cart</span>
                         </button>
                         <button
                           onClick={(e) => quickAddToWishlist(product, e)}
-                          className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
                           aria-label="Add to wishlist"
                         >
                           <Heart size={12} />
-                          <span>Wishlist</span>
                         </button>
                       </div>
                     </Link>
@@ -758,15 +756,13 @@ const Home: React.FC = () => {
                           aria-label="Add to cart"
                         >
                           <ShoppingCart size={12} />
-                          <span>Cart</span>
                         </button>
                         <button
                           onClick={(e) => quickAddToWishlist(product, e)}
-                          className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
                           aria-label="Add to wishlist"
                         >
                           <Heart size={12} />
-                          <span>Wishlist</span>
                         </button>
                       </div>
                       </div>
@@ -839,15 +835,13 @@ const Home: React.FC = () => {
                           aria-label="Add to cart"
                         >
                           <ShoppingCart size={12} />
-                          <span>Cart</span>
                         </button>
                         <button
                           onClick={(e) => quickAddToWishlist(product, e)}
-                          className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
                           aria-label="Add to wishlist"
                         >
                           <Heart size={12} />
-                          <span>Wishlist</span>
                         </button>
                       </div>
                     </Link>

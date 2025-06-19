@@ -317,8 +317,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
               onClick={handleAddToCart}
               className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center"
             >
-              <ShoppingCart size={14} className="mr-1" />
-              Add to Cart
+              <ShoppingCart size={14} />
             </button>
           )}
         </div>

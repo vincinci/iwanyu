@@ -311,8 +311,7 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
               onClick={handleAddToCart}
               className="w-full bg-gray-600 hover:bg-gray-700 text-white py-1.5 px-2 rounded text-xs font-medium transition-colors duration-200 flex items-center justify-center"
             >
-              <ShoppingCart size={12} className="mr-1" />
-              Add to Cart
+              <ShoppingCart size={12} />
             </button>
           )}
         </div>
