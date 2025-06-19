@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, ThumbsUp, ThumbsDown, MessageCircle, User, Calendar, ShoppingBag, Filter } from 'lucide-react';
+import { Star, ThumbsUp, ThumbsDown, MessageCircle, User, Calendar, ShoppingBag, Filter, Edit2, Trash2, Save, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { formatPrice } from '../utils/currency';
@@ -24,6 +24,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
   const [stats, setStats] = useState<ReviewStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [filters, setFilters] = useState<ReviewFilters>({
     rating: 'all',
     sortBy: 'newest'
@@ -119,6 +120,78 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
     } catch (error) {
       console.error('Error voting on review:', error);
     }
+  };
+
+  const handleEditReview = async (reviewId: string, reviewData: any) => {
+    if (!user) return;
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(reviewData)
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setEditingReviewId(null);
+        setReviewForm({ rating: 5, title: '', comment: '', images: [] });
+        loadReviews(true);
+      } else {
+        alert(data.error || 'Failed to update review');
+      }
+    } catch (error) {
+      console.error('Error updating review:', error);
+      alert('Failed to update review');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!user) return;
+    
+    if (!confirm('Are you sure you want to delete this review? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        loadReviews(true);
+      } else {
+        alert(data.error || 'Failed to delete review');
+      }
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      alert('Failed to delete review');
+    }
+  };
+
+  const startEditingReview = (review: Review) => {
+    setEditingReviewId(review.id);
+    setReviewForm({
+      rating: review.rating,
+      title: review.title || '',
+      comment: review.comment || '',
+      images: review.images || []
+    });
+  };
+
+  const cancelEditing = () => {
+    setEditingReviewId(null);
+    setReviewForm({ rating: 5, title: '', comment: '', images: [] });
   };
 
   const renderStars = (rating: number, size = 16) => {
@@ -227,12 +300,20 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
 
         {/* Write Review Button */}
         {user && (
-          <button
-            onClick={() => setShowReviewForm(!showReviewForm)}
-            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 mb-6"
-          >
-            Write a Review
-          </button>
+          <div className="mb-6">
+            {reviews.some(review => review.userId === user.id) ? (
+              <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                You have already reviewed this product. You can edit or delete your review below.
+              </p>
+            ) : (
+              <button
+                onClick={() => setShowReviewForm(!showReviewForm)}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+              >
+                Write a Review
+              </button>
+            )}
+          </div>
         )}
 
         {/* Review Form */}
@@ -374,53 +455,162 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Calendar size={14} className="mr-1" />
-                      {new Date(review.createdAt).toLocaleDateString()}
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Calendar size={14} className="mr-1" />
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </div>
+                      {/* Edit/Delete buttons for user's own reviews */}
+                      {user && user.id === review.userId && (
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => startEditingReview(review)}
+                            className="text-gray-400 hover:text-blue-600 transition-colors p-1 rounded"
+                            title="Edit review"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteReview(review.id)}
+                            className="text-gray-400 hover:text-red-600 transition-colors p-1 rounded"
+                            title="Delete review"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {review.title && (
-                    <h5 className="font-medium text-gray-900 mb-2">{review.title}</h5>
+                  {/* Review content or edit form */}
+                  {editingReviewId === review.id ? (
+                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                      <h5 className="text-sm font-medium text-gray-700 mb-3">Edit Your Review</h5>
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        handleEditReview(review.id, reviewForm);
+                      }} className="space-y-4">
+                        {/* Rating */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Your Rating
+                          </label>
+                          <div className="flex items-center space-x-1">
+                            {[1, 2, 3, 4, 5].map(rating => (
+                              <button
+                                key={rating}
+                                type="button"
+                                onClick={() => setReviewForm(prev => ({ ...prev, rating }))}
+                                className="p-1 hover:scale-110 transition-transform"
+                              >
+                                <Star
+                                  size={20}
+                                  className={rating <= reviewForm.rating ? "text-yellow-400 fill-current" : "text-gray-300"}
+                                />
+                              </button>
+                            ))}
+                            <span className="ml-2 text-sm text-gray-600">
+                              {reviewForm.rating} star{reviewForm.rating !== 1 ? 's' : ''}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Title */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Review Title (Optional)
+                          </label>
+                          <input
+                            type="text"
+                            value={reviewForm.title}
+                            onChange={(e) => setReviewForm(prev => ({ ...prev, title: e.target.value }))}
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                            placeholder="Summarize your experience"
+                          />
+                        </div>
+
+                        {/* Comment */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Your Review
+                          </label>
+                          <textarea
+                            value={reviewForm.comment}
+                            onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
+                            rows={3}
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                            placeholder="Share your thoughts about this product..."
+                          />
+                        </div>
+
+                        {/* Buttons */}
+                        <div className="flex space-x-3">
+                          <button
+                            type="submit"
+                            disabled={submitting}
+                            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 text-sm"
+                          >
+                            <Save size={14} />
+                            <span>{submitting ? 'Saving...' : 'Save Changes'}</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={cancelEditing}
+                            className="flex items-center space-x-2 border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 text-sm"
+                          >
+                            <X size={14} />
+                            <span>Cancel</span>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  ) : (
+                    <>
+                      {review.title && (
+                        <h5 className="font-medium text-gray-900 mb-2">{review.title}</h5>
+                      )}
+
+                      {review.comment && (
+                        <p className="text-gray-700 mb-3 leading-relaxed">{review.comment}</p>
+                      )}
+
+                      {review.images && review.images.length > 0 && (
+                        <div className="flex space-x-2 mb-3">
+                          {review.images.map((image, index) => (
+                            <img
+                              key={index}
+                              src={image}
+                              alt={`Review image ${index + 1}`}
+                              className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
 
-                  {review.comment && (
-                    <p className="text-gray-700 mb-3 leading-relaxed">{review.comment}</p>
-                  )}
-
-                  {review.images && review.images.length > 0 && (
-                    <div className="flex space-x-2 mb-3">
-                      {review.images.map((image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt={`Review image ${index + 1}`}
-                          className="w-16 h-16 object-cover rounded-lg border border-gray-200"
-                        />
-                      ))}
+                  {/* Helpful buttons - only show when not editing */}
+                  {editingReviewId !== review.id && (
+                    <div className="flex items-center space-x-4 text-sm">
+                      <span className="text-gray-600">Was this helpful?</span>
+                      <button
+                        onClick={() => handleHelpfulVote(review.id, true)}
+                        className="flex items-center space-x-1 text-gray-600 hover:text-green-600 transition-colors"
+                        disabled={!user}
+                      >
+                        <ThumbsUp size={14} />
+                        <span>Yes ({review.helpfulCount})</span>
+                      </button>
+                      <button
+                        onClick={() => handleHelpfulVote(review.id, false)}
+                        className="flex items-center space-x-1 text-gray-600 hover:text-red-600 transition-colors"
+                        disabled={!user}
+                      >
+                        <ThumbsDown size={14} />
+                        <span>No</span>
+                      </button>
                     </div>
                   )}
-
-                  {/* Helpful buttons */}
-                  <div className="flex items-center space-x-4 text-sm">
-                    <span className="text-gray-600">Was this helpful?</span>
-                    <button
-                      onClick={() => handleHelpfulVote(review.id, true)}
-                      className="flex items-center space-x-1 text-gray-600 hover:text-green-600 transition-colors"
-                      disabled={!user}
-                    >
-                      <ThumbsUp size={14} />
-                      <span>Yes ({review.helpfulCount})</span>
-                    </button>
-                    <button
-                      onClick={() => handleHelpfulVote(review.id, false)}
-                      className="flex items-center space-x-1 text-gray-600 hover:text-red-600 transition-colors"
-                      disabled={!user}
-                    >
-                      <ThumbsDown size={14} />
-                      <span>No</span>
-                    </button>
-                  </div>
                 </div>
               </div>
             </motion.div>
