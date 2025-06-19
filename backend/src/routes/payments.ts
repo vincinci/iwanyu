@@ -267,6 +267,50 @@ router.get('/verify/:transactionId', async (req: Request, res: Response) => {
             });
           }
 
+          // Create NEW_ORDER notifications for each seller whose products were ordered
+          const sellerNotifications = new Map<string, { sellerId: string; userId: string; items: any[] }>();
+          
+          for (const item of orderItems) {
+            if (item.product.seller) {
+              const sellerId = item.product.seller.id;
+              const userId = item.product.seller.userId;
+              
+              if (!sellerNotifications.has(sellerId)) {
+                sellerNotifications.set(sellerId, {
+                  sellerId,
+                  userId,
+                  items: []
+                });
+              }
+              
+              sellerNotifications.get(sellerId)!.items.push({
+                productName: item.product.name,
+                quantity: item.quantity,
+                price: item.price
+              });
+            }
+          }
+
+          // Send notification to each seller
+          for (const [_, notificationData] of sellerNotifications) {
+            const totalItems = notificationData.items.reduce((sum, item) => sum + item.quantity, 0);
+            const totalAmount = notificationData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            const productNames = notificationData.items.map(item => 
+              `${item.productName} (${item.quantity}x)`
+            ).join(', ');
+
+            await prisma.notification.create({
+              data: {
+                userId: notificationData.userId,
+                type: 'NEW_ORDER',
+                title: 'New Order Received!',
+                message: `You have a new order #${order.id} for ${totalItems} item${totalItems > 1 ? 's' : ''}: ${productNames}. Total: ${totalAmount.toLocaleString()} RWF`,
+                isRead: false
+              }
+            });
+          }
+
           // Create notification for successful payment (only for authenticated users)
           if (order.userId) {
             await prisma.notification.create({
@@ -543,6 +587,50 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req: R
                 totalOrders: {
                   increment: 1
                 }
+              }
+            });
+          }
+
+          // Create NEW_ORDER notifications for each seller whose products were ordered
+          const sellerNotifications = new Map<string, { sellerId: string; userId: string; items: any[] }>();
+          
+          for (const item of orderItems) {
+            if (item.product.seller) {
+              const sellerId = item.product.seller.id;
+              const userId = item.product.seller.userId;
+              
+              if (!sellerNotifications.has(sellerId)) {
+                sellerNotifications.set(sellerId, {
+                  sellerId,
+                  userId,
+                  items: []
+                });
+              }
+              
+              sellerNotifications.get(sellerId)!.items.push({
+                productName: item.product.name,
+                quantity: item.quantity,
+                price: item.price
+              });
+            }
+          }
+
+          // Send notification to each seller
+          for (const [_, notificationData] of sellerNotifications) {
+            const totalItems = notificationData.items.reduce((sum, item) => sum + item.quantity, 0);
+            const totalAmount = notificationData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            const productNames = notificationData.items.map(item => 
+              `${item.productName} (${item.quantity}x)`
+            ).join(', ');
+
+            await prisma.notification.create({
+              data: {
+                userId: notificationData.userId,
+                type: 'NEW_ORDER',
+                title: 'New Order Received!',
+                message: `You have a new order #${order.id} for ${totalItems} item${totalItems > 1 ? 's' : ''}: ${productNames}. Total: ${totalAmount.toLocaleString()} RWF`,
+                isRead: false
               }
             });
           }

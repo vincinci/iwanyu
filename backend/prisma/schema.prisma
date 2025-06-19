@@ -678,6 +678,7 @@ enum NotificationType {
   PAYOUT_APPROVED
   PAYOUT_REJECTED
   PAYOUT_INITIATED
+  NEW_ORDER
 }
 
 enum TicketPriority {
