@@ -113,15 +113,10 @@ const Header: React.FC = () => {
   });
 
   // Memoize categories - show ALL categories, not limited to 8
-  const categories = useMemo(() => {
-    const cats = categoriesData?.data?.categories || [];
-    console.log('=== CATEGORIES DEBUG ===');
-    console.log('Raw categories data:', categoriesData);
-    console.log('Processed categories:', cats);
-    console.log('Categories length:', cats.length);
-    console.log('Main categories (level 0):', cats.filter((c: Category) => c.level === 0));
-    return cats;
-  }, [categoriesData?.data?.categories]);
+  const categories = useMemo(() => 
+    categoriesData?.data?.categories || [], 
+    [categoriesData?.data?.categories]
+  );
 
   // Enhanced category icon mapping with comprehensive coverage
   const getCategoryIcon = useCallback((categoryName: string) => {
@@ -296,7 +291,7 @@ const Header: React.FC = () => {
                         <CategorySkeleton />
                       ) : (
                         <div className="px-3 py-3 max-h-96 overflow-y-auto">
-                          <div className="space-y-2">
+                          <div className="space-y-1">
                             {categories.length === 0 ? (
                               <div className="text-center py-4 text-gray-500">
                                 <Grid size={24} className="mx-auto mb-2 opacity-50" />
@@ -308,58 +303,55 @@ const Header: React.FC = () => {
                                 .map((category: Category) => {
                                   const subcategories = categories.filter((subcat: Category) => 
                                     subcat.parentId === category.id
-                                  ); // Show all subcategories
+                                  ); // Get all subcategories
                                   return (
-                                    <div key={category.id} className="mb-4">
+                                    <div key={category.id} className="relative group">
                                       <Link
                                         to={`/products?category=${category.slug}`}
-                                        className="group flex items-center space-x-3 p-3 rounded-lg hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 transition-all duration-200 border border-transparent hover:border-gray-300 mb-2"
+                                        className="group flex items-center justify-between p-3 rounded-lg hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 transition-all duration-200 border border-transparent hover:border-gray-300"
                                         onClick={() => setShowCategoriesDropdown(false)}
                                       >
-                                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-100 transition-colors">
-                                          {renderCategoryIcon(category.name, 16)}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                          <span className="text-sm text-gray-700 group-hover:text-gray-700 font-semibold truncate block">
+                                        <div className="flex items-center space-x-3">
+                                          <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-100 transition-colors">
+                                            {renderCategoryIcon(category.name, 16)}
+                                          </div>
+                                          <span className="text-sm text-gray-700 group-hover:text-gray-700 font-semibold">
                                             {category.name}
                                           </span>
-                                          <div className="flex items-center space-x-2 text-xs text-gray-500 group-hover:text-gray-600">
-                                            <span>{category._count?.products || 0} products</span>
-                                            {subcategories.length > 0 && (
-                                              <>
-                                                <span>•</span>
-                                                <span>{subcategories.length} subcategories</span>
-                                              </>
-                                            )}
-                                          </div>
                                         </div>
+                                        {subcategories.length > 0 && (
+                                          <ChevronRight size={14} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
+                                        )}
                                       </Link>
                                       
+                                      {/* Subcategories dropdown on hover */}
                                       {subcategories.length > 0 && (
-                                        <div className="ml-4 space-y-1">
-                                          {subcategories
-                                            .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder)
-                                            .map((subcategory: Category) => (
-                                              <Link
-                                                key={subcategory.id}
-                                                to={`/products?category=${subcategory.slug}`}
-                                                className="group flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50 transition-all duration-200"
-                                                onClick={() => setShowCategoriesDropdown(false)}
-                                              >
-                                                <div className="w-6 h-6 bg-gray-50 rounded flex items-center justify-center group-hover:bg-gray-100 transition-colors">
-                                                  {renderCategoryIcon(subcategory.name, 12)}
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                  <span className="text-xs text-gray-600 group-hover:text-gray-700 font-medium truncate block">
+                                        <div className="absolute left-full top-0 ml-2 w-64 bg-white shadow-xl border border-gray-200 rounded-lg py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                          <div className="px-3 pb-2 border-b border-gray-100">
+                                            <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                              {category.name} Categories
+                                            </h4>
+                                          </div>
+                                          <div className="py-1">
+                                            {subcategories
+                                              .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder)
+                                              .map((subcategory: Category) => (
+                                                <Link
+                                                  key={subcategory.id}
+                                                  to={`/products?category=${subcategory.slug}`}
+                                                  className="flex items-center space-x-3 px-3 py-2 hover:bg-gray-50 transition-all duration-200"
+                                                  onClick={() => setShowCategoriesDropdown(false)}
+                                                >
+                                                  <div className="w-6 h-6 bg-gray-50 rounded flex items-center justify-center">
+                                                    {renderCategoryIcon(subcategory.name, 12)}
+                                                  </div>
+                                                  <span className="text-sm text-gray-600 hover:text-gray-700 font-medium">
                                                     {subcategory.name}
                                                   </span>
-                                                  <span className="text-xs text-gray-500">
-                                                    {subcategory._count?.products || 0} products
-                                                  </span>
-                                                </div>
-                                              </Link>
-                                            ))
-                                          }
+                                                </Link>
+                                              ))
+                                            }
+                                          </div>
                                         </div>
                                       )}
                                     </div>
