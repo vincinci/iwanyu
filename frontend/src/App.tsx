@@ -92,6 +92,7 @@ import Register from './pages/Register';
 import BecomeSeller from './pages/BecomeSeller';
 import SellerDashboard from './pages/SellerDashboard';
 import SellerProducts from './pages/SellerProducts';
+import AddProduct from './pages/AddProduct';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProducts from './pages/AdminProducts';
 import AdminOrders from './pages/AdminOrders';
@@ -187,6 +188,8 @@ const AppContent: React.FC = () => {
             {/* Seller Routes */}
             <Route path="/seller/dashboard" element={<SellerDashboard />} />
             <Route path="/seller/products" element={<SellerProducts />} />
+            <Route path="/seller/products/add" element={<AddProduct />} />
+            <Route path="/add-product" element={<AddProduct />} />
             <Route path="/seller/wallet" element={<SellerWallet />} />
             <Route path="/seller/ad-campaigns" element={<AdCampaigns />} />
             <Route path="/dashboard/flash-sales" element={<SellerFlashSales />} />
