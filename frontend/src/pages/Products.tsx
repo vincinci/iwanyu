@@ -565,7 +565,7 @@ const Products: React.FC = () => {
                   {products.map((product: Product, index: number) => (
                     <motion.div
                       key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.02 }}
                       className={viewMode === 'grid' 
@@ -628,10 +628,10 @@ const Products: React.FC = () => {
                                 </div>
                               )}
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="flex gap-1">
                               <button
                                 onClick={(e) => quickAddToCart(product, e)}
-                                className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                                className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
                                 aria-label="Add to cart"
                               >
                                 <ShoppingCart size={12} />
@@ -639,7 +639,7 @@ const Products: React.FC = () => {
                               </button>
                               <button
                                 onClick={(e) => quickBuyNow(product, e)}
-                                className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                                className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
                                 aria-label="Buy now"
                               >
                                 <CreditCard size={12} />

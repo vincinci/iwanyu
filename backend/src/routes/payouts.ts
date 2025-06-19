@@ -724,4 +724,299 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req: R
   }
 });
 
+/**
+ * Simplified withdraw method - handles both bank transfer and mobile money
+ * POST /api/payouts/withdraw
+ */
+router.post('/withdraw', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { 
+      amount,
+      method, // 'BANK_TRANSFER' or 'MOBILE_MONEY'
+      accountDetails,
+      narration
+    } = req.body;
+
+    // Validate required fields
+    if (!amount || !method || !accountDetails) {
+      return res.status(400).json({ 
+        error: 'Amount, withdrawal method, and account details are required' 
+      });
+    }
+
+    // Validate amount
+    if (amount < 1000) {
+      return res.status(400).json({ 
+        error: 'Minimum withdrawal amount is RWF 1,000' 
+      });
+    }
+
+    // Check if user is a seller
+    const seller = await prisma.seller.findUnique({
+      where: { userId },
+      include: { user: true }
+    });
+
+    if (!seller) {
+      return res.status(403).json({ error: 'Seller access required' });
+    }
+
+    // Calculate available balance
+    const completedOrders = await prisma.order.findMany({
+      where: {
+        paymentStatus: 'COMPLETED',
+        orderItems: {
+          some: {
+            product: { sellerId: seller.id }
+          }
+        }
+      },
+      include: {
+        orderItems: {
+          where: {
+            product: { sellerId: seller.id }
+          }
+        }
+      }
+    });
+
+    let availableBalance = 0;
+    completedOrders.forEach(order => {
+      order.orderItems.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        availableBalance += itemTotal;
+      });
+    });
+
+    // Subtract previous successful payouts
+    const previousPayouts = await prisma.sellerPayout.findMany({
+      where: { 
+        sellerId: seller.id,
+        status: 'COMPLETED'
+      }
+    });
+
+    const totalPaidOut = previousPayouts.reduce((sum, payout) => sum + payout.amount, 0);
+    const pendingBalance = availableBalance - totalPaidOut;
+
+    if (amount > pendingBalance) {
+      return res.status(400).json({ 
+        error: 'Insufficient balance',
+        details: {
+          requested: amount,
+          available: pendingBalance,
+          currency: 'RWF'
+        }
+      });
+    }
+
+    // Route to appropriate withdrawal method
+    if (method === 'BANK_TRANSFER') {
+      const { account_bank, account_number, account_name } = accountDetails;
+      
+      if (!account_bank || !account_number || !account_name) {
+        return res.status(400).json({ 
+          error: 'Bank transfer requires account_bank, account_number, and account_name' 
+        });
+      }
+
+      // Generate transfer reference
+      const transferRef = flutterwaveService.generatePaymentReference('WITHDRAW');
+
+      // Create payout record
+      const payout = await prisma.sellerPayout.create({
+        data: {
+          sellerId: seller.id,
+          amount,
+          currency: 'RWF',
+          payoutMethod: 'BANK_TRANSFER',
+          accountDetails: {
+            account_bank,
+            account_number,
+            beneficiary_name: account_name
+          },
+          reference: transferRef,
+          status: 'PENDING',
+          narration: narration || `Withdrawal to ${account_name}`
+        }
+      });
+
+      // Initiate transfer with Flutterwave
+      try {
+        const transferResponse = await flutterwaveService.initiateTransfer({
+          account_bank,
+          account_number,
+          amount,
+          currency: 'RWF',
+          beneficiary_name: account_name,
+          narration: payout.narration || undefined,
+          reference: transferRef,
+          callback_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payouts/webhook`,
+          meta: {
+            sellerId: seller.id,
+            payoutId: payout.id,
+            sellerName: seller.businessName || seller.user.name
+          }
+        });
+
+        if (transferResponse.status === 'success') {
+          await prisma.sellerPayout.update({
+            where: { id: payout.id },
+            data: {
+              flutterwaveTransferId: transferResponse.data.id.toString(),
+              status: 'PROCESSING',
+              updatedAt: new Date()
+            }
+          });
+
+          res.json({
+            success: true,
+            message: 'Withdrawal initiated successfully',
+            data: {
+              payoutId: payout.id,
+              transferId: transferResponse.data.id,
+              amount,
+              method,
+              status: 'PROCESSING',
+              reference: transferRef,
+              estimatedCompletionTime: '1-3 business days'
+            }
+          });
+        } else {
+          await prisma.sellerPayout.update({
+            where: { id: payout.id },
+            data: { status: 'FAILED' }
+          });
+
+          res.status(400).json({
+            error: 'Failed to initiate withdrawal',
+            details: transferResponse.message
+          });
+        }
+      } catch (flutterwaveError) {
+        await prisma.sellerPayout.update({
+          where: { id: payout.id },
+          data: { status: 'FAILED' }
+        });
+
+        res.status(500).json({
+          error: 'Failed to process withdrawal',
+          details: flutterwaveError instanceof Error ? flutterwaveError.message : 'Payment service error'
+        });
+      }
+
+    } else if (method === 'MOBILE_MONEY') {
+      const { network, phone_number, account_name } = accountDetails;
+      
+      if (!network || !phone_number || !account_name) {
+        return res.status(400).json({ 
+          error: 'Mobile money requires network, phone_number, and account_name' 
+        });
+      }
+
+      // Generate transfer reference
+      const transferRef = flutterwaveService.generatePaymentReference('MMWITHDRAW');
+
+      // Create payout record
+      const payout = await prisma.sellerPayout.create({
+        data: {
+          sellerId: seller.id,
+          amount,
+          currency: 'RWF',
+          payoutMethod: 'MOBILE_MONEY',
+          accountDetails: {
+            mobile_network: network,
+            mobile_number: phone_number,
+            beneficiary_name: account_name
+          },
+          reference: transferRef,
+          status: 'PENDING',
+          narration: narration || `Mobile money withdrawal to ${phone_number}`
+        }
+      });
+
+      // Initiate mobile money transfer
+      try {
+        const transferResponse = await flutterwaveService.initiateMobileMoneyTransfer({
+          account_bank: network,
+          account_number: phone_number,
+          amount,
+          currency: 'RWF',
+          beneficiary_name: account_name,
+          narration: payout.narration || undefined,
+          reference: transferRef,
+          callback_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payouts/webhook`,
+          meta: {
+            sender: 'Iwanyu Store',
+            sender_country: 'RW',
+            mobile_number: phone_number,
+            sellerId: seller.id,
+            payoutId: payout.id,
+            sellerName: seller.businessName || seller.user.name
+          }
+        });
+
+        if (transferResponse.status === 'success') {
+          await prisma.sellerPayout.update({
+            where: { id: payout.id },
+            data: {
+              flutterwaveTransferId: transferResponse.data.id.toString(),
+              status: 'PROCESSING',
+              updatedAt: new Date()
+            }
+          });
+
+          res.json({
+            success: true,
+            message: 'Mobile money withdrawal initiated successfully',
+            data: {
+              payoutId: payout.id,
+              transferId: transferResponse.data.id,
+              amount,
+              method,
+              network,
+              status: 'PROCESSING',
+              reference: transferRef,
+              estimatedCompletionTime: '5-30 minutes'
+            }
+          });
+        } else {
+          await prisma.sellerPayout.update({
+            where: { id: payout.id },
+            data: { status: 'FAILED' }
+          });
+
+          res.status(400).json({
+            error: 'Failed to initiate mobile money withdrawal',
+            details: transferResponse.message
+          });
+        }
+      } catch (flutterwaveError) {
+        await prisma.sellerPayout.update({
+          where: { id: payout.id },
+          data: { status: 'FAILED' }
+        });
+
+        res.status(500).json({
+          error: 'Failed to process mobile money withdrawal',
+          details: flutterwaveError instanceof Error ? flutterwaveError.message : 'Payment service error'
+        });
+      }
+
+    } else {
+      return res.status(400).json({ 
+        error: 'Invalid withdrawal method. Use BANK_TRANSFER or MOBILE_MONEY' 
+      });
+    }
+
+  } catch (error) {
+    console.error('Withdraw error:', error);
+    res.status(500).json({ 
+      error: 'Failed to process withdrawal request',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 export default router; 

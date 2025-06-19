@@ -20,8 +20,9 @@ import {
   History
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { walletApi, type WalletSummary, type Payout, type BankDetails, type MobileMoneyDetails } from '../services/walletApi';
+import { walletApi, type WalletSummary, type Payout } from '../services/walletApi';
 import { formatPrice } from '../utils/currency';
+import WithdrawForm from '../components/WithdrawForm';
 
 const SellerWallet: React.FC = () => {
   const { user } = useAuth();
@@ -30,19 +31,6 @@ const SellerWallet: React.FC = () => {
   
   const [showBalance, setShowBalance] = useState(true);
   const [showPayoutModal, setShowPayoutModal] = useState(false);
-  const [payoutMethod, setPayoutMethod] = useState<'BANK_TRANSFER' | 'MOBILE_MONEY'>('BANK_TRANSFER');
-  const [payoutAmount, setPayoutAmount] = useState('');
-  const [bankDetails, setBankDetails] = useState<BankDetails>({
-    account_bank: '',
-    account_number: '',
-    account_name: '',
-    country: 'RW'
-  });
-  const [mobileDetails, setMobileDetails] = useState<MobileMoneyDetails>({
-    network: '',
-    phone_number: '',
-    country: 'RW'
-  });
 
   React.useEffect(() => {
     // Check localStorage immediately for instant response
@@ -78,80 +66,7 @@ const SellerWallet: React.FC = () => {
     enabled: !!user && user.role === 'SELLER',
   });
 
-  const { data: banks } = useQuery({
-    queryKey: ['banks', 'RW'],
-    queryFn: () => walletApi.getBanks('RW'),
-    enabled: payoutMethod === 'BANK_TRANSFER',
-  });
 
-  const { data: mobileNetworks } = useQuery({
-    queryKey: ['mobile-networks', 'RW'],
-    queryFn: () => walletApi.getMobileMoneyNetworks('RW'),
-    enabled: payoutMethod === 'MOBILE_MONEY',
-  });
-
-  const bankPayoutMutation = useMutation({
-    mutationFn: walletApi.requestBankPayout,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wallet-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['payout-history'] });
-      setShowPayoutModal(false);
-      setPayoutAmount('');
-      setBankDetails({ account_bank: '', account_number: '', account_name: '', country: 'RW' });
-    },
-  });
-
-  const mobilePayoutMutation = useMutation({
-    mutationFn: walletApi.requestMobileMoneyPayout,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wallet-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['payout-history'] });
-      setShowPayoutModal(false);
-      setPayoutAmount('');
-      setMobileDetails({ network: '', phone_number: '', country: 'RW' });
-    },
-  });
-
-  const handlePayout = async () => {
-    const amount = parseFloat(payoutAmount);
-    
-    if (!amount || amount <= 0) {
-      alert('Please enter a valid amount');
-      return;
-    }
-
-    if (!walletSummary || amount > walletSummary.availableBalance) {
-      alert('Insufficient balance');
-      return;
-    }
-
-    try {
-      if (payoutMethod === 'BANK_TRANSFER') {
-        if (!bankDetails.account_bank || !bankDetails.account_number || !bankDetails.account_name) {
-          alert('Please fill in all bank details');
-          return;
-        }
-        await bankPayoutMutation.mutateAsync({
-          amount,
-          accountDetails: bankDetails,
-          narration: `Payout to ${bankDetails.account_name}`
-        });
-      } else {
-        if (!mobileDetails.network || !mobileDetails.phone_number) {
-          alert('Please fill in all mobile money details');
-          return;
-        }
-        await mobilePayoutMutation.mutateAsync({
-          amount,
-          accountDetails: mobileDetails,
-          narration: `Mobile money payout to ${mobileDetails.phone_number}`
-        });
-      }
-    } catch (error) {
-      console.error('Payout error:', error);
-      alert('Failed to process payout. Please try again.');
-    }
-  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -242,7 +157,7 @@ const SellerWallet: React.FC = () => {
             <button
               onClick={() => setShowPayoutModal(true)}
               disabled={!walletSummary?.availableBalance || walletSummary.availableBalance <= 0}
-              className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Download className="w-5 h-5" />
               Withdraw Funds
@@ -409,7 +324,7 @@ const SellerWallet: React.FC = () => {
           )}
         </motion.div>
 
-        {/* Payout Modal */}
+        {/* Withdraw Modal */}
         <AnimatePresence>
           {showPayoutModal && (
             <motion.div
@@ -422,176 +337,17 @@ const SellerWallet: React.FC = () => {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
+                className="max-w-4xl w-full max-h-[90vh] overflow-y-auto"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Withdraw Funds</h3>
-                  <button
-                    onClick={() => setShowPayoutModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    ×
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  {/* Available Balance */}
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-sm text-green-800">
-                      Available Balance: <span className="font-semibold">{formatPrice(walletSummary?.availableBalance || 0)}</span>
-                    </p>
-                  </div>
-
-                  {/* Amount */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Amount to Withdraw
-                    </label>
-                    <input
-                      type="number"
-                      value={payoutAmount}
-                      onChange={(e) => setPayoutAmount(e.target.value)}
-                      placeholder="Enter amount"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      max={walletSummary?.availableBalance || 0}
-                      min="1000"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Minimum withdrawal: RWF 1,000</p>
-                  </div>
-
-                  {/* Payout Method */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Withdrawal Method
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => setPayoutMethod('BANK_TRANSFER')}
-                        className={`p-3 border rounded-lg flex items-center gap-2 ${
-                          payoutMethod === 'BANK_TRANSFER'
-                            ? 'border-gray-400 bg-gray-50 text-gray-700'
-                            : 'border-gray-300 text-gray-700'
-                        }`}
-                      >
-                        <CreditCard className="w-4 h-4" />
-                        <span className="text-sm">Bank</span>
-                      </button>
-                      <button
-                        onClick={() => setPayoutMethod('MOBILE_MONEY')}
-                        className={`p-3 border rounded-lg flex items-center gap-2 ${
-                          payoutMethod === 'MOBILE_MONEY'
-                            ? 'border-gray-400 bg-gray-50 text-gray-700'
-                            : 'border-gray-300 text-gray-700'
-                        }`}
-                      >
-                        <Smartphone className="w-4 h-4" />
-                        <span className="text-sm">Mobile</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Bank Transfer Details */}
-                  {payoutMethod === 'BANK_TRANSFER' && (
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Bank
-                        </label>
-                        <select
-                          value={bankDetails.account_bank}
-                          onChange={(e) => setBankDetails({...bankDetails, account_bank: e.target.value})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        >
-                          <option value="">Select Bank</option>
-                          {banks?.data?.map((bank: any) => (
-                            <option key={bank.code} value={bank.code}>
-                              {bank.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Account Number
-                        </label>
-                        <input
-                          type="text"
-                          value={bankDetails.account_number}
-                          onChange={(e) => setBankDetails({...bankDetails, account_number: e.target.value})}
-                          placeholder="Enter account number"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Account Name
-                        </label>
-                        <input
-                          type="text"
-                          value={bankDetails.account_name}
-                          onChange={(e) => setBankDetails({...bankDetails, account_name: e.target.value})}
-                          placeholder="Enter account holder name"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Mobile Money Details */}
-                  {payoutMethod === 'MOBILE_MONEY' && (
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Network
-                        </label>
-                        <select
-                          value={mobileDetails.network}
-                          onChange={(e) => setMobileDetails({...mobileDetails, network: e.target.value})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        >
-                          <option value="">Select Network</option>
-                          {mobileNetworks?.data?.RW?.map((network: string) => (
-                            <option key={network} value={network}>
-                              {network}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Phone Number
-                        </label>
-                        <input
-                          type="tel"
-                          value={mobileDetails.phone_number}
-                          onChange={(e) => setMobileDetails({...mobileDetails, phone_number: e.target.value})}
-                          placeholder="Enter phone number"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Actions */}
-                  <div className="flex gap-3 pt-4">
-                    <button
-                      onClick={() => setShowPayoutModal(false)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handlePayout}
-                      disabled={bankPayoutMutation.isPending || mobilePayoutMutation.isPending}
-                      className="flex-1 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 transition-colors disabled:opacity-50"
-                    >
-                      {(bankPayoutMutation.isPending || mobilePayoutMutation.isPending) ? 'Processing...' : 'Withdraw'}
-                    </button>
-                  </div>
-                </div>
+                <WithdrawForm
+                  availableBalance={walletSummary?.availableBalance || 0}
+                  onSuccess={() => {
+                    setShowPayoutModal(false);
+                    queryClient.invalidateQueries({ queryKey: ['wallet-summary'] });
+                    queryClient.invalidateQueries({ queryKey: ['payout-history'] });
+                  }}
+                  onCancel={() => setShowPayoutModal(false)}
+                />
               </motion.div>
             </motion.div>
           )}

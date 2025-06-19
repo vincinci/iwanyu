@@ -150,7 +150,7 @@ const AdminCategories: React.FC = () => {
 
         {/* Categories Grid */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="bg-white rounded-lg shadow-sm overflow-hidden"

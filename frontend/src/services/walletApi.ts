@@ -134,6 +134,17 @@ class WalletApi {
     const response = await api.post('/payouts/mobile-money', requestData);
     return response.data;
   };
+
+  // Simplified withdraw method that handles both bank transfer and mobile money
+  withdraw = async (withdrawalData: {
+    amount: number;
+    method: 'BANK_TRANSFER' | 'MOBILE_MONEY';
+    accountDetails: any;
+    narration?: string;
+  }) => {
+    const response = await api.post('/payouts/withdraw', withdrawalData);
+    return response.data;
+  };
 }
 
 export const walletApi = new WalletApi(); 

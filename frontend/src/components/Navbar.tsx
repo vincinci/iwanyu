@@ -160,9 +160,9 @@ const Navbar: React.FC = React.memo(() => {
               <AnimatePresence>
                 {showCategories && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
+                    exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
                     className="absolute top-full left-0 mt-1 w-80 bg-white rounded-lg shadow-lg border z-50"
                     onMouseEnter={() => setShowCategories(true)}

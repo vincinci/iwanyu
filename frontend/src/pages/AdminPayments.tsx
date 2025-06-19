@@ -214,7 +214,7 @@ const AdminPayments: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
@@ -248,7 +248,7 @@ const AdminPayments: React.FC = () => {
 
         {/* Navigation Tabs */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="mb-6"
@@ -281,7 +281,7 @@ const AdminPayments: React.FC = () => {
         {/* Overview Tab */}
         {currentTab === 'overview' && analyticsData && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="space-y-6"
@@ -384,7 +384,7 @@ const AdminPayments: React.FC = () => {
         {/* Payouts Tab */}
         {currentTab === 'payouts' && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="space-y-6"
@@ -581,7 +581,7 @@ const AdminPayments: React.FC = () => {
         {/* Seller Wallets Tab */}
         {currentTab === 'wallets' && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="space-y-6"
@@ -647,7 +647,7 @@ const AdminPayments: React.FC = () => {
         {/* Analytics Tab */}
         {currentTab === 'analytics' && analyticsData && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="space-y-6"

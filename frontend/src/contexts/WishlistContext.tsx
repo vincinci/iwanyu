@@ -62,6 +62,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
 
   const addToWishlist = async (productId: string): Promise<void> => {
     if (!user) {
+      alert('Please sign in to add items to your wishlist');
       throw new Error('You must be logged in to add items to wishlist');
     }
 
@@ -78,10 +79,16 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
         return newItems;
       });
       
-      // Show success message (you can implement toast notifications later)
+      // Show success message
+      alert('Product added to wishlist!');
       console.log('✅ Added to wishlist:', response.message);
     } catch (error) {
       console.error('❌ Failed to add to wishlist:', error);
+      if (error instanceof Error) {
+        alert(`Failed to add to wishlist: ${error.message}`);
+      } else {
+        alert('Failed to add to wishlist. Please try again.');
+      }
       throw error;
     }
   };
@@ -96,8 +103,14 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       setItems(prev => prev.filter(item => item.productId !== productId));
       
       console.log('Removed from wishlist');
+      alert('Product removed from wishlist');
     } catch (error) {
       console.error('Failed to remove from wishlist:', error);
+      if (error instanceof Error) {
+        alert(`Failed to remove from wishlist: ${error.message}`);
+      } else {
+        alert('Failed to remove from wishlist. Please try again.');
+      }
       throw error;
     }
   };

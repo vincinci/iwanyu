@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, ShoppingCart, Heart, Package, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Package, ChevronLeft, ChevronRight, CreditCard } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { formatPrice } from '../utils/currency';
@@ -313,15 +313,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
             </div>
           </div>
 
-          {/* Add to Cart Button */}
+          {/* Action Buttons */}
           {product.stock > 0 && (
-            <button
-              onClick={handleAddToCart}
-              className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center"
-            >
-              <ShoppingCart size={14} className="mr-1" />
-              Add to Cart
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAddToCart}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center"
+              >
+                <ShoppingCart size={14} className="mr-1" />
+                Cart
+              </button>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.location.href = `/checkout?product=${product.id}&quantity=1`;
+                }}
+                className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center"
+              >
+                <CreditCard size={14} className="mr-1" />
+                Buy
+              </button>
+            </div>
           )}
         </div>
       </Link>

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart, CreditCard } from 'lucide-react';
+import { ShoppingCart, CreditCard, Heart } from 'lucide-react';
 import { formatPrice } from '../utils/currency';
 import { getProductImageUrl } from '../utils/imageUtils';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 import type { Product } from '../types/api';
 
 interface ProductCardProps {
@@ -15,6 +16,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const {
     id,
     name,
@@ -39,6 +41,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
     e.preventDefault();
     // Navigate to checkout with this product
     navigate(`/checkout?product=${id}&quantity=1`);
+  };
+
+  const handleWishlistToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      if (isInWishlist(product.id)) {
+        await removeFromWishlist(product.id);
+      } else {
+        await addToWishlist(product.id);
+      }
+    } catch (error) {
+      console.error('Error updating wishlist:', error);
+    }
   };
 
   return (
@@ -66,10 +83,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
             </div>
           )}
           {discount && (
-            <div className="absolute top-1 right-1 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-xs font-medium">
+            <div className="absolute top-1 left-1 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-xs font-medium">
               -{discount}%
             </div>
           )}
+          
+          {/* Wishlist Button */}
+          <button
+            onClick={handleWishlistToggle}
+            className={`absolute top-1 right-1 p-1.5 rounded-full transition-colors ${
+              isInWishlist(product.id)
+                ? 'bg-red-100 text-red-600'
+                : 'bg-white/80 text-gray-600 hover:bg-red-100 hover:text-red-600'
+            }`}
+          >
+            <Heart size={14} className={isInWishlist(product.id) ? 'fill-current' : ''} />
+          </button>
+          
           {stock === 0 && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
               <span className="text-white font-medium text-sm">Out of Stock</span>
@@ -107,10 +137,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
       </Link>
       <div className={`px-3 pb-3 ${compact ? 'px-2 pb-2' : 'px-3 pb-3'}`}>
         {stock > 0 ? (
-          <div className={compact ? 'space-y-1.5' : 'grid grid-cols-2 gap-2'}>
+          <div className="flex gap-2">
             <button
               onClick={handleAddToCart}
-              className={`${compact ? 'w-full' : ''} bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
+              className={`flex-1 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
                 compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
               }`}
             >
@@ -119,7 +149,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
             </button>
             <button
               onClick={handleBuyNow}
-              className={`${compact ? 'w-full' : ''} bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
+              className={`flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
                 compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
               }`}
             >
