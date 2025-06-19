@@ -254,7 +254,7 @@ const Header: React.FC = () => {
               {/* Logo */}
               <Link to="/" className="flex items-center space-x-3 group mr-2">
                   <img 
-                  src="/iwanyu logo.png"
+                  src="/iwanyu-logo.png"
                     alt="Iwanyu Store Logo" 
                   className="h-10 w-auto group-hover:scale-105 transition-transform duration-200"
                     loading="eager"
