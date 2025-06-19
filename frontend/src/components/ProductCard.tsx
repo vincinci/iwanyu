@@ -106,21 +106,25 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
         </div>
       </Link>
       <div className={`px-3 pb-3 ${compact ? 'px-2 pb-2' : 'px-3 pb-3'}`}>
-        {!compact && stock > 0 ? (
-          <div className="grid grid-cols-2 gap-2">
+        {stock > 0 ? (
+          <div className={compact ? 'space-y-1.5' : 'grid grid-cols-2 gap-2'}>
             <button
               onClick={handleAddToCart}
-              className="bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium py-2 text-sm"
+              className={`${compact ? 'w-full' : ''} bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
+                compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
+              }`}
             >
-              <ShoppingCart size={14} className="mr-1" />
-              Cart
+              <ShoppingCart size={compact ? 12 : 14} className="mr-1" />
+              {compact ? 'Cart' : 'Cart'}
             </button>
             <button
               onClick={handleBuyNow}
-              className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium py-2 text-sm"
+              className={`${compact ? 'w-full' : ''} bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
+                compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
+              }`}
             >
-              <Zap size={14} className="mr-1" />
-              Buy It
+              <Zap size={compact ? 12 : 14} className="mr-1" />
+              {compact ? 'Buy' : 'Buy It'}
             </button>
           </div>
         ) : (

@@ -210,6 +210,11 @@ class SellerApi {
   }
 
   createProduct = async (data: ProductData): Promise<{ message: string; product: SellerProduct }> => {
+    console.log('SellerApi.createProduct called with data:', {
+      ...data,
+      productImage: data.productImage ? `File: ${data.productImage.name} (${data.productImage.size} bytes)` : undefined
+    });
+    
     // If productImage is a File, use FormData, otherwise use JSON
     if (data.productImage instanceof File) {
       const formData = new FormData();
@@ -223,6 +228,7 @@ class SellerApi {
         }
       });
 
+      console.log('Sending FormData request...');
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/seller/products`, {
         method: 'POST',
@@ -232,26 +238,37 @@ class SellerApi {
         body: formData,
       });
 
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to create product');
+        console.error('API Error:', error);
+        throw new Error(error.error || error.message || 'Failed to create product');
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log('Product created successfully:', result);
+      return result;
     } else {
       // Traditional JSON submission (when using image URL)
-    const response = await fetch(`${API_BASE_URL}/seller/products`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
+      console.log('Sending JSON request...');
+      const response = await fetch(`${API_BASE_URL}/seller/products`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to create product');
-    }
+      console.log('Response status:', response.status);
 
-    return response.json();
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('API Error:', error);
+        throw new Error(error.error || error.message || 'Failed to create product');
+      }
+
+      const result = await response.json();
+      console.log('Product created successfully:', result);
+      return result;
     }
   }
 

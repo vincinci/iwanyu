@@ -168,6 +168,13 @@ const Products: React.FC = () => {
     addToCart(product);
   };
 
+  const quickBuyNow = (product: Product, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Navigate to checkout with this product
+    window.open(`/checkout?product=${product.id}&quantity=1`, '_blank');
+  };
+
   const quickAddToWishlist = async (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -619,18 +626,22 @@ const Products: React.FC = () => {
                                 </div>
                               )}
                             </div>
-                            <div className="flex justify-center">
+                            <div className="space-y-1.5">
                               <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  quickAddToCart(product, e);
-                                }}
+                                onClick={(e) => quickAddToCart(product, e)}
                                 className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                                 aria-label="Add to cart"
                               >
                                 <ShoppingCart size={12} />
-                                <span>Add</span>
+                                <span>Cart</span>
+                              </button>
+                              <button
+                                onClick={(e) => quickBuyNow(product, e)}
+                                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                                aria-label="Buy now"
+                              >
+                                <Zap size={12} />
+                                <span>Buy</span>
                               </button>
                             </div>
                           </div>
@@ -696,18 +707,24 @@ const Products: React.FC = () => {
                                     Free shipping • Buyer protection
                                   </div>
                                 </div>
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    quickAddToCart(product, e);
-                                  }}
-                                  className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
-                                  aria-label="Add to cart"
-                                >
-                                  <ShoppingCart size={12} />
-                                  <span>Add</span>
-                                </button>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={(e) => quickAddToCart(product, e)}
+                                    className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 flex-1 justify-center"
+                                    aria-label="Add to cart"
+                                  >
+                                    <ShoppingCart size={14} />
+                                    <span>Add to Cart</span>
+                                  </button>
+                                  <button
+                                    onClick={(e) => quickBuyNow(product, e)}
+                                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 flex-1 justify-center"
+                                    aria-label="Buy now"
+                                  >
+                                    <Zap size={14} />
+                                    <span>Buy Now</span>
+                                  </button>
+                                </div>
                               </div>
                             </Link>
                           </div>

@@ -73,13 +73,15 @@ const AddProduct: React.FC = () => {
 
   const createProductMutation = useMutation({
     mutationFn: sellerApi.createProduct,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Product created successfully:', data);
       setSuccess(true);
       setTimeout(() => {
         navigate('/seller/products');
       }, 2000);
     },
     onError: (error: Error) => {
+      console.error('Product creation failed:', error);
       setError(error.message);
     },
   });
@@ -174,6 +176,8 @@ const AddProduct: React.FC = () => {
     e.preventDefault();
     setError('');
     
+    console.log('Form submission started with data:', formData);
+    
     // Validation
     if (!formData.name.trim()) {
       setError('Product name is required');
@@ -207,11 +211,50 @@ const AddProduct: React.FC = () => {
     }
 
     try {
+      console.log('Calling createProduct API...');
       await createProductMutation.mutateAsync(formData);
     } catch (err) {
       console.error('Failed to create product:', err);
+      // The error is already handled by onError callback above
     }
   };
+
+  // Show a detailed status screen if user is not ready to add products
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <AlertCircle className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Authentication Required</h2>
+          <p className="text-gray-600 mb-4">Please log in to add products to your store.</p>
+          <button 
+            onClick={() => navigate('/login')} 
+            className="btn-primary"
+          >
+            Log In
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (user.role !== 'SELLER') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <AlertCircle className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Seller Account Required</h2>
+          <p className="text-gray-600 mb-4">You need to create a seller account to add products.</p>
+          <button 
+            onClick={() => navigate('/become-seller')} 
+            className="btn-primary"
+          >
+            Become a Seller
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (profile?.status !== 'APPROVED') {
     return (
@@ -220,6 +263,9 @@ const AddProduct: React.FC = () => {
           <AlertCircle className="w-12 h-12 text-gray-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Account Not Approved</h2>
           <p className="text-gray-600 mb-4">Your seller account must be approved before you can add products.</p>
+          <div className="text-sm text-gray-500 mb-4">
+            Current status: <span className="font-medium">{profile?.status || 'Unknown'}</span>
+          </div>
           <button 
             onClick={() => navigate('/seller/dashboard')} 
             className="btn-primary"

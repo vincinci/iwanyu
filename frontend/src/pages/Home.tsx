@@ -45,7 +45,8 @@ import {
   Gem,
   Bike,
   Plane,
-  Mountain
+  Mountain,
+  Zap
 } from 'lucide-react';
 import { categoriesApi } from '../services/api';
 import { useInstantProducts, useGlobalPrefetch } from '../hooks/useInstantProducts';
@@ -76,13 +77,13 @@ const Home: React.FC = () => {
   // Flash sale timer with localStorage persistence
   const getFlashSaleEndTime = () => {
     try {
-      const stored = localStorage.getItem('flashSaleEndTime');
-      if (stored) {
-        const endTime = new Date(stored);
-        if (endTime > new Date()) {
-          return endTime;
-        }
+    const stored = localStorage.getItem('flashSaleEndTime');
+    if (stored) {
+      const endTime = new Date(stored);
+      if (endTime > new Date()) {
+        return endTime;
       }
+    }
     } catch (error) {
       console.warn('localStorage access failed:', error);
     }
@@ -92,7 +93,7 @@ const Home: React.FC = () => {
     newEndTime.setHours(newEndTime.getHours() + 24);
     
     try {
-      localStorage.setItem('flashSaleEndTime', newEndTime.toISOString());
+    localStorage.setItem('flashSaleEndTime', newEndTime.toISOString());
     } catch (error) {
       console.warn('localStorage write failed:', error);
     }
@@ -110,7 +111,7 @@ const Home: React.FC = () => {
       newEndTime.setHours(newEndTime.getHours() + 24);
       
       try {
-        localStorage.setItem('flashSaleEndTime', newEndTime.toISOString());
+      localStorage.setItem('flashSaleEndTime', newEndTime.toISOString());
       } catch (error) {
         console.warn('localStorage write failed:', error);
       }
@@ -127,8 +128,8 @@ const Home: React.FC = () => {
 
   const [flashSaleTime, setFlashSaleTime] = useState(() => {
     try {
-      const endTime = getFlashSaleEndTime();
-      return calculateTimeRemaining(endTime);
+    const endTime = getFlashSaleEndTime();
+    return calculateTimeRemaining(endTime);
     } catch (error) {
       console.warn('Flash sale timer initialization failed:', error);
       return { hours: 23, minutes: 59, seconds: 59 };
@@ -191,7 +192,7 @@ const Home: React.FC = () => {
     sortBy: 'createdAt',
     sortOrder: 'desc',
   });
-  
+
   // Force show content after timeout to prevent infinite loading
   useEffect(() => {
     if (isMobile) {
@@ -388,10 +389,17 @@ const Home: React.FC = () => {
     e.stopPropagation();
     
     try {
-      addToCart(product);
+    addToCart(product);
     } catch (error) {
       console.error('Add to cart failed:', error);
     }
+  };
+
+  const quickBuyNow = (product: Product, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Navigate to checkout with this product
+    window.open(`/checkout?product=${product.id}&quantity=1`, '_blank');
   };
 
   const quickAddToWishlist = async (product: Product, e: React.MouseEvent) => {
@@ -522,13 +530,13 @@ const Home: React.FC = () => {
               </h2>
               <span className="text-xs md:text-sm text-gray-500 bg-blue-100 px-2 md:px-3 py-1 rounded-full">
                 Promoted
-              </span>
+                        </span>
             </div>
 
             {/* Sponsored Products - 3 rows of 6 */}
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
               {promotedProducts.slice(0, 18).map((product: PromotedProduct, index: number) => (
-                <motion.div
+                  <motion.div
                   key={product.id}
                   initial={isMobile ? {} : { opacity: 0, y: 20 }}
                   whileInView={isMobile ? {} : { opacity: 1, y: 0 }}
@@ -568,14 +576,14 @@ const Home: React.FC = () => {
                       
                       <div className="text-sm font-bold text-gray-900">
                         {formatPrice(product.price)}
-                      </div>
-                    </div>
+                </div>
+              </div>
                   </Link>
                 </motion.div>
               ))}
-            </div>
           </div>
-        </section>
+        </div>
+      </section>
       )}
 
       {/* Flash Sale Section - Show on all devices */}
@@ -611,7 +619,7 @@ const Home: React.FC = () => {
                     <div className="text-xs">Sec</div>
                   </div>
                 </div>
-              </div>
+          </div>
             </div>
           </div>
 
@@ -642,7 +650,7 @@ const Home: React.FC = () => {
                     ) : null}
                     <div className={`w-full h-20 md:h-24 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
                       <Package className="text-gray-400" size={16} />
-                    </div>
+                      </div>
                     
                     {/* Flash Sale Badge */}
                     {(product.salePrice && product.salePrice < product.price) ? (
@@ -662,20 +670,24 @@ const Home: React.FC = () => {
                         {product.name}
                       </h3>
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
-                        {formatPrice(product.salePrice || product.price)}
-                      </div>
-                      <div className="flex justify-center">
+                            {formatPrice(product.salePrice || product.price)}
+                            </div>
+                      <div className="space-y-1.5">
                         <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            quickAddToCart(product, e);
-                          }}
+                          onClick={(e) => quickAddToCart(product, e)}
                           className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                           aria-label="Add to cart"
                         >
                           <ShoppingCart size={12} />
-                          <span>Add</span>
+                          <span>Cart</span>
+                        </button>
+                        <button
+                          onClick={(e) => quickBuyNow(product, e)}
+                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                          aria-label="Buy now"
+                        >
+                          <Zap size={12} />
+                          <span>Buy</span>
                         </button>
                       </div>
                     </Link>
@@ -720,7 +732,7 @@ const Home: React.FC = () => {
                     <div className="relative overflow-hidden">
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
-                        alt={product.name}
+                          alt={product.name}
                         className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
@@ -733,8 +745,8 @@ const Home: React.FC = () => {
                       {calculateDiscount(product.price, product.salePrice) > 0 && (
                         <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[10px]">
                           -{calculateDiscount(product.price, product.salePrice)}%
-                        </div>
-                      )}
+                      </div>
+                    )}
                     </div>
                     
                     <div className="p-2">
@@ -745,22 +757,26 @@ const Home: React.FC = () => {
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
                         {formatPrice(product.salePrice || product.price)}
                       </div>
-                      <div className="flex justify-center">
+                      <div className="space-y-1.5">
                         <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            quickAddToCart(product, e);
-                          }}
+                          onClick={(e) => quickAddToCart(product, e)}
                           className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                           aria-label="Add to cart"
                         >
                           <ShoppingCart size={12} />
-                          <span>Add</span>
+                          <span>Cart</span>
+                        </button>
+                        <button
+                          onClick={(e) => quickBuyNow(product, e)}
+                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                          aria-label="Buy now"
+                        >
+                          <Zap size={12} />
+                          <span>Buy</span>
                         </button>
                       </div>
-                    </div>
-                  </Link>
+                      </div>
+                    </Link>
                 </motion.div>
               ))}
             </div>
@@ -822,18 +838,22 @@ const Home: React.FC = () => {
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
                         {formatPrice(product.salePrice || product.price)}
                       </div>
-                      <div className="flex justify-center">
+                      <div className="space-y-1.5">
                         <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            quickAddToCart(product, e);
-                          }}
+                          onClick={(e) => quickAddToCart(product, e)}
                           className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
                           aria-label="Add to cart"
                         >
                           <ShoppingCart size={12} />
-                          <span>Add</span>
+                          <span>Cart</span>
+                        </button>
+                        <button
+                          onClick={(e) => quickBuyNow(product, e)}
+                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 w-full justify-center"
+                          aria-label="Buy now"
+                        >
+                          <Zap size={12} />
+                          <span>Buy</span>
                         </button>
                       </div>
                     </Link>

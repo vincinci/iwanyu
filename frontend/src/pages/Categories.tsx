@@ -208,14 +208,14 @@ const Categories: React.FC = () => {
                             <span>{subcategories.length} subcategories</span>
                           </div>
                         </div>
-                        <Link
-                          to={`/products?category=${category.slug}`}
+              <Link
+                to={`/products?category=${category.slug}`}
                           className="bg-white/20 hover:bg-white/30 transition-colors px-4 py-2 rounded-lg font-medium"
                         >
                           View All
                         </Link>
-                      </div>
-                    </div>
+                  </div>
+                </div>
 
                     {/* Subcategories Grid */}
                     {subcategories.length > 0 && (
@@ -238,12 +238,12 @@ const Categories: React.FC = () => {
                                       {subcategory.name}
                                     </h3>
                                   </div>
-                                </div>
-                                
+                  </div>
+                  
                                 <div className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors mb-3">
                                   {subcategory.description || 'Browse products in this category'}
-                                </div>
-                                
+                  </div>
+                  
                                 <div className="flex items-center justify-end">
                                   <ArrowRight size={12} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
                                 </div>
@@ -263,8 +263,8 @@ const Categories: React.FC = () => {
                           to={`/products?category=${category.slug}`}
                           className="inline-flex items-center mt-2 text-sm text-gray-600 hover:text-gray-800 font-medium"
                         >
-                          Browse Products
-                          <ArrowRight size={12} className="ml-1" />
+                    Browse Products
+                    <ArrowRight size={12} className="ml-1" />
                         </Link>
                       </div>
                     )}
