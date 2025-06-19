@@ -200,8 +200,9 @@ const AddProduct: React.FC = () => {
                 Product Name *
               </label>
               <input
-                type="text"
+                id="product-name"
                 name="name"
+                type="text"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -216,6 +217,7 @@ const AddProduct: React.FC = () => {
                 Description *
               </label>
               <textarea
+                id="product-description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -232,6 +234,7 @@ const AddProduct: React.FC = () => {
                 Category *
               </label>
               <select
+                id="product-category"
                 name="categoryId"
                 value={formData.categoryId}
                 onChange={handleChange}
@@ -254,8 +257,9 @@ const AddProduct: React.FC = () => {
                   Price (RWF) *
                 </label>
                 <input
-                  type="number"
+                  id="product-price"
                   name="price"
+                  type="number"
                   value={formData.price}
                   onChange={handleChange}
                   required
@@ -271,8 +275,9 @@ const AddProduct: React.FC = () => {
                   Stock *
                 </label>
                 <input
-                  type="number"
+                  id="product-stock"
                   name="stock"
+                  type="number"
                   value={formData.stock}
                   onChange={handleChange}
                   required
@@ -301,6 +306,8 @@ const AddProduct: React.FC = () => {
                       <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
                     </div>
                     <input
+                      id="product-image-file"
+                      name="productImage"
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
@@ -312,8 +319,9 @@ const AddProduct: React.FC = () => {
                 {/* OR Image URL */}
                 <div className="text-center text-sm text-gray-500">OR</div>
                 <input
-                  type="url"
+                  id="product-image-url"
                   name="image"
+                  type="url"
                   value={formData.image}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"

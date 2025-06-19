@@ -126,6 +126,8 @@ const Navbar: React.FC = React.memo(() => {
             <form onSubmit={handleSearch} className="relative">
               <div className="relative">
                 <input
+                  id="navbar-search"
+                  name="search"
                   type="text"
                   placeholder="Search for products..."
                   value={searchQuery}
@@ -347,6 +349,8 @@ const Navbar: React.FC = React.memo(() => {
         <div className="md:hidden pb-4">
           <form onSubmit={handleSearch} className="relative">
             <input
+              id="mobile-navbar-search"
+              name="search"
               type="text"
               placeholder="Search for products..."
               value={searchQuery}

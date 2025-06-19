@@ -459,6 +459,8 @@ const Header: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-gray-600 transition-colors duration-200" size={20} />
                 <input
+                  id="desktop-search"
+                  name="search"
                   type="text"
                   placeholder="Search for products, brands, and more..."
                   value={searchTerm}
@@ -660,6 +662,8 @@ const Header: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-gray-600 transition-colors duration-200" size={18} />
               <input
+                id="mobile-search"
+                name="search"
                 type="text"
                 placeholder="Search products..."
                 value={searchTerm}

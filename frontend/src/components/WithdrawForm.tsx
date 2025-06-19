@@ -182,6 +182,8 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({
           </label>
           <div className="relative">
             <input
+              id="withdraw-amount"
+              name="amount"
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -248,6 +250,8 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({
                 Bank
               </label>
               <select
+                id="withdraw-bank"
+                name="bank"
                 value={accountDetails.account_bank}
                 onChange={(e) => setAccountDetails({ ...accountDetails, account_bank: e.target.value })}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 ${
@@ -271,6 +275,8 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({
                 Account Number
               </label>
               <input
+                id="withdraw-account-number"
+                name="accountNumber"
                 type="text"
                 value={accountDetails.account_number}
                 onChange={(e) => setAccountDetails({ ...accountDetails, account_number: e.target.value })}
