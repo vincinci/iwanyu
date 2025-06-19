@@ -747,17 +747,17 @@ const Products: React.FC = () => {
                                 </div>
                               )}
                             </div>
-                            <div className="flex gap-0.5">
+                            <div className="flex gap-0.5 justify-center">
                               <button
                                 onClick={(e) => quickAddToCart(product, e)}
-                                className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
+                                className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium w-6 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
                                 aria-label="Add to cart"
                               >
                                 <ShoppingCart size={8} />
                               </button>
                               <button
                                 onClick={(e) => quickAddToWishlist(product, e)}
-                                className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
+                                className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium w-6 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
                                 aria-label="Add to wishlist"
                               >
                                 <Heart size={8} />
@@ -826,17 +826,17 @@ const Products: React.FC = () => {
                                     Free shipping • Buyer protection
                                   </div>
                                 </div>
-                                <div className="flex gap-0.5">
+                                <div className="flex gap-0.5 justify-center">
                                   <button
                                     onClick={(e) => quickAddToCart(product, e)}
-                                    className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
+                                    className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium w-6 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
                                     aria-label="Add to cart"
                                   >
                                     <ShoppingCart size={8} />
                                   </button>
                                   <button
                                     onClick={(e) => quickAddToWishlist(product, e)}
-                                    className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
+                                    className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium w-6 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
                                     aria-label="Add to wishlist"
                                   >
                                     <Heart size={8} />

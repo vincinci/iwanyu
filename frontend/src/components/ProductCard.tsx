@@ -133,8 +133,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
         {stock > 0 ? (
           <button
             onClick={handleAddToCart}
-            className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded transition-all duration-200 flex items-center justify-center font-medium ${
-              compact ? 'py-0.5 text-xs max-w-16 mx-auto' : 'py-1 text-sm max-w-20 mx-auto'
+            className={`bg-gray-600 hover:bg-gray-700 text-white rounded transition-all duration-200 flex items-center justify-center font-medium mx-auto ${
+              compact ? 'w-6 h-6' : 'w-8 h-8'
             }`}
           >
             <ShoppingCart size={compact ? 8 : 10} />
@@ -143,8 +143,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
           <button
             onClick={handleAddToCart}
             disabled={stock === 0}
-            className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
-              compact ? 'py-0.5 text-xs max-w-16 mx-auto' : 'py-1 text-sm max-w-20 mx-auto'
+            className={`bg-gray-600 hover:bg-gray-700 text-white rounded transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed mx-auto ${
+              compact ? 'w-6 h-6' : 'w-8 h-8'
             }`}
           >
             <ShoppingCart size={compact ? 8 : 10} />
