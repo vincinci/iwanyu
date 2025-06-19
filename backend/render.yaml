@@ -17,7 +17,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_URL
-        value: https://your-frontend-app.vercel.app
+        value: https://iwanyu.vercel.app
 
 databases:
   - name: ecommerce-db

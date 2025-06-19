@@ -41,6 +41,8 @@ const allowedOrigins = [
   'http://localhost:5177',
   'http://localhost:5178',
   'http://localhost:3000',
+  'https://iwanyu.vercel.app',
+  'https://iwanyu-git-main-dushimiyimanadavy.vercel.app',
   // Add Vercel preview and production domains
   /.*\.vercel\.app$/,
   // Add your specific domain if you have a custom domain
@@ -49,8 +51,13 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    console.log('CORS request from origin:', origin);
+    
     // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('No origin - allowing request');
+      return callback(null, true);
+    }
     
     // Check if origin is in allowed list or matches Vercel pattern
     const isAllowed = allowedOrigins.some(allowedOrigin => {
@@ -63,13 +70,38 @@ app.use(cors({
     });
     
     if (isAllowed) {
+      console.log('Origin allowed:', origin);
       callback(null, true);
     } else {
+      console.log('Origin blocked:', origin);
+      console.log('Allowed origins:', allowedOrigins.filter(o => o !== undefined).map(o => o.toString()));
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
+
+// Additional CORS headers for preflight requests
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && (origin.includes('vercel.app') || origin.includes('localhost'))) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  }
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(204);
+  } else {
+    next();
+  }
+});
 
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
