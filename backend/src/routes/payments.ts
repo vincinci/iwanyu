@@ -3,6 +3,7 @@ import { authenticateToken } from '../middleware/auth';
 import flutterwaveService from '../utils/flutterwave';
 import prisma from '../utils/db';
 import brevoService from '../services/brevoService';
+import { NotificationType } from '@prisma/client';
 
 const router = express.Router();
 
@@ -303,7 +304,7 @@ router.get('/verify/:transactionId', async (req: Request, res: Response) => {
             await prisma.notification.create({
               data: {
                 userId: notificationData.userId,
-                type: 'NEW_ORDER',
+                type: NotificationType.NEW_ORDER,
                 title: 'New Order Received!',
                 message: `You have a new order #${order.id} for ${totalItems} item${totalItems > 1 ? 's' : ''}: ${productNames}. Total: ${totalAmount.toLocaleString()} RWF`,
                 isRead: false
@@ -627,7 +628,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req: R
             await prisma.notification.create({
               data: {
                 userId: notificationData.userId,
-                type: 'NEW_ORDER',
+                type: NotificationType.NEW_ORDER,
                 title: 'New Order Received!',
                 message: `You have a new order #${order.id} for ${totalItems} item${totalItems > 1 ? 's' : ''}: ${productNames}. Total: ${totalAmount.toLocaleString()} RWF`,
                 isRead: false
