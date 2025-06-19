@@ -11,6 +11,7 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
+    "db:seed": "node scripts/simpleSeed.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "manage-users": "npx ts-node src/scripts/manageUsers.ts",
     "approve-seller": "npx ts-node scripts/approveSeller.ts",
