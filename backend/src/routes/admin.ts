@@ -2,6 +2,7 @@ import express, { Response } from 'express';
 import prisma from '../utils/db';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { clearProductCaches } from './products';
+import { NotificationType } from '@prisma/client';
 
 const router = express.Router();
 
@@ -1293,7 +1294,7 @@ router.put('/payouts/:payoutId/status', authenticateToken, requireAdmin, async (
     await prisma.notification.create({
       data: {
         userId: payout.seller.userId,
-        type: status === 'APPROVED' ? 'PAYOUT_APPROVED' : 'PAYOUT_REJECTED',
+        type: status === 'APPROVED' ? NotificationType.PAYOUT_APPROVED : NotificationType.PAYOUT_REJECTED,
         title: status === 'APPROVED' ? 'Payout Approved' : 'Payout Rejected',
         message: status === 'APPROVED' 
           ? `Your payout request of ${payout.amount} ${payout.currency} has been approved and is being processed.`
@@ -1372,7 +1373,7 @@ router.post('/payouts/manual', authenticateToken, requireAdmin, async (req: Auth
     await prisma.notification.create({
       data: {
         userId: seller.userId,
-        type: 'PAYOUT_INITIATED',
+        type: NotificationType.PAYOUT_INITIATED,
         title: 'Manual Payout Initiated',
         message: `A manual payout of ${amount} RWF has been initiated by admin. ${narration || ''}`,
         isRead: false
