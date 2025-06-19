@@ -83,6 +83,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   // Optimized scroll handler with throttling
   useEffect(() => {
@@ -218,12 +219,21 @@ const Header: React.FC = () => {
     const handleClickOutside = () => {
       setShowCategoriesDropdown(false);
       setIsUserMenuOpen(false);
+      setExpandedCategory(null);
     };
 
     // Always add the event listener to ensure mobile compatibility
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
+
+  // Close categories dropdown when mobile menu opens
+  useEffect(() => {
+    if (isMenuOpen) {
+      setShowCategoriesDropdown(false);
+      setExpandedCategory(null);
+    }
+  }, [isMenuOpen]);
 
   return (
     <>
@@ -276,7 +286,7 @@ const Header: React.FC = () => {
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.15 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="fixed md:absolute left-4 md:left-0 right-4 md:right-auto mt-2 md:w-96 bg-white shadow-xl border border-gray-200 rounded-xl py-4 z-50"
+                    className="fixed md:absolute left-2 md:left-0 right-2 md:right-auto mt-2 md:w-96 bg-white shadow-xl border border-gray-200 rounded-xl py-4 z-50 max-h-[80vh] overflow-hidden"
                     style={{ top: "4rem" }}
                     data-testid="categories-dropdown"
                   >
@@ -304,55 +314,107 @@ const Header: React.FC = () => {
                                   const subcategories = categories.filter((subcat: Category) => 
                                     subcat.parentId === category.id
                                   ); // Get all subcategories
+                                  const isExpanded = expandedCategory === category.id;
+                                  
                                   return (
-                                    <div key={category.id} className="relative group">
-                                      <Link
-                                        to={`/products?category=${category.slug}`}
-                                        className="group flex items-center justify-between p-3 rounded-lg hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 transition-all duration-200 border border-transparent hover:border-gray-300"
-                                        onClick={() => setShowCategoriesDropdown(false)}
-                                      >
-                                        <div className="flex items-center space-x-3">
-                                          <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-100 transition-colors">
-                                            {renderCategoryIcon(category.name, 16)}
-                                          </div>
-                                          <span className="text-sm text-gray-700 group-hover:text-gray-700 font-semibold">
-                                            {category.name}
-                                          </span>
+                                    <div key={category.id} className="relative">
+                                      {/* Main Category */}
+                                      <div className="group">
+                                        <div className="flex items-center">
+                                          <Link
+                                            to={`/products?category=${category.slug}`}
+                                            className="flex-1 flex items-center space-x-3 p-3 rounded-lg hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 transition-all duration-200 border border-transparent hover:border-gray-300"
+                                            onClick={() => setShowCategoriesDropdown(false)}
+                                          >
+                                            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-100 transition-colors">
+                                              {renderCategoryIcon(category.name, 16)}
+                                            </div>
+                                            <span className="text-sm text-gray-700 group-hover:text-gray-700 font-semibold">
+                                              {category.name}
+                                            </span>
+                                          </Link>
+                                          
+                                          {/* Subcategories toggle button for mobile */}
+                                          {subcategories.length > 0 && (
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setExpandedCategory(isExpanded ? null : category.id);
+                                              }}
+                                              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                                              aria-label={`Toggle ${category.name} subcategories`}
+                                            >
+                                              <ChevronDown 
+                                                size={14} 
+                                                className={`text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} 
+                                              />
+                                            </button>
+                                          )}
                                         </div>
+                                        
+                                        {/* Desktop hover subcategories */}
                                         {subcategories.length > 0 && (
-                                          <ChevronRight size={14} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
+                                          <div className="hidden md:block absolute left-full top-0 ml-2 w-64 bg-white shadow-xl border border-gray-200 rounded-lg py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                            <div className="px-3 pb-2 border-b border-gray-100">
+                                              <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                {category.name} Categories
+                                              </h4>
+                                            </div>
+                                            <div className="py-1">
+                                              {subcategories
+                                                .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder)
+                                                .map((subcategory: Category) => (
+                                                  <Link
+                                                    key={subcategory.id}
+                                                    to={`/products?category=${subcategory.slug}`}
+                                                    className="flex items-center space-x-3 px-3 py-2 hover:bg-gray-50 transition-all duration-200"
+                                                    onClick={() => setShowCategoriesDropdown(false)}
+                                                  >
+                                                    <div className="w-6 h-6 bg-gray-50 rounded flex items-center justify-center">
+                                                      {renderCategoryIcon(subcategory.name, 12)}
+                                                    </div>
+                                                    <span className="text-sm text-gray-600 hover:text-gray-700 font-medium">
+                                                      {subcategory.name}
+                                                    </span>
+                                                  </Link>
+                                                ))
+                                              }
+                                            </div>
+                                          </div>
                                         )}
-                                      </Link>
+                                      </div>
                                       
-                                      {/* Subcategories dropdown on hover */}
-                                      {subcategories.length > 0 && (
-                                        <div className="absolute left-full top-0 ml-2 w-64 bg-white shadow-xl border border-gray-200 rounded-lg py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                                          <div className="px-3 pb-2 border-b border-gray-100">
-                                            <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                              {category.name} Categories
-                                            </h4>
-                                          </div>
-                                          <div className="py-1">
-                                            {subcategories
-                                              .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder)
-                                              .map((subcategory: Category) => (
-                                                <Link
-                                                  key={subcategory.id}
-                                                  to={`/products?category=${subcategory.slug}`}
-                                                  className="flex items-center space-x-3 px-3 py-2 hover:bg-gray-50 transition-all duration-200"
-                                                  onClick={() => setShowCategoriesDropdown(false)}
-                                                >
-                                                  <div className="w-6 h-6 bg-gray-50 rounded flex items-center justify-center">
-                                                    {renderCategoryIcon(subcategory.name, 12)}
-                                                  </div>
-                                                  <span className="text-sm text-gray-600 hover:text-gray-700 font-medium">
-                                                    {subcategory.name}
-                                                  </span>
-                                                </Link>
-                                              ))
-                                            }
-                                          </div>
-                                        </div>
+                                      {/* Mobile expanded subcategories */}
+                                      {subcategories.length > 0 && isExpanded && (
+                                        <motion.div
+                                          initial={{ opacity: 0, height: 0 }}
+                                          animate={{ opacity: 1, height: 'auto' }}
+                                          exit={{ opacity: 0, height: 0 }}
+                                          transition={{ duration: 0.2 }}
+                                          className="md:hidden ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4"
+                                        >
+                                          {subcategories
+                                            .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder)
+                                            .map((subcategory: Category) => (
+                                              <Link
+                                                key={subcategory.id}
+                                                to={`/products?category=${subcategory.slug}`}
+                                                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                                                onClick={() => {
+                                                  setShowCategoriesDropdown(false);
+                                                  setExpandedCategory(null);
+                                                }}
+                                              >
+                                                <div className="w-6 h-6 bg-gray-50 rounded flex items-center justify-center">
+                                                  {renderCategoryIcon(subcategory.name, 12)}
+                                                </div>
+                                                <span className="text-sm text-gray-600 font-medium">
+                                                  {subcategory.name}
+                                                </span>
+                                              </Link>
+                                            ))
+                                          }
+                                        </motion.div>
                                       )}
                                     </div>
                                   );
@@ -360,7 +422,7 @@ const Header: React.FC = () => {
                             )}
                           </div>
                           
-                          <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
+                          <div className="mt-4 pt-3 border-t border-gray-100 flex flex-col sm:flex-row gap-2">
                             <Link
                               to="/products"
                               className="flex-1 flex items-center justify-center space-x-2 p-3 rounded-lg bg-gradient-to-r from-orange-500 to-pink-500 text-white hover:from-orange-600 hover:to-pink-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
