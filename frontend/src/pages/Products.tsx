@@ -48,6 +48,11 @@ const Products: React.FC = () => {
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [showPriceRange, setShowPriceRange] = useState(false);
+  const [quickFilters, setQuickFilters] = useState({
+    freeShipping: false,
+    buyerProtection: false,
+    highRating: false,
+  });
   const [page, setPage] = useState(1);
   const [limit] = useState(12);
 
@@ -89,6 +94,8 @@ const Products: React.FC = () => {
     category: selectedCategories.length > 0 ? selectedCategories[0] : undefined,
     sortBy,
     sortOrder,
+    priceMin: priceRange.min ? parseFloat(priceRange.min) : undefined,
+    priceMax: priceRange.max ? parseFloat(priceRange.max) : undefined,
   });
 
   const products = data?.data?.products || [];
@@ -146,13 +153,39 @@ const Products: React.FC = () => {
     setSearchParams(newParams);
   };
 
-  const handleSort = (newSortBy: string) => {
-    if (newSortBy === sortBy) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(newSortBy);
-      setSortOrder('desc');
+  const handleSort = (option: string) => {
+    let newSortBy: string;
+    let newSortOrder: 'asc' | 'desc';
+    
+    switch (option) {
+      case 'Price: Low to High':
+        newSortBy = 'price';
+        newSortOrder = 'asc';
+        break;
+      case 'Price: High to Low':
+        newSortBy = 'price';
+        newSortOrder = 'desc';
+        break;
+      case 'Newest First':
+        newSortBy = 'createdAt';
+        newSortOrder = 'desc';
+        break;
+      case 'Highest Rated':
+        newSortBy = 'avgRating';
+        newSortOrder = 'desc';
+        break;
+      case 'Name: A to Z':
+        newSortBy = 'name';
+        newSortOrder = 'asc';
+        break;
+      default:
+        newSortBy = 'createdAt';
+        newSortOrder = 'desc';
     }
+    
+    setSortBy(newSortBy);
+    setSortOrder(newSortOrder);
+    setPage(1); // Reset to first page when sort changes
   };
 
   const handlePageChange = (page: number) => {
@@ -188,18 +221,37 @@ const Products: React.FC = () => {
     }
   };
 
+  const handlePriceRangeChange = (type: 'min' | 'max', value: string) => {
+    setPriceRange(prev => ({ ...prev, [type]: value }));
+    setPage(1); // Reset to first page when filter changes
+  };
+
+  const handleQuickFilter = (filterType: 'freeShipping' | 'buyerProtection' | 'highRating') => {
+    setQuickFilters(prev => ({
+      ...prev,
+      [filterType]: !prev[filterType]
+    }));
+    setPage(1); // Reset to first page when filter changes
+  };
+
   const clearAllFilters = () => {
     setSelectedCategories([]);
     setPriceRange({ min: '', max: '' });
+    setQuickFilters({
+      freeShipping: false,
+      buyerProtection: false,
+      highRating: false,
+    });
     setSearchQuery('');
     setSearchParams(new URLSearchParams());
+    setPage(1);
   };
 
   const sortOptions = [
-    { value: 'newest', label: 'Newest First' },
-    { value: 'price-low', label: 'Price: Low to High' },
-    { value: 'price-high', label: 'Price: High to Low' },
-    { value: 'rating', label: 'Highest Rated' },
+    { value: 'createdAt', label: 'Newest First' },
+    { value: 'price', label: 'Price: Low to High' },
+    { value: 'price', label: 'Price: High to Low' },
+    { value: 'avgRating', label: 'Highest Rated' },
     { value: 'name', label: 'Name: A to Z' },
   ];
 
@@ -296,7 +348,8 @@ const Products: React.FC = () => {
           {/* Quick Filters */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 pt-4 border-t border-gray-100 gap-4">
             <div className="flex items-center gap-4 flex-wrap">
-              {selectedCategories.length > 0 || priceRange.min || priceRange.max || searchQuery ? (
+              {selectedCategories.length > 0 || priceRange.min || priceRange.max || searchQuery || 
+               quickFilters.freeShipping || quickFilters.buyerProtection || quickFilters.highRating ? (
                 <div className="flex items-center gap-3 text-sm">
                   <span className="text-gray-600 font-medium">Active filters:</span>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -325,15 +378,51 @@ const Products: React.FC = () => {
                         >
                           <X size={14} />
                         </button>
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    onClick={clearAllFilters}
-                    className="text-black hover:text-gray-800 text-xs font-semibold uppercase tracking-wide transition-colors"
-                  >
-                    Clear all
-                  </button>
+                                              </span>
+                      )}
+                      {quickFilters.freeShipping && (
+                        <span className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                          Free Shipping
+                          <button 
+                            onClick={() => handleQuickFilter('freeShipping')} 
+                            className="ml-2 hover:text-blue-900 transition-colors" 
+                            aria-label="Remove free shipping filter"
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      )}
+                      {quickFilters.buyerProtection && (
+                        <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                          Buyer Protection
+                          <button 
+                            onClick={() => handleQuickFilter('buyerProtection')} 
+                            className="ml-2 hover:text-green-900 transition-colors" 
+                            aria-label="Remove buyer protection filter"
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      )}
+                      {quickFilters.highRating && (
+                        <span className="inline-flex items-center px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
+                          4+ Stars
+                          <button 
+                            onClick={() => handleQuickFilter('highRating')} 
+                            className="ml-2 hover:text-yellow-900 transition-colors" 
+                            aria-label="Remove high rating filter"
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={clearAllFilters}
+                      className="text-black hover:text-gray-800 text-xs font-semibold uppercase tracking-wide transition-colors"
+                    >
+                      Clear all
+                    </button>
                 </div>
               ) : (
                 <div className="text-sm text-gray-500">
@@ -417,7 +506,7 @@ const Products: React.FC = () => {
                           type="number"
                           placeholder="0"
                           value={priceRange.min}
-                          onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                          onChange={(e) => handlePriceRangeChange('min', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                           aria-label="Minimum price"
                         />
@@ -428,7 +517,7 @@ const Products: React.FC = () => {
                           type="number"
                           placeholder="∞"
                           value={priceRange.max}
-                          onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                          onChange={(e) => handlePriceRangeChange('max', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                           aria-label="Maximum price"
                         />
@@ -441,21 +530,51 @@ const Products: React.FC = () => {
                 <div className="mb-6">
                   <h4 className="font-semibold text-gray-900 mb-4 text-sm uppercase tracking-wide">Quick Filters</h4>
                   <div className="space-y-2">
-                    <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 text-sm flex items-center transition-colors border border-transparent hover:border-gray-200" aria-label="Filter by shipping">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                    <button 
+                      onClick={() => handleQuickFilter('freeShipping')}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center transition-colors border ${
+                        quickFilters.freeShipping 
+                          ? 'bg-blue-50 border-blue-200' 
+                          : 'border-transparent hover:bg-gray-50 hover:border-gray-200'
+                      }`} 
+                      aria-label="Filter by shipping"
+                    >
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                        quickFilters.freeShipping ? 'bg-blue-200' : 'bg-blue-100'
+                      }`}>
                         <Truck size={16} className="text-blue-600" />
                       </div>
                       <span className="font-medium">Free Shipping</span>
                     </button>
-                    <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 text-sm flex items-center transition-colors border border-transparent hover:border-gray-200" aria-label="Filter by buyer protection">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                    <button 
+                      onClick={() => handleQuickFilter('buyerProtection')}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center transition-colors border ${
+                        quickFilters.buyerProtection 
+                          ? 'bg-green-50 border-green-200' 
+                          : 'border-transparent hover:bg-gray-50 hover:border-gray-200'
+                      }`} 
+                      aria-label="Filter by buyer protection"
+                    >
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                        quickFilters.buyerProtection ? 'bg-green-200' : 'bg-green-100'
+                      }`}>
                         <Shield size={16} className="text-green-600" />
                       </div>
                       <span className="font-medium">Buyer Protection</span>
                     </button>
-                    <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 text-sm flex items-center transition-colors border border-transparent hover:border-gray-200" aria-label="Filter by 4+ star rating">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
-                        <Star size={16} className="text-gray-600" />
+                    <button 
+                      onClick={() => handleQuickFilter('highRating')}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center transition-colors border ${
+                        quickFilters.highRating 
+                          ? 'bg-yellow-50 border-yellow-200' 
+                          : 'border-transparent hover:bg-gray-50 hover:border-gray-200'
+                      }`} 
+                      aria-label="Filter by 4+ star rating"
+                    >
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                        quickFilters.highRating ? 'bg-yellow-200' : 'bg-gray-100'
+                      }`}>
+                        <Star size={16} className={quickFilters.highRating ? 'text-yellow-600' : 'text-gray-600'} />
                       </div>
                       <span className="font-medium">4+ Stars</span>
                     </button>
@@ -463,7 +582,8 @@ const Products: React.FC = () => {
                 </div>
 
                 {/* Clear Filters Button */}
-                {(selectedCategories.length > 0 || priceRange.min || priceRange.max) && (
+                {(selectedCategories.length > 0 || priceRange.min || priceRange.max || 
+                  quickFilters.freeShipping || quickFilters.buyerProtection || quickFilters.highRating) && (
                   <button
                     onClick={clearAllFilters}
                     className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
@@ -485,16 +605,24 @@ const Products: React.FC = () => {
                   <div className="flex items-center gap-2 flex-wrap">
                     {sortOptions.map((option) => (
                       <button
-                        key={option.value}
-                        onClick={() => handleSort(option.value)}
+                        key={option.label}
+                        onClick={() => handleSort(option.label)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          sortBy === option.value
+                          (sortBy === option.value && (
+                            (option.label === 'Price: Low to High' && sortOrder === 'asc') ||
+                            (option.label === 'Price: High to Low' && sortOrder === 'desc') ||
+                            (option.label !== 'Price: Low to High' && option.label !== 'Price: High to Low')
+                          ))
                             ? 'bg-gray-600 text-white shadow-sm'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
                         {option.label}
-                        {sortBy === option.value && (
+                        {(sortBy === option.value && (
+                          (option.label === 'Price: Low to High' && sortOrder === 'asc') ||
+                          (option.label === 'Price: High to Low' && sortOrder === 'desc') ||
+                          (option.label !== 'Price: Low to High' && option.label !== 'Price: High to Low')
+                        )) && (
                           <ArrowUpDown className="inline ml-2" size={14} />
                         )}
                       </button>

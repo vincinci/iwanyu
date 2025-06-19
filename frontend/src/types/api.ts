@@ -164,6 +164,8 @@ export interface ProductsQueryParams {
   search?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  priceMin?: number;
+  priceMax?: number;
 }
 
 export interface ProductVariant {

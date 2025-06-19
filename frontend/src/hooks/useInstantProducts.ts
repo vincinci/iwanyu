@@ -29,6 +29,8 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
     search,
     sortBy = 'createdAt',
     sortOrder = 'desc',
+    priceMin,
+    priceMax,
     enabled = true,
     prefetchNext = true,
     prefetchPrevious = true,
@@ -40,7 +42,7 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
   });
 
   // Create a stable query key
-  const queryKey = ['products', page, category, search, sortBy, sortOrder, limit];
+  const queryKey = ['products', page, category, search, sortBy, sortOrder, priceMin, priceMax, limit];
 
   // Prefetch next page
   const prefetchNextPage = useCallback(async () => {
@@ -108,6 +110,8 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
       search: search || undefined,
       sortBy,
       sortOrder,
+      priceMin,
+      priceMax,
     }),
     enabled,
     ...INSTANT_CONFIG,
@@ -148,7 +152,7 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
     if (prefetchNext && page < totalPages) {
       prefetchPromises.push(
         queryClient.prefetchQuery({
-          queryKey: ['products', page + 1, category, search, sortBy, sortOrder, limit],
+          queryKey: ['products', page + 1, category, search, sortBy, sortOrder, priceMin, priceMax, limit],
           queryFn: () => productsApi.getAll({
             page: page + 1,
             limit,
@@ -156,6 +160,8 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
             search: search || undefined,
             sortBy,
             sortOrder,
+            priceMin,
+            priceMax,
           }),
           ...INSTANT_CONFIG,
         })
@@ -166,7 +172,7 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
     if (prefetchPrevious && page > 1) {
       prefetchPromises.push(
         queryClient.prefetchQuery({
-          queryKey: ['products', page - 1, category, search, sortBy, sortOrder, limit],
+          queryKey: ['products', page - 1, category, search, sortBy, sortOrder, priceMin, priceMax, limit],
           queryFn: () => productsApi.getAll({
             page: page - 1,
             limit,
@@ -174,6 +180,8 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
             search: search || undefined,
             sortBy,
             sortOrder,
+            priceMin,
+            priceMax,
           }),
           ...INSTANT_CONFIG,
         })
@@ -184,12 +192,12 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
     Promise.all(prefetchPromises).catch(() => {
       // Silently fail prefetching - don't block main UI
     });
-  }, [query.data, enabled, page, totalPages, category, search, sortBy, sortOrder, limit, prefetchNext, prefetchPrevious, queryClient]);
+  }, [query.data, enabled, page, totalPages, category, search, sortBy, sortOrder, priceMin, priceMax, limit, prefetchNext, prefetchPrevious, queryClient]);
 
   // Prefetch category data on demand
   const prefetchCategory = useCallback((categorySlug: string) => {
     return queryClient.prefetchQuery({
-      queryKey: ['products', 1, categorySlug, search, sortBy, sortOrder, limit],
+      queryKey: ['products', 1, categorySlug, search, sortBy, sortOrder, priceMin, priceMax, limit],
       queryFn: () => productsApi.getAll({
         page: 1,
         limit,
@@ -197,15 +205,17 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
         search: search || undefined,
         sortBy,
         sortOrder,
+        priceMin,
+        priceMax,
       }),
       ...INSTANT_CONFIG,
     });
-  }, [search, sortBy, sortOrder, limit, queryClient]);
+  }, [search, sortBy, sortOrder, priceMin, priceMax, limit, queryClient]);
 
   // Prefetch search results
   const prefetchSearch = useCallback((searchTerm: string) => {
     return queryClient.prefetchQuery({
-      queryKey: ['products', 1, category, searchTerm, sortBy, sortOrder, limit],
+      queryKey: ['products', 1, category, searchTerm, sortBy, sortOrder, priceMin, priceMax, limit],
       queryFn: () => productsApi.getAll({
         page: 1,
         limit,
@@ -213,24 +223,28 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
         search: searchTerm,
         sortBy,
         sortOrder,
+        priceMin,
+        priceMax,
       }),
       ...INSTANT_CONFIG,
     });
-  }, [category, sortBy, sortOrder, limit, queryClient]);
+  }, [category, sortBy, sortOrder, priceMin, priceMax, limit, queryClient]);
 
   // Prefetch all products (for homepage)
   const prefetchAllProducts = useCallback(() => {
     return queryClient.prefetchQuery({
-      queryKey: ['products', 1, '', '', sortBy, sortOrder, limit],
+      queryKey: ['products', 1, '', '', sortBy, sortOrder, priceMin, priceMax, limit],
       queryFn: () => productsApi.getAll({
         page: 1,
         limit,
         sortBy,
         sortOrder,
+        priceMin,
+        priceMax,
       }),
       ...INSTANT_CONFIG,
     });
-  }, [sortBy, sortOrder, limit, queryClient]);
+  }, [sortBy, sortOrder, priceMin, priceMax, limit, queryClient]);
 
   return {
     ...query,
