@@ -95,12 +95,17 @@ const AddProduct: React.FC = () => {
       ...prev,
       [name]: type === 'number' ? parseFloat(value) || 0 : value,
     }));
+
+    // Clear error when user starts typing
+    if (error) {
+      setError('');
+    }
   };
 
   const handleImageUpload = (file: File) => {
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      setError('Please select a valid image file');
+      setError('Please select a valid image file (JPG, PNG, GIF, WebP)');
       return;
     }
 
@@ -110,10 +115,17 @@ const AddProduct: React.FC = () => {
       return;
     }
 
+    console.log('Image file selected:', { name: file.name, size: file.size, type: file.type });
+
     // Create preview
     const reader = new FileReader();
     reader.onload = (e) => {
-      setImagePreview(e.target?.result as string);
+      const result = e.target?.result as string;
+      setImagePreview(result);
+      console.log('Image preview created');
+    };
+    reader.onerror = () => {
+      setError('Failed to read image file');
     };
     reader.readAsDataURL(file);
 
@@ -132,7 +144,21 @@ const AddProduct: React.FC = () => {
       image: url,
       productImage: undefined, // Clear file when URL is provided
     }));
-    setImagePreview(url);
+    
+    if (url.trim()) {
+      // Basic URL validation
+      try {
+        new URL(url);
+        setImagePreview(url);
+        setError('');
+        console.log('Image URL set:', url);
+      } catch {
+        setError('Please enter a valid image URL');
+        setImagePreview('');
+      }
+    } else {
+      setImagePreview('');
+    }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,46 +202,77 @@ const AddProduct: React.FC = () => {
     e.preventDefault();
     setError('');
     
-    console.log('Form submission started with data:', formData);
+    console.log('=== PRODUCT CREATION DEBUG ===');
+    console.log('Form data:', {
+      ...formData,
+      productImage: formData.productImage ? `File: ${formData.productImage.name} (${formData.productImage.size} bytes)` : undefined
+    });
+    console.log('User:', user);
+    console.log('Profile:', profile);
+    console.log('Categories available:', categories.length);
     
-    // Validation
+    // Enhanced validation with specific error messages
+    const validationErrors = [];
+    
     if (!formData.name.trim()) {
-      setError('Product name is required');
-      return;
+      validationErrors.push('Product name is required');
     }
     
     if (!formData.description.trim()) {
-      setError('Product description is required');
-      return;
+      validationErrors.push('Product description is required');
     }
     
     if (formData.price <= 0) {
-      setError('Price must be greater than 0');
-      return;
+      validationErrors.push('Price must be greater than 0');
     }
     
     if (!formData.categoryId) {
-      setError('Please select a category');
-      return;
+      validationErrors.push('Please select a category');
+    } else {
+      // Verify category exists
+      const categoryExists = categories.some((cat: Category) => cat.id === formData.categoryId);
+      if (!categoryExists) {
+        validationErrors.push('Selected category is invalid');
+      }
     }
 
     if (formData.stock < 0) {
-      setError('Stock cannot be negative');
-      return;
+      validationErrors.push('Stock cannot be negative');
     }
 
     // Check if either image file or URL is provided
     if (!formData.productImage && !formData.image?.trim()) {
-      setError('Please upload an image or provide an image URL');
+      validationErrors.push('Please upload an image or provide an image URL');
+    }
+
+    // Authentication checks
+    if (!user) {
+      validationErrors.push('You must be logged in to create products');
+    }
+
+    if (user && user.role !== 'SELLER') {
+      validationErrors.push('You must be a seller to create products');
+    }
+
+    if (profile && profile.status !== 'APPROVED') {
+      validationErrors.push(`Your seller account must be approved. Current status: ${profile.status}`);
+    }
+
+    if (validationErrors.length > 0) {
+      console.error('Validation errors:', validationErrors);
+      setError(validationErrors[0]); // Show first error
       return;
     }
 
     try {
-      console.log('Calling createProduct API...');
+      console.log('All validations passed. Calling createProduct API...');
+      setLoading(true);
       await createProductMutation.mutateAsync(formData);
     } catch (err) {
       console.error('Failed to create product:', err);
       // The error is already handled by onError callback above
+    } finally {
+      setLoading(false);
     }
   };
 

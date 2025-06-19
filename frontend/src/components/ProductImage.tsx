@@ -25,12 +25,19 @@ const ProductImage: React.FC<ProductImageProps> = ({
   const imageUrl = getProductImageUrl(product);
   const showPlaceholder = !imageUrl || imageError;
 
-  const handleImageError = () => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.warn('Image failed to load:', {
+      src: e.currentTarget.src,
+      product: product.name,
+      originalImage: product.image,
+      allImages: product.images
+    });
     setImageError(true);
   };
 
   const handleImageLoad = () => {
     setImageLoaded(true);
+    console.log('Image loaded successfully:', imageUrl);
   };
 
   return (
