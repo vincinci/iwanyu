@@ -118,13 +118,13 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                   >
                     {isInCart(product.id) ? (
                       <div className="flex items-center">
-                        <ShoppingCart size={10} />
+                        <ShoppingCart size={12} />
                         {getItemQuantity(product.id) > 1 && (
                           <span className="ml-0.5 text-xs font-bold">{getItemQuantity(product.id)}</span>
                         )}
                       </div>
                     ) : (
-                      <Plus size={10} />
+                      <Plus size={12} />
                     )}
                   </button>
                 </div>

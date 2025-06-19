@@ -288,10 +288,10 @@ const Deals: React.FC = () => {
                 <div className="flex justify-center">
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium w-12 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-0.5 justify-center"
+                    className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium w-14 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-0.5 justify-center"
                     aria-label="Add to cart"
                   >
-                    <ShoppingCart size={8} />
+                    <ShoppingCart size={10} />
                     <span>Add</span>
                   </button>
                 </div>
