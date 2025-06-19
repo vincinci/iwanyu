@@ -58,6 +58,15 @@ export interface BecomeSellerData {
   nationalId?: File | string; // National ID file or document path
 }
 
+export interface ProductVariant {
+  name: string;
+  value: string;
+  price?: number;
+  stock: number;
+  sku?: string;
+  image?: string;
+}
+
 export interface ProductData {
   name: string;
   description: string;
@@ -67,10 +76,12 @@ export interface ProductData {
   stock: number;
   image?: string;
   productImage?: File; // Add support for file upload
+  productImages?: File[]; // Support for multiple image uploads
   images?: string[];
   brand?: string;
   sku?: string;
   isActive?: boolean;
+  variants?: ProductVariant[];
 }
 
 export interface SellerProduct {
@@ -96,6 +107,7 @@ export interface SellerProduct {
     name: string;
     slug: string;
   };
+  variants?: ProductVariant[];
 }
 
 class SellerApi {
@@ -222,7 +234,13 @@ class SellerApi {
         if (value !== undefined && value !== null) {
           if (key === 'productImage' && value instanceof File) {
             formData.append(key, value);
-          } else if (key !== 'productImage') {
+          } else if (key === 'productImages' && Array.isArray(value)) {
+            value.forEach((file: File, index: number) => {
+              formData.append(`productImages`, file);
+            });
+          } else if (key === 'variants' && Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+          } else if (key !== 'productImage' && key !== 'productImages') {
             formData.append(key, String(value));
           }
         }

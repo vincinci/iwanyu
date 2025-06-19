@@ -527,8 +527,8 @@ const Home: React.FC = () => {
                         </span>
             </div>
 
-            {/* Sponsored Products - 3 rows of 6 */}
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
+            {/* Sponsored Products - 2 columns on mobile */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
               {promotedProducts.slice(0, 18).map((product: PromotedProduct, index: number) => (
                   <motion.div
                   key={product.id}
@@ -619,7 +619,7 @@ const Home: React.FC = () => {
 
           {/* Flash Sale Products - 3 rows of 6 */}
           {flashProducts.length > 0 ? (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
               {flashProducts.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
@@ -708,9 +708,9 @@ const Home: React.FC = () => {
             </Link>
           </div>
 
-          {/* Best Sellers - 3 rows of 6 */}
+          {/* Best Sellers - 2 columns on mobile */}
           {bestSellers.length > 0 ? (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
               {bestSellers.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}
@@ -788,9 +788,9 @@ const Home: React.FC = () => {
             </h2>
           </div>
 
-          {/* Latest Products - 3 rows of 6 */}
+          {/* Latest Products - 2 columns on mobile */}
           {latestProducts.length > 0 ? (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
               {latestProducts.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
                   key={product.id}

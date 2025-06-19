@@ -388,6 +388,11 @@ router.get('/products', authenticateToken, async (req: AuthRequest, res: Respons
             name: true,
             slug: true
           }
+        },
+        variants: {
+          orderBy: {
+            sortOrder: 'asc'
+          }
         }
       },
       orderBy: {
@@ -403,7 +408,10 @@ router.get('/products', authenticateToken, async (req: AuthRequest, res: Respons
 });
 
 // Create a new product
-router.post('/products', authenticateToken, upload.single('productImage'), async (req: AuthRequest, res: Response) => {
+router.post('/products', authenticateToken, upload.fields([
+  { name: 'productImage', maxCount: 1 },
+  { name: 'productImages', maxCount: 5 }
+]), async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.id;
 
@@ -456,11 +464,17 @@ router.post('/products', authenticateToken, upload.single('productImage'), async
       image,
       images,
       brand,
-      sku
+      sku,
+      variants
     } = req.body;
 
+    // Handle multiple uploaded files
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+    const mainImageFile = files?.productImage?.[0];
+    const additionalImageFiles = files?.productImages || [];
+
     // Use uploaded file path if available, otherwise use provided image URL
-    const productImage = req.file ? req.file.path : image;
+    const productImage = mainImageFile ? mainImageFile.path : image;
 
     // Create slug from name
     const slug = name.toLowerCase()
@@ -468,24 +482,58 @@ router.post('/products', authenticateToken, upload.single('productImage'), async
       .replace(/\s+/g, '-')
       .trim() + '-' + Date.now();
 
-    // Prepare images array - include the main image if it exists
+    // Prepare images array
     let productImages: string[] = [];
+    
+    // Add main image first if it exists
+    if (productImage) {
+      productImages.push(productImage);
+    }
+    
+    // Add additional uploaded images
+    additionalImageFiles.forEach(file => {
+      if (!productImages.includes(file.path)) {
+        productImages.push(file.path);
+      }
+    });
+    
+    // Add any provided image URLs
     if (images && Array.isArray(images)) {
-      productImages = images;
+      images.forEach(img => {
+        if (img && !productImages.includes(img)) {
+          productImages.push(img);
+        }
+      });
     } else if (images && typeof images === 'string') {
       try {
-        productImages = JSON.parse(images);
+        const parsedImages = JSON.parse(images);
+        if (Array.isArray(parsedImages)) {
+          parsedImages.forEach(img => {
+            if (img && !productImages.includes(img)) {
+              productImages.push(img);
+            }
+          });
+        }
       } catch {
-        productImages = [images];
+        if (images && !productImages.includes(images)) {
+          productImages.push(images);
+        }
       }
     }
 
-    // Add main image to images array if not already included
-    if (productImage && !productImages.includes(productImage)) {
-      productImages.unshift(productImage); // Add as first image
+    // Parse variants if provided
+    let parsedVariants: any[] = [];
+    if (variants) {
+      try {
+        parsedVariants = typeof variants === 'string' ? JSON.parse(variants) : variants;
+      } catch (error) {
+        console.error('Error parsing variants:', error);
+        res.status(400).json({ error: 'Invalid variants format' });
+        return;
+      }
     }
 
-    // Create product
+    // Create product with variants
     const product = await prisma.product.create({
       data: {
         name,
@@ -502,13 +550,30 @@ router.post('/products', authenticateToken, upload.single('productImage'), async
         sku,
         featured: false,
         status: 'active',
-        isActive: true
+        isActive: true,
+        variants: {
+          create: parsedVariants.map((variant: any, index: number) => ({
+            name: variant.name,
+            value: variant.value,
+            price: variant.price ? parseFloat(variant.price) : null,
+            stock: variant.stock ? parseInt(variant.stock) : 0,
+            sku: variant.sku || null,
+            image: variant.image || null,
+            sortOrder: index,
+            isActive: true
+          }))
+        }
       },
       include: {
         category: {
           select: {
             name: true,
             slug: true
+          }
+        },
+        variants: {
+          orderBy: {
+            sortOrder: 'asc'
           }
         }
       }

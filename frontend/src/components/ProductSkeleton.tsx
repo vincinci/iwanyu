@@ -113,8 +113,8 @@ const ProductSkeleton: React.FC<ProductSkeletonProps> = ({
 
   const getGridClass = () => {
     if (variant === 'list') return 'space-y-4';
-    if (variant === 'compact') return 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3';
-    return 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3';
+    if (variant === 'compact') return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3';
+    return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3';
   };
 
   return (

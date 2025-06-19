@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { sellerApi, type ProductData } from '../services/sellerApi';
 import { categoriesApi } from '../services/api';
 import type { Category } from '../types/api';
+import ProductVariants from '../components/ProductVariants';
 
 const AddProduct: React.FC = () => {
   const { user } = useAuth();
@@ -14,7 +15,7 @@ const AddProduct: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string>('');
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [useImageUpload, setUseImageUpload] = useState(true);
   const [dragActive, setDragActive] = useState(false);
 
@@ -27,9 +28,11 @@ const AddProduct: React.FC = () => {
     stock: 0,
     image: '',
     productImage: undefined,
+    productImages: [],
     images: [],
     brand: '',
     sku: '',
+    variants: [],
   });
 
   React.useEffect(() => {
@@ -102,69 +105,89 @@ const AddProduct: React.FC = () => {
     }
   };
 
-  const handleImageUpload = (file: File) => {
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please select a valid image file (JPG, PNG, GIF, WebP)');
+  const handleImageUpload = (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    const currentImages = formData.productImages || [];
+    
+    // Check if adding these files would exceed the limit
+    if (currentImages.length + fileArray.length > 5) {
+      setError(`Maximum 5 images allowed. You can add ${5 - currentImages.length} more images.`);
       return;
     }
 
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Image file size must be less than 5MB');
-      return;
-    }
+    const newImages: File[] = [];
+    const newPreviews: string[] = [];
 
-    console.log('Image file selected:', { name: file.name, size: file.size, type: file.type });
+    fileArray.forEach(file => {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select only valid image files (JPG, PNG, GIF, WebP)');
+        return;
+      }
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      setImagePreview(result);
-      console.log('Image preview created');
-    };
-    reader.onerror = () => {
-      setError('Failed to read image file');
-    };
-    reader.readAsDataURL(file);
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Each image file must be less than 5MB');
+        return;
+      }
+
+      newImages.push(file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        newPreviews.push(result);
+        
+        // Update previews when all files are processed
+        if (newPreviews.length === fileArray.length) {
+          setImagePreviews(prev => [...prev, ...newPreviews]);
+        }
+      };
+      reader.onerror = () => {
+        setError('Failed to read image file');
+      };
+      reader.readAsDataURL(file);
+    });
 
     // Update form data
     setFormData(prev => ({
       ...prev,
-      productImage: file,
-      image: '', // Clear URL when file is selected
+      productImages: [...currentImages, ...newImages],
+      images: [], // Clear URLs when files are selected
     }));
     setError('');
   };
 
   const handleImageUrlChange = (url: string) => {
-    setFormData(prev => ({
-      ...prev,
-      image: url,
-      productImage: undefined, // Clear file when URL is provided
-    }));
+    const currentUrls = formData.images || [];
+    
+    if (currentUrls.length >= 5) {
+      setError('Maximum 5 images allowed');
+      return;
+    }
     
     if (url.trim()) {
       // Basic URL validation
       try {
         new URL(url);
-        setImagePreview(url);
+        setFormData(prev => ({
+          ...prev,
+          images: [...currentUrls, url],
+          productImages: [], // Clear files when URL is provided
+        }));
+        setImagePreviews(prev => [...prev, url]);
         setError('');
-        console.log('Image URL set:', url);
       } catch {
         setError('Please enter a valid image URL');
-        setImagePreview('');
       }
-    } else {
-      setImagePreview('');
     }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleImageUpload(file);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleImageUpload(files);
     }
   };
 
@@ -173,9 +196,9 @@ const AddProduct: React.FC = () => {
     e.stopPropagation();
     setDragActive(false);
 
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      handleImageUpload(file);
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      handleImageUpload(files);
     }
   };
 
@@ -189,12 +212,28 @@ const AddProduct: React.FC = () => {
     }
   };
 
-  const removeImage = () => {
-    setImagePreview('');
+  const removeImage = (index: number) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
     setFormData(prev => ({
       ...prev,
-      image: '',
-      productImage: undefined,
+      productImages: prev.productImages?.filter((_, i) => i !== index) || [],
+      images: prev.images?.filter((_, i) => i !== index) || [],
+    }));
+  };
+
+  const removeAllImages = () => {
+    setImagePreviews([]);
+    setFormData(prev => ({
+      ...prev,
+      productImages: [],
+      images: [],
+    }));
+  };
+
+  const handleVariantsChange = (variants: ProductData['variants']) => {
+    setFormData(prev => ({
+      ...prev,
+      variants: variants || [],
     }));
   };
 
@@ -584,10 +623,22 @@ const AddProduct: React.FC = () => {
               </div>
             </div>
 
-            {/* Product Image */}
+            {/* Product Variants */}
+            <ProductVariants
+              variants={formData.variants || []}
+              onChange={handleVariantsChange}
+              basePrice={formData.price}
+            />
+
+            {/* Product Images */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Product Image *</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Product Images * 
+                  <span className="text-sm font-normal text-gray-500 ml-2">
+                    ({imagePreviews.length}/5)
+                  </span>
+                </h3>
                 <div className="flex items-center space-x-2">
                   <button
                     type="button"
@@ -613,8 +664,18 @@ const AddProduct: React.FC = () => {
                     <LinkIcon size={14} />
                     <span>URL</span>
                   </button>
+                  {imagePreviews.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={removeAllImages}
+                      className="flex items-center space-x-1 px-3 py-1 text-sm rounded bg-red-100 text-red-700 hover:bg-red-200"
+                    >
+                      <X size={14} />
+                      <span>Clear All</span>
+                    </button>
+                  )}
                 </div>
-                </div>
+              </div>
 
               {useImageUpload ? (
                 <div className="space-y-4">
@@ -624,7 +685,7 @@ const AddProduct: React.FC = () => {
                       dragActive 
                         ? 'border-gray-400 bg-gray-50' 
                         : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    } ${imagePreviews.length >= 5 ? 'opacity-50 pointer-events-none' : ''}`}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
                     onDragOver={handleDrag}
@@ -633,10 +694,12 @@ const AddProduct: React.FC = () => {
                     <input
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={handleFileInputChange}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      aria-label="Upload product image"
-                      title="Upload product image"
+                      aria-label="Upload product images"
+                      title="Upload product images"
+                      disabled={imagePreviews.length >= 5}
                     />
                     <div className="text-center">
                       <Upload className="mx-auto h-12 w-12 text-gray-400" />
@@ -645,8 +708,13 @@ const AddProduct: React.FC = () => {
                           <span className="font-medium text-gray-600">Click to upload</span> or drag and drop
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
-                          PNG, JPG, GIF up to 5MB
+                          PNG, JPG, GIF up to 5MB each • Maximum 5 images
                         </p>
+                        {imagePreviews.length >= 5 && (
+                          <p className="text-xs text-red-500 mt-1">
+                            Maximum limit reached
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -656,39 +724,73 @@ const AddProduct: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Image URL
                   </label>
-                  <input
-                    type="url"
-                    value={formData.image}
-                    onChange={(e) => handleImageUrlChange(e.target.value)}
-                    placeholder="Enter image URL"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                  />
-                </div>
-              )}
-
-              {/* Image Preview */}
-              {imagePreview && (
-                <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Preview
-                  </label>
-                  <div className="relative inline-block">
-                    <img
-                      src={imagePreview}
-                      alt="Product preview"
-                      className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      placeholder="Enter image URL"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const url = (e.target as HTMLInputElement).value;
+                          if (url.trim()) {
+                            handleImageUrlChange(url);
+                            (e.target as HTMLInputElement).value = '';
+                          }
+                        }
+                      }}
+                      disabled={imagePreviews.length >= 5}
                     />
                     <button
                       type="button"
-                      onClick={removeImage}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                      aria-label="Remove image"
-                      title="Remove image"
+                      onClick={() => {
+                        const input = document.querySelector('input[type="url"]') as HTMLInputElement;
+                        if (input?.value.trim()) {
+                          handleImageUrlChange(input.value);
+                          input.value = '';
+                        }
+                      }}
+                      className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:opacity-50"
+                      disabled={imagePreviews.length >= 5}
                     >
-                      <X size={14} />
+                      Add
                     </button>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Image Previews */}
+              {imagePreviews.length > 0 && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Preview ({imagePreviews.length} image{imagePreviews.length !== 1 ? 's' : ''})
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={preview}
+                          alt={`Product preview ${index + 1}`}
+                          className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                          aria-label={`Remove image ${index + 1}`}
+                          title={`Remove image ${index + 1}`}
+                        >
+                          <X size={12} />
+                        </button>
+                        {index === 0 && (
+                          <div className="absolute bottom-1 left-1 bg-blue-500 text-white text-xs px-1 py-0.5 rounded">
+                            Main
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
 
