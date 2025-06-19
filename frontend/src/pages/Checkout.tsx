@@ -110,7 +110,7 @@ const Checkout: React.FC = () => {
     },
   });
 
-  // Parse URL parameters for direct purchase (Buy It button)
+  // Parse URL parameters for direct purchase (legacy Buy Now functionality)
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const productId = queryParams.get('product');
@@ -236,7 +236,7 @@ const Checkout: React.FC = () => {
     let orderItems: OrderItem[];
     
     if (directPurchase) {
-      // For direct "Buy It" purchases
+      // For legacy direct purchases (from removed Buy Now buttons)
       const orderItem: OrderItem = {
         productId: directPurchase.productId,
         quantity: directPurchase.quantity

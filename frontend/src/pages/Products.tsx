@@ -3,23 +3,21 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
-  Grid3x3, 
-  List, 
+  Filter, 
+  X, 
   Star, 
-  Package, 
   ShoppingCart, 
+  Heart, 
   ChevronDown, 
   ChevronUp,
+  Grid, 
+  List,
   SlidersHorizontal,
-  Heart,
-  Eye,
+  Package,
   Zap,
-  Users,
-  X,
-  ArrowUpDown,
   Truck,
   Shield,
-  CreditCard
+  ArrowUpDown
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { categoriesApi } from '../services/api';
@@ -170,13 +168,6 @@ const Products: React.FC = () => {
     addToCart(product);
   };
 
-  const quickBuyNow = (product: Product, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Navigate to checkout with this product
-    navigate(`/checkout?product=${product.id}&quantity=1`);
-  };
-
   const quickAddToWishlist = async (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -279,7 +270,7 @@ const Products: React.FC = () => {
                   }`}
                   aria-label="Grid view"
                 >
-                  <Grid3x3 size={16} />
+                  <Grid size={16} />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
@@ -638,12 +629,12 @@ const Products: React.FC = () => {
                                 <span>Cart</span>
                               </button>
                               <button
-                                onClick={(e) => quickBuyNow(product, e)}
+                                onClick={(e) => quickAddToWishlist(product, e)}
                                 className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
-                                aria-label="Buy now"
+                                aria-label="Add to wishlist"
                               >
-                                <CreditCard size={12} />
-                                <span>Buy</span>
+                                <Heart size={12} />
+                                <span>Wishlist</span>
                               </button>
                             </div>
                           </div>
@@ -719,12 +710,12 @@ const Products: React.FC = () => {
                                     <span>Add to Cart</span>
                                   </button>
                                   <button
-                                    onClick={(e) => quickBuyNow(product, e)}
+                                    onClick={(e) => quickAddToWishlist(product, e)}
                                     className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 flex-1 justify-center"
-                                    aria-label="Buy now"
+                                    aria-label="Add to wishlist"
                                   >
-                                    <CreditCard size={14} />
-                                    <span>Buy Now</span>
+                                    <Heart size={14} />
+                                    <span>Wishlist</span>
                                   </button>
                                 </div>
                               </div>

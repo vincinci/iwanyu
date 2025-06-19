@@ -7,17 +7,19 @@ import {
   Star, 
   Plus, 
   Minus, 
-  Package, 
-  Truck, 
-  Shield, 
-  RotateCcw,
-  Heart,
-  Share2,
-  AlertCircle,
-  Zap,
+  ChevronRight,
   Copy,
-  ExternalLink,
-  CreditCard
+  Check,
+  AlertCircle,
+  Package,
+  Truck,
+  Shield,
+  RotateCcw,
+  MessageCircle,
+  ThumbsUp,
+  ChevronDown,
+  Heart,
+  Share2
 } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
@@ -159,36 +161,6 @@ const ProductDetail: React.FC = () => {
     setTimeout(() => {
       setIsAddingToCart(false);
     }, 1000);
-  };
-
-  const handleBuyNow = () => {
-    if (!product) return;
-    
-    // Check if all required variants are selected
-    if (hasVariants && !areAllVariantsSelected()) {
-      alert('Please select all required options before proceeding.');
-      return;
-    }
-    
-    // Create URL parameters for direct checkout
-    const checkoutParams = new URLSearchParams({
-      product: product.id,
-      quantity: quantity.toString()
-    });
-    
-    // Add selected variants to checkout URL
-    if (hasVariants && Object.keys(selectedVariants).length > 0) {
-      Object.entries(selectedVariants).forEach(([variantName, variantValue]) => {
-        // Find the actual variant ID
-        const variant = product.variants?.find((v: ProductVariant) => v.name === variantName && v.value === variantValue);
-        if (variant) {
-          checkoutParams.append('variants', `${variantName}:${variantValue}:${variant.id}`);
-        }
-      });
-    }
-    
-    // Navigate to checkout with product and variant information
-    navigate(`/checkout?${checkoutParams.toString()}`);
   };
 
   const handleWishlistToggle = async () => {
@@ -707,18 +679,10 @@ const ProductDetail: React.FC = () => {
                   <button
                     onClick={handleAddToCart}
                     disabled={isAddingToCart || (hasVariants && !areAllVariantsSelected())}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 disabled:bg-orange-300 text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed"
+                    className="w-full bg-gray-600 hover:bg-gray-700 disabled:bg-orange-300 text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed"
                   >
                     <ShoppingCart className="mr-2" size={18} />
                     {isAddingToCart ? 'Adding...' : 'Add to Cart'}
-                  </button>
-                  <button
-                    onClick={handleBuyNow}
-                    disabled={hasVariants && !areAllVariantsSelected()}
-                    className="flex-1 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 disabled:cursor-not-allowed flex items-center justify-center"
-                  >
-                    <CreditCard className="mr-2" size={18} />
-                    Buy Now
                   </button>
                 </div>
               </div>
@@ -774,16 +738,6 @@ const ProductDetail: React.FC = () => {
             >
               <ShoppingCart className="mr-2" size={16} />
               {isAddingToCart ? 'Adding...' : 'Add to Cart'}
-            </button>
-
-            {/* Buy Now Button */}
-            <button
-              onClick={handleBuyNow}
-              disabled={hasVariants && !areAllVariantsSelected()}
-              className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 disabled:cursor-not-allowed text-sm flex items-center justify-center"
-            >
-              <CreditCard className="mr-1" size={16} />
-              Buy Now
             </button>
           </div>
         </div>

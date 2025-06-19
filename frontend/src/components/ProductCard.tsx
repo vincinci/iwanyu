@@ -37,12 +37,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
     addToCart(product);
   };
 
-  const handleBuyNow = (e: React.MouseEvent) => {
-    e.preventDefault();
-    // Navigate to checkout with this product
-    navigate(`/checkout?product=${id}&quantity=1`);
-  };
-
   const handleWishlistToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -137,26 +131,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
       </Link>
       <div className={`px-3 pb-3 ${compact ? 'px-2 pb-2' : 'px-3 pb-3'}`}>
         {stock > 0 ? (
-          <div className="flex gap-2">
-            <button
-              onClick={handleAddToCart}
-              className={`flex-1 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
-                compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
-              }`}
-            >
-              <ShoppingCart size={compact ? 12 : 14} className="mr-1" />
-              {compact ? 'Cart' : 'Cart'}
-            </button>
-            <button
-              onClick={handleBuyNow}
-              className={`flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
-                compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
-              }`}
-            >
-              <CreditCard size={compact ? 12 : 14} className="mr-1" />
-              {compact ? 'Buy' : 'Buy It'}
-            </button>
-          </div>
+          <button
+            onClick={handleAddToCart}
+            className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
+              compact ? 'py-1.5 text-xs' : 'py-2 text-sm'
+            }`}
+          >
+            <ShoppingCart size={compact ? 12 : 14} className="mr-1" />
+            {compact ? 'Add to Cart' : 'Add to Cart'}
+          </button>
         ) : (
           <button
             onClick={handleAddToCart}

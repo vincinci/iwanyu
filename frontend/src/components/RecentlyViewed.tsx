@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, ShoppingCart, Heart, Package, Clock, ChevronLeft, ChevronRight, CreditCard } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Package, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,8 +19,6 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
   const [recentProducts, setRecentProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { addToCart } = useCart();
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     loadRecentlyViewed();
@@ -309,26 +307,13 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
 
           {/* Action Buttons */}
           {product.stock > 0 && (
-            <div className="flex gap-1">
-              <button
-                onClick={handleAddToCart}
-                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-1.5 px-2 rounded text-xs font-medium transition-colors duration-200 flex items-center justify-center"
-              >
-                <ShoppingCart size={12} className="mr-1" />
-                Add
-              </button>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  window.location.href = `/checkout?product=${product.id}&quantity=1`;
-                }}
-                className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-1.5 px-2 rounded text-xs font-medium transition-colors duration-200 flex items-center justify-center"
-              >
-                <CreditCard size={12} className="mr-1" />
-                Buy
-              </button>
-            </div>
+            <button
+              onClick={handleAddToCart}
+              className="w-full bg-gray-600 hover:bg-gray-700 text-white py-1.5 px-2 rounded text-xs font-medium transition-colors duration-200 flex items-center justify-center"
+            >
+              <ShoppingCart size={12} className="mr-1" />
+              Add to Cart
+            </button>
           )}
         </div>
       </Link>

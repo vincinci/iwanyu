@@ -46,8 +46,7 @@ import {
   Bike,
   Plane,
   Mountain,
-  Zap,
-  CreditCard
+  Zap
 } from 'lucide-react';
 import { categoriesApi } from '../services/api';
 import { useInstantProducts, useGlobalPrefetch } from '../hooks/useInstantProducts';
@@ -397,13 +396,6 @@ const Home: React.FC = () => {
     }
   };
 
-  const quickBuyNow = (product: Product, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Navigate to checkout with this product
-    navigate(`/checkout?product=${product.id}&quantity=1`);
-  };
-
   const quickAddToWishlist = async (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -684,12 +676,12 @@ const Home: React.FC = () => {
                           <span>Cart</span>
                         </button>
                         <button
-                          onClick={(e) => quickBuyNow(product, e)}
+                          onClick={(e) => quickAddToWishlist(product, e)}
                           className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
-                          aria-label="Buy now"
+                          aria-label="Add to wishlist"
                         >
-                          <CreditCard size={12} />
-                          <span>Buy</span>
+                          <Heart size={12} />
+                          <span>Wishlist</span>
                         </button>
                       </div>
                     </Link>
@@ -769,12 +761,12 @@ const Home: React.FC = () => {
                           <span>Cart</span>
                         </button>
                         <button
-                          onClick={(e) => quickBuyNow(product, e)}
+                          onClick={(e) => quickAddToWishlist(product, e)}
                           className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
-                          aria-label="Buy now"
+                          aria-label="Add to wishlist"
                         >
-                          <CreditCard size={12} />
-                          <span>Buy</span>
+                          <Heart size={12} />
+                          <span>Wishlist</span>
                         </button>
                       </div>
                       </div>
@@ -850,12 +842,12 @@ const Home: React.FC = () => {
                           <span>Cart</span>
                         </button>
                         <button
-                          onClick={(e) => quickBuyNow(product, e)}
+                          onClick={(e) => quickAddToWishlist(product, e)}
                           className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
-                          aria-label="Buy now"
+                          aria-label="Add to wishlist"
                         >
-                          <CreditCard size={12} />
-                          <span>Buy</span>
+                          <Heart size={12} />
+                          <span>Wishlist</span>
                         </button>
                       </div>
                     </Link>
