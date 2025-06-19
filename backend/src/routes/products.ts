@@ -131,6 +131,18 @@ router.get('/', async (req: Request, res: Response) => {
             select: {
               businessName: true
             }
+          },
+          variants: {
+            where: { isActive: true },
+            select: {
+              id: true,
+              name: true,
+              value: true,
+              price: true,
+              stock: true,
+              image: true
+            },
+            orderBy: { sortOrder: 'asc' }
           }
         },
         skip,
