@@ -6,6 +6,7 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "postinstall": "prisma generate",
     "deploy": "chmod +x scripts/deploy.sh && ./scripts/deploy.sh",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
@@ -27,7 +28,7 @@
   "description": "Ecommerce backend API with Node.js, Express, and Prisma",
   "dependencies": {
     "@getbrevo/brevo": "^2.2.0",
-    "@prisma/client": "^6.10.1",
+    "@prisma/client": "^6.8.2",
     "@sendinblue/client": "^3.3.1",
     "@types/multer": "^1.4.13",
     "axios": "^1.10.0",
