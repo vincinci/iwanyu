@@ -113,18 +113,18 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                   <button
                     onClick={(e) => handleAddToCart(product, e)}
                     disabled={product.stock === 0}
-                    className="absolute bottom-2 right-2 bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-110"
+                    className="absolute bottom-2 right-2 bg-gray-500 hover:bg-gray-600 text-white p-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-110"
                     title={product.stock === 0 ? 'Out of stock' : 'Quick add to cart'}
                   >
                     {isInCart(product.id) ? (
                       <div className="flex items-center">
-                        <ShoppingCart size={14} />
+                        <ShoppingCart size={12} />
                         {getItemQuantity(product.id) > 1 && (
                           <span className="ml-1 text-xs font-bold">{getItemQuantity(product.id)}</span>
                         )}
                       </div>
                     ) : (
-                      <Plus size={14} />
+                      <Plus size={12} />
                     )}
                   </button>
                 </div>

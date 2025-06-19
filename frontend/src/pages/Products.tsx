@@ -750,17 +750,17 @@ const Products: React.FC = () => {
                             <div className="flex gap-1">
                               <button
                                 onClick={(e) => quickAddToCart(product, e)}
-                                className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                                className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-1.5 py-1 rounded-md shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
                                 aria-label="Add to cart"
                               >
-                                <ShoppingCart size={12} />
+                                <ShoppingCart size={10} />
                               </button>
                               <button
                                 onClick={(e) => quickAddToWishlist(product, e)}
-                                className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                                className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-1.5 py-1 rounded-md shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
                                 aria-label="Add to wishlist"
                               >
-                                <Heart size={12} />
+                                <Heart size={10} />
                               </button>
                             </div>
                           </div>
@@ -829,17 +829,17 @@ const Products: React.FC = () => {
                                 <div className="flex gap-2">
                                   <button
                                     onClick={(e) => quickAddToCart(product, e)}
-                                    className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 flex-1 justify-center"
+                                    className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-sm font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 flex-1 justify-center"
                                     aria-label="Add to cart"
                                   >
-                                    <ShoppingCart size={14} />
+                                    <ShoppingCart size={12} />
                                   </button>
                                   <button
                                     onClick={(e) => quickAddToWishlist(product, e)}
-                                    className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 flex-1 justify-center"
+                                    className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-sm font-medium px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 flex-1 justify-center"
                                     aria-label="Add to wishlist"
                                   >
-                                    <Heart size={14} />
+                                    <Heart size={12} />
                                   </button>
                                 </div>
                               </div>
