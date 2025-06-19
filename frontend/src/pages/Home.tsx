@@ -666,20 +666,20 @@ const Home: React.FC = () => {
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
                             {formatPrice(product.salePrice || product.price)}
                             </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-0.5">
                         <button
                           onClick={(e) => quickAddToCart(product, e)}
-                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-1.5 py-1 rounded-md shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
                           aria-label="Add to cart"
                         >
-                          <ShoppingCart size={10} />
+                          <ShoppingCart size={8} />
                         </button>
                         <button
                           onClick={(e) => quickAddToWishlist(product, e)}
-                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-1.5 py-1 rounded-md shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
                           aria-label="Add to wishlist"
                         >
-                          <Heart size={10} />
+                          <Heart size={8} />
                         </button>
                       </div>
                     </Link>
@@ -749,20 +749,20 @@ const Home: React.FC = () => {
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
                         {formatPrice(product.salePrice || product.price)}
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-0.5">
                         <button
                           onClick={(e) => quickAddToCart(product, e)}
-                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
                           aria-label="Add to cart"
                         >
-                          <ShoppingCart size={12} />
+                          <ShoppingCart size={8} />
                         </button>
                         <button
                           onClick={(e) => quickAddToWishlist(product, e)}
-                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
                           aria-label="Add to wishlist"
                         >
-                          <Heart size={12} />
+                          <Heart size={8} />
                         </button>
                       </div>
                       </div>
@@ -828,20 +828,20 @@ const Home: React.FC = () => {
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
                         {formatPrice(product.salePrice || product.price)}
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-0.5">
                         <button
                           onClick={(e) => quickAddToCart(product, e)}
-                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
                           aria-label="Add to cart"
                         >
-                          <ShoppingCart size={12} />
+                          <ShoppingCart size={8} />
                         </button>
                         <button
                           onClick={(e) => quickAddToWishlist(product, e)}
-                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 flex-1 justify-center"
+                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium px-1 py-0.5 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center flex-1"
                           aria-label="Add to wishlist"
                         >
-                          <Heart size={12} />
+                          <Heart size={8} />
                         </button>
                       </div>
                     </Link>

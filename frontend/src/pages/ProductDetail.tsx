@@ -373,7 +373,7 @@ const ProductDetail: React.FC = () => {
                 <button 
                   onClick={handleWishlistToggle}
                   disabled={isAddingToWishlist}
-                  className={`p-1.5 border border-gray-300 rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`p-1 border border-gray-300 rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
                     productInWishlist 
                       ? 'text-red-500 bg-red-50 border-red-200 hover:bg-red-100' 
                       : 'text-gray-600 hover:text-red-500 hover:bg-red-50'
@@ -384,7 +384,7 @@ const ProductDetail: React.FC = () => {
                   {isAddingToWishlist ? (
                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
                   ) : (
-                    <Heart size={16} className={productInWishlist ? "fill-current" : ""} />
+                    <Heart size={14} className={productInWishlist ? "fill-current" : ""} />
                   )}
                 </button>
                 <div className="relative share-dropdown-container">
@@ -679,9 +679,9 @@ const ProductDetail: React.FC = () => {
                   <button
                     onClick={handleAddToCart}
                     disabled={isAddingToCart || (hasVariants && !areAllVariantsSelected())}
-                    className="w-full bg-gray-600 hover:bg-gray-700 disabled:bg-orange-300 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed text-sm"
+                    className="flex-1 max-w-xs bg-gray-600 hover:bg-gray-700 disabled:bg-orange-300 text-white py-1.5 px-3 rounded-md font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed text-sm"
                   >
-                    <ShoppingCart className="mr-2" size={16} />
+                    <ShoppingCart className="mr-1.5" size={14} />
                     {isAddingToCart ? 'Adding...' : 'Add to Cart'}
                   </button>
                 </div>
@@ -734,9 +734,9 @@ const ProductDetail: React.FC = () => {
             <button
               onClick={handleAddToCart}
               disabled={isAddingToCart || (hasVariants && !areAllVariantsSelected())}
-              className="flex-1 bg-gray-600 hover:bg-gray-700 disabled:bg-orange-300 text-white py-2 px-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed text-sm"
+              className="flex-1 max-w-sm bg-gray-600 hover:bg-gray-700 disabled:bg-orange-300 text-white py-1.5 px-2 rounded-md font-medium transition-colors duration-200 flex items-center justify-center disabled:cursor-not-allowed text-sm"
             >
-              <ShoppingCart className="mr-1" size={14} />
+              <ShoppingCart className="mr-1" size={12} />
               {isAddingToCart ? 'Adding...' : 'Add to Cart'}
             </button>
           </div>

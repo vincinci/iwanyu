@@ -133,21 +133,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
         {stock > 0 ? (
           <button
             onClick={handleAddToCart}
-            className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium ${
-              compact ? 'py-1 text-xs' : 'py-1.5 text-sm'
+            className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded transition-all duration-200 flex items-center justify-center font-medium ${
+              compact ? 'py-0.5 text-xs max-w-16 mx-auto' : 'py-1 text-sm max-w-20 mx-auto'
             }`}
           >
-            <ShoppingCart size={compact ? 10 : 12} />
+            <ShoppingCart size={compact ? 8 : 10} />
           </button>
         ) : (
           <button
             onClick={handleAddToCart}
             disabled={stock === 0}
-            className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
-              compact ? 'py-1 text-xs' : 'py-1.5 text-sm'
+            className={`w-full bg-gray-600 hover:bg-gray-700 text-white rounded transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
+              compact ? 'py-0.5 text-xs max-w-16 mx-auto' : 'py-1 text-sm max-w-20 mx-auto'
             }`}
           >
-            <ShoppingCart size={compact ? 10 : 12} />
+            <ShoppingCart size={compact ? 8 : 10} />
           </button>
         )}
       </div>
