@@ -722,7 +722,9 @@ const Checkout: React.FC = () => {
                   </div>
                   
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Shipping</span>
+                    <span className="text-gray-600 flex items-center">
+                      Shipping <span className="ml-1 text-xs text-gray-400" title="Flat rate shipping fee applies to all orders">(Flat Rate)</span>
+                    </span>
                     <span className="text-gray-900">{formatPrice(deliveryFee)}</span>
                   </div>
                   
