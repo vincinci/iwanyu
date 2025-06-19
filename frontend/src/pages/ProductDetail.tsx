@@ -159,8 +159,33 @@ const ProductDetail: React.FC = () => {
   };
 
   const handleBuyNow = () => {
-    handleAddToCart();
-    navigate('/cart');
+    if (!product) return;
+    
+    // Check if all required variants are selected
+    if (hasVariants && !areAllVariantsSelected()) {
+      alert('Please select all required options before proceeding.');
+      return;
+    }
+    
+    // Create URL parameters for direct checkout
+    const checkoutParams = new URLSearchParams({
+      product: product.id,
+      quantity: quantity.toString()
+    });
+    
+    // Add selected variants to checkout URL
+    if (hasVariants && Object.keys(selectedVariants).length > 0) {
+      Object.entries(selectedVariants).forEach(([variantName, variantValue]) => {
+        // Find the actual variant ID
+        const variant = product.variants?.find((v: ProductVariant) => v.name === variantName && v.value === variantValue);
+        if (variant) {
+          checkoutParams.append('variants', `${variantName}:${variantValue}:${variant.id}`);
+        }
+      });
+    }
+    
+    // Navigate to checkout with product and variant information
+    navigate(`/checkout?${checkoutParams.toString()}`);
   };
 
   const handleWishlistToggle = async () => {

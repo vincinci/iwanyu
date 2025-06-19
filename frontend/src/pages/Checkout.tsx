@@ -34,6 +34,7 @@ interface ShippingAddress {
 interface OrderItem {
   productId: string;
   quantity: number;
+  variantId?: string;
 }
 
 const Checkout: React.FC = () => {
@@ -48,6 +49,11 @@ const Checkout: React.FC = () => {
     productId: string;
     quantity: number;
     productData: any | null;
+    selectedVariants?: Array<{
+      variantName: string;
+      variantValue: string;
+      variantId: string;
+    }>;
   } | null>(null);
   const [isLoadingProduct, setIsLoadingProduct] = useState(false);
 
@@ -112,6 +118,18 @@ const Checkout: React.FC = () => {
     
     if (productId) {
       setIsLoadingProduct(true);
+      
+      // Parse variant information from URL
+      const variantParams = queryParams.getAll('variants');
+      const selectedVariants = variantParams.map(variant => {
+        const [variantName, variantValue, variantId] = variant.split(':');
+        return {
+          variantName,
+          variantValue,
+          variantId
+        };
+      });
+      
       // Fetch the product details
       fetch(`${API_BASE_URL}/products/${productId}`)
         .then(response => {
@@ -122,7 +140,8 @@ const Checkout: React.FC = () => {
           setDirectPurchase({
             productId,
             quantity,
-            productData: data.data
+            productData: data.data,
+            selectedVariants: selectedVariants.length > 0 ? selectedVariants : undefined
           });
           setIsLoadingProduct(false);
         })
@@ -136,7 +155,21 @@ const Checkout: React.FC = () => {
   
   // Calculate the correct total including any direct purchase
   const calculatedTotal = directPurchase 
-    ? (directPurchase.productData?.salePrice || directPurchase.productData?.price || 0) * directPurchase.quantity 
+    ? (() => {
+        let productPrice = directPurchase.productData?.salePrice || directPurchase.productData?.price || 0;
+        
+        // Check if a variant with different pricing is selected
+        if (directPurchase.selectedVariants && directPurchase.selectedVariants.length > 0) {
+          const selectedVariant = directPurchase.productData?.variants?.find((v: any) => 
+            v.id === directPurchase.selectedVariants![0].variantId
+          );
+          if (selectedVariant && selectedVariant.price) {
+            productPrice = selectedVariant.price;
+          }
+        }
+        
+        return productPrice * directPurchase.quantity;
+      })()
     : totalAmount;
   
   // Add delivery fee to total
@@ -198,15 +231,24 @@ const Checkout: React.FC = () => {
     
     if (directPurchase) {
       // For direct "Buy It" purchases
-      orderItems = [{
+      const orderItem: OrderItem = {
         productId: directPurchase.productId,
         quantity: directPurchase.quantity
-      }];
+      };
+      
+      // Add variant information if available
+      if (directPurchase.selectedVariants && directPurchase.selectedVariants.length > 0) {
+        // For now, use the first variant ID (you can modify this logic based on your needs)
+        orderItem.variantId = directPurchase.selectedVariants[0].variantId;
+      }
+      
+      orderItems = [orderItem];
     } else {
       // For regular cart checkouts
       orderItems = items.map(item => ({
         productId: item.id,
         quantity: item.quantity
+        // Note: Cart variants support can be added later
       }));
     }
 
@@ -675,12 +717,18 @@ const Checkout: React.FC = () => {
                         <h4 className="text-sm font-medium text-gray-900 line-clamp-1">
                           {directPurchase.productData.name}
                         </h4>
+                        {/* Show selected variants */}
+                        {directPurchase.selectedVariants && directPurchase.selectedVariants.length > 0 && (
+                          <p className="text-xs text-gray-500">
+                            {directPurchase.selectedVariants.map(v => `${v.variantName}: ${v.variantValue}`).join(', ')}
+                          </p>
+                        )}
                         <p className="text-sm text-gray-600">
                           Qty: {directPurchase.quantity}
                         </p>
                       </div>
                       <div className="text-sm font-medium text-gray-900">
-                        {formatPrice((directPurchase.productData.salePrice || directPurchase.productData.price) * directPurchase.quantity)}
+                        {formatPrice(calculatedTotal)}
                       </div>
                     </div>
                   ) : (

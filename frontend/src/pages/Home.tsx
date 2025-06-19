@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, 
@@ -137,6 +137,7 @@ const Home: React.FC = () => {
   });
 
   const { prefetchEverything } = useGlobalPrefetch();
+  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
@@ -399,7 +400,7 @@ const Home: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     // Navigate to checkout with this product
-    window.open(`/checkout?product=${product.id}&quantity=1`, '_blank');
+    navigate(`/checkout?product=${product.id}&quantity=1`);
   };
 
   const quickAddToWishlist = async (product: Product, e: React.MouseEvent) => {

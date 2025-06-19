@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
@@ -35,6 +35,7 @@ import type { Category, Product } from '../types/api';
 
 const Products: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
@@ -172,7 +173,7 @@ const Products: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     // Navigate to checkout with this product
-    window.open(`/checkout?product=${product.id}&quantity=1`, '_blank');
+    navigate(`/checkout?product=${product.id}&quantity=1`);
   };
 
   const quickAddToWishlist = async (product: Product, e: React.MouseEvent) => {
