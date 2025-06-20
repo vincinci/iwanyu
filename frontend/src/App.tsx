@@ -124,6 +124,7 @@ import NotFound from './pages/NotFound';
 import SellerFlashSales from './pages/SellerFlashSales';
 import SellerProfile from './pages/seller/SellerProfile';
 import PaymentCallback from './pages/PaymentCallback';
+import Profile from './pages/Profile';
 
 // Create global query client with mobile-optimized settings
 const queryClient = new QueryClient({
@@ -196,7 +197,7 @@ const AppContent: React.FC = () => {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/account" element={<Account />} />
-            <Route path="/profile" element={<Account />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />

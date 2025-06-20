@@ -320,4 +320,133 @@ router.get('/validate', authenticateToken, async (req: any, res: Response) => {
   }
 });
 
+// Update User Profile
+router.put('/profile', authenticateToken, async (req: any, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    
+    if (!userId) {
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
+    }
+
+    const { firstName, lastName, username, phone, email, currentPassword, newPassword } = req.body;
+
+    // Get current user data
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!currentUser) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    // Prepare update data
+    const updateData: any = {};
+
+    // Update basic profile fields
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    if (username !== undefined) updateData.username = username;
+    if (phone !== undefined) updateData.phone = phone;
+    if (email !== undefined) updateData.email = email;
+
+    // Update name field if firstName or lastName changed
+    if (firstName !== undefined || lastName !== undefined) {
+      const newFirstName = firstName !== undefined ? firstName : currentUser.firstName;
+      const newLastName = lastName !== undefined ? lastName : currentUser.lastName;
+      updateData.name = `${newFirstName || ''} ${newLastName || ''}`.trim();
+    }
+
+    // Handle password change
+    if (newPassword) {
+      if (!currentPassword) {
+        res.status(400).json({ error: 'Current password is required to change password' });
+        return;
+      }
+
+      // Verify current password
+      if (!currentUser.password) {
+        res.status(400).json({ error: 'No password set for this account' });
+        return;
+      }
+
+      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, currentUser.password);
+      if (!isCurrentPasswordValid) {
+        res.status(400).json({ error: 'Current password is incorrect' });
+        return;
+      }
+
+      // Validate new password strength
+      if (newPassword.length < 6) {
+        res.status(400).json({ error: 'New password must be at least 6 characters long' });
+        return;
+      }
+
+      // Hash new password
+      updateData.password = await bcrypt.hash(newPassword, 12);
+    }
+
+    // Check for unique constraints
+    if (email && email !== currentUser.email) {
+      const existingUser = await prisma.user.findUnique({
+        where: { email }
+      });
+      if (existingUser) {
+        res.status(400).json({ error: 'Email is already in use' });
+        return;
+      }
+    }
+
+    if (username && username !== currentUser.username) {
+      const existingUser = await prisma.user.findUnique({
+        where: { username }
+      });
+      if (existingUser) {
+        res.status(400).json({ error: 'Username is already taken' });
+        return;
+      }
+    }
+
+    // Update user
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+        phone: true,
+        role: true,
+        updatedAt: true
+      }
+    });
+
+    res.json({
+      message: 'Profile updated successfully',
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    
+    // Handle Prisma unique constraint errors
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+      const target = (error as any).meta?.target;
+      if (target?.includes('email')) {
+        res.status(400).json({ error: 'Email is already in use' });
+        return;
+      }
+      if (target?.includes('username')) {
+        res.status(400).json({ error: 'Username is already taken' });
+        return;
+      }
+    }
+    
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
 export default router; 

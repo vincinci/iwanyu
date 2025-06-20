@@ -11,27 +11,46 @@ import {
   Shield,
   Edit,
   Save,
-  X
+  X,
+  Eye,
+  EyeOff,
+  Lock
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { formatPrice } from '../utils/currency';
+import { authApi, type UpdateProfileData } from '../services/authApi';
 
 const Account: React.FC = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { itemCount, totalAmount } = useCart();
   const { wishlistCount } = useWishlist();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     email: user?.email || '',
+    username: user?.username || '',
     phone: '+250 794 306 915',
     address: 'Remera, Kabeza',
     city: 'Kigali',
     country: 'Rwanda'
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   });
 
   const tabs = [
@@ -50,37 +69,121 @@ const Account: React.FC = () => {
   ];
 
   const recentOrders = [
-    {
-      id: 'ORD-001',
-      date: '2024-06-15',
-      status: 'Delivered',
-      total: 45000,
-      items: 3
-    },
-    {
-      id: 'ORD-002',
-      date: '2024-06-10',
-      status: 'Shipped',
-      total: 32000,
-      items: 2
-    },
-    {
-      id: 'ORD-003',
-      date: '2024-06-05',
-      status: 'Processing',
-      total: 78000,
-      items: 5
-    }
+    { id: '#12345', date: 'Dec 15, 2024', items: 3, total: 125000, status: 'Delivered' },
+    { id: '#12346', date: 'Dec 10, 2024', items: 1, total: 45000, status: 'Shipped' },
+    { id: '#12347', date: 'Dec 5, 2024', items: 2, total: 75000, status: 'Processing' },
   ];
-
-  const handleSave = () => {
-    // Here you would typically save to backend
-    setIsEditing(false);
-    // Show success message
-  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    setError(null);
+    setSuccess(null);
+  };
+
+  const handlePasswordChange = (field: string, value: string) => {
+    setPasswordData(prev => ({ ...prev, [field]: value }));
+    setError(null);
+    setSuccess(null);
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const updateData: UpdateProfileData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        username: formData.username,
+        phone: formData.phone
+      };
+
+      const response = await authApi.updateProfile(updateData);
+      
+      // Update the auth context with new user data
+      await refreshUser();
+      
+      setSuccess('Profile updated successfully!');
+      setIsEditing(false);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordSave = async () => {
+    if (!user) return;
+
+    // Validate password fields
+    if (!passwordData.currentPassword) {
+      setError('Current password is required');
+      return;
+    }
+
+    if (!passwordData.newPassword) {
+      setError('New password is required');
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      setError('New password must be at least 6 characters long');
+      return;
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setError('New passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const updateData: UpdateProfileData = {
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      };
+
+      await authApi.updateProfile(updateData);
+      
+      setSuccess('Password changed successfully!');
+      setIsChangingPassword(false);
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetForms = () => {
+    setFormData({
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      email: user?.email || '',
+      username: user?.username || '',
+      phone: '+250 794 306 915',
+      address: 'Remera, Kabeza',
+      city: 'Kigali',
+      country: 'Rwanda'
+    });
+    setPasswordData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setError(null);
+    setSuccess(null);
   };
 
   const getStatusColor = (status: string) => {
@@ -178,17 +281,176 @@ const Account: React.FC = () => {
               {/* Profile Tab */}
               {activeTab === 'profile' && (
                 <div>
+                  {/* Error/Success Messages */}
+                  {error && (
+                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                      {error}
+                    </div>
+                  )}
+                  {success && (
+                    <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                      {success}
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-gray-900">Profile Information</h2>
-                    <button
-                      onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-                      className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors duration-200"
-                    >
-                      {isEditing ? <Save size={16} /> : <Edit size={16} />}
-                      <span>{isEditing ? 'Save Changes' : 'Edit Profile'}</span>
-                    </button>
+                    <div className="flex gap-2">
+                      {!isChangingPassword && (
+                        <button
+                          onClick={() => setIsChangingPassword(true)}
+                          className="flex items-center space-x-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors duration-200"
+                        >
+                          <Lock size={16} />
+                          <span>Change Password</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          if (isEditing) {
+                            handleSave();
+                          } else {
+                            setIsEditing(true);
+                            setError(null);
+                            setSuccess(null);
+                          }
+                        }}
+                        disabled={loading}
+                        className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50"
+                      >
+                        {loading ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        ) : isEditing ? (
+                          <Save size={16} />
+                        ) : (
+                          <Edit size={16} />
+                        )}
+                        <span>{loading ? 'Saving...' : isEditing ? 'Save Changes' : 'Edit Profile'}</span>
+                      </button>
+                      {isEditing && (
+                        <button
+                          onClick={() => {
+                            setIsEditing(false);
+                            resetForms();
+                          }}
+                          className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          <X size={16} />
+                          <span>Cancel</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
+                  {/* Password Change Section */}
+                  {isChangingPassword && (
+                    <div className="mb-8 p-6 bg-orange-50 border border-orange-200 rounded-lg">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900">Change Password</h3>
+                        <button
+                          onClick={() => {
+                            setIsChangingPassword(false);
+                            setPasswordData({
+                              currentPassword: '',
+                              newPassword: '',
+                              confirmPassword: ''
+                            });
+                            setError(null);
+                            setSuccess(null);
+                          }}
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          <X size={20} />
+                        </button>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Current Password
+                          </label>
+                          <div className="relative">
+                            <input
+                              type={showCurrentPassword ? 'text' : 'password'}
+                              value={passwordData.currentPassword}
+                              onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
+                              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
+                              placeholder="Enter current password"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                            >
+                              {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            New Password
+                          </label>
+                          <div className="relative">
+                            <input
+                              type={showNewPassword ? 'text' : 'password'}
+                              value={passwordData.newPassword}
+                              onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
+                              placeholder="Enter new password"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowNewPassword(!showNewPassword)}
+                              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                            >
+                              {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Confirm New Password
+                          </label>
+                          <div className="relative">
+                            <input
+                              type={showConfirmPassword ? 'text' : 'password'}
+                              value={passwordData.confirmPassword}
+                              onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400"
+                              placeholder="Confirm new password"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                            >
+                              {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end mt-4">
+                        <button
+                          onClick={handlePasswordSave}
+                          disabled={loading}
+                          className="flex items-center space-x-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50"
+                        >
+                          {loading ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          ) : (
+                            <Save size={16} />
+                          )}
+                          <span>{loading ? 'Changing...' : 'Change Password'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Profile Information Form */}
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -224,6 +486,19 @@ const Account: React.FC = () => {
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
+                        disabled={!isEditing}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400 disabled:bg-gray-100"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Username
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.username}
+                        onChange={(e) => handleInputChange('username', e.target.value)}
                         disabled={!isEditing}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-gray-400 disabled:bg-gray-100"
                       />

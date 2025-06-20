@@ -569,6 +569,15 @@ const Header: React.FC = () => {
                         <div className="border-t border-gray-100 my-1"></div>
                         
                         <Link
+                          to="/profile"
+                          className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 hover:text-gray-700 transition-all duration-200"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <User size={16} />
+                          <span className="font-medium">My Profile</span>
+                        </Link>
+                        
+                        <Link
                           to="/orders"
                           className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 hover:text-gray-700 transition-all duration-200"
                           onClick={() => setIsUserMenuOpen(false)}
@@ -745,12 +754,12 @@ const Header: React.FC = () => {
                           )}
                         
                         <Link
-                          to="/orders"
+                          to="/profile"
                           className="flex items-center space-x-2 p-2 rounded-lg bg-gray-100 text-gray-700"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          <Package size={16} />
-                          <span>My Orders</span>
+                          <User size={16} />
+                          <span>My Profile</span>
                         </Link>
                       </div>
                       </div>
