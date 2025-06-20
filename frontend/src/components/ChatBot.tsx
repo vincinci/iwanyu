@@ -162,9 +162,130 @@ const ChatBot: React.FC = () => {
     }, 1000);
   };
 
+  // Predictive understanding function
+  const predictUserIntent = (message: string): { intent: string; confidence: number; response?: string } => {
+    const lowerMessage = message.toLowerCase();
+    const { intentPatterns } = chatbotConfig;
+    
+    let bestMatch = { intent: 'unknown', confidence: 0, response: '' };
+    
+    for (const [intentName, pattern] of Object.entries(intentPatterns)) {
+      let score = 0;
+      
+      // Check for exact casual phrases
+      for (const phrase of pattern.casualPhrases) {
+        if (lowerMessage.includes(phrase.toLowerCase())) {
+          score += 3;
+        }
+      }
+      
+      // Check for keywords
+      for (const keyword of pattern.keywords) {
+        if (lowerMessage.includes(keyword.toLowerCase())) {
+          score += 1;
+        }
+      }
+      
+      // Boost score for partial matches
+      const messageWords = lowerMessage.split(' ');
+      for (const word of messageWords) {
+        if (word.length > 2) {
+          for (const keyword of pattern.keywords) {
+            if (keyword.includes(word) || word.includes(keyword)) {
+              score += 0.5;
+            }
+          }
+        }
+      }
+      
+      if (score > bestMatch.confidence) {
+        bestMatch = {
+          intent: intentName,
+          confidence: score,
+          response: pattern.response
+        };
+      }
+    }
+    
+    return bestMatch;
+  };
+
+  // Enhanced response system with casual greetings and predictive understanding
   const getSmartResponse = (message: string): { text: string; actions?: Message['actions'] } => {
     const lowerMessage = message.toLowerCase();
-    const { faq, company, delivery, paymentMethods, returnPolicy, vendorInfo, policies, promotions } = chatbotConfig;
+    const { faq, company, delivery, paymentMethods, returnPolicy, vendorInfo, policies, promotions, casualGreetings, casualResponses } = chatbotConfig;
+    
+    // Handle casual greetings first
+    const casualGreetingPatterns = [
+      /^(hi|hey|hello|yo|sup|whats up|what's up|wassup)$/i,
+      /^(hi|hey|hello)\s*(there|dude|bro|friend)?$/i,
+      /^(whats up|what's up|wassup|sup)\s*(dude|bro|friend)?$/i
+    ];
+    
+    const isCasualGreeting = casualGreetingPatterns.some(pattern => pattern.test(message.trim()));
+    if (isCasualGreeting) {
+      const randomCasualGreeting = casualGreetings[Math.floor(Math.random() * casualGreetings.length)];
+      return { text: randomCasualGreeting };
+    }
+    
+    // Handle casual conversation
+    if (lowerMessage.includes('whats up') || lowerMessage.includes("what's up") || lowerMessage.includes('wassup')) {
+      const randomResponse = casualResponses.whatsUp[Math.floor(Math.random() * casualResponses.whatsUp.length)];
+      return { text: randomResponse };
+    }
+    
+    if (lowerMessage.includes('how are you') || lowerMessage.includes('how you doing')) {
+      const randomResponse = casualResponses.howAreYou[Math.floor(Math.random() * casualResponses.howAreYou.length)];
+      return { text: randomResponse };
+    }
+    
+    if (lowerMessage.includes('thank') || lowerMessage.includes('thanks') || lowerMessage.includes('thx')) {
+      const randomResponse = casualResponses.thanks[Math.floor(Math.random() * casualResponses.thanks.length)];
+      return { text: randomResponse };
+    }
+    
+    if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye') || lowerMessage.includes('see you') || lowerMessage.includes('later')) {
+      const randomResponse = casualResponses.bye[Math.floor(Math.random() * casualResponses.bye.length)];
+      return { text: randomResponse };
+    }
+    
+    // Try predictive understanding first
+    const predictedIntent = predictUserIntent(message);
+    if (predictedIntent.confidence >= 1.5) {
+      const actions: Message['actions'] = [];
+      
+      // Add relevant actions based on intent
+      if (predictedIntent.intent === 'shopping') {
+        actions.push({
+          label: "Browse Products",
+          action: () => window.open('/products', '_blank'),
+          icon: <ShoppingBag size={16} />
+        });
+      } else if (predictedIntent.intent === 'selling') {
+        actions.push({
+          label: "Start Selling",
+          action: () => window.open('/seller/register', '_blank'),
+          icon: <Store size={16} />
+        });
+      } else if (predictedIntent.intent === 'tracking') {
+        actions.push({
+          label: "Track Order",
+          action: () => window.open('/orders', '_blank'),
+          icon: <Package size={16} />
+        });
+      } else if (predictedIntent.intent === 'problems' || predictedIntent.intent === 'account') {
+        actions.push({
+          label: "Get Help",
+          action: () => openWhatsApp(`I need help with: ${message}`),
+          icon: <MessageSquare size={16} />
+        });
+      }
+      
+      return {
+        text: predictedIntent.response || "I understand what you're looking for! How can I help?",
+        actions: actions.length > 0 ? actions : undefined
+      };
+    }
     
     // Search through all FAQ categories including new ones
     const allFaqs = [
@@ -206,10 +327,38 @@ const ChatBot: React.FC = () => {
       return { text: matchingFaq.a };
     }
     
-    // Enhanced keyword-based responses
+    // Enhanced keyword-based responses with casual language understanding
     if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
       const randomGreeting = chatbotConfig.greetings[Math.floor(Math.random() * chatbotConfig.greetings.length)];
       return { text: randomGreeting };
+    }
+    
+    // Handle casual expressions
+    if (lowerMessage.includes('wanna') || lowerMessage.includes('want to') || lowerMessage.includes('trying to')) {
+      if (lowerMessage.includes('buy') || lowerMessage.includes('shop') || lowerMessage.includes('get')) {
+        return {
+          text: "I can help you find what you're looking for! 🛍️ What kind of product are you interested in? We have electronics, fashion, home goods, and much more.",
+          actions: [
+            {
+              label: "Browse Products",
+              action: () => window.open('/products', '_blank'),
+              icon: <ShoppingBag size={16} />
+            }
+          ]
+        };
+      }
+      if (lowerMessage.includes('sell') || lowerMessage.includes('make money')) {
+        return {
+          text: "That's awesome! 🏪 Starting to sell on Iwanyu is easy and free. Would you like me to guide you through the process?",
+          actions: [
+            {
+              label: "Start Selling",
+              action: () => window.open('/seller/register', '_blank'),
+              icon: <Store size={16} />
+            }
+          ]
+        };
+      }
     }
     
     if (lowerMessage.includes('owner') || lowerMessage.includes('who owns') || lowerMessage.includes('founder')) {
@@ -324,9 +473,28 @@ const ChatBot: React.FC = () => {
       };
     }
     
+    // Handle incomplete or unclear messages with helpful suggestions
+    if (lowerMessage.length < 3 || lowerMessage.split(' ').length === 1) {
+      return {
+        text: "I'd love to help! 😊 Could you tell me a bit more about what you're looking for? I can help with shopping, selling, orders, payments, or any other questions about Iwanyu.",
+        actions: [
+          {
+            label: "Browse Products",
+            action: () => window.open('/products', '_blank'),
+            icon: <ShoppingBag size={16} />
+          },
+          {
+            label: "Get Support",
+            action: () => openWhatsApp("I need help with Iwanyu"),
+            icon: <MessageSquare size={16} />
+          }
+        ]
+      };
+    }
+    
     // Default response with comprehensive help options
     return {
-      text: "I'm here to help! I can assist you with:\n\n🛍️ Shopping & Products\n📦 Orders & Delivery\n💳 Payments & Refunds\n🏪 Becoming a Seller\n👤 Account Management\n🎯 Promotions & Discounts\n🔧 Technical Support\n📞 Contact Information\n\nWhat would you like to know more about?",
+      text: "I'm here to help! 😊 I can assist you with:\n\n🛍️ Shopping & Products\n📦 Orders & Delivery\n💳 Payments & Refunds\n🏪 Becoming a Seller\n👤 Account Management\n🎯 Promotions & Discounts\n🔧 Technical Support\n📞 Contact Information\n\nWhat would you like to know more about?",
       actions: [
         {
           label: "Browse Products",

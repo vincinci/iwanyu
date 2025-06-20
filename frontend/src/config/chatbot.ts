@@ -383,7 +383,7 @@ export const chatbotConfig = {
     ]
   },
   
-  // Enhanced greeting system
+  // Enhanced greeting system with casual greetings
   greetings: [
     "Hi there! 👋 Welcome to Iwanyu! I'm your personal shopping assistant. How can I help you today?",
     "Hello! 🌟 I'm here to help you with anything about Iwanyu - shopping, selling, orders, or general questions. What would you like to know?",
@@ -391,6 +391,83 @@ export const chatbotConfig = {
     "Hi! 😊 Great to see you at Iwanyu! Whether you're looking to shop, sell, or need support, I'm here to help. What can I do for you?",
     "Hello and welcome! 🎉 I'm your Iwanyu assistant. I can help you find products, track orders, answer questions about selling, or connect you with support. What interests you?"
   ],
+  
+  // Casual greetings responses
+  casualGreetings: [
+    "Hey! 👋 What's up? How can I help you with Iwanyu today?",
+    "Hi there! 😊 What brings you to Iwanyu? Looking to shop or need some help?",
+    "Hello! 🙂 What's going on? Need help with anything on Iwanyu?",
+    "Hey hey! 👋 What can I do for you today?",
+    "Hi! 😄 What's happening? How can I assist you with Iwanyu?",
+    "Yo! 👋 What's up? Need help with shopping, selling, or something else?",
+    "Hey there! 🤙 What's good? How can I help you out today?",
+    "Hi! 🌟 What's new? Looking for something specific on Iwanyu?",
+    "Hello! 👋 What's cooking? How can I make your Iwanyu experience better?",
+    "Hey! 😊 What's the plan? Shopping, selling, or just browsing around?"
+  ],
+  
+  // Predictive understanding patterns
+  intentPatterns: {
+    shopping: {
+      keywords: ['buy', 'purchase', 'shop', 'looking for', 'want', 'need', 'find', 'search', 'product', 'item', 'stuff', 'thing', 'get', 'order'],
+      casualPhrases: ['wanna buy', 'looking to get', 'trying to find', 'need some', 'want something', 'shopping for'],
+      response: "I can help you find what you're looking for! 🛍️ What kind of product are you interested in? We have electronics, fashion, home goods, and much more from trusted vendors."
+    },
+    selling: {
+      keywords: ['sell', 'vendor', 'store', 'business', 'make money', 'start selling', 'become seller', 'open shop'],
+      casualPhrases: ['wanna sell', 'trying to make money', 'start a business', 'open my store'],
+      response: "That's awesome! 🏪 Starting to sell on Iwanyu is easy and free. No registration fees, just a small commission per sale. Would you like me to guide you through the process?"
+    },
+    delivery: {
+      keywords: ['delivery', 'shipping', 'transport', 'send', 'deliver', 'arrive', 'when', 'how long', 'fast'],
+      casualPhrases: ['when will it arrive', 'how fast', 'quick delivery', 'same day'],
+      response: "We deliver throughout Rwanda in 1-3 working days! 📦 Same-day delivery is available in Kigali for orders before 2 PM. Delivery fees vary by location and are shown at checkout."
+    },
+    payment: {
+      keywords: ['pay', 'payment', 'money', 'cost', 'price', 'expensive', 'cheap', 'afford', 'momo', 'mobile money'],
+      casualPhrases: ['how much', 'can I afford', 'too expensive', 'payment options'],
+      response: "We accept Mobile Money (MTN & Airtel), bank transfers, and cash on delivery! 💳 All payments are secure. You can also filter products by price range to find what fits your budget."
+    },
+    problems: {
+      keywords: ['problem', 'issue', 'help', 'stuck', 'error', 'not working', 'broken', 'cant', 'unable', 'difficult'],
+      casualPhrases: ['having trouble', 'cant figure out', 'not working', 'need help'],
+      response: "I'm here to help! 🤝 What specific issue are you facing? Whether it's with ordering, account access, payments, or anything else - let me know and I'll guide you through it."
+    },
+    account: {
+      keywords: ['account', 'login', 'register', 'sign up', 'profile', 'password', 'forgot', 'username'],
+      casualPhrases: ['cant login', 'forgot password', 'make account', 'sign me up'],
+      response: "I can help with account issues! 👤 You can create a free account, reset passwords, or update your profile. What specifically do you need help with?"
+    },
+    tracking: {
+      keywords: ['track', 'order', 'where', 'status', 'progress', 'location', 'delivered', 'shipped'],
+      casualPhrases: ['where is my order', 'track my stuff', 'order status', 'has it shipped'],
+      response: "You can track your order easily! 📍 Once confirmed, you'll get a tracking link. You can also check 'My Orders' in your account for real-time updates."
+    }
+  },
+  
+  // Casual conversation starters
+  casualResponses: {
+    whatsUp: [
+      "Not much, just here helping awesome people like you! 😊 What's up with you? Need help with anything on Iwanyu?",
+      "Just chillin' and ready to help! 🤙 What brings you here today?",
+      "Living the AI life! 🤖 What can I help you with on Iwanyu?"
+    ],
+    howAreYou: [
+      "I'm doing great, thanks for asking! 😊 How are you doing? What can I help you with today?",
+      "Fantastic! Ready to help you with anything Iwanyu-related! 🌟 How can I assist you?",
+      "I'm awesome, thanks! 😄 What about you? Looking for something specific?"
+    ],
+    thanks: [
+      "You're welcome! 😊 Anything else I can help you with?",
+      "No problem at all! 👍 Is there anything else you need help with?",
+      "Happy to help! 🌟 Let me know if you need anything else!"
+    ],
+    bye: [
+      "Goodbye! 👋 Thanks for visiting Iwanyu. Come back anytime you need help!",
+      "See you later! 😊 Have a great day and happy shopping!",
+      "Bye! 🌟 Don't hesitate to come back if you need any help with Iwanyu!"
+    ]
+  },
   
   // Context-aware responses
   contextResponses: {
