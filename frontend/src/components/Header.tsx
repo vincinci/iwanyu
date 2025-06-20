@@ -508,7 +508,7 @@ const Header: React.FC = () => {
                     <div className="w-8 h-8 rounded-full overflow-hidden shadow-md">
                       {user.avatar ? (
                         <img
-                          src={`http://localhost:3001/${user.avatar}`}
+                          src={`http://localhost:3001/${user.avatar}?t=${Date.now()}`}
                           alt="Profile"
                           className="w-full h-full object-cover"
                         />
@@ -714,7 +714,7 @@ const Header: React.FC = () => {
                         <div className="w-8 h-8 rounded-full overflow-hidden shadow-md">
                           {user.avatar ? (
                             <img
-                              src={`http://localhost:3001/${user.avatar}`}
+                              src={`http://localhost:3001/${user.avatar}?t=${Date.now()}`}
                               alt="Profile"
                               className="w-full h-full object-cover"
                             />

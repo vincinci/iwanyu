@@ -488,7 +488,7 @@ const ProductDetail: React.FC = () => {
                 <h3 className="font-semibold mb-2">Sold by</h3>
                 <p className="text-gray-600">
                   {product.seller.businessName || 
-                                                  (product.seller.user?.firstName && product.seller.user?.lastName
+                    (product.seller.user?.firstName && product.seller.user?.lastName 
                                 ? `${product.seller.user?.firstName} ${product.seller.user?.lastName}`
                       : (product.seller.user?.name || 'Seller'))}
                 </p>

@@ -101,16 +101,25 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       return;
     }
 
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'Image size must be less than 5MB' });
+    // Validate file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image size must be less than 10MB' });
       return;
     }
 
     setIsUploadingImage(true);
     try {
-      await authApi.uploadProfileImage(file);
+      const uploadResult = await authApi.uploadProfileImage(file);
+      console.log('Upload result:', uploadResult);
+      
+      // Force a refresh of user data
       await refreshUser();
+      
+      // Small delay to ensure context updates
+      setTimeout(() => {
+        console.log('User after refresh:', user);
+      }, 100);
+      
       setMessage({ type: 'success', text: 'Profile image updated successfully!' });
     } catch (error: any) {
       console.error('Upload error:', 'Error occurred');
@@ -247,7 +256,9 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
   const getAvatarUrl = () => {
     if (user?.avatar) {
-      return `http://localhost:3001/${user.avatar}`;
+      // Add timestamp to prevent caching
+      const timestamp = new Date().getTime();
+      return `http://localhost:3001/${user.avatar}?t=${timestamp}`;
     }
     return null;
   };
@@ -353,7 +364,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
           </div>
         </div>
         <p className="mt-2 text-sm text-gray-500">
-          JPG, GIF or PNG. Max size of 5MB.
+          JPG, GIF or PNG. Max size of 10MB.
         </p>
       </div>
 

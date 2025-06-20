@@ -44,7 +44,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 10 * 1024 * 1024, // 10MB limit
   },
 });
 
@@ -327,6 +327,8 @@ router.get('/validate', authenticateToken, async (req: any, res: Response) => {
         firstName: true,
         lastName: true,
         username: true,
+        phone: true,
+        avatar: true,
         role: true,
         isActive: true
       }
