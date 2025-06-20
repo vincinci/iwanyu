@@ -295,8 +295,8 @@ const ChatBot: React.FC = () => {
       ...faq.promotions
     ];
     
-    const findBestFaqMatch = (query: string) => {
-      let bestMatch = null;
+    const findBestFaqMatch = (query: string): { q: string; a: string } | null => {
+      let bestMatch: { q: string; a: string } | null = null;
       let bestScore = 0;
       
       allFaqs.forEach(faqItem => {
