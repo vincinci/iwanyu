@@ -9,9 +9,50 @@ import type {
 // Use environment variable for production, fallback to localhost for development
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
+// Request throttling to prevent overwhelming the backend
+class RequestThrottler {
+  private queue: Array<() => Promise<any>> = [];
+  private running = 0;
+  private maxConcurrent = 3; // Limit concurrent requests for Render free tier
+  private delay = 100; // Minimum delay between requests
+
+  async add<T>(request: () => Promise<T>): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this.queue.push(async () => {
+        try {
+          this.running++;
+          // Add small delay to prevent burst requests
+          if (this.running > 1) {
+            await new Promise(resolve => setTimeout(resolve, this.delay));
+          }
+          const result = await request();
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        } finally {
+          this.running--;
+          this.processQueue();
+        }
+      });
+      this.processQueue();
+    });
+  }
+
+  private processQueue() {
+    if (this.running < this.maxConcurrent && this.queue.length > 0) {
+      const next = this.queue.shift();
+      if (next) {
+        next();
+      }
+    }
+  }
+}
+
+const throttler = new RequestThrottler();
+
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000, // 10 second timeout to prevent hanging
+  timeout: 15000, // Increased timeout for slower backends
   headers: {
     'Content-Type': 'application/json',
   },
@@ -40,7 +81,9 @@ api.interceptors.request.use(
 // Handle response errors and auto-logout on 401
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+    
     console.log('API Error intercepted:', {
       status: error.response?.status,
       url: error.config?.url,
@@ -48,6 +91,14 @@ api.interceptors.response.use(
       currentPath: typeof window !== 'undefined' ? window.location.pathname : '/',
       isNetworkError: !error.response && error.message.includes('Network Error')
     });
+
+    // Handle 502 Bad Gateway errors with retry
+    if (error.response?.status === 502 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      console.log('Retrying 502 error after delay...');
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+      return api(originalRequest);
+    }
 
     // Handle network errors gracefully (backend not running, no internet, etc.)
     if (!error.response && error.code === 'ECONNABORTED') {
@@ -60,91 +111,87 @@ api.interceptors.response.use(
       return Promise.reject(new Error('Unable to connect to server. Please try again later.'));
     }
 
+    // Auto-logout on authentication errors
     if (error.response?.status === 401) {
-      // Don't redirect if we're already on auth pages or if this is an auth validation call
-      const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password'].includes(
-        typeof window !== 'undefined' ? window.location.pathname : '/'
-      );
-      const isAuthValidation = error.config?.url?.includes('/auth/validate');
-      
-      console.log('401 Error details:', {
-        isAuthPage,
-        isAuthValidation,
-        url: error.config?.url,
-        currentPath: typeof window !== 'undefined' ? window.location.pathname : '/'
-      });
-
-      // Only clear storage and redirect if it's not an auth validation call
-      if (!isAuthValidation) {
-        console.log('Clearing auth storage due to 401 error');
-        try {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-        } catch (storageError) {
-          console.warn('Failed to clear localStorage:', storageError);
-        }
-        
-        // Only redirect if we're not already on an auth page and window is available
-        if (!isAuthPage && typeof window !== 'undefined') {
-          console.log('Redirecting to login due to 401 error');
+      console.log('Authentication error - clearing stored token');
+      try {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Only redirect if we're not already on the login page
+        if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
           window.location.href = '/login';
         }
-      } else {
-        console.log('Ignoring 401 from auth validation endpoint');
+      } catch (storageError) {
+        console.warn('Failed to clear localStorage:', storageError);
       }
     }
+
     return Promise.reject(error);
   }
 );
 
-// Products API
+// Throttled request wrapper
+const throttledRequest = async <T>(request: () => Promise<T>): Promise<T> => {
+  return throttler.add(request);
+};
+
+// Products API with throttling
 export const productsApi = {
   getAll: async (params: ProductsQueryParams = {}) => {
-    const response = await api.get('/products', { params });
-    // Backend returns { success: true, data: { products: [...], pagination: {...} } }
-    // Frontend expects { data: { products: [...], pagination: {...} } }
-    return response.data; // Use the response data directly since it already has the correct structure
+    return throttledRequest(async () => {
+      const response = await api.get('/products', { params });
+      return response.data;
+    });
   },
   getById: async (id: string) => {
-    const response = await api.get(`/products/${id}`);
-    return response.data; // Use response data directly
+    return throttledRequest(async () => {
+      const response = await api.get(`/products/${id}`);
+      return response.data;
+    });
   },
 };
 
-// Categories API
+// Categories API with throttling
 export const categoriesApi = {
   getAll: async () => {
-    const response = await api.get('/categories');
-    return response.data; // Use response data directly since backend returns { success: true, data: { categories: [...] } }
+    return throttledRequest(async () => {
+      const response = await api.get('/categories');
+      return response.data;
+    });
+  },
+  getById: async (id: string) => {
+    return throttledRequest(async () => {
+      const response = await api.get(`/categories/${id}`);
+      return response.data;
+    });
   },
 };
 
-// Auth API
+// Auth API with throttling
 export const authApi = {
-  register: async (userData: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }) => {
-    const response = await api.post('/auth/register', userData);
-    return { data: response.data };
-  },
   login: async (email: string, password: string) => {
-    const response = await api.post('/auth/login', { email, password });
-    return { data: response.data };
+    return throttledRequest(async () => {
+      const response = await api.post('/auth/login', { email, password });
+      return response.data;
+    });
   },
-  forgotPassword: async (email: string) => {
-    const response = await api.post('/auth/forgot-password', { email });
-    return { data: response.data };
+  register: async (userData: any) => {
+    return throttledRequest(async () => {
+      const response = await api.post('/auth/register', userData);
+      return response.data;
+    });
   },
-  resetPassword: async (token: string, password: string) => {
-    const response = await api.post('/auth/reset-password', { token, password });
-    return { data: response.data };
+  validateToken: async () => {
+    return throttledRequest(async () => {
+      const response = await api.get('/auth/validate');
+      return response.data;
+    });
   },
-  verifyResetToken: async (token: string) => {
-    const response = await api.get(`/auth/verify-reset-token/${token}`);
-    return { data: response.data };
+  logout: async () => {
+    return throttledRequest(async () => {
+      const response = await api.post('/auth/logout');
+      return response.data;
+    });
   },
 };
 
@@ -174,4 +221,5 @@ export const removeProductFromFlashSale = async (flashSaleId: string, productId:
   return api.delete(`/seller/flash-sales/${flashSaleId}/remove-product/${productId}`);
 };
 
+// Export the axios instance for direct use when needed
 export default api; 

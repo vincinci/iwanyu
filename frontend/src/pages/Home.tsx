@@ -163,39 +163,50 @@ const Home: React.FC = () => {
 
   const categories = categoriesData?.data?.categories || [];
 
-  // Flash sale products with instant loading - reduced limit for mobile
+  // Check if we're in production to reduce API calls
+  const isProduction = import.meta.env.PROD || window.location.hostname !== 'localhost';
+
+  // Featured products - primary query (always load this first)
   const { 
-    products: flashProducts, 
-    isInstantLoading: flashLoading,
-    hasInstantData: hasFlashData
+    products: featuredProducts, 
+    isInstantLoading: featuredLoading,
+    hasInstantData: hasFeaturedData
   } = useInstantProducts({
-    limit: isMobile ? 4 : 8,
-    sortBy: 'totalSales',
+    limit: isMobile ? 6 : 8,
+    sortBy: 'featured',
     sortOrder: 'desc',
+    enabled: true, // Always enabled as primary content
   });
 
-  // Best sellers with instant loading - reduced limit for mobile
+  // Best sellers - secondary query (delayed start in production)
   const { 
     products: bestSellers, 
     isInstantLoading: bestLoading,
     hasInstantData: hasBestData
   } = useInstantProducts({
     limit: isMobile ? 6 : 12,
-    sortBy: 'featured',
+    sortBy: 'totalSales',
     sortOrder: 'desc',
+    enabled: isProduction ? hasFeaturedData : true, // Wait for featured in production
   });
 
-  // Latest products with instant loading - reduced limit for mobile
+  // Latest products - tertiary query (further delayed in production)
   const { 
     products: latestProducts, 
     isInstantLoading: latestLoading,
     hasInstantData: hasLatestData,
     prefetchCategory
   } = useInstantProducts({
-    limit: isMobile ? 10 : 20,
+    limit: isMobile ? 8 : 16,
     sortBy: 'createdAt',
     sortOrder: 'desc',
+    enabled: isProduction ? (hasFeaturedData && hasBestData) : true, // Wait for both in production
   });
+
+  // Use featured products as flash sale products to reduce API calls
+  const flashProducts = featuredProducts.slice(0, isMobile ? 4 : 6);
+  const flashLoading = featuredLoading;
+  const hasFlashData = hasFeaturedData;
 
   // Force show content after timeout to prevent infinite loading
   useEffect(() => {

@@ -4,14 +4,18 @@ import { productsApi } from '../services/api';
 import type { ProductsQueryParams } from '../types/api';
 import { useInView } from 'react-intersection-observer';
 
-// Global instant loading configuration
+// Check if we're in production (deployed)
+const isProduction = import.meta.env.PROD || window.location.hostname !== 'localhost';
+
+// Global instant loading configuration - less aggressive for production
 const INSTANT_CONFIG = {
-  staleTime: 30 * 60 * 1000, // 30 minutes - very aggressive caching
-  gcTime: 60 * 60 * 1000, // 1 hour in cache
+  staleTime: isProduction ? 60 * 60 * 1000 : 30 * 60 * 1000, // 1 hour in prod, 30 min in dev
+  gcTime: isProduction ? 2 * 60 * 60 * 1000 : 60 * 60 * 1000, // 2 hours in prod, 1 hour in dev
   refetchOnWindowFocus: false,
   refetchOnMount: false, // Don't refetch if data exists
   refetchOnReconnect: false,
-  retry: 1, // Quick failure for instant UX
+  retry: isProduction ? 2 : 1, // More retries in production
+  retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
 };
 
 interface UseInstantProductsOptions extends ProductsQueryParams {
@@ -32,8 +36,8 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
     priceMin,
     priceMax,
     enabled = true,
-    prefetchNext = true,
-    prefetchPrevious = true,
+    prefetchNext = !isProduction, // Disable prefetching in production
+    prefetchPrevious = !isProduction,
   } = options;
 
   const { ref, inView } = useInView({
@@ -43,62 +47,6 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
 
   // Create a stable query key
   const queryKey = ['products', page, category, search, sortBy, sortOrder, priceMin, priceMax, limit];
-
-  // Prefetch next page
-  const prefetchNextPage = useCallback(async () => {
-    if (!page || !enabled) return;
-    
-    const nextPage = page + 1;
-    await queryClient.prefetchQuery({
-      queryKey: ['products', { ...options, page: nextPage }],
-      queryFn: () => productsApi.getAll({ ...options, page: nextPage }),
-      ...INSTANT_CONFIG
-    });
-  }, [options, queryClient]);
-
-  // Prefetch previous page
-  const prefetchPreviousPage = useCallback(async () => {
-    if (!page || page <= 1) return;
-    
-    const prevPage = page - 1;
-    await queryClient.prefetchQuery({
-      queryKey: ['products', { ...options, page: prevPage }],
-      queryFn: () => productsApi.getAll({ ...options, page: prevPage }),
-      ...INSTANT_CONFIG
-    });
-  }, [options, queryClient]);
-
-  // Prefetch category pages
-  const prefetchCategoryPages = useCallback(async () => {
-    if (!category) return;
-    
-    const pages = [1, 2, 3]; // Prefetch first 3 pages
-    await Promise.all(
-      pages.map(page =>
-        queryClient.prefetchQuery({
-          queryKey: ['products', { ...options, page }],
-          queryFn: () => productsApi.getAll({ ...options, page }),
-          ...INSTANT_CONFIG
-        })
-      )
-    );
-  }, [options, queryClient]);
-
-  // Prefetch search results
-  const prefetchSearchResults = useCallback(async () => {
-    if (!search) return;
-    
-    const pages = [1, 2]; // Prefetch first 2 pages of search results
-    await Promise.all(
-      pages.map(page =>
-        queryClient.prefetchQuery({
-          queryKey: ['products', { ...options, page }],
-          queryFn: () => productsApi.getAll({ ...options, page }),
-          ...INSTANT_CONFIG
-        })
-      )
-    );
-  }, [options, queryClient]);
 
   // Main query with instant loading optimizations
   const query = useQuery({
@@ -120,82 +68,47 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
 
   const totalPages = query.data?.data?.pagination?.totalPages || 1;
 
-  // Trigger prefetching based on viewport
+  // Prefetch next page - only in development or when explicitly enabled
+  const prefetchNextPage = useCallback(async () => {
+    if (!prefetchNext || !page || !enabled || isProduction) return;
+    
+    const nextPage = page + 1;
+    if (nextPage > totalPages) return;
+    
+    await queryClient.prefetchQuery({
+      queryKey: ['products', nextPage, category, search, sortBy, sortOrder, priceMin, priceMax, limit],
+      queryFn: () => productsApi.getAll({ ...options, page: nextPage }),
+      ...INSTANT_CONFIG
+    });
+  }, [prefetchNext, page, enabled, totalPages, category, search, sortBy, sortOrder, priceMin, priceMax, limit, options, queryClient]);
+
+  // Prefetch previous page - only in development or when explicitly enabled
+  const prefetchPreviousPage = useCallback(async () => {
+    if (!prefetchPrevious || !page || page <= 1 || isProduction) return;
+    
+    const prevPage = page - 1;
+    await queryClient.prefetchQuery({
+      queryKey: ['products', prevPage, category, search, sortBy, sortOrder, priceMin, priceMax, limit],
+      queryFn: () => productsApi.getAll({ ...options, page: prevPage }),
+      ...INSTANT_CONFIG
+    });
+  }, [prefetchPrevious, page, category, search, sortBy, sortOrder, priceMin, priceMax, limit, options, queryClient]);
+
+  // Reduced prefetching - only trigger on viewport in development
   useEffect(() => {
-    if (inView) {
+    if (inView && !isProduction) {
       prefetchNextPage();
       prefetchPreviousPage();
     }
   }, [inView, prefetchNextPage, prefetchPreviousPage]);
 
-  // Trigger category prefetching when category changes
-  useEffect(() => {
-    if (category) {
-      prefetchCategoryPages();
-    }
-  }, [category, prefetchCategoryPages]);
+  // Remove aggressive prefetching strategies for production
+  // Only keep essential prefetching for development
 
-  // Trigger search prefetching when search changes
-  useEffect(() => {
-    if (search) {
-      prefetchSearchResults();
-    }
-  }, [search, prefetchSearchResults]);
-
-  // Aggressive prefetching strategy
-  useEffect(() => {
-    if (!query.data || !enabled) return;
-
-    const prefetchPromises: Promise<unknown>[] = [];
-
-    // Prefetch next page
-    if (prefetchNext && page < totalPages) {
-      prefetchPromises.push(
-        queryClient.prefetchQuery({
-          queryKey: ['products', page + 1, category, search, sortBy, sortOrder, priceMin, priceMax, limit],
-          queryFn: () => productsApi.getAll({
-            page: page + 1,
-            limit,
-            category: category || undefined,
-            search: search || undefined,
-            sortBy,
-            sortOrder,
-            priceMin,
-            priceMax,
-          }),
-          ...INSTANT_CONFIG,
-        })
-      );
-    }
-
-    // Prefetch previous page
-    if (prefetchPrevious && page > 1) {
-      prefetchPromises.push(
-        queryClient.prefetchQuery({
-          queryKey: ['products', page - 1, category, search, sortBy, sortOrder, priceMin, priceMax, limit],
-          queryFn: () => productsApi.getAll({
-            page: page - 1,
-            limit,
-            category: category || undefined,
-            search: search || undefined,
-            sortBy,
-            sortOrder,
-            priceMin,
-            priceMax,
-          }),
-          ...INSTANT_CONFIG,
-        })
-      );
-    }
-
-    // Execute all prefetches in parallel
-    Promise.all(prefetchPromises).catch(() => {
-      // Silently fail prefetching - don't block main UI
-    });
-  }, [query.data, enabled, page, totalPages, category, search, sortBy, sortOrder, priceMin, priceMax, limit, prefetchNext, prefetchPrevious, queryClient]);
-
-  // Prefetch category data on demand
-  const prefetchCategory = useCallback((categorySlug: string) => {
+  // Prefetch category data on demand - throttled
+  const prefetchCategory = useCallback(async (categorySlug: string) => {
+    if (isProduction) return; // Skip in production
+    
     return queryClient.prefetchQuery({
       queryKey: ['products', 1, categorySlug, search, sortBy, sortOrder, priceMin, priceMax, limit],
       queryFn: () => productsApi.getAll({
@@ -212,8 +125,10 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
     });
   }, [search, sortBy, sortOrder, priceMin, priceMax, limit, queryClient]);
 
-  // Prefetch search results
-  const prefetchSearch = useCallback((searchTerm: string) => {
+  // Prefetch search results - throttled
+  const prefetchSearch = useCallback(async (searchTerm: string) => {
+    if (isProduction) return; // Skip in production
+    
     return queryClient.prefetchQuery({
       queryKey: ['products', 1, category, searchTerm, sortBy, sortOrder, priceMin, priceMax, limit],
       queryFn: () => productsApi.getAll({
@@ -230,8 +145,10 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
     });
   }, [category, sortBy, sortOrder, priceMin, priceMax, limit, queryClient]);
 
-  // Prefetch all products (for homepage)
-  const prefetchAllProducts = useCallback(() => {
+  // Prefetch all products (for homepage) - throttled
+  const prefetchAllProducts = useCallback(async () => {
+    if (isProduction) return; // Skip in production
+    
     return queryClient.prefetchQuery({
       queryKey: ['products', 1, '', '', sortBy, sortOrder, priceMin, priceMax, limit],
       queryFn: () => productsApi.getAll({
@@ -260,8 +177,6 @@ export const useInstantProducts = (options: UseInstantProductsOptions = {}) => {
     ref,
     prefetchNextPage,
     prefetchPreviousPage,
-    prefetchCategoryPages,
-    prefetchSearchResults
   };
 };
 
@@ -277,9 +192,9 @@ export const useInstantProduct = (id: string, enabled = true) => {
     staleTime: 15 * 60 * 1000, // 15 minutes for individual products
   });
 
-  // Prefetch related products when product loads
+  // Prefetch related products when product loads - only in development
   useEffect(() => {
-    if (!query.data?.data?.product?.categoryId) return;
+    if (isProduction || !query.data?.data?.product?.categoryId) return;
     
     // Prefetch related products in the same category
     queryClient.prefetchQuery({
@@ -303,11 +218,26 @@ export const useInstantProduct = (id: string, enabled = true) => {
   };
 };
 
-// Global prefetcher for homepage/initial load
+// Global prefetcher for homepage/initial load - simplified for production
 export const useGlobalPrefetch = () => {
   const queryClient = useQueryClient();
 
   const prefetchEverything = useCallback(async () => {
+    if (isProduction) {
+      // In production, only prefetch the most essential data
+      try {
+        await queryClient.prefetchQuery({
+          queryKey: ['products', 1, '', '', 'featured', 'desc', 8],
+          queryFn: () => productsApi.getAll({ page: 1, limit: 8, sortBy: 'featured', sortOrder: 'desc' }),
+          ...INSTANT_CONFIG,
+        });
+      } catch (error) {
+        console.warn('Essential prefetch failed, but app will continue normally:', error);
+      }
+      return;
+    }
+
+    // Development prefetching (more aggressive)
     try {
       const prefetchPromises = [
         // Prefetch first page of all products
@@ -321,13 +251,6 @@ export const useGlobalPrefetch = () => {
         queryClient.prefetchQuery({
           queryKey: ['products', 1, '', '', 'featured', 'desc', 8],
           queryFn: () => productsApi.getAll({ page: 1, limit: 8, sortBy: 'featured', sortOrder: 'desc' }),
-          ...INSTANT_CONFIG,
-        }),
-        
-        // Prefetch popular products
-        queryClient.prefetchQuery({
-          queryKey: ['products', 1, '', '', 'totalSales', 'desc', 8],
-          queryFn: () => productsApi.getAll({ page: 1, limit: 8, sortBy: 'totalSales', sortOrder: 'desc' }),
           ...INSTANT_CONFIG,
         }),
       ];
