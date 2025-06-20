@@ -70,8 +70,8 @@ class CouponsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to fetch coupons');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch coupons' }));
+      throw new Error(errorData.error || 'Failed to fetch coupons');
     }
 
     return response.json();
@@ -94,8 +94,8 @@ class CouponsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to create coupon');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to create coupon' }));
+      throw new Error(errorData.error || 'Failed to create coupon');
     }
 
     return response.json();
@@ -109,8 +109,8 @@ class CouponsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to update coupon');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update coupon' }));
+      throw new Error(errorData.error || 'Failed to update coupon');
     }
 
     return response.json();
@@ -123,8 +123,8 @@ class CouponsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to delete coupon');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to delete coupon' }));
+      throw new Error(errorData.error || 'Failed to delete coupon');
     }
 
     return response.json();
@@ -137,8 +137,8 @@ class CouponsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to fetch coupon usage');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch coupon usage' }));
+      throw new Error(errorData.error || 'Failed to fetch coupon usage');
     }
 
     return response.json();
@@ -157,8 +157,8 @@ class CouponsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to validate coupon');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to validate coupon' }));
+      throw new Error(errorData.error || 'Failed to validate coupon');
     }
 
     return response.json();

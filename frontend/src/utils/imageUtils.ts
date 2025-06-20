@@ -72,7 +72,7 @@ export const getProductImageUrls = (product: { image?: string; images?: string[]
 
   // Add images from images array (check for null and empty array)
   if ((product as any).images && Array.isArray((product as any).images) && (product as any).images.length > 0) {
-    (product as any).images.forEach(imagePath => {
+    (product as any).images.forEach((imagePath: any) => {
       const url = getImageUrl(imagePath);
       if (url && url !== '' && !urls.includes(url)) {
         urls.push(url);

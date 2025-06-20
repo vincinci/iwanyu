@@ -75,8 +75,8 @@ class OrdersApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to fetch orders');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch orders' }));
+      throw new Error(errorData.error || 'Failed to fetch orders');
     }
 
     return response.json();
@@ -89,8 +89,8 @@ class OrdersApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to fetch order');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch order' }));
+      throw new Error(errorData.error || 'Failed to fetch order');
     }
 
     return response.json();
@@ -104,8 +104,8 @@ class OrdersApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to update order status');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update order status' }));
+      throw new Error(errorData.error || 'Failed to update order status');
     }
 
     return response.json();
@@ -119,8 +119,8 @@ class OrdersApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to cancel order');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to cancel order' }));
+      throw new Error(errorData.error || 'Failed to cancel order');
     }
 
     return response.json();

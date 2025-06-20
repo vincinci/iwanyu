@@ -143,9 +143,9 @@ class SellerApi {
       });
 
       if (!response.ok) {
-
-        throw new Error((errorResponse as any).error || 'Failed to create seller profile');
-      }
+      const errorData = await response.json().catch(() => ({ error: 'Failed to create seller profile' }));
+      throw new Error(errorData.error || 'Failed to create seller profile');
+    }
 
       return response.json();
     } else {
@@ -157,9 +157,9 @@ class SellerApi {
       });
 
       if (!response.ok) {
-
-        throw new Error((errorResponse as any).error || 'Failed to create seller profile');
-      }
+      const errorData = await response.json().catch(() => ({ error: 'Failed to create seller profile' }));
+      throw new Error(errorData.error || 'Failed to create seller profile');
+    }
 
       return response.json();
     }
@@ -171,8 +171,8 @@ class SellerApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to get seller profile');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to get seller profile' }));
+      throw new Error(errorData.error || 'Failed to get seller profile');
     }
 
     return response.json();
@@ -186,8 +186,8 @@ class SellerApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to update seller profile');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update seller profile' }));
+      throw new Error(errorData.error || 'Failed to update seller profile');
     }
 
     return response.json();
@@ -199,8 +199,8 @@ class SellerApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to get dashboard data');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to get dashboard data' }));
+      throw new Error(errorData.error || 'Failed to get dashboard data');
     }
 
     return response.json();
@@ -213,8 +213,8 @@ class SellerApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to get products');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to get products' }));
+      throw new Error(errorData.error || 'Failed to get products');
     }
 
     return response.json();
@@ -259,8 +259,8 @@ class SellerApi {
       
       if (!response.ok) {
 
-        console.error('API Error:', error);
-        throw new Error((errorResponse as any).error || error.message || 'Failed to create product');
+        console.error('API Error:', 'Request failed');
+        throw new Error((errorResponse as any).error || 'Unknown error' || 'Failed to create product');
       }
 
       const result = await response.json();
@@ -279,8 +279,8 @@ class SellerApi {
 
       if (!response.ok) {
 
-        console.error('API Error:', error);
-        throw new Error((errorResponse as any).error || error.message || 'Failed to create product');
+        console.error('API Error:', 'Request failed');
+        throw new Error((errorResponse as any).error || 'Unknown error' || 'Failed to create product');
       }
 
       const result = await response.json();
@@ -297,8 +297,8 @@ class SellerApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to update product');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update product' }));
+      throw new Error(errorData.error || 'Failed to update product');
     }
 
     return response.json();
@@ -311,8 +311,8 @@ class SellerApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to delete product');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to delete product' }));
+      throw new Error(errorData.error || 'Failed to delete product');
     }
 
     return response.json();
@@ -339,8 +339,8 @@ class SellerApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to import products');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to import products' }));
+      throw new Error(errorData.error || 'Failed to import products');
     }
 
     return response.json();

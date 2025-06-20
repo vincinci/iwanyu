@@ -76,8 +76,8 @@ class ReviewsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to fetch reviews');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch reviews' }));
+      throw new Error(errorData.error || 'Failed to fetch reviews');
     }
 
     return response.json();
@@ -97,8 +97,8 @@ class ReviewsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to create review');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to create review' }));
+      throw new Error(errorData.error || 'Failed to create review');
     }
 
     return response.json();
@@ -117,8 +117,8 @@ class ReviewsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to update review');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update review' }));
+      throw new Error(errorData.error || 'Failed to update review');
     }
 
     return response.json();
@@ -131,8 +131,8 @@ class ReviewsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to delete review');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to delete review' }));
+      throw new Error(errorData.error || 'Failed to delete review');
     }
 
     return response.json();
@@ -146,8 +146,8 @@ class ReviewsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to vote on review');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to vote on review' }));
+      throw new Error(errorData.error || 'Failed to vote on review');
     }
 
     return response.json();
@@ -162,8 +162,8 @@ class ReviewsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to fetch review stats');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch review stats' }));
+      throw new Error(errorData.error || 'Failed to fetch review stats');
     }
 
     return response.json();
@@ -176,8 +176,8 @@ class ReviewsApi {
     });
 
     if (!response.ok) {
-
-      throw new Error((errorResponse as any).error || 'Failed to fetch user reviews');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch user reviews' }));
+      throw new Error(errorData.error || 'Failed to fetch user reviews');
     }
 
     return response.json();
