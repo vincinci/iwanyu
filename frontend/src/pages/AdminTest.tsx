@@ -22,7 +22,7 @@ const AdminTest: React.FC = () => {
       console.log('Token:', token);
       console.log('API Base URL:', API_BASE_URL);
 
-      const response = await fetch(`${API_BASE_URL}/admin/dashboard`); {
+      const response = await fetch(`${API_BASE_URL}/admin/dashboard`), {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,

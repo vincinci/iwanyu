@@ -1,100 +1,130 @@
-import api from './api';
-
-export interface OrderItem {
-  id: string;
-  quantity: number;
-  price: number;
-  product: {
-    id: string;
-    name: string;
-    images: string[];
-    price: number;
-  };
-}
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 export interface Order {
   id: string;
-  status: 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-  paymentStatus: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-  paymentMethod: string;
-  subtotal: number;
-  discount: number;
+  orderNumber?: string;
+  userId: string;
+  subtotal?: number;
+  total: number;
+  status: 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'RETURNED';
+  paymentStatus?: string;
+  paymentMethod?: string;
+  shipping?: number;
   shippingCost: number;
   tax: number;
-  total: number;
-  trackingNumber?: string;
-  notes?: string;
   createdAt: string;
   updatedAt: string;
-  orderItems: OrderItem[];
-  shippingAddress?: unknown;
-  guestEmail?: string;
-  guestPhone?: string;
-}
-
-export interface OrdersResponse {
-  success: boolean;
-  data: {
-    orders: Order[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      pages: number;
+  orderItems: Array<{
+    id: string;
+    quantity: number;
+    price: number;
+    product: {
+      id: string;
+      name: string;
+      image?: string;
+      images: string[];
     };
+  }>;
+  shippingAddress?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
   };
 }
 
-export interface OrderResponse {
-  success: boolean;
-  data: Order;
+export interface OrdersResponse {
+  orders: Order[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
 }
 
-// Get user's orders
-export const getUserOrders = async (params?: {
-  page?: number;
-  limit?: number;
-  status?: string;
-}): Promise<OrdersResponse> => {
-  const searchParams = new URLSearchParams();
-  if (params?.page) searchParams.append('page', params.page.toString());
-  if (params?.limit) searchParams.append('limit', params.limit.toString());
-  if (params?.status) searchParams.append('status', params.status);
+class OrdersApi {
+  private getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  }
 
-  const response = await api.get(`/orders?${searchParams}`);
-  return response.data;
-};
+  async getOrders(params: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    userId?: string;
+  } = {}): Promise<OrdersResponse> {
+    const searchParams = new URLSearchParams();
+    if (params.page) searchParams.append('page', params.page.toString());
+    if (params.limit) searchParams.append('limit', params.limit.toString());
+    if (params.status) searchParams.append('status', params.status);
+    if (params.userId) searchParams.append('userId', params.userId);
 
-// Get specific order
-export const getOrder = async (orderId: string): Promise<OrderResponse> => {
-  const response = await api.get(`/orders/${orderId}`);
-  return response.data;
-};
+    const response = await fetch(`${API_BASE_URL}/orders?${searchParams}`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+    });
 
-// Cancel order
-export const cancelOrder = async (orderId: string): Promise<{ success: boolean; message: string }> => {
-  const response = await api.post(`/orders/${orderId}/cancel`);
-  return response.data;
-};
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch orders');
+    }
 
-// Create order
-export const createOrder = async (orderData: {
-  items: Array<{
-    productId: string;
-    quantity: number;
-  }>;
-  shippingAddress?: unknown;
-  couponCode?: string;
-  notes?: string;
-  isGuest?: boolean;
-}): Promise<{ success: boolean; data: { id: string } }> => {
-  const response = await api.post('/orders', orderData);
-  return response.data;
-};
+    return response.json();
+  }
 
-export default {
-  getUserOrders,
-  getOrder,
-  cancelOrder,
-  createOrder,
-}; 
+  async getOrder(id: string): Promise<Order> {
+    const response = await fetch(`${API_BASE_URL}/orders/${id}`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch order');
+    }
+
+    return response.json();
+  }
+
+  async updateOrderStatus(id: string, status: string): Promise<{ message: string; order: Order }> {
+    const response = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ status }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to update order status');
+    }
+
+    return response.json();
+  }
+
+  async cancelOrder(id: string, reason?: string): Promise<{ message: string; order: Order }> {
+    const response = await fetch(`${API_BASE_URL}/orders/${id}/cancel`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ reason }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to cancel order');
+    }
+
+    return response.json();
+  }
+}
+
+export const ordersApi = new OrdersApi(); 

@@ -82,7 +82,7 @@ const Checkout: React.FC = () => {
       isGuest?: boolean;
     }) => {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/orders`); {
+      const response = await fetch(`${API_BASE_URL}/orders`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -299,11 +299,11 @@ const Checkout: React.FC = () => {
         signal: controller.signal
       });
 
-      const  timeoutPromise]) as Response;
+      const response = await Promise.race([fetchPromise, timeoutPromise]) as Response;
       clearTimeout(requestTimeout);
 
       if (!response.ok) {
-        const }));
+        const response = await fetch(API_BASE_URL + '/api', {));
         throw new Error(error.error || 'Failed to initialize payment');
       }
 

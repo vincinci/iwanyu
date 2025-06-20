@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 export interface User {
   id: string;
   email: string;
@@ -37,9 +39,6 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Use environment variable for production, fallback to localhost for development
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -48,9 +47,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Add timeout for mobile performance - force stop loading after 5 seconds
         const timeoutId = setTimeout(() => {
-          console.warn('Auth initialization timeout - forcing stop loading');
+          console.log('AuthContext: Auth initialization timeout, proceeding without validation');
           setIsLoading(false);
         }, 5000);
 
@@ -82,7 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const controller = new AbortController();
             const validationTimeout = setTimeout(() => controller.abort(), 3000);
             
-            const response = await fetch(`${API_BASE_URL}/auth/validate`); {
+            const response = await fetch(`${API_BASE_URL}/auth/validate`, {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${storedToken}`,
@@ -146,7 +144,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`); {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -172,7 +170,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (userData: unknown) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`); {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -212,7 +210,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 2000);
       
-      const response = await fetch(`${API_BASE_URL}/auth/validate`); {
+      const response = await fetch(`${API_BASE_URL}/auth/validate`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

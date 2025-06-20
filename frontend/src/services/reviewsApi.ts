@@ -7,24 +7,17 @@ export interface Review {
   rating: number;
   title?: string;
   comment?: string;
-  images: string[];
-  isVerifiedPurchase: boolean;
-  helpfulCount: number;
-  isApproved: boolean;
+  images?: string[];
+  verified: boolean;
+  helpful: number;
   createdAt: string;
   updatedAt: string;
   user: {
     id: string;
     firstName?: string;
     lastName?: string;
+    email: string;
     avatar?: string;
-  };
-  product?: {
-    id: string;
-    name: string;
-    slug: string;
-    image?: string;
-    price: number;
   };
 }
 
@@ -41,32 +34,14 @@ export interface ReviewStats {
 }
 
 export interface ReviewsResponse {
-  success: boolean;
-  data: {
-    reviews: Review[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      pages: number;
-    };
-    stats: ReviewStats;
+  reviews: Review[];
+  stats: ReviewStats;
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
   };
-}
-
-export interface CreateReviewData {
-  productId: string;
-  rating: number;
-  title?: string;
-  comment?: string;
-  images?: string[];
-}
-
-export interface UpdateReviewData {
-  rating?: number;
-  title?: string;
-  comment?: string;
-  images?: string[];
 }
 
 class ReviewsApi {
@@ -78,32 +53,43 @@ class ReviewsApi {
     };
   }
 
-  async getProductReviews(
-    productId: string,
-    options: {
-      page?: number;
-      limit?: number;
-      rating?: number | 'all';
-      sortBy?: 'newest' | 'oldest' | 'highest' | 'lowest' | 'helpful';
-    } = {}
-  ): Promise<ReviewsResponse> {
-    const params = new URLSearchParams();
-    if (options.page) params.append('page', options.page.toString());
-    if (options.limit) params.append('limit', options.limit.toString());
-    if (options.rating && options.rating !== 'all') params.append('rating', options.rating.toString());
-    if (options.sortBy) params.append('sortBy', options.sortBy);
+  async getReviews(productId: string, params: {
+    page?: number;
+    limit?: number;
+    rating?: number | 'all';
+    sortBy?: 'newest' | 'oldest' | 'highest' | 'lowest' | 'helpful';
+  } = {}): Promise<ReviewsResponse> {
+    const searchParams = new URLSearchParams();
+    searchParams.append('productId', productId);
+    if (params.page) searchParams.append('page', params.page.toString());
+    if (params.limit) searchParams.append('limit', params.limit.toString());
+    if (params.rating && params.rating !== 'all') {
+      searchParams.append('rating', params.rating.toString());
+    }
+    if (params.sortBy) searchParams.append('sortBy', params.sortBy);
 
-    const response = await fetch(`${API_BASE_URL}/reviews/product/${productId}?${params}`);
+    const response = await fetch(`${API_BASE_URL}/reviews?${searchParams}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get reviews');
+      throw new Error(error.error || 'Failed to fetch reviews');
     }
 
     return response.json();
   }
 
-  async createReview(data: CreateReviewData): Promise<{ success: boolean; message: string; data: Review }> {
+  async createReview(data: {
+    productId: string;
+    rating: number;
+    title?: string;
+    comment?: string;
+    images?: string[];
+  }): Promise<{ message: string; review: Review }> {
     const response = await fetch(`${API_BASE_URL}/reviews`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
@@ -118,11 +104,13 @@ class ReviewsApi {
     return response.json();
   }
 
-  async updateReview(
-    reviewId: string,
-    data: UpdateReviewData
-  ): Promise<{ success: boolean; message: string; data: Review }> {
-    const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
+  async updateReview(id: string, data: {
+    rating?: number;
+    title?: string;
+    comment?: string;
+    images?: string[];
+  }): Promise<{ message: string; review: Review }> {
+    const response = await fetch(`${API_BASE_URL}/reviews/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
@@ -136,8 +124,8 @@ class ReviewsApi {
     return response.json();
   }
 
-  async deleteReview(reviewId: string): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
+  async deleteReview(id: string): Promise<{ message: string }> {
+    const response = await fetch(`${API_BASE_URL}/reviews/${id}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
@@ -150,10 +138,7 @@ class ReviewsApi {
     return response.json();
   }
 
-  async markReviewHelpful(
-    reviewId: string,
-    isHelpful: boolean
-  ): Promise<{ success: boolean; message: string; data: { helpfulCount: number } }> {
+  async voteHelpful(reviewId: string, isHelpful: boolean): Promise<{ message: string }> {
     const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}/helpful`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
@@ -162,35 +147,37 @@ class ReviewsApi {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to record vote');
+      throw new Error(error.error || 'Failed to vote on review');
     }
 
     return response.json();
   }
 
-  async getUserReviews(options: { page?: number; limit?: number } = {}): Promise<{
-    success: boolean;
-    data: {
-      reviews: Review[];
-      pagination: {
-        page: number;
-        limit: number;
-        total: number;
-        pages: number;
-      };
-    };
-  }> {
-    const params = new URLSearchParams();
-    if (options.page) params.append('page', options.page.toString());
-    if (options.limit) params.append('limit', options.limit.toString());
+  async getReviewStats(productId: string): Promise<ReviewStats> {
+    const response = await fetch(`${API_BASE_URL}/reviews/stats?productId=${productId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-    const response = await fetch(`${API_BASE_URL}/reviews/user?${params}`, {
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch review stats');
+    }
+
+    return response.json();
+  }
+
+  async getUserReviews(userId?: string): Promise<Review[]> {
+    const response = await fetch(`${API_BASE_URL}/reviews/user${userId ? `?userId=${userId}` : ''}`, {
+      method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get user reviews');
+      throw new Error(error.error || 'Failed to fetch user reviews');
     }
 
     return response.json();

@@ -14,7 +14,7 @@ const AuthDebug: React.FC = () => {
 
     try {
       const storedToken = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/auth/validate`); {
+      const response = await fetch(`${API_BASE_URL}/auth/validate`), {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${storedToken}`,

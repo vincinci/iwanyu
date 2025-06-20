@@ -115,7 +115,7 @@ const PaymentCallback: React.FC = () => {
             controller.abort();
           }, 15000);
 
-          const response = await fetch(`${API_BASE_URL}/payments/verify/${useTransactionId}`); {
+          const response = await fetch(`${API_BASE_URL}/payments/verify/${useTransactionId}`, {
             method: 'GET',
             headers,
             signal: controller.signal

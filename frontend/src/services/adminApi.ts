@@ -83,7 +83,7 @@ export interface AdminSeller {
   businessAddress?: string;
   businessDescription?: string;
   businessType?: string;
-  nationalId?: string; // National ID document path/URL
+  nationalId?: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED';
   createdAt: string;
   updatedAt: string;
@@ -232,21 +232,20 @@ class AdminApi {
     };
   }
 
-  // Dashboard
   async getDashboard(): Promise<AdminDashboard> {
     const response = await fetch(`${this.baseUrl}/admin/dashboard`, {
+      method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get dashboard data');
+      throw new Error(error.error || 'Failed to fetch dashboard data');
     }
 
     return response.json();
   }
 
-  // User Management
   async getUsers(params: {
     page?: number;
     limit?: number;
@@ -254,18 +253,19 @@ class AdminApi {
     role?: string;
   } = {}): Promise<UsersResponse> {
     const searchParams = new URLSearchParams();
-    if (params.page) searchParams.set('page', params.page.toString());
-    if (params.limit) searchParams.set('limit', params.limit.toString());
-    if (params.search) searchParams.set('search', params.search);
-    if (params.role) searchParams.set('role', params.role);
+    if (params.page) searchParams.append('page', params.page.toString());
+    if (params.limit) searchParams.append('limit', params.limit.toString());
+    if (params.search) searchParams.append('search', params.search);
+    if (params.role) searchParams.append('role', params.role);
 
     const response = await fetch(`${this.baseUrl}/admin/users?${searchParams}`, {
+      method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get users');
+      throw new Error(error.error || 'Failed to fetch users');
     }
 
     return response.json();
@@ -305,24 +305,24 @@ class AdminApi {
     return response.json();
   }
 
-  // Seller Management
   async getSellers(params: {
     page?: number;
     limit?: number;
     status?: string;
   } = {}): Promise<SellersResponse> {
     const searchParams = new URLSearchParams();
-    if (params.page) searchParams.set('page', params.page.toString());
-    if (params.limit) searchParams.set('limit', params.limit.toString());
-    if (params.status) searchParams.set('status', params.status);
+    if (params.page) searchParams.append('page', params.page.toString());
+    if (params.limit) searchParams.append('limit', params.limit.toString());
+    if (params.status) searchParams.append('status', params.status);
 
     const response = await fetch(`${this.baseUrl}/admin/sellers?${searchParams}`, {
+      method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get sellers');
+      throw new Error(error.error || 'Failed to fetch sellers');
     }
 
     return response.json();
@@ -343,7 +343,6 @@ class AdminApi {
     return response.json();
   }
 
-  // Get seller verification document
   async getSellerDocument(id: string): Promise<{
     seller: {
       id: string;
@@ -366,14 +365,16 @@ class AdminApi {
     });
 
     if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('No document found for this seller');
+      }
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get seller document');
+      throw new Error(error.error || 'Failed to fetch seller document');
     }
 
     return response.json();
   }
 
-  // Product Management
   async getProducts(params: {
     page?: number;
     limit?: number;
@@ -381,18 +382,19 @@ class AdminApi {
     status?: string;
   } = {}): Promise<ProductsResponse> {
     const searchParams = new URLSearchParams();
-    if (params.page) searchParams.set('page', params.page.toString());
-    if (params.limit) searchParams.set('limit', params.limit.toString());
-    if (params.search) searchParams.set('search', params.search);
-    if (params.status) searchParams.set('status', params.status);
+    if (params.page) searchParams.append('page', params.page.toString());
+    if (params.limit) searchParams.append('limit', params.limit.toString());
+    if (params.search) searchParams.append('search', params.search);
+    if (params.status) searchParams.append('status', params.status);
 
     const response = await fetch(`${this.baseUrl}/admin/products?${searchParams}`, {
+      method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get products');
+      throw new Error(error.error || 'Failed to fetch products');
     }
 
     return response.json();
@@ -442,15 +444,15 @@ class AdminApi {
     return response.json();
   }
 
-  // Category Management
   async getCategories(): Promise<AdminCategory[]> {
     const response = await fetch(`${this.baseUrl}/admin/categories`, {
+      method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get categories');
+      throw new Error(error.error || 'Failed to fetch categories');
     }
 
     return response.json();
@@ -508,24 +510,24 @@ class AdminApi {
     return response.json();
   }
 
-  // Order Management
   async getOrders(params: {
     page?: number;
     limit?: number;
     status?: string;
   } = {}): Promise<OrdersResponse> {
     const searchParams = new URLSearchParams();
-    if (params.page) searchParams.set('page', params.page.toString());
-    if (params.limit) searchParams.set('limit', params.limit.toString());
-    if (params.status) searchParams.set('status', params.status);
+    if (params.page) searchParams.append('page', params.page.toString());
+    if (params.limit) searchParams.append('limit', params.limit.toString());
+    if (params.status) searchParams.append('status', params.status);
 
     const response = await fetch(`${this.baseUrl}/admin/orders?${searchParams}`, {
+      method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get orders');
+      throw new Error(error.error || 'Failed to fetch orders');
     }
 
     return response.json();
@@ -546,9 +548,6 @@ class AdminApi {
     return response.json();
   }
 
-  // PAYMENT MANAGEMENT FUNCTIONS
-
-  // Get all seller payouts with filtering and pagination
   async getPayouts(params: {
     page?: number;
     limit?: number;
@@ -562,46 +561,43 @@ class AdminApi {
   } = {}): Promise<unknown> {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== '') {
+      if (value !== undefined) {
         searchParams.append(key, value.toString());
       }
     });
 
-    const response = await fetch(`${this.baseUrl}/admin/payouts?${searchParams.toString()}`, {
+    const response = await fetch(`${this.baseUrl}/admin/payouts?${searchParams}`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get payouts');
+      throw new Error(error.error || 'Failed to fetch payouts');
     }
 
     return response.json();
   }
 
-  // Get seller wallet overview
   async getSellerWallets(page = 1, limit = 20, search = ''): Promise<unknown> {
-    const searchParams = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-      search: search
-    });
+    const searchParams = new URLSearchParams();
+    searchParams.append('page', page.toString());
+    searchParams.append('limit', limit.toString());
+    if (search) searchParams.append('search', search);
 
-    const response = await fetch(`${this.baseUrl}/admin/seller-wallets?${searchParams.toString()}`, {
+    const response = await fetch(`${this.baseUrl}/admin/seller-wallets?${searchParams}`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get seller wallets');
+      throw new Error(error.error || 'Failed to fetch seller wallets');
     }
 
     return response.json();
   }
 
-  // Get detailed seller wallet information
   async getSellerWalletDetails(sellerId: string): Promise<unknown> {
     const response = await fetch(`${this.baseUrl}/admin/seller-wallets/${sellerId}`, {
       method: 'GET',
@@ -610,13 +606,12 @@ class AdminApi {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get seller wallet details');
+      throw new Error(error.error || 'Failed to fetch seller wallet details');
     }
 
     return response.json();
   }
 
-  // Approve or reject payout request
   async updatePayoutStatus(payoutId: string, status: 'APPROVED' | 'REJECTED', adminNotes?: string): Promise<unknown> {
     const response = await fetch(`${this.baseUrl}/admin/payouts/${payoutId}/status`, {
       method: 'PUT',
@@ -632,7 +627,6 @@ class AdminApi {
     return response.json();
   }
 
-  // Create manual payout for seller
   async createManualPayout(payoutData: {
     sellerId: string;
     amount: number;
@@ -655,24 +649,20 @@ class AdminApi {
     return response.json();
   }
 
-  // Get payout analytics and summary
   async getPayoutAnalytics(period: '7d' | '30d' | '90d' | '1y' = '30d'): Promise<unknown> {
-    const searchParams = new URLSearchParams({ period });
-
-    const response = await fetch(`${this.baseUrl}/admin/payouts/analytics?${searchParams.toString()}`, {
+    const response = await fetch(`${this.baseUrl}/admin/payout-analytics?period=${period}`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to get payout analytics');
+      throw new Error(error.error || 'Failed to fetch payout analytics');
     }
 
     return response.json();
   }
 
-  // CSV Import
   async importProducts(csvFile: File): Promise<{ 
     message: string; 
     results: { 
@@ -686,7 +676,7 @@ class AdminApi {
     formData.append('csvFile', csvFile);
 
     const token = localStorage.getItem('token');
-    const response = await fetch(`${this.baseUrl}/admin/csv-import`, {
+    const response = await fetch(`${this.baseUrl}/admin/products/import`, {
       method: 'POST',
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
