@@ -48,64 +48,11 @@ const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [userPreferences, setUserPreferences] = useState<{
-    name?: string;
-    interests?: string[];
-    previousTopics?: string[];
-  }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const openWhatsApp = (message: string) => {
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/${chatbotConfig.whatsappNumber}?text=${encodedMessage}`, '_blank');
-  };
-
-  // AI Learning and Personalization
-  const updateUserPreferences = (message: string, intent: string) => {
-    const lowerMessage = message.toLowerCase();
-    
-    // Extract name if mentioned
-    const nameMatch = lowerMessage.match(/(?:my name is|i'm|i am|call me) (\w+)/);
-    if (nameMatch) {
-      setUserPreferences(prev => ({ ...prev, name: nameMatch[1] }));
-    }
-    
-    // Track interests based on intent
-    const interestMap: { [key: string]: string } = {
-      'ordering': 'shopping',
-      'delivery': 'delivery',
-      'payment': 'payments',
-      'vendor': 'selling',
-      'technical': 'technical_support',
-      'promotions': 'deals'
-    };
-    
-    if (interestMap[intent]) {
-      setUserPreferences(prev => ({
-        ...prev,
-        interests: [...(prev.interests || []), interestMap[intent]].slice(-5), // Keep last 5 interests
-        previousTopics: [...(prev.previousTopics || []), intent].slice(-10) // Keep last 10 topics
-      }));
-    }
-  };
-
-  // Personalized greeting based on user history
-  const getPersonalizedGreeting = (): string => {
-    const { name, interests, previousTopics } = userPreferences;
-    
-    if (name) {
-      if (interests && interests.length > 0) {
-        const topInterest = interests[interests.length - 1];
-        return `Welcome back, ${name}! 👋 I remember you were interested in ${topInterest}. How can I help you today?`;
-      }
-      return `Welcome back, ${name}! 👋 Great to see you again! How can I assist you today?`;
-    }
-    
-    if (previousTopics && previousTopics.length > 0) {
-      return `Welcome back! 👋 I see you've been exploring our services. What would you like to know more about today?`;
-    }
-    
-    return chatbotResponses.greeting;
+    window.open(`https://wa.me/${chatbotConfig.whatsappNumber.replace('+', '')}?text=${encodedMessage}`, '_blank');
   };
 
   const quickActions: QuickAction[] = [
@@ -214,76 +161,11 @@ const ChatBot: React.FC = () => {
     }, 1000);
   };
 
-  const getAIResponse = (message: string, conversationHistory: Message[]): { text: string; actions?: Message['actions'] } => {
+  const getSmartResponse = (message: string): { text: string; actions?: Message['actions'] } => {
     const lowerMessage = message.toLowerCase();
     const { faq, company, delivery, paymentMethods, returnPolicy, vendorInfo, policies, promotions } = chatbotConfig;
     
-    // Analyze conversation context
-    const recentMessages = conversationHistory.slice(-5);
-    const userMessages = recentMessages.filter(m => !m.isBot).map(m => m.text.toLowerCase());
-    const lastBotMessage = recentMessages.filter(m => m.isBot).pop()?.text || '';
-    
-    // Enhanced keyword extraction and intent detection
-    const extractKeywords = (text: string): string[] => {
-      const stopWords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'through', 'during', 'before', 'after', 'above', 'below', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once'];
-      return text.split(/\s+/).filter(word => word.length > 2 && !stopWords.includes(word));
-    };
-    
-    const keywords = extractKeywords(lowerMessage);
-    
-    // Intent classification with confidence scoring
-    const intents = {
-      greeting: { keywords: ['hello', 'hi', 'hey', 'good', 'morning', 'afternoon', 'evening'], confidence: 0 },
-      ordering: { keywords: ['order', 'buy', 'purchase', 'cart', 'checkout', 'shopping'], confidence: 0 },
-      delivery: { keywords: ['delivery', 'shipping', 'deliver', 'ship', 'arrive', 'when', 'time'], confidence: 0 },
-      payment: { keywords: ['payment', 'pay', 'money', 'card', 'mobile', 'bank', 'cost', 'price'], confidence: 0 },
-      tracking: { keywords: ['track', 'status', 'where', 'progress', 'update'], confidence: 0 },
-      returns: { keywords: ['return', 'refund', 'exchange', 'back', 'unsatisfied', 'wrong'], confidence: 0 },
-      vendor: { keywords: ['sell', 'seller', 'vendor', 'store', 'business', 'merchant'], confidence: 0 },
-      support: { keywords: ['help', 'support', 'problem', 'issue', 'contact', 'assistance'], confidence: 0 },
-      company: { keywords: ['iwanyu', 'about', 'company', 'owner', 'who', 'what'], confidence: 0 },
-      technical: { keywords: ['login', 'password', 'account', 'app', 'website', 'bug', 'error'], confidence: 0 },
-      promotions: { keywords: ['discount', 'promo', 'offer', 'deal', 'sale', 'coupon'], confidence: 0 }
-    };
-    
-    // Calculate intent confidence scores
-    Object.keys(intents).forEach(intent => {
-      const intentKeywords = intents[intent as keyof typeof intents].keywords;
-      const matches = keywords.filter(keyword => 
-        intentKeywords.some(intentKeyword => 
-          keyword.includes(intentKeyword) || intentKeyword.includes(keyword)
-        )
-      );
-      intents[intent as keyof typeof intents].confidence = matches.length / Math.max(keywords.length, 1);
-    });
-    
-    // Find the highest confidence intent
-    const topIntent = Object.entries(intents).reduce((a, b) => 
-      intents[a[0] as keyof typeof intents].confidence > intents[b[0] as keyof typeof intents].confidence ? a : b
-    )[0];
-    
-    const confidence = intents[topIntent as keyof typeof intents].confidence;
-    
-    // Context-aware responses based on conversation flow
-    if (lastBotMessage.includes('How can I help') && confidence < 0.2) {
-      return {
-        text: "I understand you're looking for assistance! Let me help you with some common topics:\n\n🛍️ **Shopping**: Browse products, place orders, checkout process\n🚚 **Delivery**: Shipping times, tracking, delivery areas\n💳 **Payments**: Payment methods, security, billing\n🔄 **Returns**: Return policy, refunds, exchanges\n🏪 **Selling**: Become a vendor, manage your store\n📞 **Support**: Contact our team, account help\n\nWhat would you like to know more about?",
-        actions: [
-          {
-            label: "Browse Products",
-            action: () => window.open('/products', '_blank'),
-            icon: <ShoppingBag size={16} />
-          },
-          {
-            label: "Contact Support",
-            action: () => openWhatsApp("Hello! I need help with my inquiry."),
-            icon: <MessageSquare size={16} />
-          }
-        ]
-      };
-    }
-    
-    // Advanced FAQ matching with fuzzy search
+    // Search through all FAQ categories
     const allFaqs = [
       ...faq.general,
       ...faq.orders,
@@ -295,222 +177,106 @@ const ChatBot: React.FC = () => {
       ...faq.promotions
     ];
     
-    const findBestFaqMatch = (query: string): { q: string; a: string } | null => {
-      let bestMatch: { q: string; a: string } | null = null;
-      let bestScore = 0;
-      
-      allFaqs.forEach(faqItem => {
-        const questionWords = extractKeywords(faqItem.q.toLowerCase());
-        const answerWords = extractKeywords(faqItem.a.toLowerCase());
-        const queryWords = extractKeywords(query);
-        
-        // Calculate similarity score
-        const qScore = queryWords.filter(word => 
-          questionWords.some(qWord => qWord.includes(word) || word.includes(qWord))
-        ).length / Math.max(queryWords.length, 1);
-        
-        const aScore = queryWords.filter(word => 
-          answerWords.some(aWord => aWord.includes(word) || word.includes(aWord))
-        ).length / Math.max(queryWords.length, 1);
-        
-        const totalScore = (qScore * 0.7) + (aScore * 0.3);
-        
-        if (totalScore > bestScore && totalScore > 0.3) {
-          bestScore = totalScore;
-          bestMatch = faqItem;
-        }
-      });
-      
-      return bestMatch;
-    };
+    // Find matching FAQ
+    const matchingFaq = allFaqs.find(item => 
+      lowerMessage.includes(item.q.toLowerCase().split('?')[0].split(' ').slice(1, -1).join(' ')) ||
+      item.q.toLowerCase().includes(lowerMessage.split(' ').slice(0, 3).join(' ')) ||
+      lowerMessage.includes(item.a.toLowerCase().split(' ').slice(0, 3).join(' '))
+    );
     
-    const faqMatch = findBestFaqMatch(lowerMessage);
-    if (faqMatch) {
+    if (matchingFaq) {
+      return { text: matchingFaq.a };
+    }
+    
+    // Keyword-based responses
+    if (lowerMessage.includes('owner') || lowerMessage.includes('who owns')) {
+      return { text: `Iwanyu is proudly owned and managed by ${company.owner}.` };
+    }
+    
+    if (lowerMessage.includes('what is iwanyu') || lowerMessage.includes('about iwanyu')) {
+      return { text: company.description };
+    }
+    
+    if (lowerMessage.includes('app') || lowerMessage.includes('mobile')) {
+      return { text: "Yes! You can shop or manage your store easily through our Iwanyu mobile app. It's available for both customers and vendors." };
+    }
+    
+    if (lowerMessage.includes('delivery') || lowerMessage.includes('shipping')) {
       return { 
-        text: `${faqMatch.a}\n\n💡 **Need more help?** I can assist with related topics or connect you with our support team.`,
+        text: `Delivery takes ${delivery.timeframe}. ${delivery.feeInfo} You can track your order once it's confirmed!` 
+      };
+    }
+    
+    if (lowerMessage.includes('payment') || lowerMessage.includes('pay')) {
+      return { 
+        text: `We accept: ${paymentMethods.join(', ')}. All payments are secure and protected.` 
+      };
+    }
+    
+    if (lowerMessage.includes('return') || lowerMessage.includes('refund')) {
+      return { 
+        text: `You can return products within ${returnPolicy.window}. ${returnPolicy.returnShippingCost}. We ensure you get a refund if items aren't as described.` 
+      };
+    }
+    
+    if (lowerMessage.includes('sell') || lowerMessage.includes('vendor') || lowerMessage.includes('seller')) {
+      return { 
+        text: `Becoming a seller is easy! ${vendorInfo.registrationFee}. We charge ${vendorInfo.commission}. You can manage everything from the app and get paid ${vendorInfo.paymentSchedule}.`,
         actions: [
           {
-            label: "More Questions",
-            action: () => {},
-            icon: <MessageCircle size={16} />
-          },
-          {
-            label: "WhatsApp Support",
-            action: () => openWhatsApp(`I have a question about: ${faqMatch.q}`),
-            icon: <MessageSquare size={16} />
+            label: "Start Selling Now",
+            action: () => window.open('/seller/register', '_blank'),
+            icon: <ShoppingBag size={16} />
           }
         ]
       };
     }
     
-    // Intent-based intelligent responses
-    if (confidence > 0.3) {
-      switch (topIntent) {
-        case 'greeting':
-          const greetings = [
-            `Hello! 👋 Welcome to ${company.name}! I'm your AI shopping assistant.`,
-            `Hi there! 🌟 Great to see you at ${company.name}! How can I make your shopping experience amazing today?`,
-            `Hey! 😊 Welcome to ${company.name} - ${company.description.split('.')[0]}. What can I help you discover?`
-          ];
-          return {
-            text: greetings[Math.floor(Math.random() * greetings.length)] + "\n\nI can help you with:\n• Finding products\n• Order assistance\n• Delivery information\n• Payment options\n• Becoming a seller\n\nWhat interests you most?",
-            actions: [
-              {
-                label: "Shop Now",
-                action: () => window.open('/products', '_blank'),
-                icon: <ShoppingBag size={16} />
-              }
-            ]
-          };
-          
-        case 'ordering':
-          return {
-            text: "🛒 **Ready to shop?** Here's how easy it is:\n\n**Step 1:** Browse our amazing products\n**Step 2:** Add favorites to your cart\n**Step 3:** Secure checkout in minutes\n**Step 4:** Choose your payment method\n**Step 5:** Confirm and relax!\n\n✨ **Pro tip:** Create an account for faster checkout and order tracking!",
-            actions: [
-              {
-                label: "Start Shopping",
-                action: () => window.open('/products', '_blank'),
-                icon: <ShoppingBag size={16} />
-              },
-              {
-                label: "View Cart",
-                action: () => window.open('/cart', '_blank'),
-                icon: <Package size={16} />
-              }
-            ]
-          };
-          
-        case 'delivery':
-          return {
-            text: `🚚 **Delivery Made Simple!**\n\n⏱️ **Timeframe:** ${delivery.timeframe}\n📍 **Coverage:** ${company.location}\n📦 **Tracking:** ${delivery.trackingAvailable ? 'Real-time tracking available!' : 'Updates via SMS/email'}\n💰 **Fees:** ${delivery.feeInfo}\n\n🎯 **Fast, reliable, and secure delivery to your doorstep!**`,
-            actions: [
-              {
-                label: "Track Order",
-                action: () => window.open('/orders', '_blank'),
-                icon: <Package size={16} />
-              }
-            ]
-          };
-          
-        case 'payment':
-          return {
-            text: `💳 **Secure Payment Options:**\n\n${paymentMethods.map(method => `✅ ${method}`).join('\n')}\n\n🔒 **100% Secure:** All transactions are encrypted and protected\n💡 **Tip:** Mobile Money is the fastest option for instant confirmation!`,
-            actions: [
-              {
-                label: "Payment Help",
-                action: () => openWhatsApp("I need help with payment options"),
-                icon: <MessageSquare size={16} />
-              }
-            ]
-          };
-          
-        case 'vendor':
-          return {
-            text: `🏪 **Start Your Business Journey!**\n\n🎯 **Why Choose ${company.name}?**\n• ${vendorInfo.registrationFee}\n• ${vendorInfo.commission}\n• ${vendorInfo.canManageFromApp ? 'Full mobile app management' : 'Easy management tools'}\n• ${vendorInfo.paymentSchedule} payments\n\n🚀 **Join thousands of successful sellers today!**`,
-            actions: [
-              {
-                label: "Start Selling",
-                action: () => window.open('/seller/register', '_blank'),
-                icon: <ShoppingBag size={16} />
-              },
-              {
-                label: "Seller Support",
-                action: () => openWhatsApp("I want to become a seller on Iwanyu"),
-                icon: <MessageSquare size={16} />
-              }
-            ]
-          };
-          
-        case 'returns':
-          return {
-            text: `🔄 **Hassle-Free Returns**\n\n⏰ **Return Window:** ${returnPolicy.window}\n💰 **Shipping:** ${returnPolicy.returnShippingCost}\n🛡️ **Protection:** ${policies.refundPolicy}\n\n📝 **Easy Process:** Go to 'My Orders' → Select item → Request return`,
-            actions: [
-              {
-                label: "My Orders",
-                action: () => window.open('/orders', '_blank'),
-                icon: <Package size={16} />
-              },
-              {
-                label: "Return Help",
-                action: () => openWhatsApp("I need help with a return"),
-                icon: <MessageSquare size={16} />
-              }
-            ]
-          };
-          
-        case 'promotions':
-          return {
-            text: `🎉 **Amazing Deals Await!**\n\n💰 **Current Offers:** ${promotions.hasDiscounts ? 'Check our latest discounts!' : 'New deals coming soon!'}\n🎁 **Referral Program:** ${promotions.referralProgram}\n📱 **Stay Updated:** ${promotions.socialMediaUpdates ? 'Follow us on social media for exclusive deals!' : 'Enable notifications for deals!'}\n\n✨ **More savings, more shopping!**`,
-            actions: [
-              {
-                label: "View Deals",
-                action: () => window.open('/deals', '_blank'),
-                icon: <ShoppingBag size={16} />
-              }
-            ]
-          };
-          
-        case 'company':
-          return {
-            text: `🌟 **About ${company.name}**\n\n👨‍💼 **Founded by:** ${company.owner}\n🌍 **Location:** ${company.location}\n📱 **Mobile App:** ${company.hasApp ? 'Available for iOS & Android' : 'Coming soon!'}\n\n💫 **Our Mission:** ${company.description}\n\n🎯 **We're committed to connecting buyers and sellers across Rwanda with quality products and exceptional service!**`
-          };
-          
-        case 'support':
-          return {
-            text: `🤝 **We're Here to Help!**\n\n📧 **Email:** ${chatbotConfig.supportEmail}\n📞 **Phone:** ${chatbotConfig.hotlineNumber}\n💬 **WhatsApp:** Available 24/7\n\n🕒 **Business Hours:**\n• Weekdays: ${chatbotConfig.businessHours.weekdays}\n• Weekends: ${chatbotConfig.businessHours.weekends}\n\n⚡ **Fast response guaranteed!**`,
-            actions: [
-              {
-                label: "WhatsApp Now",
-                action: () => openWhatsApp("Hello! I need assistance with my inquiry."),
-                icon: <MessageSquare size={16} />
-              },
-              {
-                label: "Email Support",
-                action: () => window.open(`mailto:${chatbotConfig.supportEmail}`, '_blank'),
-                icon: <Mail size={16} />
-              }
-            ]
-          };
-          
-        case 'technical':
-          return {
-            text: `🔧 **Technical Support**\n\n🚀 **Quick Fixes:**\n• **Login Issues:** Try password reset\n• **App Problems:** Update to latest version\n• **Website Issues:** Clear browser cache\n• **Payment Errors:** Check internet connection\n\n💡 **Still need help?** Our tech team is ready to assist!`,
-            actions: [
-              {
-                label: "Tech Support",
-                action: () => openWhatsApp("I'm having technical issues with the website/app"),
-                icon: <MessageSquare size={16} />
-              }
-            ]
-          };
-      }
+    if (lowerMessage.includes('discount') || lowerMessage.includes('promo') || lowerMessage.includes('offer')) {
+      return { 
+        text: `Yes! We regularly offer discounts and promotions. ${promotions.referralProgram}. Follow our social media to never miss a deal!` 
+      };
     }
     
-    // Contextual follow-up questions
-    const contextualResponses = [
-      "I understand you're looking for information. Let me help you find exactly what you need! 🎯",
-      "Great question! I'm here to make your Iwanyu experience smooth and enjoyable. 😊",
-      "I'd love to assist you with that! Let me provide you with the best information. ✨"
-    ];
+    if (lowerMessage.includes('track') || lowerMessage.includes('order status')) {
+      return { 
+        text: "You can track your order! Once confirmed, you'll receive a tracking link or code to monitor progress.",
+        actions: [
+          {
+            label: "Track My Order",
+            action: () => window.open('/orders', '_blank'),
+            icon: <Package size={16} />
+          }
+        ]
+      };
+    }
     
-    // Intelligent fallback with suggestions
+    if (lowerMessage.includes('contact') || lowerMessage.includes('support') || lowerMessage.includes('help')) {
+      return { 
+        text: `You can reach us at ${chatbotConfig.supportEmail} or call ${chatbotConfig.hotlineNumber}. We're here ${chatbotConfig.businessHours.weekdays} on weekdays and ${chatbotConfig.businessHours.weekends} on weekends.`,
+        actions: [
+          {
+            label: "Email Support",
+            action: () => window.open(`mailto:${chatbotConfig.supportEmail}`, '_blank'),
+            icon: <Mail size={16} />
+          }
+        ]
+      };
+    }
+    
+    // Default response with helpful suggestions
     return {
-      text: `${contextualResponses[Math.floor(Math.random() * contextualResponses.length)]}\n\n🤖 **I can help you with:**\n\n🛍️ **Shopping:** Product search, ordering, cart management\n🚚 **Delivery:** Shipping info, tracking, delivery areas\n💳 **Payments:** Payment methods, security, billing\n🔄 **Returns:** Return policy, refunds, exchanges\n🏪 **Selling:** Vendor registration, store management\n📞 **Support:** Contact options, account help\n\n💬 **Try asking:** "How do I place an order?" or "What are your delivery options?"`,
+      text: "I'm here to help! I can assist you with:\n\n• Product information and ordering\n• Delivery and tracking\n• Payment methods\n• Returns and refunds\n• Becoming a seller\n• Account issues\n• Promotions and discounts\n\nWhat would you like to know?",
       actions: [
         {
-          label: "Popular Products",
+          label: "Browse Products",
           action: () => window.open('/products', '_blank'),
           icon: <ShoppingBag size={16} />
         },
         {
-          label: "Human Support",
-          action: () => openWhatsApp(`I need help with: ${message}`),
+          label: "Contact Support",
+          action: () => openWhatsApp("Hello! I need help with my inquiry."),
           icon: <MessageSquare size={16} />
-        },
-        {
-          label: "Browse Categories",
-          action: () => window.open('/categories', '_blank'),
-          icon: <Package size={16} />
         }
       ]
     };
@@ -525,36 +291,21 @@ const ChatBot: React.FC = () => {
     // Add user message
     addMessage(userMessage, false);
     
-    // Show typing indicator with realistic delay
+    // Show typing indicator
     setIsTyping(true);
     
-    // AI processing with learning
+    // Get smart response
     setTimeout(() => {
-      const response = getAIResponse(userMessage, messages);
-      
-      // Extract intent for learning (simplified version)
-      const lowerMessage = userMessage.toLowerCase();
-      let detectedIntent = 'general';
-      if (lowerMessage.includes('order') || lowerMessage.includes('buy')) detectedIntent = 'ordering';
-      else if (lowerMessage.includes('delivery') || lowerMessage.includes('ship')) detectedIntent = 'delivery';
-      else if (lowerMessage.includes('payment') || lowerMessage.includes('pay')) detectedIntent = 'payment';
-      else if (lowerMessage.includes('sell') || lowerMessage.includes('vendor')) detectedIntent = 'vendor';
-      else if (lowerMessage.includes('return') || lowerMessage.includes('refund')) detectedIntent = 'returns';
-      else if (lowerMessage.includes('discount') || lowerMessage.includes('promo')) detectedIntent = 'promotions';
-      
-      // Update AI learning
-      updateUserPreferences(userMessage, detectedIntent);
-      
-      // Add AI response with personalization
+      const response = getSmartResponse(userMessage);
       addMessage(response.text, true, response.actions);
       setIsTyping(false);
-    }, Math.random() * 1000 + 800); // Realistic thinking time: 0.8-1.8 seconds
+    }, 1000);
   };
 
   const initializeChat = () => {
     if (messages.length === 0) {
       setTimeout(() => {
-        addMessage(getPersonalizedGreeting(), true);
+        addMessage(chatbotResponses.greeting, true);
       }, 500);
     }
   };
