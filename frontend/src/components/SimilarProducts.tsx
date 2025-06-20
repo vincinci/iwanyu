@@ -26,9 +26,10 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
     try {
       setLoading(true);
       
-      // First try to get products from the same category
-      const }/products?category=${currentProduct.categoryId}&limit=${limit * 2}&exclude=${currentProduct.id}`
-      );
+              // First try to get products from the same category
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/products?category=${currentProduct.categoryId}&limit=${limit * 2}&exclude=${currentProduct.id}`
+        );
       
       const data = await response.json();
       let products = data.success ? data.data.products : [];

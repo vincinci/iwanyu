@@ -49,8 +49,8 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
       setLoading(reset);
       const currentPage = reset ? 1 : page;
       
-      const }/reviews/product/${productId}?page=${currentPage}&limit=10&rating=${filters.rating}&sortBy=${filters.sortBy}`);
-      const data = await response.json();
+              const response = await fetch(`${API_BASE_URL}/reviews/product/${productId}?page=${currentPage}&limit=10&rating=${filters.rating}&sortBy=${filters.sortBy}`);
+        const data = await response.json();
 
       if (data.success) {
         if (reset) {

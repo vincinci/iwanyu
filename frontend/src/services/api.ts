@@ -136,13 +136,13 @@ const throttledRequest = async <T>(request: () => Promise<T>): Promise<T> => {
 export const productsApi = {
   getAll: async (params: ProductsQueryParams = {}) => {
     return throttledRequest(async () => {
-      const  { params });
+      const response = await api.get('/products', { params });
       return response.data;
     });
   },
   getById: async (id: string) => {
     return throttledRequest(async () => {
-      const }`);
+      const response = await api.get(`/products/${id}`);
       return response.data;
     });
   },
@@ -152,13 +152,13 @@ export const productsApi = {
 export const categoriesApi = {
   getAll: async () => {
     return throttledRequest(async () => {
-      const 
+      const response = await api.get('/categories');
       return response.data;
     });
   },
   getById: async (id: string) => {
     return throttledRequest(async () => {
-      const }`);
+      const response = await api.get(`/categories/${id}`);
       return response.data;
     });
   },
@@ -168,25 +168,25 @@ export const categoriesApi = {
 export const authApi = {
   login: async (email: string, password: string) => {
     return throttledRequest(async () => {
-      const  { email, password });
+      const response = await api.post('/auth/login', { email, password });
       return response.data;
     });
   },
   register: async (userData: unknown) => {
     return throttledRequest(async () => {
-      const  userData);
+      const response = await api.post('/auth/register', userData);
       return response.data;
     });
   },
   validateToken: async () => {
     return throttledRequest(async () => {
-      const 
+      const response = await api.get('/auth/validate');
       return response.data;
     });
   },
   logout: async () => {
     return throttledRequest(async () => {
-      const 
+      const response = await api.post('/auth/logout');
       return response.data;
     });
   },

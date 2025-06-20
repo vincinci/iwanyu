@@ -98,7 +98,7 @@ export const getProductImageUrls = (product: { image?: string; images?: string[]
  */
 export const isImageAccessible = async (imageUrl: string): Promise<boolean> => {
   try {
-    const  { method: 'HEAD' });
+    const response = await fetch(imageUrl, { method: 'HEAD' });
     return response.ok;
   } catch {
     return false;

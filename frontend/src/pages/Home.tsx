@@ -261,11 +261,11 @@ const Home: React.FC = () => {
   // Fetch promoted products for home page - with error handling
   useEffect(() => {
     const fetchPromotedProducts = async () => {
-      setPromotedLoading(true);
-      try {
-        const  6);
-        if (response?.success && response?.data) {
-          setPromotedProducts(response.data);
+              setPromotedLoading(true);
+        try {
+          const response = await advertisementApi.getHomePageAds('HOME_FEATURED', 6);
+          if (response?.success && response?.data) {
+            setPromotedProducts(response.data);
         }
       } catch (error) {
         console.error('Error fetching promoted products:', error);
