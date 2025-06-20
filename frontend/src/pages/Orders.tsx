@@ -61,7 +61,7 @@ const Orders: React.FC = () => {
   // Get order details
   const fetchOrderDetails = async (orderId: string) => {
     try {
-      const 
+      const error = await response.json();
       setSelectedOrder(response.data);
       setShowOrderDetails(true);
     } catch (error) {

@@ -99,7 +99,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
     setIsUploadingImage(true);
     try {
-      const 
+      const error = await response.json();
       await refreshUser();
       setMessage({ type: 'success', text: 'Profile image updated successfully!' });
     } catch (error: unknown) {

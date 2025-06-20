@@ -23,7 +23,7 @@ import { getImageUrl } from '../utils/imageUtils';
 
 const AdminProducts: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState('');

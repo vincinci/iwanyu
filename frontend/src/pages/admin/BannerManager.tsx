@@ -52,7 +52,7 @@ const BannerManager: React.FC = () => {
     imageUrl: ''
   });
   const { showSuccess, showError } = useToast();
-  const 
+  const error = await response.json();
   const { user } = useAuth();
 
   // Admin protection

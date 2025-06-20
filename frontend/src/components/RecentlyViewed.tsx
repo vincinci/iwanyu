@@ -9,6 +9,8 @@ import { formatPrice } from '../utils/currency';
 import { getProductImageUrl } from '../utils/imageUtils';
 import type { Product } from '../types/api';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 interface RecentlyViewedProps {
   currentProductId?: string;
   limit?: number;
@@ -30,13 +32,11 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
       
       if (user) {
         // For logged-in users, get from database
-        const }/users/recently-viewed?limit=${limit}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+        const response = await fetch(`${API_BASE_URL}/users/recently-viewed?limit=${limit}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
-        );
+        });
         
         if (response.ok) {
           const data = await response.json();
@@ -62,8 +62,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
             // Fetch product details
             const productPromises = filteredIds.slice(0, limit).map(async (id: string) => {
               try {
-                const }/products/${id}`
-                );
+                const response = await fetch(`${API_BASE_URL}/products/${id}`);
                 if (response.ok) {
                   const data = await response.json();
                   return data.success ? data.data.product : null;

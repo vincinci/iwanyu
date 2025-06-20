@@ -11,7 +11,7 @@ import ProductImport from '../components/ProductImport';
 
 const SellerDashboard: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const [showImportModal, setShowImportModal] = React.useState(false);
 
   React.useEffect(() => {

@@ -12,7 +12,7 @@ import {
 
 const SellerFlashSales: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const [flashSales, setFlashSales] = useState<any[]>([]);
   const [discountedProducts, setDiscountedProducts] = useState<any[]>([]);
   const [selectedFlashSale, setSelectedFlashSale] = useState<string | null>(null);

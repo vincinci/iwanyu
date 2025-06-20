@@ -38,7 +38,7 @@ interface OrderItem {
 }
 
 const Checkout: React.FC = () => {
-  const 
+  const error = await response.json();
   const location = useLocation();
   const { user } = useAuth();
   const { items,  itemCount, addToCart } = useCart();
@@ -82,7 +82,7 @@ const Checkout: React.FC = () => {
       isGuest?: boolean;
     }) => {
       const token = localStorage.getItem('token');
-      const }/orders`, {
+      const response = await fetch(`${API_BASE_URL}/orders`); {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const Checkout: React.FC = () => {
       });
 
       if (!response.ok) {
-        const 
+        const error = await response.json();
         throw new Error(error.error || 'Failed to create order');
       }
 

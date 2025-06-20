@@ -26,7 +26,7 @@ import WithdrawForm from '../components/WithdrawForm';
 
 const SellerWallet: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const queryClient = useQueryClient();
   
   const [showBalance, setShowBalance] = useState(true);

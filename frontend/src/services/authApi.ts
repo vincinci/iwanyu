@@ -54,14 +54,14 @@ class AuthApi {
   }
 
   async updateProfile(data: UpdateProfileData): Promise<UpdateProfileResponse> {
-    const }/auth/profile`, {
+    const response = await fetch(`${API_BASE_URL}/auth/profile`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to update profile');
     }
 
@@ -69,12 +69,12 @@ class AuthApi {
   }
 
   async validateToken(): Promise<{ valid: boolean; user: User; token: string }> {
-    const }/auth/validate`, {
+    const response = await fetch(`${API_BASE_URL}/auth/validate`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Token validation failed');
     }
 
@@ -86,7 +86,7 @@ class AuthApi {
     const formData = new FormData();
     formData.append('avatar', file);
 
-    const }/auth/profile/avatar`, formData, {
+    const response = await axios.post(`${API_BASE_URL}/auth/profile/avatar`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
@@ -97,7 +97,7 @@ class AuthApi {
 
   async deleteProfileImage(): Promise<ProfileImageResponse> {
     const token = localStorage.getItem('token');
-    const }/auth/profile/avatar`, {
+    const response = await axios.delete(`${API_BASE_URL}/auth/profile/avatar`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

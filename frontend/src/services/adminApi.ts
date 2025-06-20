@@ -222,6 +222,8 @@ export interface OrdersResponse {
 }
 
 class AdminApi {
+  private baseUrl = API_BASE_URL;
+
   private getAuthHeaders() {
     const token = localStorage.getItem('token');
     return {
@@ -232,27 +234,16 @@ class AdminApi {
 
   // Dashboard
   async getDashboard(): Promise<AdminDashboard> {
-    const url = `${API_BASE_URL}/admin/dashboard`;
-    console.log('AdminApi.getDashboard: URL:', url);
-    console.log('AdminApi.getDashboard: API_BASE_URL:', API_BASE_URL);
-    console.log('AdminApi.getDashboard: Headers:', this.getAuthHeaders());
-    
-    const  {
+    const response = await fetch(`${this.baseUrl}/admin/dashboard`, {
       headers: this.getAuthHeaders(),
     });
 
-    console.log('AdminApi.getDashboard: Response status:', response.status);
-    console.log('AdminApi.getDashboard: Response ok:', response.ok);
-
     if (!response.ok) {
-      const 
-      console.error('AdminApi.getDashboard: Error response:', error);
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get dashboard data');
     }
 
-    const data = await response.json();
-    console.log('AdminApi.getDashboard: Success data:', data);
-    return data;
+    return response.json();
   }
 
   // User Management
@@ -268,12 +259,12 @@ class AdminApi {
     if (params.search) searchParams.set('search', params.search);
     if (params.role) searchParams.set('role', params.role);
 
-    const }/admin/users?${searchParams}`, {
+    const response = await fetch(`${this.baseUrl}/admin/users?${searchParams}`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get users');
     }
 
@@ -286,14 +277,14 @@ class AdminApi {
     lastName?: string;
     email?: string;
   }): Promise<{ message: string; user: AdminUser }> {
-    const }/admin/users/${id}`, {
+    const response = await fetch(`${this.baseUrl}/admin/users/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to update user');
     }
 
@@ -301,13 +292,13 @@ class AdminApi {
   }
 
   async deleteUser(id: string): Promise<{ message: string }> {
-    const }/admin/users/${id}`, {
+    const response = await fetch(`${this.baseUrl}/admin/users/${id}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to delete user');
     }
 
@@ -325,12 +316,12 @@ class AdminApi {
     if (params.limit) searchParams.set('limit', params.limit.toString());
     if (params.status) searchParams.set('status', params.status);
 
-    const }/admin/sellers?${searchParams}`, {
+    const response = await fetch(`${this.baseUrl}/admin/sellers?${searchParams}`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get sellers');
     }
 
@@ -338,14 +329,14 @@ class AdminApi {
   }
 
   async updateSellerStatus(id: string, status: string): Promise<{ message: string; seller: AdminSeller }> {
-    const }/admin/sellers/${id}/status`, {
+    const response = await fetch(`${this.baseUrl}/admin/sellers/${id}/status`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({ status }),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to update seller status');
     }
 
@@ -369,13 +360,13 @@ class AdminApi {
       viewUrl: string;
     };
   }> {
-    const }/admin/sellers/${id}/document`, {
+    const response = await fetch(`${this.baseUrl}/admin/sellers/${id}/document`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get seller document');
     }
 
@@ -395,12 +386,12 @@ class AdminApi {
     if (params.search) searchParams.set('search', params.search);
     if (params.status) searchParams.set('status', params.status);
 
-    const }/admin/products?${searchParams}`, {
+    const response = await fetch(`${this.baseUrl}/admin/products?${searchParams}`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get products');
     }
 
@@ -408,14 +399,14 @@ class AdminApi {
   }
 
   async updateProduct(id: string, data: unknown): Promise<{ message: string; product: AdminProduct }> {
-    const }/admin/products/${id}`, {
+    const response = await fetch(`${this.baseUrl}/admin/products/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to update product');
     }
 
@@ -423,13 +414,13 @@ class AdminApi {
   }
 
   async deleteProduct(id: string): Promise<{ message: string }> {
-    const }/admin/products/${id}`, {
+    const response = await fetch(`${this.baseUrl}/admin/products/${id}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to delete product');
     }
 
@@ -437,17 +428,14 @@ class AdminApi {
   }
 
   async bulkDeleteProducts(productIds: string[]): Promise<{ message: string; deletedCount: number }> {
-    const }/admin/products`, {
+    const response = await fetch(`${this.baseUrl}/admin/products/bulk-delete`, {
       method: 'DELETE',
-      headers: {
-        ...this.getAuthHeaders(),
-        'Content-Type': 'application/json',
-      },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify({ productIds }),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to delete products');
     }
 
@@ -456,12 +444,12 @@ class AdminApi {
 
   // Category Management
   async getCategories(): Promise<AdminCategory[]> {
-    const }/admin/categories`, {
+    const response = await fetch(`${this.baseUrl}/admin/categories`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get categories');
     }
 
@@ -473,14 +461,14 @@ class AdminApi {
     description?: string;
     image?: string;
   }): Promise<{ message: string; category: AdminCategory }> {
-    const }/admin/categories`, {
+    const response = await fetch(`${this.baseUrl}/admin/categories`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to create category');
     }
 
@@ -492,14 +480,14 @@ class AdminApi {
     description?: string;
     image?: string;
   }): Promise<{ message: string; category: AdminCategory }> {
-    const }/admin/categories/${id}`, {
+    const response = await fetch(`${this.baseUrl}/admin/categories/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to update category');
     }
 
@@ -507,13 +495,13 @@ class AdminApi {
   }
 
   async deleteCategory(id: string): Promise<{ message: string }> {
-    const }/admin/categories/${id}`, {
+    const response = await fetch(`${this.baseUrl}/admin/categories/${id}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to delete category');
     }
 
@@ -531,12 +519,12 @@ class AdminApi {
     if (params.limit) searchParams.set('limit', params.limit.toString());
     if (params.status) searchParams.set('status', params.status);
 
-    const }/admin/orders?${searchParams}`, {
+    const response = await fetch(`${this.baseUrl}/admin/orders?${searchParams}`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get orders');
     }
 
@@ -544,14 +532,14 @@ class AdminApi {
   }
 
   async updateOrderStatus(id: string, status: string): Promise<{ message: string; order: AdminOrder }> {
-    const }/admin/orders/${id}/status`, {
+    const response = await fetch(`${this.baseUrl}/admin/orders/${id}/status`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({ status }),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to update order status');
     }
 
@@ -571,7 +559,7 @@ class AdminApi {
     payoutMethod?: string;
     sortBy?: string;
     sortOrder?: string;
-  } = {}): Promise<any> {
+  } = {}): Promise<unknown> {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== '') {
@@ -579,13 +567,13 @@ class AdminApi {
       }
     });
 
-    const }/admin/payouts?${searchParams.toString()}`, {
+    const response = await fetch(`${this.baseUrl}/admin/payouts?${searchParams.toString()}`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get payouts');
     }
 
@@ -593,20 +581,20 @@ class AdminApi {
   }
 
   // Get seller wallet overview
-  async getSellerWallets(page = 1, limit = 20, search = ''): Promise<any> {
+  async getSellerWallets(page = 1, limit = 20, search = ''): Promise<unknown> {
     const searchParams = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
       search: search
     });
 
-    const }/admin/seller-wallets?${searchParams.toString()}`, {
+    const response = await fetch(`${this.baseUrl}/admin/seller-wallets?${searchParams.toString()}`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get seller wallets');
     }
 
@@ -614,14 +602,14 @@ class AdminApi {
   }
 
   // Get detailed seller wallet information
-  async getSellerWalletDetails(sellerId: string): Promise<any> {
-    const }/admin/seller-wallets/${sellerId}`, {
+  async getSellerWalletDetails(sellerId: string): Promise<unknown> {
+    const response = await fetch(`${this.baseUrl}/admin/seller-wallets/${sellerId}`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get seller wallet details');
     }
 
@@ -629,15 +617,15 @@ class AdminApi {
   }
 
   // Approve or reject payout request
-  async updatePayoutStatus(payoutId: string, status: 'APPROVED' | 'REJECTED', adminNotes?: string): Promise<any> {
-    const }/admin/payouts/${payoutId}/status`, {
+  async updatePayoutStatus(payoutId: string, status: 'APPROVED' | 'REJECTED', adminNotes?: string): Promise<unknown> {
+    const response = await fetch(`${this.baseUrl}/admin/payouts/${payoutId}/status`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({ status, adminNotes }),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to update payout status');
     }
 
@@ -652,15 +640,15 @@ class AdminApi {
     accountDetails: unknown;
     narration?: string;
     adminNotes?: string;
-  }): Promise<any> {
-    const }/admin/payouts/manual`, {
+  }): Promise<unknown> {
+    const response = await fetch(`${this.baseUrl}/admin/payouts/manual`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(payoutData),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to create manual payout');
     }
 
@@ -668,16 +656,16 @@ class AdminApi {
   }
 
   // Get payout analytics and summary
-  async getPayoutAnalytics(period: '7d' | '30d' | '90d' | '1y' = '30d'): Promise<any> {
+  async getPayoutAnalytics(period: '7d' | '30d' | '90d' | '1y' = '30d'): Promise<unknown> {
     const searchParams = new URLSearchParams({ period });
 
-    const }/admin/payouts/analytics?${searchParams.toString()}`, {
+    const response = await fetch(`${this.baseUrl}/admin/payouts/analytics?${searchParams.toString()}`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get payout analytics');
     }
 
@@ -698,7 +686,7 @@ class AdminApi {
     formData.append('csvFile', csvFile);
 
     const token = localStorage.getItem('token');
-    const }/admin/csv-import`, {
+    const response = await fetch(`${this.baseUrl}/admin/csv-import`, {
       method: 'POST',
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
@@ -707,7 +695,7 @@ class AdminApi {
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to import products');
     }
 

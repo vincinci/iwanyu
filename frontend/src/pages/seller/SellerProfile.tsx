@@ -18,7 +18,7 @@ interface FormData {
 
 const SellerProfile: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const [formData, setFormData] = useState<FormData>({
     businessName: '',
     businessEmail: '',

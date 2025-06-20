@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminTest: React.FC = () => {
   const { user, token } = useAuth();
-  const 
+  const error = await response.json();
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ const AdminTest: React.FC = () => {
       console.log('Token:', token);
       console.log('API Base URL:', API_BASE_URL);
 
-      const }/admin/dashboard`, {
+      const response = await fetch(`${API_BASE_URL}/admin/dashboard`); {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,

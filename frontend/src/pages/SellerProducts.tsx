@@ -20,7 +20,7 @@ import { getImageUrl } from '../utils/imageUtils';
 
 const SellerProducts: React.FC = () => {
   const { user, isLoading: authLoading } = useAuth();
-  const 
+  const error = await response.json();
   const queryClient = useQueryClient();
   const [selectedProduct, setSelectedProduct] = useState<SellerProduct | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);

@@ -27,7 +27,7 @@ interface ImportResults {
 
 const AdminCsvImport: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const { showSuccess, showError } = useToast();
   
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -65,7 +65,7 @@ const AdminCsvImport: React.FC = () => {
     setError(null);
 
     try {
-      const 
+      const error = await response.json();
       setResults(response.results);
       
       if (response.results.successful > 0) {

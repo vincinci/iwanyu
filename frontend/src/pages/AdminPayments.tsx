@@ -68,7 +68,7 @@ interface PayoutFilters {
 
 const AdminPayments: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const queryClient = useQueryClient();
 
   // State management

@@ -136,7 +136,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
 
   // Calculate total amount using actual price values (not cents)
-  const  item) => {
+  const item = items.reduce((total, item) => {
     const price = item.salePrice && item.salePrice < item.price ? item.salePrice : item.price;
     return total + (price * item.quantity);
   }, 0);

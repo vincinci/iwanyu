@@ -75,7 +75,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
 
     setSubmitting(true);
     try {
-      const }/reviews`, {
+      const response = await fetch(`${API_BASE_URL}/reviews`); {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
     if (!user) return;
 
     try {
-      const }/reviews/${reviewId}/helpful`, {
+      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}/helpful`); {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
 
     setSubmitting(true);
     try {
-      const }/reviews/${reviewId}`, {
+      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`); {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
     }
 
     try {
-      const }/reviews/${reviewId}`, {
+      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`); {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

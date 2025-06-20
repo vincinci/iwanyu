@@ -18,7 +18,7 @@ import { adminApi, type AdminUser } from '../services/adminApi';
 
 const AdminUsers: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState('');

@@ -10,8 +10,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login, user, isLoading } = useAuth();
-  const 
-
+  const error = await response.json();
   // Redirect authenticated users away from login page
   React.useEffect(() => {
     if (!isLoading && user) {

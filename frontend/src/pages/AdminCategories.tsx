@@ -16,7 +16,7 @@ import { adminApi, type AdminCategory } from '../services/adminApi';
 
 const AdminCategories: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const queryClient = useQueryClient();
 
   const [editingCategory, setEditingCategory] = useState<AdminCategory | null>(null);

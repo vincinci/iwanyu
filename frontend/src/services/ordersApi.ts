@@ -61,19 +61,19 @@ export const getUserOrders = async (params?: {
   if (params?.limit) searchParams.append('limit', params.limit.toString());
   if (params?.status) searchParams.append('status', params.status);
 
-  const }`);
+  const response = await api.get(`/orders?${searchParams}`);
   return response.data;
 };
 
 // Get specific order
 export const getOrder = async (orderId: string): Promise<OrderResponse> => {
-  const }`);
+  const response = await api.get(`/orders/${orderId}`);
   return response.data;
 };
 
 // Cancel order
 export const cancelOrder = async (orderId: string): Promise<{ success: boolean; message: string }> => {
-  const }/cancel`);
+  const response = await api.post(`/orders/${orderId}/cancel`);
   return response.data;
 };
 
@@ -88,7 +88,7 @@ export const createOrder = async (orderData: {
   notes?: string;
   isGuest?: boolean;
 }): Promise<{ success: boolean; data: { id: string } }> => {
-  const  orderData);
+  const response = await api.post('/orders', orderData);
   return response.data;
 };
 

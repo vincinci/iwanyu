@@ -93,10 +93,10 @@ class ReviewsApi {
     if (options.rating && options.rating !== 'all') params.append('rating', options.rating.toString());
     if (options.sortBy) params.append('sortBy', options.sortBy);
 
-    const }/reviews/product/${productId}?${params}`);
+    const response = await fetch(`${API_BASE_URL}/reviews/product/${productId}?${params}`);
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get reviews');
     }
 
@@ -104,14 +104,14 @@ class ReviewsApi {
   }
 
   async createReview(data: CreateReviewData): Promise<{ success: boolean; message: string; data: Review }> {
-    const }/reviews`, {
+    const response = await fetch(`${API_BASE_URL}/reviews`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to create review');
     }
 
@@ -122,14 +122,14 @@ class ReviewsApi {
     reviewId: string,
     data: UpdateReviewData
   ): Promise<{ success: boolean; message: string; data: Review }> {
-    const }/reviews/${reviewId}`, {
+    const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to update review');
     }
 
@@ -137,13 +137,13 @@ class ReviewsApi {
   }
 
   async deleteReview(reviewId: string): Promise<{ success: boolean; message: string }> {
-    const }/reviews/${reviewId}`, {
+    const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to delete review');
     }
 
@@ -154,14 +154,14 @@ class ReviewsApi {
     reviewId: string,
     isHelpful: boolean
   ): Promise<{ success: boolean; message: string; data: { helpfulCount: number } }> {
-    const }/reviews/${reviewId}/helpful`, {
+    const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}/helpful`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({ isHelpful }),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to record vote');
     }
 
@@ -184,12 +184,12 @@ class ReviewsApi {
     if (options.page) params.append('page', options.page.toString());
     if (options.limit) params.append('limit', options.limit.toString());
 
-    const }/reviews/user?${params}`, {
+    const response = await fetch(`${API_BASE_URL}/reviews/user?${params}`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const 
+      const error = await response.json();
       throw new Error(error.error || 'Failed to get user reviews');
     }
 

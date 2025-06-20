@@ -8,7 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 const ResetPassword: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const 
+  const error = await response.json();
   const token = searchParams.get('token');
 
   const [password, setPassword] = useState('');
@@ -28,7 +28,7 @@ const ResetPassword: React.FC = () => {
 
     const verifyToken = async () => {
       try {
-        const }/auth/verify-reset-token/${token}`);
+        const response = await fetch(`${API_BASE_URL}/auth/verify-reset-token/${token}`);
         if (response.ok) {
           setTokenValid(true);
         } else {
@@ -82,7 +82,7 @@ const ResetPassword: React.FC = () => {
     setLoading(true);
 
     try {
-      const }/auth/reset-password`, {
+      const response = await fetch(`${API_BASE_URL}/auth/reset-password`); {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

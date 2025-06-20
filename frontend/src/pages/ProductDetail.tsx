@@ -36,7 +36,7 @@ import { addToRecentlyViewed } from '../utils/recentlyViewed';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const 
+  const error = await response.json();
   const { user } = useAuth();
   const { showError } = useToast();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);

@@ -18,7 +18,7 @@ import { formatPrice } from '../utils/currency';
 
 const AdminOrders: React.FC = () => {
   const { user } = useAuth();
-  const 
+  const error = await response.json();
   const queryClient = useQueryClient();
 
   const [statusFilter, setStatusFilter] = useState('');
