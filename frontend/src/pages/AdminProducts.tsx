@@ -69,6 +69,11 @@ const AdminProducts: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       setEditingProduct(null);
+      console.log('✅ Product updated successfully');
+    },
+    onError: (error: any) => {
+      console.error('❌ Product update failed:', error);
+      setError(error.message || 'Failed to update product');
     },
   });
 
@@ -76,6 +81,11 @@ const AdminProducts: React.FC = () => {
     mutationFn: (id: string) => adminApi.deleteProduct(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      console.log('✅ Product deleted successfully');
+    },
+    onError: (error: any) => {
+      console.error('❌ Product deletion failed:', error);
+      setError(error.message || 'Failed to delete product');
     },
   });
 
@@ -85,8 +95,14 @@ const AdminProducts: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       setSelectedProducts([]);
       setShowBulkActions(false);
-      // You could add a toast notification here
-      console.log(data.message);
+      console.log('✅ Bulk delete successful:', data.message);
+    },
+    onError: (error: any) => {
+      console.error('❌ Bulk delete failed:', error);
+      setError(error.message || 'Failed to delete products');
+      // Reset selection on error
+      setSelectedProducts([]);
+      setShowBulkActions(false);
     },
   });
 
