@@ -118,7 +118,12 @@ app.use('/uploads', (req, res, next) => {
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Ecommerce API is running' });
+  res.json({ 
+    status: 'OK', 
+    message: 'Ecommerce API is running',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
 });
 
 // Routes
