@@ -28,7 +28,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
       
       // First try to get products from the same category
       let response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/products?category=${currentProduct.categoryId}&limit=${limit * 2}&exclude=${currentProduct.id}`
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/products?category=${currentProduct.categoryId}&limit=${limit * 2}&exclude=${currentProduct.id}`
       );
       
       let data = await response.json();
@@ -40,7 +40,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
         const priceMax = currentProduct.price * 1.5;
         
         const priceResponse = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/products?priceMin=${priceMin}&priceMax=${priceMax}&limit=${limit}&exclude=${currentProduct.id}`
+          `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/products?priceMin=${priceMin}&priceMax=${priceMax}&limit=${limit}&exclude=${currentProduct.id}`
         );
         
         const priceData = await priceResponse.json();
@@ -55,7 +55,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
       // If still not enough, get random popular products
       if (products.length < limit) {
         const popularResponse = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/products?sortBy=rating&limit=${limit}&exclude=${currentProduct.id}`
+          `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/products?sortBy=rating&limit=${limit}&exclude=${currentProduct.id}`
         );
         
         const popularData = await popularResponse.json();

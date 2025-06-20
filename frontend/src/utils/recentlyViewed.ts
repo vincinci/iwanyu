@@ -9,7 +9,7 @@ export const addToRecentlyViewed = async (productId: string, isLoggedIn: boolean
       // For logged-in users, send to backend
       const token = localStorage.getItem('token');
       if (token) {
-        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/recently-viewed`, {
+        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/users/recently-viewed`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

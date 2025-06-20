@@ -16,7 +16,7 @@ interface ReviewFilters {
   sortBy: 'newest' | 'oldest' | 'highest' | 'lowest' | 'helpful';
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, productPrice }) => {
   const { user } = useAuth();
@@ -50,7 +50,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
       setLoading(reset);
       const currentPage = reset ? 1 : page;
       
-      const response = await fetch(`${API_BASE_URL}/api/reviews/product/${productId}?page=${currentPage}&limit=10&rating=${filters.rating}&sortBy=${filters.sortBy}`);
+      const response = await fetch(`${API_BASE_URL}/reviews/product/${productId}?page=${currentPage}&limit=10&rating=${filters.rating}&sortBy=${filters.sortBy}`);
       const data = await response.json();
 
       if (data.success) {
@@ -76,7 +76,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
 
     setSubmitting(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/reviews`, {
+      const response = await fetch(`${API_BASE_URL}/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
     if (!user) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/helpful`, {
+      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}/helpful`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
 
     setSubmitting(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
+      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
+      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

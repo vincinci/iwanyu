@@ -852,7 +852,7 @@ router.post('/withdraw', authenticateToken, async (req: AuthRequest, res: Respon
           beneficiary_name: account_name,
           narration: payout.narration || undefined,
           reference: transferRef,
-          callback_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payouts/webhook`,
+          callback_url: `${process.env.BACKEND_URL || 'http://localhost:3001'}/api/payouts/webhook`,
           meta: {
             sellerId: seller.id,
             payoutId: payout.id,
@@ -946,7 +946,7 @@ router.post('/withdraw', authenticateToken, async (req: AuthRequest, res: Respon
           beneficiary_name: account_name,
           narration: payout.narration || undefined,
           reference: transferRef,
-          callback_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payouts/webhook`,
+          callback_url: `${process.env.BACKEND_URL || 'http://localhost:3001'}/api/payouts/webhook`,
           meta: {
             sender: 'Iwanyu Store',
             sender_country: 'RW',
