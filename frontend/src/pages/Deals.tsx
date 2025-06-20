@@ -155,21 +155,21 @@ const Deals: React.FC = () => {
 
   const handleAddToCart = (product: DealProduct) => {
     addToCart({
-      id: product.id,
-      name: product.name,
+      id: (product as any).id,
+      name: (product as any).name,
       price: product.originalPrice,
-      salePrice: product.salePrice,
-      images: product.images,
+      salePrice: (product as any).salePrice,
+      images: (product as any).images,
       stock: 50
     });
   };
 
   const handleToggleWishlist = async (product: DealProduct) => {
     try {
-      if (isInWishlist(product.id)) {
-        await removeFromWishlist(product.id);
+      if (isInWishlist((product as any).id)) {
+        await removeFromWishlist((product as any).id);
       } else {
-        await addToWishlist(product.id);
+        await addToWishlist((product as any).id);
       }
     } catch (error) {
       console.error('Error toggling wishlist:', error);
@@ -239,7 +239,7 @@ const Deals: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
           {activeDeals.map((product, index) => (
             <motion.div
-              key={product.id}
+              key={(product as any).id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.05 }}
@@ -248,8 +248,8 @@ const Deals: React.FC = () => {
               {/* Product Image */}
               <div className="relative h-20 md:h-24 overflow-hidden">
                 <img
-                  src={product.images[0]}
-                  alt={product.name}
+                  src={(product as any).images[0]}
+                  alt={(product as any).name}
                   className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                 />
                 
@@ -262,27 +262,27 @@ const Deals: React.FC = () => {
                 <button
                   onClick={() => handleToggleWishlist(product)}
                   className={`absolute top-1 right-1 p-1 rounded-full transition-all duration-200 ${
-                    isInWishlist(product.id)
+                    isInWishlist((product as any).id)
                       ? 'bg-red-500 text-white'
                       : 'bg-white/80 text-gray-600 hover:text-red-500'
                   }`}
                 >
-                  <Heart size={12} className={isInWishlist(product.id) ? 'fill-current' : ''} />
+                  <Heart size={12} className={isInWishlist((product as any).id) ? 'fill-current' : ''} />
                 </button>
               </div>
 
               {/* Product Info */}
               <div className="p-2">
-                <Link to={`/products/${product.id}`}>
+                <Link to={`/products/${(product as any).id}`}>
                   <h3 className="font-medium text-xs text-gray-900 mb-1 hover:text-red-500 transition-colors line-clamp-2">
-                    {product.name}
+                    {(product as any).name}
                   </h3>
                 </Link>
 
                 {/* Price and Add to Cart */}
                 <div className="text-center mb-2">
                   <div className="text-sm font-bold text-red-500">
-                    {formatPrice(product.salePrice)}
+                    {formatPrice((product as any).salePrice)}
                   </div>
                 </div>
                 <div className="flex justify-center">

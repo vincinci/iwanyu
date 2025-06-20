@@ -76,7 +76,7 @@ class OrdersApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch orders');
+      throw new Error((errorResponse as any).error || 'Failed to fetch orders');
     }
 
     return response.json();
@@ -90,7 +90,7 @@ class OrdersApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch order');
+      throw new Error((errorResponse as any).error || 'Failed to fetch order');
     }
 
     return response.json();
@@ -105,7 +105,7 @@ class OrdersApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update order status');
+      throw new Error((errorResponse as any).error || 'Failed to update order status');
     }
 
     return response.json();
@@ -120,7 +120,7 @@ class OrdersApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to cancel order');
+      throw new Error((errorResponse as any).error || 'Failed to cancel order');
     }
 
     return response.json();

@@ -77,7 +77,7 @@ class ReviewsApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch reviews');
+      throw new Error((errorResponse as any).error || 'Failed to fetch reviews');
     }
 
     return response.json();
@@ -98,7 +98,7 @@ class ReviewsApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to create review');
+      throw new Error((errorResponse as any).error || 'Failed to create review');
     }
 
     return response.json();
@@ -118,7 +118,7 @@ class ReviewsApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update review');
+      throw new Error((errorResponse as any).error || 'Failed to update review');
     }
 
     return response.json();
@@ -132,7 +132,7 @@ class ReviewsApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to delete review');
+      throw new Error((errorResponse as any).error || 'Failed to delete review');
     }
 
     return response.json();
@@ -147,7 +147,7 @@ class ReviewsApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to vote on review');
+      throw new Error((errorResponse as any).error || 'Failed to vote on review');
     }
 
     return response.json();
@@ -163,7 +163,7 @@ class ReviewsApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch review stats');
+      throw new Error((errorResponse as any).error || 'Failed to fetch review stats');
     }
 
     return response.json();
@@ -177,7 +177,7 @@ class ReviewsApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch user reviews');
+      throw new Error((errorResponse as any).error || 'Failed to fetch user reviews');
     }
 
     return response.json();

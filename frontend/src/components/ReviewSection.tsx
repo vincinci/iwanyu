@@ -121,7 +121,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
     }
   };
 
-  const handleEditReview = async (reviewId: string, reviewData: unknown) => {
+  const handleEditReview = async (reviewId: string, reviewData: any) => {
     if (!user) return;
 
     setSubmitting(true);
@@ -446,7 +446,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
                       </h4>
                       <div className="flex items-center space-x-2 mt-1">
                         {renderStars(review.rating)}
-                        {review.isVerifiedPurchase && (
+                        {(review as any).isVerifiedPurchase && (
                           <span className="inline-flex items-center text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
                             <ShoppingBag size={10} className="mr-1" />
                             Verified Purchase
@@ -598,7 +598,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
                         disabled={!user}
                       >
                         <ThumbsUp size={14} />
-                        <span>Yes ({review.helpfulCount})</span>
+                        <span>Yes ({(review as any).helpfulCount})</span>
                       </button>
                       <button
                         onClick={() => handleHelpfulVote(review.id, false)}

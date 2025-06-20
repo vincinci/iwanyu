@@ -536,7 +536,7 @@ const Account: React.FC = () => {
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Recent Orders</h2>
                   <div className="space-y-4">
-                    {recentOrders.map((order) => (
+                    {recentOrders.map((order: any) => (
                       <div key={order.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
                         <div className="flex items-center justify-between">
                           <div>

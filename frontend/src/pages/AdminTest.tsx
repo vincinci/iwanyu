@@ -40,7 +40,7 @@ const AdminTest: React.FC = () => {
       const data = await response.json();
       console.log('Dashboard data:', data);
       setDashboardData(data);
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error('Error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
     } finally {

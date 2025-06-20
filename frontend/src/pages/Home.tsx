@@ -66,6 +66,7 @@ import banner5 from '../assets/banners/banner-5.png';
 import ModernBanner from '../components/ModernBanner';
 
 const Home: React.FC = () => {
+  const prefetchEverything = () => {};
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [promotedProducts, setPromotedProducts] = useState<PromotedProduct[]>([]);
@@ -369,8 +370,8 @@ const Home: React.FC = () => {
           const parsedBanners = JSON.parse(savedBanners);
           // Only show active banners, sorted by order
           const activeBanners = parsedBanners
-            .filter((banner: unknown) => (banner as any).isActive)
-            .sort((a: unknown, b: unknown) => a.order - b.order);
+            .filter((banner: any) => (banner as any).isActive)
+            .sort((a: unknown, b: any) => a.order - b.order);
           setBanners(activeBanners);
         } else {
           // Use default banners
@@ -449,11 +450,11 @@ const Home: React.FC = () => {
     loadBanners();
 
     // Listen for banner updates from admin panel
-    const handleBannersUpdated = (event: unknown) => {
-      const updatedBanners = event.detail;
+    const handleBannersUpdated = (event: any) => {
+      const updatedBanners = (event as any).detail;
       const activeBanners = updatedBanners
-        .filter((banner: unknown) => (banner as any).isActive)
-        .sort((a: unknown, b: unknown) => a.order - b.order);
+        .filter((banner: any) => (banner as any).isActive)
+        .sort((a: unknown, b: any) => a.order - b.order);
       setBanners(activeBanners);
     };
 
@@ -497,7 +498,7 @@ const Home: React.FC = () => {
   };
 
   // Helper function to get product rating safely - now uses actual product data
-  const getProductRating = (product: unknown) => {
+  const getProductRating = (product: any) => {
     try {
       // Use actual product rating if available
       if ((product as any)?.avgRating && (product as any).avgRating > 0) {
@@ -621,7 +622,7 @@ const Home: React.FC = () => {
                   >
                     <div className="relative overflow-hidden">
                       <img
-                        src={product.images?.[0] || '/placeholder-product.jpg'}
+                        src={(product as any).images?.[0] || '/placeholder-product.jpg'}
                         alt={(product as any).name}
                         className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
@@ -632,9 +633,9 @@ const Home: React.FC = () => {
                       />
                       
                       {/* Discount Badge */}
-                      {calculateDiscount(product.price, product.salePrice) > 0 && (
+                      {calculateDiscount((product as any).price, (product as any).salePrice) > 0 && (
                         <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[10px]">
-                          -{calculateDiscount(product.price, product.salePrice)}%
+                          -{calculateDiscount((product as any).price, (product as any).salePrice)}%
                         </div>
                       )}
                     </div>
@@ -645,7 +646,7 @@ const Home: React.FC = () => {
                       </h3>
                       
                       <div className="text-sm font-bold text-gray-900">
-                        {formatPrice(product.price)}
+                        {formatPrice((product as any).price)}
                 </div>
               </div>
                   </Link>
@@ -705,9 +706,9 @@ const Home: React.FC = () => {
                   className="bg-white rounded-lg border hover:shadow-md transition-all duration-200 overflow-hidden group relative"
                 >
                   <Link to={`/products/${(product as any).id}`}>
-                    {product.images?.[0] ? (
+                    {(product as any).images?.[0] ? (
                       <img
-                        src={product.images[0]}
+                        src={(product as any).images[0]}
                         alt={(product as any).name}
                         className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
@@ -718,14 +719,14 @@ const Home: React.FC = () => {
                         }}
                       />
                     ) : null}
-                    <div className={`w-full h-20 md:h-24 bg-gray-100 flex items-center justify-center ${product.images?.[0] ? 'hidden' : ''}`}>
+                    <div className={`w-full h-20 md:h-24 bg-gray-100 flex items-center justify-center ${(product as any).images?.[0] ? 'hidden' : ''}`}>
                       <Package className="text-gray-400" size={16} />
                       </div>
                     
                     {/* Flash Sale Badge */}
-                    {(product.salePrice && product.salePrice < product.price) ? (
+                    {((product as any).salePrice && (product as any).salePrice < (product as any).price) ? (
                       <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
-                        -{calculateDiscount(product.price, product.salePrice)}%
+                        -{calculateDiscount((product as any).price, (product as any).salePrice)}%
                       </div>
                     ) : (
                       <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
@@ -740,7 +741,7 @@ const Home: React.FC = () => {
                         {(product as any).name}
                       </h3>
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
-                            {formatPrice(product.salePrice || product.price)}
+                            {formatPrice((product as any).salePrice || (product as any).price)}
                             </div>
                       <div className="flex gap-0.5 justify-center">
                         <button
@@ -799,7 +800,7 @@ const Home: React.FC = () => {
                   <Link to={`/products/${(product as any).id}`} className="block">
                     <div className="relative overflow-hidden">
                       <img
-                        src={product.images?.[0] || '/placeholder-product.jpg'}
+                        src={(product as any).images?.[0] || '/placeholder-product.jpg'}
                           alt={(product as any).name}
                         className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
@@ -810,9 +811,9 @@ const Home: React.FC = () => {
                       />
                       
                       {/* Discount Badge */}
-                      {calculateDiscount(product.price, product.salePrice) > 0 && (
+                      {calculateDiscount((product as any).price, (product as any).salePrice) > 0 && (
                         <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[10px]">
-                          -{calculateDiscount(product.price, product.salePrice)}%
+                          -{calculateDiscount((product as any).price, (product as any).salePrice)}%
                       </div>
                     )}
                     </div>
@@ -823,7 +824,7 @@ const Home: React.FC = () => {
                       </h3>
                       
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
-                        {formatPrice(product.salePrice || product.price)}
+                        {formatPrice((product as any).salePrice || (product as any).price)}
                       </div>
                       <div className="flex gap-0.5 justify-center">
                         <button
@@ -876,9 +877,9 @@ const Home: React.FC = () => {
                   className="bg-white rounded-lg border hover:shadow-md transition-all duration-200 overflow-hidden group"
                 >
                   <Link to={`/products/${(product as any).id}`} className="block relative">
-                    {product.images?.[0] ? (
+                    {(product as any).images?.[0] ? (
                       <img
-                        src={product.images[0]}
+                        src={(product as any).images[0]}
                         alt={(product as any).name}
                         className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
@@ -902,7 +903,7 @@ const Home: React.FC = () => {
                         {(product as any).name}
                       </h3>
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
-                        {formatPrice(product.salePrice || product.price)}
+                        {formatPrice((product as any).salePrice || (product as any).price)}
                       </div>
                       <div className="flex gap-0.5 justify-center">
                         <button

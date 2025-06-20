@@ -240,7 +240,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch dashboard data');
+      throw new Error((errorResponse as any).error || 'Failed to fetch dashboard data');
     }
 
     return response.json();
@@ -265,7 +265,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch users');
+      throw new Error((errorResponse as any).error || 'Failed to fetch users');
     }
 
     return response.json();
@@ -285,7 +285,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update user');
+      throw new Error((errorResponse as any).error || 'Failed to update user');
     }
 
     return response.json();
@@ -299,7 +299,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to delete user');
+      throw new Error((errorResponse as any).error || 'Failed to delete user');
     }
 
     return response.json();
@@ -322,7 +322,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch sellers');
+      throw new Error((errorResponse as any).error || 'Failed to fetch sellers');
     }
 
     return response.json();
@@ -337,7 +337,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update seller status');
+      throw new Error((errorResponse as any).error || 'Failed to update seller status');
     }
 
     return response.json();
@@ -369,7 +369,7 @@ class AdminApi {
         throw new Error('No document found for this seller');
       }
 
-      throw new Error(errorData.error || 'Failed to fetch seller document');
+      throw new Error((errorResponse as any).error || 'Failed to fetch seller document');
     }
 
     return response.json();
@@ -394,13 +394,13 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch products');
+      throw new Error((errorResponse as any).error || 'Failed to fetch products');
     }
 
     return response.json();
   }
 
-  async updateProduct(id: string, data: unknown): Promise<{ message: string; product: AdminProduct }> {
+  async updateProduct(id: string, data: any): Promise<{ message: string; product: AdminProduct }> {
     const response = await fetch(`${this.baseUrl}/admin/products/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
@@ -409,7 +409,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update product');
+      throw new Error((errorResponse as any).error || 'Failed to update product');
     }
 
     return response.json();
@@ -423,7 +423,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to delete product');
+      throw new Error((errorResponse as any).error || 'Failed to delete product');
     }
 
     return response.json();
@@ -438,7 +438,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to delete products');
+      throw new Error((errorResponse as any).error || 'Failed to delete products');
     }
 
     return response.json();
@@ -452,7 +452,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch categories');
+      throw new Error((errorResponse as any).error || 'Failed to fetch categories');
     }
 
     return response.json();
@@ -471,7 +471,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to create category');
+      throw new Error((errorResponse as any).error || 'Failed to create category');
     }
 
     return response.json();
@@ -490,7 +490,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update category');
+      throw new Error((errorResponse as any).error || 'Failed to update category');
     }
 
     return response.json();
@@ -504,7 +504,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to delete category');
+      throw new Error((errorResponse as any).error || 'Failed to delete category');
     }
 
     return response.json();
@@ -527,7 +527,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch orders');
+      throw new Error((errorResponse as any).error || 'Failed to fetch orders');
     }
 
     return response.json();
@@ -542,7 +542,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update order status');
+      throw new Error((errorResponse as any).error || 'Failed to update order status');
     }
 
     return response.json();
@@ -573,7 +573,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch payouts');
+      throw new Error((errorResponse as any).error || 'Failed to fetch payouts');
     }
 
     return response.json();
@@ -592,7 +592,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch seller wallets');
+      throw new Error((errorResponse as any).error || 'Failed to fetch seller wallets');
     }
 
     return response.json();
@@ -606,7 +606,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch seller wallet details');
+      throw new Error((errorResponse as any).error || 'Failed to fetch seller wallet details');
     }
 
     return response.json();
@@ -621,7 +621,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update payout status');
+      throw new Error((errorResponse as any).error || 'Failed to update payout status');
     }
 
     return response.json();
@@ -643,7 +643,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to create manual payout');
+      throw new Error((errorResponse as any).error || 'Failed to create manual payout');
     }
 
     return response.json();
@@ -657,7 +657,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to fetch payout analytics');
+      throw new Error((errorResponse as any).error || 'Failed to fetch payout analytics');
     }
 
     return response.json();
@@ -686,7 +686,7 @@ class AdminApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to import products');
+      throw new Error((errorResponse as any).error || 'Failed to import products');
     }
 
     return response.json();

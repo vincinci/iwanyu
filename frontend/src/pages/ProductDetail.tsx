@@ -51,7 +51,7 @@ const ProductDetail: React.FC = () => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   // Helper function to get product rating from actual data
-  const getProductRating = (product: unknown) => {
+  const getProductRating = (product: any) => {
     // Use actual product rating if available
     if ((product as any)?.avgRating && (product as any).avgRating > 0) {
       return parseFloat((product as any).avgRating.toFixed(1));
@@ -70,10 +70,10 @@ const ProductDetail: React.FC = () => {
   }, [product, id, user]);
 
   // Check if product is in wishlist
-  const productInWishlist = product ? isInWishlist(product.id) : false;
+  const productInWishlist = product ? isInWishlist((product as any).id) : false;
 
   // Group variants by name (Size, Color, etc.)
-  const variantGroups = product?.variants?.reduce((groups: Record<string, ProductVariant[]>, variant: ProductVariant) => {
+  const variantGroups = (product as any)?.variants?.reduce((groups: Record<string, ProductVariant[]>, variant: ProductVariant) => {
     if (!groups[variant.name]) {
       groups[variant.name] = [];
     }
@@ -89,13 +89,13 @@ const ProductDetail: React.FC = () => {
     let variantPrice: number | null = null;
     
     Object.entries(selectedVariants).forEach(([variantName, variantValue]) => {
-      const variant = product.variants?.find((v: ProductVariant) => v.name === variantName && v.value === variantValue);
-      if (variant && variant.price && variant.price !== product.price) {
+      const variant = (product as any).variants?.find((v: ProductVariant) => v.name === variantName && v.value === variantValue);
+      if (variant && variant.price && variant.price !== (product as any).price) {
         variantPrice = variant.price;
       }
     });
     
-    const basePrice = product.salePrice && product.salePrice < product.price ? product.salePrice : product.price;
+    const basePrice = (product as any).salePrice && (product as any).salePrice < (product as any).price ? (product as any).salePrice : (product as any).price;
     return variantPrice || basePrice;
   };
 
@@ -104,15 +104,15 @@ const ProductDetail: React.FC = () => {
     if (!product) return 0;
     
     // If no variants selected or no variants exist, return base product stock
-    if (Object.keys(selectedVariants).length === 0 || !product.variants?.length) {
-      return product.stock;
+    if (Object.keys(selectedVariants).length === 0 || !(product as any).variants?.length) {
+      return (product as any).stock;
     }
     
     // Find the minimum stock among selected variants
-    let minStock = product.stock;
+    let minStock = (product as any).stock;
     
     Object.entries(selectedVariants).forEach(([variantName, variantValue]) => {
-      const variant = product.variants?.find((v: ProductVariant) => v.name === variantName && v.value === variantValue);
+      const variant = (product as any).variants?.find((v: ProductVariant) => v.name === variantName && v.value === variantValue);
       if (variant) {
         minStock = Math.min(minStock, variant.stock);
       }
@@ -182,10 +182,10 @@ const ProductDetail: React.FC = () => {
     
     try {
       if (productInWishlist) {
-        await removeFromWishlist(product.id);
+        await removeFromWishlist((product as any).id);
         console.log('✅ Successfully removed from wishlist');
       } else {
-        await addToWishlist(product.id);
+        await addToWishlist((product as any).id);
         console.log('✅ Successfully added to wishlist');
       }
     } catch (error) {
@@ -201,8 +201,8 @@ const ProductDetail: React.FC = () => {
 
   const handleShare = async () => {
     const shareData = {
-      title: product.name,
-      text: `Check out this ${product.name} - ${formatPrice(getCurrentPrice())}`,
+      title: (product as any).name,
+      text: `Check out this ${(product as any).name} - ${formatPrice(getCurrentPrice())}`,
       url: window.location.href,
     };
 
@@ -235,8 +235,8 @@ const ProductDetail: React.FC = () => {
 
   const handleSocialShare = (platform: string) => {
     const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`Check out this ${product.name} - ${formatPrice(getCurrentPrice())}`);
-    const title = encodeURIComponent(product.name);
+    const text = encodeURIComponent(`Check out this ${(product as any).name} - ${formatPrice(getCurrentPrice())}`);
+    const title = encodeURIComponent((product as any).name);
     
     let shareUrl = '';
     
@@ -294,9 +294,9 @@ const ProductDetail: React.FC = () => {
 
   const currentPrice = getCurrentPrice();
   const currentStock = getCurrentStock();
-  const hasDiscount = product?.salePrice && product.salePrice < product.price;
-  const discountPercentage = hasDiscount ? Math.round(((product.price - product.salePrice!) / product.price) * 100) : 0;
-  const itemInCart = getItemQuantity(product?.id || '');
+  const hasDiscount = (product as any)?.salePrice && (product as any).salePrice < (product as any).price;
+  const discountPercentage = hasDiscount ? Math.round((((product as any).price - (product as any).salePrice!) / (product as any).price) * 100) : 0;
+  const itemInCart = getItemQuantity((product as any)?.id || '');
   const hasVariants = Object.keys(variantGroups).length > 0;
 
   return (
@@ -308,7 +308,7 @@ const ProductDetail: React.FC = () => {
           <span>/</span>
           <Link to="/products" className="hover:text-gray-600">Products</Link>
           <span>/</span>
-          <span className="text-gray-900">{product.name}</span>
+          <span className="text-gray-900">{(product as any).name}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
@@ -326,7 +326,7 @@ const ProductDetail: React.FC = () => {
                 return imageUrls.length > 0 ? (
                   <img
                     src={imageUrls[selectedImageIndex] || imageUrls[0]}
-                    alt={product.name}
+                    alt={(product as any).name}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -354,7 +354,7 @@ const ProductDetail: React.FC = () => {
                     >
                       <img
                         src={imageUrl}
-                        alt={`${product.name} ${index + 1}`}
+                        alt={`${(product as any).name} ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -455,7 +455,7 @@ const ProductDetail: React.FC = () => {
 
             {/* Title - Mobile responsive */}
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-              {product.name}
+              {(product as any).name}
             </h1>
 
             {/* Product Rating and Reviews - Only show if ratings exist */}
@@ -474,7 +474,7 @@ const ProductDetail: React.FC = () => {
                   <div className="flex items-center space-x-4 text-sm text-gray-600">
                     <span className="flex items-center">
                       <Star size={14} className="text-yellow-400 fill-current mr-1" />
-                      {(product as any).avgRating.toFixed(1)} ({product.totalReviews || 0} reviews)
+                      {(product as any).avgRating.toFixed(1)} ({(product as any).totalReviews || 0} reviews)
                     </span>
                   </div>
                 </div>
@@ -503,7 +503,7 @@ const ProductDetail: React.FC = () => {
                 {hasDiscount && (
                   <>
                     <span className="text-xl text-gray-500 line-through">
-                      {formatPrice(product.price)}
+                      {formatPrice((product as any).price)}
                     </span>
                     <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-sm font-medium">
                       {discountPercentage}% OFF
@@ -513,7 +513,7 @@ const ProductDetail: React.FC = () => {
               </div>
               {hasDiscount && (
                 <p className="text-black text-sm mt-1">
-                  You save {formatPrice(product.price - currentPrice)}
+                  You save {formatPrice((product as any).price - currentPrice)}
                 </p>
               )}
             </div>
@@ -620,8 +620,8 @@ const ProductDetail: React.FC = () => {
                     {selectedVariants[variantName] && (
                       (() => {
                         const selectedVariant = (variants as ProductVariant[]).find((v: ProductVariant) => v.value === selectedVariants[variantName]);
-                        const priceDiff = selectedVariant?.price && selectedVariant.price !== product.price 
-                          ? selectedVariant.price - product.price 
+                        const priceDiff = selectedVariant?.price && selectedVariant.price !== (product as any).price 
+                          ? selectedVariant.price - (product as any).price 
                           : 0;
                         
                         return priceDiff !== 0 ? (
@@ -696,8 +696,8 @@ const ProductDetail: React.FC = () => {
       {/* Reviews Section */}
       <div className="container mx-auto px-4 py-8">
         <ReviewSection 
-          productId={product.id} 
-          productName={product.name}
+          productId={(product as any).id} 
+          productName={(product as any).name}
           productPrice={getCurrentPrice()}
         />
       </div>

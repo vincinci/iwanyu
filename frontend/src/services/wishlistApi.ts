@@ -55,7 +55,7 @@ class WishlistApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to get wishlist');
+      throw new Error((errorResponse as any).error || 'Failed to get wishlist');
     }
 
     return response.json();
@@ -75,7 +75,7 @@ class WishlistApi {
     if (!response.ok) {
 
       console.error('❌ API Error response:', error);
-      throw new Error(errorData.error || 'Failed to add to wishlist');
+      throw new Error((errorResponse as any).error || 'Failed to add to wishlist');
     }
 
     const result = await response.json();
@@ -91,7 +91,7 @@ class WishlistApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to remove from wishlist');
+      throw new Error((errorResponse as any).error || 'Failed to remove from wishlist');
     }
 
     return response.json();
@@ -105,7 +105,7 @@ class WishlistApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to clear wishlist');
+      throw new Error((errorResponse as any).error || 'Failed to clear wishlist');
     }
 
     return response.json();
@@ -118,7 +118,7 @@ class WishlistApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to check wishlist status');
+      throw new Error((errorResponse as any).error || 'Failed to check wishlist status');
     }
 
     return response.json();
@@ -133,7 +133,7 @@ class WishlistApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to move to cart');
+      throw new Error((errorResponse as any).error || 'Failed to move to cart');
     }
 
     return response.json();

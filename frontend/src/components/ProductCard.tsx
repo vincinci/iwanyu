@@ -41,10 +41,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
     e.stopPropagation();
     
     try {
-      if (isInWishlist(product.id)) {
-        await removeFromWishlist(product.id);
+      if (isInWishlist((product as any).id)) {
+        await removeFromWishlist((product as any).id);
       } else {
-        await addToWishlist(product.id);
+        await addToWishlist((product as any).id);
       }
     } catch (error) {
       console.error('Error updating wishlist:', error);
@@ -85,12 +85,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
           <button
             onClick={handleWishlistToggle}
             className={`absolute top-1 right-1 p-1.5 rounded-full transition-colors ${
-              isInWishlist(product.id)
+              isInWishlist((product as any).id)
                 ? 'bg-red-100 text-red-600'
                 : 'bg-white/80 text-gray-600 hover:bg-red-100 hover:text-red-600'
             }`}
           >
-            <Heart size={14} className={isInWishlist(product.id) ? 'fill-current' : ''} />
+            <Heart size={14} className={isInWishlist((product as any).id) ? 'fill-current' : ''} />
           </button>
           
           {stock === 0 && (

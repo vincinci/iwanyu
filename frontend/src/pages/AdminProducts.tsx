@@ -56,7 +56,7 @@ const AdminProducts: React.FC = () => {
   });
 
   const updateProductMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: unknown }) => adminApi.updateProduct(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => adminApi.updateProduct(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       setEditingProduct(null);
@@ -81,7 +81,7 @@ const AdminProducts: React.FC = () => {
     },
   });
 
-  const handleUpdateProduct = (productData: unknown) => {
+  const handleUpdateProduct = (productData: any) => {
     if (editingProduct) {
       updateProductMutation.mutate({ id: editingProduct.id, data: productData });
     }
@@ -302,35 +302,35 @@ const AdminProducts: React.FC = () => {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {data.products.map((product) => (
-                      <tr key={product.id} className="hover:bg-gray-50">
+                      <tr key={(product as any).id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <input
                             type="checkbox"
-                            checked={selectedProducts.includes(product.id)}
-                            onChange={() => handleSelectProduct(product.id)}
+                            checked={selectedProducts.includes((product as any).id)}
+                            onChange={() => handleSelectProduct((product as any).id)}
                             className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            {getImageUrl(product.image) && (
+                            {getImageUrl((product as any).image) && (
                               <img
-                                src={getImageUrl(product.image)!}
-                                alt={product.name}
+                                src={getImageUrl((product as any).image)!}
+                                alt={(product as any).name}
                                 className="w-10 h-10 rounded-lg object-cover mr-3"
                               />
                             )}
                             <div>
                               <div className="text-sm font-medium text-gray-900">
-                                {product.name}
+                                {(product as any).name}
                               </div>
                               <div className="text-sm text-gray-500">
                                 {product.category.name} • {product.sku || 'No SKU'}
                               </div>
-                              {product.variants && product.variants.length > 0 && (
+                              {(product as any).variants && (product as any).variants.length > 0 && (
                                 <div className="text-xs text-blue-600 mt-1">
-                                  {product.variants.length} variant{product.variants.length !== 1 ? 's' : ''} 
-                                  ({product.variants.map(v => `${v.name}:${v.value}`).join(', ')})
+                                  {(product as any).variants.length} variant{(product as any).variants.length !== 1 ? 's' : ''} 
+                                  ({(product as any).variants.map(v => `${v.name}:${v.value}`).join(', ')})
                                 </div>
                               )}
                               {product.featured && (
@@ -344,24 +344,24 @@ const AdminProducts: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            {formatPrice(product.price)}
+                            {formatPrice((product as any).price)}
                           </div>
-                          {product.salePrice && (
+                          {(product as any).salePrice && (
                             <div className="text-sm text-green-600">
-                              Sale: {formatPrice(product.salePrice)}
+                              Sale: {formatPrice((product as any).salePrice)}
                             </div>
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className={`text-sm font-medium ${
-                            product.stock > 10 ? 'text-green-600' : 
-                            product.stock > 0 ? 'text-gray-600' : 'text-red-600'
+                            (product as any).stock > 10 ? 'text-green-600' : 
+                            (product as any).stock > 0 ? 'text-gray-600' : 'text-red-600'
                           }`}>
-                            {product.stock} units
+                            {(product as any).stock} units
                           </div>
-                          {product.variants && product.variants.length > 0 && (
+                          {(product as any).variants && (product as any).variants.length > 0 && (
                             <div className="text-xs text-gray-500 mt-1">
-                              Variants: {product.variants.map(v => `${v.value}(${v.stock})`).join(', ')}
+                              Variants: {(product as any).variants.map(v => `${v.value}(${v.stock})`).join(', ')}
                             </div>
                           )}
                         </td>
@@ -390,15 +390,15 @@ const AdminProducts: React.FC = () => {
                               onClick={() => setEditingProduct(product)}
                               className="text-gray-600 hover:text-orange-900"
                               title="Edit product"
-                              aria-label={`Edit product ${product.name}`}
+                              aria-label={`Edit product ${(product as any).name}`}
                             >
                               <Edit3 className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleDeleteProduct(product.id)}
+                              onClick={() => handleDeleteProduct((product as any).id)}
                               className="text-red-600 hover:text-red-900"
                               title="Delete product"
-                              aria-label={`Delete product ${product.name}`}
+                              aria-label={`Delete product ${(product as any).name}`}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>

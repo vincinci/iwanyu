@@ -26,33 +26,33 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
     const category = product.category?.name.toLowerCase() || '';
     
     if (category.includes('shoe') || category.includes('footwear')) {
-      return `Experience premium comfort and style with these exceptional ${product.name}. Crafted with high-quality materials and innovative design, these shoes offer superior comfort for all-day wear. Features include breathable construction, durable outsole, and contemporary styling that complements any outfit. Perfect for both casual and semi-formal occasions.`;
+      return `Experience premium comfort and style with these exceptional ${(product as any).name}. Crafted with high-quality materials and innovative design, these shoes offer superior comfort for all-day wear. Features include breathable construction, durable outsole, and contemporary styling that complements any outfit. Perfect for both casual and semi-formal occasions.`;
     }
     
     if (category.includes('clothing') || category.includes('apparel') || category.includes('shirt') || category.includes('t-shirt')) {
-      return `Discover the perfect blend of comfort and style with this premium ${product.name}. Made from high-quality materials that ensure durability and comfort throughout the day. Features modern cut and design that flatters all body types. Easy care fabric that maintains its shape and color wash after wash. A versatile piece that's perfect for any wardrobe.`;
+      return `Discover the perfect blend of comfort and style with this premium ${(product as any).name}. Made from high-quality materials that ensure durability and comfort throughout the day. Features modern cut and design that flatters all body types. Easy care fabric that maintains its shape and color wash after wash. A versatile piece that's perfect for any wardrobe.`;
     }
     
     if (category.includes('electronics') || category.includes('tech')) {
-      return `Experience cutting-edge technology with the ${product.name}. This premium device combines innovative features with user-friendly design to deliver exceptional performance. Built with high-quality components for reliability and longevity. Features advanced functionality that enhances your daily activities while maintaining ease of use.`;
+      return `Experience cutting-edge technology with the ${(product as any).name}. This premium device combines innovative features with user-friendly design to deliver exceptional performance. Built with high-quality components for reliability and longevity. Features advanced functionality that enhances your daily activities while maintaining ease of use.`;
     }
     
     if (category.includes('home') || category.includes('kitchen')) {
-      return `Transform your space with the premium ${product.name}. Expertly designed to combine functionality with aesthetic appeal. Made from high-quality materials that ensure durability and long-lasting performance. Features thoughtful design elements that enhance both form and function in your home.`;
+      return `Transform your space with the premium ${(product as any).name}. Expertly designed to combine functionality with aesthetic appeal. Made from high-quality materials that ensure durability and long-lasting performance. Features thoughtful design elements that enhance both form and function in your home.`;
     }
     
     if (category.includes('sports') || category.includes('fitness')) {
-      return `Elevate your performance with the ${product.name}. Engineered for athletes and fitness enthusiasts who demand the best. Features advanced materials and design that enhance performance while providing comfort and durability. Perfect for training, competition, or recreational activities.`;
+      return `Elevate your performance with the ${(product as any).name}. Engineered for athletes and fitness enthusiasts who demand the best. Features advanced materials and design that enhance performance while providing comfort and durability. Perfect for training, competition, or recreational activities.`;
     }
     
-    return `Discover the exceptional quality and craftsmanship of the ${product.name}. This premium product combines innovative design with superior materials to deliver outstanding performance and value. Features thoughtful details and construction that ensure long-lasting satisfaction and reliability.`;
+    return `Discover the exceptional quality and craftsmanship of the ${(product as any).name}. This premium product combines innovative design with superior materials to deliver outstanding performance and value. Features thoughtful details and construction that ensure long-lasting satisfaction and reliability.`;
   };
 
   const getSpecifications = () => {
     const specs = [
       { label: 'Brand', value: product.brand || 'Premium Brand', icon: <Star size={16} /> },
       { label: 'SKU', value: product.sku || 'N/A', icon: <Package size={16} /> },
-      { label: 'Stock', value: `${product.stock} available`, icon: <Package size={16} /> }
+      { label: 'Stock', value: `${(product as any).stock} available`, icon: <Package size={16} /> }
     ];
 
     // Add category-specific specs
@@ -80,10 +80,10 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
     }
 
     // Add variants as specifications
-    if (product.variants && product.variants.length > 0) {
-      const variantTypes = [...new Set(product.variants.map(v => v.name))];
+    if ((product as any).variants && (product as any).variants.length > 0) {
+      const variantTypes = [...new Set((product as any).variants.map(v => v.name))];
       variantTypes.forEach(type => {
-        const values = product.variants!
+        const values = (product as any).variants!
           .filter(v => v.name === type)
           .map(v => v.value)
           .join(', ');

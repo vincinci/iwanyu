@@ -28,9 +28,9 @@ const ProductImage: React.FC<ProductImageProps> = ({
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.warn('Image failed to load:', {
       src: e.currentTarget.src,
-      product: product.name,
-      originalImage: product.image,
-      allImages: product.images
+      product: (product as any).name,
+      originalImage: (product as any).image,
+      allImages: (product as any).images
     });
     setImageError(true);
   };
@@ -51,7 +51,7 @@ const ProductImage: React.FC<ProductImageProps> = ({
       {imageUrl && !imageError && (
         <img
           src={imageUrl}
-          alt={product.name}
+          alt={(product as any).name}
           className={`${className} transition-opacity duration-300 ${
             imageLoaded ? 'opacity-100' : 'opacity-0'
           }`}

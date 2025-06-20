@@ -198,7 +198,7 @@ const AdminOrders: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {data.orders.map((order) => (
+                    {data.orders.map((order: any) => (
                       <tr key={order.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
@@ -224,7 +224,7 @@ const AdminOrders: React.FC = () => {
                           <div className="text-sm text-gray-900">
                             {order.orderItems.slice(0, 2).map((item, index) => (
                               <div key={index} className="mb-1">
-                                {item.quantity}x {item.product.name}
+                                {item.quantity}x {(item as any).product.name}
                               </div>
                             ))}
                             {order.orderItems.length > 2 && (
@@ -353,7 +353,7 @@ const AdminOrders: React.FC = () => {
                   {selectedOrder.orderItems.map((item, index) => (
                     <div key={index} className="flex justify-between items-center p-3 border-b last:border-b-0 border-gray-200">
                       <div>
-                        <p className="font-medium text-gray-900">{item.product.name}</p>
+                        <p className="font-medium text-gray-900">{(item as any).product.name}</p>
                         <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                       </div>
                       <div className="text-right">
@@ -370,10 +370,10 @@ const AdminOrders: React.FC = () => {
                   <span>Total:</span>
                   <span>{formatPrice(selectedOrder.total)}</span>
                 </div>
-                {selectedOrder.subtotal && (
+                {(selectedOrder as any).subtotal && (
                   <div className="flex justify-between text-sm text-gray-600 mt-1">
                     <span>Subtotal:</span>
-                    <span>{formatPrice(selectedOrder.subtotal)}</span>
+                    <span>{formatPrice((selectedOrder as any).subtotal)}</span>
                   </div>
                 )}
               </div>

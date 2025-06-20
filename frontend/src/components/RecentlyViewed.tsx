@@ -161,7 +161,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
           {recentProducts.map((product) => (
-            <div key={product.id} className="flex-shrink-0 w-1/3">
+            <div key={(product as any).id} className="flex-shrink-0 w-1/3">
               <RecentProductCard product={product} />
             </div>
           ))}
@@ -171,7 +171,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
       {/* Mobile Grid View */}
       <div className="md:hidden grid grid-cols-2 gap-4">
         {recentProducts.slice(0, 4).map((product) => (
-          <RecentProductCard key={product.id} product={product} compact />
+          <RecentProductCard key={(product as any).id} product={product} compact />
         ))}
       </div>
     </div>
@@ -189,9 +189,9 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   
   const imageUrl = getProductImageUrl(product);
-  const hasDiscount = product.salePrice && product.salePrice < product.price;
-  const discountPercentage = hasDiscount ? Math.round(((product.price - product.salePrice!) / product.price) * 100) : 0;
-  const finalPrice = product.salePrice || product.price;
+  const hasDiscount = (product as any).salePrice && (product as any).salePrice < (product as any).price;
+  const discountPercentage = hasDiscount ? Math.round((((product as any).price - (product as any).salePrice!) / (product as any).price) * 100) : 0;
+  const finalPrice = (product as any).salePrice || (product as any).price;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -209,10 +209,10 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
     e.stopPropagation();
     
     try {
-      if (isInWishlist(product.id)) {
-        await removeFromWishlist(product.id);
+      if (isInWishlist((product as any).id)) {
+        await removeFromWishlist((product as any).id);
       } else {
-        await addToWishlist(product.id);
+        await addToWishlist((product as any).id);
       }
     } catch (error) {
       console.error('Error updating wishlist:', error);
@@ -226,13 +226,13 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
       whileHover={{ y: -2 }}
       className="group bg-white rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-200 overflow-hidden"
     >
-      <Link to={`/products/${product.id}`} className="block">
+      <Link to={`/products/${(product as any).id}`} className="block">
         {/* Product Image */}
         <div className={`relative ${compact ? 'h-24' : 'h-32'} bg-gray-50 overflow-hidden`}>
           {imageUrl ? (
             <img
               src={imageUrl}
-              alt={product.name}
+              alt={(product as any).name}
               className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
             />
@@ -253,12 +253,12 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
           <button
             onClick={handleWishlistToggle}
             className={`absolute top-1 right-1 p-1 rounded-full transition-colors ${
-              isInWishlist(product.id)
+              isInWishlist((product as any).id)
                 ? 'bg-red-100 text-red-600'
                 : 'bg-white/80 text-gray-600 hover:bg-red-100 hover:text-red-600'
             }`}
           >
-            <Heart size={12} className={isInWishlist(product.id) ? 'fill-current' : ''} />
+            <Heart size={12} className={isInWishlist((product as any).id) ? 'fill-current' : ''} />
           </button>
         </div>
 
@@ -267,23 +267,23 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
           <h3 className={`font-medium text-gray-900 group-hover:text-gray-700 transition-colors ${
             compact ? 'text-xs line-clamp-2' : 'text-sm line-clamp-1'
           } mb-1`}>
-            {product.name}
+            {(product as any).name}
           </h3>
 
           {/* Rating */}
-          {product.avgRating > 0 && (
+          {(product as any).avgRating > 0 && (
             <div className="flex items-center mb-1">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     size={10}
-                    className={i < Math.floor(product.avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"}
+                    className={i < Math.floor((product as any).avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"}
                   />
                 ))}
               </div>
               <span className="text-xs text-gray-500 ml-1">
-                ({product.totalReviews})
+                ({(product as any).totalReviews})
               </span>
             </div>
           )}
@@ -296,14 +296,14 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
               </span>
               {hasDiscount && (
                 <span className={`text-gray-500 line-through ${compact ? 'text-xs' : 'text-xs'}`}>
-                  {formatPrice(product.price)}
+                  {formatPrice((product as any).price)}
                 </span>
               )}
             </div>
           </div>
 
           {/* Action Buttons */}
-          {product.stock > 0 && (
+          {(product as any).stock > 0 && (
             <button
               onClick={handleAddToCart}
               className="w-full bg-gray-600 hover:bg-gray-700 text-white py-1.5 px-2 rounded text-xs font-medium transition-colors duration-200 flex items-center justify-center"

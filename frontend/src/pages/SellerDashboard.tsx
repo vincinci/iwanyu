@@ -290,10 +290,10 @@ const SellerDashboard: React.FC = () => {
                   <div key={orderItem.id} className="p-6 hover:bg-gray-50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        {product.image ? (
+                        {(product as any).image ? (
                           <img
-                            src={product.image}
-                            alt={product.name || 'Product'}
+                            src={(product as any).image}
+                            alt={(product as any).name || 'Product'}
                             className="w-12 h-12 object-cover rounded-lg"
                           />
                         ) : (
@@ -304,7 +304,7 @@ const SellerDashboard: React.FC = () => {
                         
                         <div>
                           <h3 className="font-medium text-gray-900">
-                            {product.name || 'Unknown Product'}
+                            {(product as any).name || 'Unknown Product'}
                           </h3>
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <User className="w-4 h-4" />

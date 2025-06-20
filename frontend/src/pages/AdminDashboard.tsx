@@ -398,7 +398,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {dashboard.recentOrders.slice(0, 5).map((order) => (
+                {dashboard.recentOrders.slice(0, 5).map((order: any) => (
                   <div key={order.id} className="p-6 hover:bg-gray-50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">

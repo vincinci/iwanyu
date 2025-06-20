@@ -63,18 +63,18 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {products.slice(0, 6).map((product: Product, index: number) => (
               <motion.div
-                key={product.id}
+                key={(product as any).id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: index * 0.05 }}
                 className="bg-white rounded-lg border border-gray-200 hover:border-gray-400 hover:shadow-lg transition-all duration-200 overflow-hidden group"
               >
                 <div className="relative">
-                  <Link to={`/products/${product.id}`}>
-                    {product.images && product.images.length > 0 ? (
+                  <Link to={`/products/${(product as any).id}`}>
+                    {(product as any).images && (product as any).images.length > 0 ? (
                       <img
-                        src={product.images[0]}
-                        alt={product.name}
+                        src={(product as any).images[0]}
+                        alt={(product as any).name}
                         className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-200"
                         loading={index < 3 ? "eager" : "lazy"}
                         decoding="async"
@@ -87,9 +87,9 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                   </Link>
                   
                   {/* Enhanced Sale Badge */}
-                  {product.salePrice && product.salePrice < product.price && (
+                  {(product as any).salePrice && (product as any).salePrice < (product as any).price && (
                     <span className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs px-2 py-1 rounded-full font-medium shadow-md">
-                      -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
+                      -{Math.round((((product as any).price - (product as any).salePrice) / (product as any).price) * 100)}%
                     </span>
                   )}
 
@@ -102,7 +102,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                   )}
 
                   {/* Stock Badge */}
-                  {product.stock === 0 && (
+                  {(product as any).stock === 0 && (
                     <span className="absolute top-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded-full font-medium">
                       Out of Stock
                     </span>
@@ -111,15 +111,15 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                   {/* Enhanced Quick Add to Cart Button */}
                   <button
                     onClick={(e) => handleAddToCart(product, e)}
-                    disabled={product.stock === 0}
+                    disabled={(product as any).stock === 0}
                     className="absolute bottom-1 right-1 bg-gray-500 hover:bg-gray-600 text-white p-1 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-110"
-                    title={product.stock === 0 ? 'Out of stock' : 'Quick add to cart'}
+                    title={(product as any).stock === 0 ? 'Out of stock' : 'Quick add to cart'}
                   >
-                    {isInCart(product.id) ? (
+                    {isInCart((product as any).id) ? (
                       <div className="flex items-center">
                         <ShoppingCart size={12} />
-                        {getItemQuantity(product.id) > 1 && (
-                          <span className="ml-0.5 text-xs font-bold">{getItemQuantity(product.id)}</span>
+                        {getItemQuantity((product as any).id) > 1 && (
+                          <span className="ml-0.5 text-xs font-bold">{getItemQuantity((product as any).id)}</span>
                         )}
                       </div>
                     ) : (
@@ -129,9 +129,9 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                 </div>
                 
                 <div className="p-4">
-                  <Link to={`/products/${product.id}`} className="block">
+                  <Link to={`/products/${(product as any).id}`} className="block">
                     <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2 leading-tight h-10 group-hover:text-gray-700 transition-colors">
-                      {product.name}
+                      {(product as any).name}
                     </h3>
                     
                     {/* Seller name */}
@@ -145,12 +145,12 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                     )}
                     
                     {/* Enhanced Rating */}
-                    {product.avgRating > 0 && (
+                    {(product as any).avgRating > 0 && (
                       <div className="flex items-center mb-2">
                         <div className="flex items-center">
                           <Star className="w-3 h-3 text-yellow-400 fill-current" />
                           <span className="text-xs text-gray-600 ml-1">
-                            {product.avgRating.toFixed(1)} ({product.totalReviews})
+                            {(product as any).avgRating.toFixed(1)} ({(product as any).totalReviews})
                           </span>
                         </div>
                       </div>
@@ -159,30 +159,30 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                     {/* Enhanced Price Display */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        {product.salePrice && product.salePrice < product.price ? (
+                        {(product as any).salePrice && (product as any).salePrice < (product as any).price ? (
                           <>
                             <span className="text-sm font-bold text-red-600">
-                              {formatPrice(product.salePrice)}
+                              {formatPrice((product as any).salePrice)}
                             </span>
                             <span className="text-xs text-gray-500 line-through">
-                              {formatPrice(product.price)}
+                              {formatPrice((product as any).price)}
                             </span>
                           </>
                         ) : (
                           <span className="text-sm font-bold text-gray-900">
-                            {formatPrice(product.price)}
+                            {formatPrice((product as any).price)}
                           </span>
                         )}
                       </div>
                       
                       <span className={`text-xs px-2 py-1 rounded-full ${
-                        product.stock > 10 
+                        (product as any).stock > 10 
                           ? 'bg-green-100 text-green-800' 
-                          : product.stock > 0 
+                          : (product as any).stock > 0 
                           ? 'bg-gray-100 text-gray-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {product.stock > 10 ? '✓' : product.stock > 0 ? product.stock : '✗'}
+                        {(product as any).stock > 10 ? '✓' : (product as any).stock > 0 ? (product as any).stock : '✗'}
                       </span>
                     </div>
                   </Link>

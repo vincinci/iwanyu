@@ -48,7 +48,7 @@ const Checkout: React.FC = () => {
   const [directPurchase, setDirectPurchase] = useState<{
     productId: string;
     quantity: number;
-    productData: unknown | null;
+    productData: any | null;
     selectedVariants?: Array<{
       variantName: string;
       variantValue: string;
@@ -103,7 +103,7 @@ const Checkout: React.FC = () => {
       const orderId = data.data.id;
       initiatePayment(orderId);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Order creation failed:', error);
       setIsProcessing(false);
       alert(error.message || 'Failed to place order. Please try again.');
@@ -161,8 +161,8 @@ const Checkout: React.FC = () => {
         
         // Check if a variant with different pricing is selected
         if (directPurchase.selectedVariants && directPurchase.selectedVariants.length > 0) {
-          const selectedVariant = directPurchase.productData?.variants?.find((v: unknown) => 
-            v.id === directPurchase.selectedVariants![0].variantId
+          const selectedVariant = directPurchase.productData?.variants?.find((v: any) => 
+            (v as any).id === directPurchase.selectedVariants![0].variantId
           );
           if (selectedVariant && selectedVariant.price && selectedVariant.price > 0) {
             productPrice = selectedVariant.price;
@@ -746,7 +746,7 @@ const Checkout: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    items.map((item) => (
+                    items.map((item: any) => (
                       <div key={item.id} className="flex items-center space-x-3">
                         <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
                           {item.image ? (

@@ -60,7 +60,7 @@ const AdminCategories: React.FC = () => {
   });
 
   const updateCategoryMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: unknown }) => 
+    mutationFn: ({ id, data }: { id: string; data: any }) => 
       adminApi.updateCategory(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
@@ -75,11 +75,11 @@ const AdminCategories: React.FC = () => {
     },
   });
 
-  const handleCreateCategory = (categoryData: unknown) => {
+  const handleCreateCategory = (categoryData: any) => {
     createCategoryMutation.mutate(categoryData);
   };
 
-  const handleUpdateCategory = (categoryData: unknown) => {
+  const handleUpdateCategory = (categoryData: any) => {
     if (editingCategory) {
       updateCategoryMutation.mutate({ id: editingCategory.id, data: categoryData });
     }

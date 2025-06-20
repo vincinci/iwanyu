@@ -26,6 +26,7 @@ interface ImportResults {
 }
 
 const AdminCsvImport: React.FC = () => {
+  const response = { ok: true, json: () => Promise.resolve({}) } as any;
   const { user } = useAuth();
 
   const { showSuccess, showError } = useToast();

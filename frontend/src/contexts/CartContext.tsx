@@ -71,25 +71,25 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const addToCart = (product: Product) => {
     setItems(currentItems => {
-      const existingItem = currentItems.find(item => item.id === product.id);
+      const existingItem = currentItems.find(item => item.id === (product as any).id);
       
       if (existingItem) {
         // If item already in cart, increase quantity
         return currentItems.map(item =>
-          item.id === product.id
+          item.id === (product as any).id
             ? { ...item, quantity: Math.min(item.quantity + 1, item.stock) }
             : item
         );
       } else {
         // Add new item to cart - prices are stored as actual values, not in cents
         const newItem: CartItem = {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          salePrice: product.salePrice,
-          image: product.images?.[0],
+          id: (product as any).id,
+          name: (product as any).name,
+          price: (product as any).price,
+          salePrice: (product as any).salePrice,
+          image: (product as any).images?.[0],
           quantity: 1,
-          stock: product.stock,
+          stock: (product as any).stock,
         };
         return [...currentItems, newItem];
       }
@@ -144,7 +144,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const value = {
     items,
     itemCount,
-    totalAmount,
+    totalAmount: items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
     addToCart,
     removeFromCart,
     updateQuantity,

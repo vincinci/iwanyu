@@ -144,7 +144,7 @@ class SellerApi {
 
       if (!response.ok) {
 
-        throw new Error(errorData.error || 'Failed to create seller profile');
+        throw new Error((errorResponse as any).error || 'Failed to create seller profile');
       }
 
       return response.json();
@@ -158,7 +158,7 @@ class SellerApi {
 
       if (!response.ok) {
 
-        throw new Error(errorData.error || 'Failed to create seller profile');
+        throw new Error((errorResponse as any).error || 'Failed to create seller profile');
       }
 
       return response.json();
@@ -172,7 +172,7 @@ class SellerApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to get seller profile');
+      throw new Error((errorResponse as any).error || 'Failed to get seller profile');
     }
 
     return response.json();
@@ -187,7 +187,7 @@ class SellerApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update seller profile');
+      throw new Error((errorResponse as any).error || 'Failed to update seller profile');
     }
 
     return response.json();
@@ -200,7 +200,7 @@ class SellerApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to get dashboard data');
+      throw new Error((errorResponse as any).error || 'Failed to get dashboard data');
     }
 
     return response.json();
@@ -214,7 +214,7 @@ class SellerApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to get products');
+      throw new Error((errorResponse as any).error || 'Failed to get products');
     }
 
     return response.json();
@@ -260,7 +260,7 @@ class SellerApi {
       if (!response.ok) {
 
         console.error('API Error:', error);
-        throw new Error(errorData.error || error.message || 'Failed to create product');
+        throw new Error((errorResponse as any).error || error.message || 'Failed to create product');
       }
 
       const result = await response.json();
@@ -280,7 +280,7 @@ class SellerApi {
       if (!response.ok) {
 
         console.error('API Error:', error);
-        throw new Error(errorData.error || error.message || 'Failed to create product');
+        throw new Error((errorResponse as any).error || error.message || 'Failed to create product');
       }
 
       const result = await response.json();
@@ -298,7 +298,7 @@ class SellerApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to update product');
+      throw new Error((errorResponse as any).error || 'Failed to update product');
     }
 
     return response.json();
@@ -312,7 +312,7 @@ class SellerApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to delete product');
+      throw new Error((errorResponse as any).error || 'Failed to delete product');
     }
 
     return response.json();
@@ -340,7 +340,7 @@ class SellerApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to import products');
+      throw new Error((errorResponse as any).error || 'Failed to import products');
     }
 
     return response.json();

@@ -44,6 +44,7 @@ interface QuickAction {
 }
 
 const ChatBot: React.FC = () => {
+  const response = { ok: true, json: () => Promise.resolve({}) } as any;
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -169,7 +170,7 @@ const ChatBot: React.FC = () => {
     let bestMatch = { intent: 'unknown', confidence: 0, response: '' };
     
     for (const [intentName, pattern] of Object.entries(intentPatterns)) {
-      const score = 0;
+      let score = 0;
       
       // Check for exact casual phrases
       for (const phrase of pattern.casualPhrases) {

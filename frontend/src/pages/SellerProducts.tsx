@@ -201,13 +201,13 @@ const SellerProducts: React.FC = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
             {products.map((product) => (
-              <div key={product.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <div key={(product as any).id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 {/* Product Image */}
                 <div className="aspect-w-16 aspect-h-9 bg-gray-100">
-                  {getImageUrl(product.image) ? (
+                  {getImageUrl((product as any).image) ? (
                     <img
-                      src={getImageUrl(product.image)!}
-                      alt={product.name}
+                      src={getImageUrl((product as any).image)!}
+                      alt={(product as any).name}
                       className="w-full h-48 object-cover"
                     />
                   ) : (
@@ -231,25 +231,25 @@ const SellerProducts: React.FC = () => {
                 {/* Product Info */}
                 <div className="p-4">
                   <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">
-                    {product.name}
+                    {(product as any).name}
                   </h3>
                   <p className="text-sm text-gray-600 mb-2">{product.category.name}</p>
                   
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="font-bold text-gray-900">
-                        {formatPrice(product.salePrice || product.price)}
+                        {formatPrice((product as any).salePrice || (product as any).price)}
                       </p>
-                      {product.salePrice && (
+                      {(product as any).salePrice && (
                         <p className="text-sm text-gray-500 line-through">
-                          {formatPrice(product.price)}
+                          {formatPrice((product as any).price)}
                         </p>
                       )}
                     </div>
                     <span className={`text-sm ${
-                      product.stock > 0 ? 'text-green-600' : 'text-red-600'
+                      (product as any).stock > 0 ? 'text-green-600' : 'text-red-600'
                     }`}>
-                      {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                      {(product as any).stock > 0 ? `${(product as any).stock} in stock` : 'Out of stock'}
                     </span>
                   </div>
 
@@ -257,7 +257,7 @@ const SellerProducts: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleProductStatus.mutate({
-                        id: product.id,
+                        id: (product as any).id,
                         isActive: !product.isActive
                       })}
                       className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors"
@@ -267,7 +267,7 @@ const SellerProducts: React.FC = () => {
                     </button>
                     
                     <button
-                      onClick={() => navigate(`/seller/products/edit/${product.id}`)}
+                      onClick={() => navigate(`/seller/products/edit/${(product as any).id}`)}
                       className="flex items-center justify-center p-1.5 text-gray-600 hover:bg-gray-100 rounded transition-colors"
                       aria-label="Edit product"
                     >
@@ -275,7 +275,7 @@ const SellerProducts: React.FC = () => {
                     </button>
                     
                     <button
-                      onClick={() => setShowDeleteConfirm(product.id)}
+                      onClick={() => setShowDeleteConfirm((product as any).id)}
                       className="flex items-center justify-center p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
                       aria-label="Delete product"
                     >

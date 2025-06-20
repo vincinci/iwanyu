@@ -44,7 +44,7 @@ const AdminUsers: React.FC = () => {
   });
 
   const updateUserMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: unknown }) => adminApi.updateUser(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => adminApi.updateUser(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       setEditingUser(null);
@@ -57,13 +57,13 @@ const AdminUsers: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       setDeletingUser(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Delete user error:', error);
       alert(`Failed to delete user: ${error instanceof Error ? error.message : 'Unknown error'}`);
     },
   });
 
-  const handleUpdateUser = (userData: unknown) => {
+  const handleUpdateUser = (userData: any) => {
     if (editingUser) {
       updateUserMutation.mutate({ id: editingUser.id, data: userData });
     }

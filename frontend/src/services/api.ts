@@ -69,7 +69,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
+  (error: any) => {
     console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
@@ -78,7 +78,7 @@ api.interceptors.request.use(
 // Handle response errors and auto-logout on 401
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
+  async (error: any) => {
     const originalRequest = error.config;
     
     console.log('API Error intercepted:', {
@@ -172,7 +172,7 @@ export const authApi = {
       return response.data;
     });
   },
-  register: async (userData: unknown) => {
+  register: async (userData: any) => {
     return throttledRequest(async () => {
       const response = await api.post('/auth/register', userData);
       return response.data;

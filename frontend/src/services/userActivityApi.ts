@@ -88,7 +88,7 @@ class UserActivityApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to get recently viewed products');
+      throw new Error((errorResponse as any).error || 'Failed to get recently viewed products');
     }
 
     return response.json();
@@ -102,7 +102,7 @@ class UserActivityApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to record product view');
+      throw new Error((errorResponse as any).error || 'Failed to record product view');
     }
 
     return response.json();
@@ -116,7 +116,7 @@ class UserActivityApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to clear recently viewed products');
+      throw new Error((errorResponse as any).error || 'Failed to clear recently viewed products');
     }
 
     return response.json();
@@ -136,7 +136,7 @@ class UserActivityApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to get product comparisons');
+      throw new Error((errorResponse as any).error || 'Failed to get product comparisons');
     }
 
     return response.json();
@@ -160,7 +160,7 @@ class UserActivityApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to add product to comparisons');
+      throw new Error((errorResponse as any).error || 'Failed to add product to comparisons');
     }
 
     return response.json();
@@ -174,7 +174,7 @@ class UserActivityApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to remove product from comparisons');
+      throw new Error((errorResponse as any).error || 'Failed to remove product from comparisons');
     }
 
     return response.json();
@@ -188,7 +188,7 @@ class UserActivityApi {
 
     if (!response.ok) {
 
-      throw new Error(errorData.error || 'Failed to clear comparisons');
+      throw new Error((errorResponse as any).error || 'Failed to clear comparisons');
     }
 
     return response.json();

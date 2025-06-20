@@ -102,7 +102,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
       await refreshUser();
       setMessage({ type: 'success', text: 'Profile image updated successfully!' });
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Upload error:', error);
       setMessage({ 
         type: 'error', 
@@ -124,7 +124,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       await authApi.deleteProfileImage();
       await refreshUser();
       setMessage({ type: 'success', text: 'Profile image removed successfully!' });
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Delete error:', error);
       setMessage({ 
         type: 'error', 

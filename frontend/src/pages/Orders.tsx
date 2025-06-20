@@ -63,7 +63,7 @@ const Orders: React.FC = () => {
   const fetchOrderDetails = async (orderId: string) => {
     try {
 
-      setSelectedOrder(response.data);
+      setSelectedOrder((response as any).data);
       setShowOrderDetails(true);
     } catch (error) {
       console.error('Failed to fetch order details:', error);
@@ -120,7 +120,7 @@ const Orders: React.FC = () => {
 
   const canCancelOrder = (order: Order) => {
     return ['PENDING', 'CONFIRMED'].includes(order.status) && 
-           ['PENDING', 'PROCESSING'].includes(order.paymentStatus);
+           ['PENDING', 'PROCESSING'].includes((order as any).paymentStatus);
   };
 
   const handleCancelOrder = (orderId: string) => {
@@ -250,7 +250,7 @@ const Orders: React.FC = () => {
         ) : (
           <div className="space-y-4">
             <AnimatePresence>
-              {orders.map((order) => (
+              {orders.map((order: any) => (
                 <motion.div
                   key={order.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -301,13 +301,13 @@ const Orders: React.FC = () => {
 
                     {/* Order Items Preview */}
                     <div className="flex space-x-4 overflow-x-auto pb-2">
-                      {order.orderItems.slice(0, 3).map((item) => (
+                      {order.orderItems.slice(0, 3).map((item: any) => (
                         <div key={item.id} className="flex-shrink-0 flex items-center space-x-3 bg-gray-50 rounded-lg p-3">
                           <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
-                            {item.product.images?.[0] ? (
+                            {(item as any).product.images?.[0] ? (
                               <img
                                 src={getProductImageUrl(item.product) || ''}
-                                alt={item.product.name}
+                                alt={(item as any).product.name}
                                 className="w-full h-full object-cover"
                               />
                             ) : (
@@ -318,7 +318,7 @@ const Orders: React.FC = () => {
                           </div>
                           <div>
                             <p className="text-sm font-medium text-gray-900 truncate max-w-32">
-                              {item.product.name}
+                              {(item as any).product.name}
                             </p>
                             <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
                           </div>
@@ -436,10 +436,10 @@ const Orders: React.FC = () => {
                         <span className="text-gray-600">Order Date:</span>
                         <span className="font-medium">{formatDate(selectedOrder.createdAt)}</span>
                       </div>
-                      {selectedOrder.trackingNumber && (
+                      {(selectedOrder as any).trackingNumber && (
                         <div className="flex justify-between">
                           <span className="text-gray-600">Tracking Number:</span>
-                          <span className="font-medium">{selectedOrder.trackingNumber}</span>
+                          <span className="font-medium">{(selectedOrder as any).trackingNumber}</span>
                         </div>
                       )}
                     </div>
@@ -472,13 +472,13 @@ const Orders: React.FC = () => {
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3">Order Items</h3>
                   <div className="space-y-3">
-                    {selectedOrder.orderItems.map((item) => (
+                    {selectedOrder.orderItems.map((item: any) => (
                       <div key={item.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
                         <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
-                          {item.product.images?.[0] ? (
+                          {(item as any).product.images?.[0] ? (
                             <img
                               src={getProductImageUrl(item.product) || ''}
-                              alt={item.product.name}
+                              alt={(item as any).product.name}
                               className="w-full h-full object-cover"
                             />
                           ) : (
@@ -488,7 +488,7 @@ const Orders: React.FC = () => {
                           )}
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-900">{item.product.name}</h4>
+                          <h4 className="font-medium text-gray-900">{(item as any).product.name}</h4>
                           <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                           <p className="text-sm text-gray-600">Price: {formatPrice(item.price)}</p>
                         </div>
@@ -508,12 +508,12 @@ const Orders: React.FC = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Subtotal:</span>
-                      <span className="font-medium">{formatPrice(selectedOrder.subtotal)}</span>
+                      <span className="font-medium">{formatPrice((selectedOrder as any).subtotal)}</span>
                     </div>
-                    {selectedOrder.discount > 0 && (
+                    {(selectedOrder as any).discount > 0 && (
                       <div className="flex justify-between">
                         <span className="text-gray-600">Discount:</span>
-                        <span className="font-medium text-green-600">-{formatPrice(selectedOrder.discount)}</span>
+                        <span className="font-medium text-green-600">-{formatPrice((selectedOrder as any).discount)}</span>
                       </div>
                     )}
                     <div className="flex justify-between">
@@ -536,10 +536,10 @@ const Orders: React.FC = () => {
                 </div>
 
                 {/* Notes */}
-                {selectedOrder.notes && (
+                {(selectedOrder as any).notes && (
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-3">Order Notes</h3>
-                    <p className="text-gray-600 bg-gray-50 p-4 rounded-lg">{selectedOrder.notes}</p>
+                    <p className="text-gray-600 bg-gray-50 p-4 rounded-lg">{(selectedOrder as any).notes}</p>
                   </div>
                 )}
 

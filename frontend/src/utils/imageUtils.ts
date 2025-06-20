@@ -41,9 +41,9 @@ export const getImageUrl = (imagePath: string | undefined | null): string | null
  */
 export const getProductImageUrl = (product: { image?: string; images?: string[] | null }): string | null => {
   // Try to get from images array first (check for null and empty array)
-  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+  if ((product as any).images && Array.isArray((product as any).images) && (product as any).images.length > 0) {
     // Find the first valid image URL
-    for (const imagePath of product.images) {
+    for (const imagePath of (product as any).images) {
       const url = getImageUrl(imagePath);
       if (url && url !== '') {
         return url;
@@ -52,8 +52,8 @@ export const getProductImageUrl = (product: { image?: string; images?: string[] 
   }
 
   // Fall back to single image field
-  if (product.image) {
-    const url = getImageUrl(product.image);
+  if ((product as any).image) {
+    const url = getImageUrl((product as any).image);
     if (url && url !== '') {
       return url;
     }
@@ -71,8 +71,8 @@ export const getProductImageUrls = (product: { image?: string; images?: string[]
   const urls: string[] = [];
 
   // Add images from images array (check for null and empty array)
-  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
-    product.images.forEach(imagePath => {
+  if ((product as any).images && Array.isArray((product as any).images) && (product as any).images.length > 0) {
+    (product as any).images.forEach(imagePath => {
       const url = getImageUrl(imagePath);
       if (url && url !== '' && !urls.includes(url)) {
         urls.push(url);
@@ -81,8 +81,8 @@ export const getProductImageUrls = (product: { image?: string; images?: string[]
   }
 
   // If no images in array, try single image field
-  if (urls.length === 0 && product.image) {
-    const url = getImageUrl(product.image);
+  if (urls.length === 0 && (product as any).image) {
+    const url = getImageUrl((product as any).image);
     if (url && url !== '') {
       urls.push(url);
     }

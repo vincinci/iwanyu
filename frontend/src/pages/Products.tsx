@@ -212,10 +212,10 @@ const Products: React.FC = () => {
     }
 
     try {
-      if (isInWishlist(product.id)) {
-        await removeFromWishlist(product.id);
+      if (isInWishlist((product as any).id)) {
+        await removeFromWishlist((product as any).id);
       } else {
-        await addToWishlist(product.id);
+        await addToWishlist((product as any).id);
       }
     } catch (error) {
       console.error('Wishlist error:', error);
@@ -272,10 +272,10 @@ const Products: React.FC = () => {
   };
 
   // Helper function to get product rating from actual data
-  const getProductRating = (product: unknown) => {
+  const getProductRating = (product: any) => {
     // Use actual product rating if available
-    if (product?.avgRating && product.avgRating > 0) {
-      return parseFloat(product.avgRating.toFixed(1));
+    if ((product as any)?.avgRating && (product as any).avgRating > 0) {
+      return parseFloat((product as any).avgRating.toFixed(1));
     }
     return 0;
   };
@@ -684,7 +684,7 @@ const Products: React.FC = () => {
                 }>
                   {products.map((product: Product, index: number) => (
                     <motion.div
-                      key={product.id}
+                      key={(product as any).id}
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.02 }}
@@ -695,13 +695,13 @@ const Products: React.FC = () => {
                     >
                       {viewMode === 'grid' ? (
                         // Grid View - Small uniform cards
-                        <Link to={`/products/${product.id}`} className="block">
+                        <Link to={`/products/${(product as any).id}`} className="block">
                           <div className="relative">
                             <div className="h-20 md:h-24 bg-gray-50 relative overflow-hidden">
                               {getProductImageUrl(product) ? (
                                 <img
                                   src={getProductImageUrl(product)!}
-                                  alt={product.name}
+                                  alt={(product as any).name}
                                   className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                                   loading="lazy"
                                   onError={(e) => {
@@ -724,27 +724,27 @@ const Products: React.FC = () => {
                             )}
                             
                             {/* Discount Badge */}
-                            {product.salePrice && product.salePrice < product.price && (
+                            {(product as any).salePrice && (product as any).salePrice < (product as any).price && (
                               <div className="absolute top-1 right-1 bg-gray-600 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
-                                -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
+                                -{Math.round((((product as any).price - (product as any).salePrice) / (product as any).price) * 100)}%
                               </div>
                             )}
                           </div>
                           
                           <div className="p-2">
                             <h3 className="font-medium text-xs text-gray-900 line-clamp-2 mb-1">
-                              {product.name}
+                              {(product as any).name}
                             </h3>
                             
                             {/* Price Display */}
                             <div className="text-center mb-2">
-                              {product.salePrice ? (
+                              {(product as any).salePrice ? (
                                 <div className="text-sm font-bold text-black">
-                                  {formatPrice(product.salePrice)}
+                                  {formatPrice((product as any).salePrice)}
                                 </div>
                               ) : (
                                 <div className="text-sm font-bold text-black">
-                                  {formatPrice(product.price)}
+                                  {formatPrice((product as any).price)}
                                 </div>
                               )}
                             </div>
@@ -769,11 +769,11 @@ const Products: React.FC = () => {
                       ) : (
                         // List View
                         <>
-                          <Link to={`/products/${product.id}`} className="w-48 flex-shrink-0 relative">
+                          <Link to={`/products/${(product as any).id}`} className="w-48 flex-shrink-0 relative">
                             {getProductImageUrl(product) ? (
                               <img
                                 src={getProductImageUrl(product)!}
-                                alt={product.name}
+                                alt={(product as any).name}
                                 className="w-full h-28 sm:h-32 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                                 loading="lazy"
                               />
@@ -785,9 +785,9 @@ const Products: React.FC = () => {
                           </Link>
                           
                           <div className="flex-1 p-6">
-                            <Link to={`/products/${product.id}`}>
+                            <Link to={`/products/${(product as any).id}`}>
                               <h3 className="text-lg font-medium text-gray-900 mb-2 group-hover:text-black transition-colors">
-                                {product.name}
+                                {(product as any).name}
                               </h3>
                               {/* Seller name */}
                               {product.seller && (
@@ -799,14 +799,14 @@ const Products: React.FC = () => {
                                 </p>
                               )}
                               {/* Rating - Only show if product has rating */}
-                              {product.avgRating > 0 && (
+                              {(product as any).avgRating > 0 && (
                                 <div className="flex items-center mb-3">
                                   <div className="flex items-center">
                                     {[...Array(5)].map((_, i) => (
-                                      <Star key={i} size={16} className={i < Math.floor(product.avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"} />
+                                      <Star key={i} size={16} className={i < Math.floor((product as any).avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"} />
                                     ))}
                                   </div>
-                                  <span className="text-sm text-gray-500 ml-2">({product.avgRating.toFixed(1)}) {product.totalReviews} reviews</span>
+                                  <span className="text-sm text-gray-500 ml-2">({(product as any).avgRating.toFixed(1)}) {(product as any).totalReviews} reviews</span>
                                 </div>
                               )}
                               <p className="text-gray-600 text-sm mb-4 line-clamp-2">
@@ -815,11 +815,11 @@ const Products: React.FC = () => {
                               <div className="flex items-center justify-between">
                                 <div>
                                   <span className="text-2xl font-bold text-black">
-                                    {formatPrice(product.salePrice || product.price)}
+                                    {formatPrice((product as any).salePrice || (product as any).price)}
                                   </span>
-                                  {product.salePrice && (
+                                  {(product as any).salePrice && (
                                     <span className="text-sm text-gray-500 line-through ml-2">
-                                      {formatPrice(product.price)}
+                                      {formatPrice((product as any).price)}
                                     </span>
                                   )}
                                   <div className="flex items-center mt-1 text-xs text-gray-500">

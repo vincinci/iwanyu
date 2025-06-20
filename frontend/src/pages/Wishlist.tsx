@@ -22,10 +22,10 @@ const Wishlist: React.FC = () => {
   const { addToCart } = useCart();
 
   // Helper function to get product rating from actual data
-  const getProductRating = (product: unknown) => {
+  const getProductRating = (product: any) => {
     // Use actual product rating if available
-    if (product?.avgRating && product.avgRating > 0) {
-      return parseFloat(product.avgRating.toFixed(1));
+    if ((product as any)?.avgRating && (product as any).avgRating > 0) {
+      return parseFloat((product as any).avgRating.toFixed(1));
     }
     return 0;
   };
@@ -152,7 +152,7 @@ const Wishlist: React.FC = () => {
         {/* Wishlist Items - Mobile responsive grid */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
           <AnimatePresence>
-            {items.map((item) => (
+            {items.map((item: any) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 1, scale: 1 }}
@@ -160,11 +160,11 @@ const Wishlist: React.FC = () => {
                 transition={{ duration: 0.2 }}
                 className="bg-white rounded-lg border hover:shadow-lg transition-all duration-200 overflow-hidden group"
               >
-                <Link to={`/products/${item.product.id}`} className="block relative">
-                  {item.product.images?.[0] ? (
+                <Link to={`/products/${(item as any).product.id}`} className="block relative">
+                  {(item as any).product.images?.[0] ? (
                     <img
-                      src={item.product.images[0]}
-                      alt={item.product.name}
+                      src={(item as any).product.images[0]}
+                      alt={(item as any).product.name}
                       className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     />
@@ -189,15 +189,15 @@ const Wishlist: React.FC = () => {
                 </Link>
                 
                 <div className="p-2">
-                  <Link to={`/products/${item.product.id}`}>
+                  <Link to={`/products/${(item as any).product.id}`}>
                     <h3 className="text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
-                      {item.product.name}
+                      {(item as any).product.name}
                     </h3>
                     
                     {/* Price and Add to Cart */}
                     <div className="text-center mb-2">
                       <div className="text-sm font-bold text-red-600">
-                        {formatPrice(item.product.salePrice || item.product.price)}
+                        {formatPrice((item as any).product.salePrice || (item as any).product.price)}
                       </div>
                     </div>
                     <div className="flex justify-center">

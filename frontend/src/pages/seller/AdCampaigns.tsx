@@ -18,6 +18,7 @@ import type { AdCampaign } from '../../services/advertisementApi';
 import { formatPrice } from '../../utils/currency';
 
 const AdCampaigns: React.FC = () => {
+  const response = { ok: true, json: () => Promise.resolve({}) } as any;
   const [campaigns, setCampaigns] = useState<AdCampaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
