@@ -240,7 +240,7 @@ const Header: React.FC = () => {
 
       <header className={`sticky top-0 bg-white shadow-sm border-b border-gray-200 transition-all duration-300 z-40 ${isScrolled ? 'shadow-md' : ''}`}>
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-12 sm:h-14 md:h-16">
             {/* Logo and Categories - Mobile Optimized Layout */}
             <div className="flex items-center space-x-2 sm:space-x-3 flex-1">
               {/* Logo */}
@@ -248,7 +248,7 @@ const Header: React.FC = () => {
                   <img 
                   src="/iwanyu-logo.png"
                     alt="Iwanyu Store Logo" 
-                  className="h-8 w-auto sm:h-9 md:h-10 lg:h-11 group-hover:scale-105 transition-transform duration-200 max-w-[120px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[180px]"
+                  className="h-6 w-auto sm:h-8 md:h-9 lg:h-10 group-hover:scale-105 transition-transform duration-200 max-w-[100px] sm:max-w-[120px] md:max-w-[140px] lg:max-w-[160px]"
                     loading="eager"
                     decoding="async"
                 />
@@ -622,15 +622,15 @@ const Header: React.FC = () => {
             </div>
 
             {/* Mobile Right Section: Cart, Wishlist, Menu */}
-            <div className="md:hidden flex items-center space-x-2">
+            <div className="md:hidden flex items-center space-x-1 sm:space-x-2">
               {/* Mobile Wishlist Button */}
               <Link
                 to="/wishlist"
-                className="relative p-2 text-gray-600 hover:text-red-500 transition-all duration-200 rounded-lg hover:bg-red-50"
+                className="relative p-1.5 sm:p-2 text-gray-600 hover:text-red-500 transition-all duration-200 rounded-lg hover:bg-red-50"
               >
-                <Heart size={20} />
+                <Heart size={18} />
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium">
+                  <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-xs rounded-full h-3.5 w-3.5 flex items-center justify-center font-medium text-[10px]">
                     {wishlistCount > 99 ? '99+' : wishlistCount}
                   </span>
                 )}
@@ -639,14 +639,14 @@ const Header: React.FC = () => {
               {/* Mobile Cart Button */}
               <Link
                 to="/cart"
-                className="relative p-2 text-gray-600 hover:text-gray-600 transition-all duration-200 rounded-lg hover:bg-gray-100"
+                className="relative p-1.5 sm:p-2 text-gray-600 hover:text-gray-600 transition-all duration-200 rounded-lg hover:bg-gray-100"
               >
-                <ShoppingCart size={20} />
+                <ShoppingCart size={18} />
                 {itemCount > 0 && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium shadow-md"
+                    className="absolute -top-0.5 -right-0.5 bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium shadow-md text-[10px]"
                   >
                     {itemCount > 99 ? '99+' : itemCount}
                   </motion.span>
@@ -657,13 +657,13 @@ const Header: React.FC = () => {
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-                className={`p-2 rounded-lg transition-all duration-200 ${
+                className={`p-1.5 sm:p-2 rounded-lg transition-all duration-200 ${
                   isMenuOpen 
                     ? 'text-gray-600 bg-gray-50' 
                     : 'text-gray-600 hover:text-gray-600 hover:bg-gray-100'
                 }`}
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
             </div>
           </div>

@@ -605,7 +605,7 @@ const Home: React.FC = () => {
             </div>
 
             {/* Sponsored Products - 2 columns on mobile */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-2 md:gap-3">
               {promotedProducts.slice(0, 18).map((product: PromotedProduct, index: number) => (
                   <motion.div
                   key={(product as any).id}
@@ -624,7 +624,7 @@ const Home: React.FC = () => {
                       <img
                         src={(product as any).images?.[0] || '/placeholder-product.jpg'}
                         alt={(product as any).name}
-                        className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-16 sm:h-20 md:h-24 object-contain p-0.5 sm:p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -632,23 +632,23 @@ const Home: React.FC = () => {
                         }}
                       />
                       
-                      {/* Discount Badge */}
+                      {/* Discount Badge - Smaller */}
                       {calculateDiscount((product as any).price, (product as any).salePrice) > 0 && (
-                        <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[10px]">
+                        <div className="absolute top-0.5 left-0.5 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[8px] sm:text-[10px]">
                           -{calculateDiscount((product as any).price, (product as any).salePrice)}%
                         </div>
                       )}
                     </div>
                     
-                    <div className="p-2">
+                    <div className="p-1 sm:p-2">
                       <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2 group-hover:text-gray-700 transition-colors">
                         {(product as any).name}
                       </h3>
                       
-                      <div className="text-sm font-bold text-gray-900">
+                      <div className="text-xs sm:text-sm font-bold text-gray-900">
                         {formatPrice((product as any).price)}
-                </div>
-              </div>
+                      </div>
+                    </div>
                   </Link>
                 </motion.div>
               ))}
@@ -696,7 +696,7 @@ const Home: React.FC = () => {
 
           {/* Flash Sale Products - 3 rows of 6 */}
           {flashProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-2 md:gap-3">
               {flashProducts.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
                   key={(product as any).id}
@@ -710,7 +710,7 @@ const Home: React.FC = () => {
                       <img
                         src={(product as any).images[0]}
                         alt={(product as any).name}
-                        className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-16 sm:h-20 md:h-24 object-contain p-0.5 sm:p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -719,44 +719,44 @@ const Home: React.FC = () => {
                         }}
                       />
                     ) : null}
-                    <div className={`w-full h-20 md:h-24 bg-gray-100 flex items-center justify-center ${(product as any).images?.[0] ? 'hidden' : ''}`}>
-                      <Package className="text-gray-400" size={16} />
-                      </div>
+                    <div className={`w-full h-16 sm:h-20 md:h-24 bg-gray-100 flex items-center justify-center ${(product as any).images?.[0] ? 'hidden' : ''}`}>
+                      <Package className="text-gray-400" size={12} />
+                    </div>
                     
-                    {/* Flash Sale Badge */}
+                    {/* Flash Sale Badge - Smaller */}
                     {((product as any).salePrice && (product as any).salePrice < (product as any).price) ? (
-                      <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
+                      <div className="absolute top-0.5 left-0.5 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[8px] sm:text-[10px]">
                         -{calculateDiscount((product as any).price, (product as any).salePrice)}%
                       </div>
                     ) : (
-                      <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
+                      <div className="absolute top-0.5 left-0.5 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[8px] sm:text-[10px]">
                         FLASH
                       </div>
                     )}
                   </Link>
                   
-                  <div className="p-2">
+                  <div className="p-1 sm:p-2">
                     <Link to={`/products/${(product as any).id}`}>
                       <h3 className="text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
                         {(product as any).name}
                       </h3>
-                      <div className="text-sm font-bold text-red-600 mb-2 text-center">
-                            {formatPrice((product as any).salePrice || (product as any).price)}
-                            </div>
+                      <div className="text-xs sm:text-sm font-bold text-red-600 mb-1 sm:mb-2 text-center">
+                        {formatPrice((product as any).salePrice || (product as any).price)}
+                      </div>
                       <div className="flex gap-0.5 justify-center">
                         <button
                           onClick={(e) => quickAddToCart(product, e)}
-                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium w-8 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
+                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium w-6 h-5 sm:w-8 sm:h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
                           aria-label="Add to cart"
                         >
-                          <ShoppingCart size={12} />
+                          <ShoppingCart size={10} />
                         </button>
                         <button
                           onClick={(e) => quickAddToWishlist(product, e)}
-                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium w-8 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
+                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium w-6 h-5 sm:w-8 sm:h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
                           aria-label="Add to wishlist"
                         >
-                          <Heart size={12} />
+                          <Heart size={10} />
                         </button>
                       </div>
                     </Link>
@@ -787,7 +787,7 @@ const Home: React.FC = () => {
 
           {/* Best Sellers - 2 columns on mobile */}
           {bestSellers.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-2 md:gap-3">
               {bestSellers.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
                   key={(product as any).id}
@@ -802,7 +802,7 @@ const Home: React.FC = () => {
                       <img
                         src={(product as any).images?.[0] || '/placeholder-product.jpg'}
                           alt={(product as any).name}
-                        className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-16 sm:h-20 md:h-24 object-contain p-0.5 sm:p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -810,40 +810,24 @@ const Home: React.FC = () => {
                         }}
                       />
                       
-                      {/* Discount Badge */}
+                      {/* Discount Badge - Smaller */}
                       {calculateDiscount((product as any).price, (product as any).salePrice) > 0 && (
-                        <div className="absolute top-1 left-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[10px]">
+                        <div className="absolute top-0.5 left-0.5 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded text-[8px] sm:text-[10px]">
                           -{calculateDiscount((product as any).price, (product as any).salePrice)}%
-                      </div>
-                    )}
+                        </div>
+                      )}
                     </div>
                     
-                    <div className="p-2">
-                      <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2">
+                    <div className="p-1 sm:p-2">
+                      <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2 group-hover:text-gray-700 transition-colors">
                         {(product as any).name}
                       </h3>
                       
-                      <div className="text-sm font-bold text-red-600 mb-2 text-center">
+                      <div className="text-xs sm:text-sm font-bold text-gray-900">
                         {formatPrice((product as any).salePrice || (product as any).price)}
                       </div>
-                      <div className="flex gap-0.5 justify-center">
-                        <button
-                          onClick={(e) => quickAddToCart(product, e)}
-                          className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium w-8 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
-                          aria-label="Add to cart"
-                        >
-                          <ShoppingCart size={12} />
-                        </button>
-                        <button
-                          onClick={(e) => quickAddToWishlist(product, e)}
-                          className="border border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-xs font-medium w-8 h-6 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
-                          aria-label="Add to wishlist"
-                        >
-                          <Heart size={12} />
-                        </button>
-                      </div>
-                      </div>
-                    </Link>
+                    </div>
+                  </Link>
                 </motion.div>
               ))}
             </div>

@@ -666,58 +666,58 @@ const Products: React.FC = () => {
                       }`}
                     >
                       {viewMode === 'grid' ? (
-                        // Grid View - Mobile Optimized
+                        // Grid View - Mobile Optimized (Smaller)
                         <Link to={`/products/${(product as any).id}`} className="block">
                           <div className="relative">
                             {getProductImageUrl(product) ? (
                               <img
                                 src={getProductImageUrl(product)!}
                                 alt={(product as any).name}
-                                className="w-full h-24 sm:h-32 md:h-40 lg:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-16 sm:h-24 md:h-32 lg:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                                 loading="lazy"
                               />
                             ) : (
-                              <div className="w-full h-24 sm:h-32 md:h-40 lg:h-48 bg-gray-100 flex items-center justify-center">
-                                <Package className="text-gray-400" size={24} />
+                              <div className="w-full h-16 sm:h-24 md:h-32 lg:h-40 bg-gray-100 flex items-center justify-center">
+                                <Package className="text-gray-400" size={16} />
                               </div>
                             )}
                             
-                            {/* Wishlist Button - Top Right */}
+                            {/* Wishlist Button - Smaller on mobile */}
                             <button
                               onClick={(e) => quickAddToWishlist(product, e)}
-                              className={`absolute top-1 right-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                              className={`absolute top-0.5 right-0.5 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
                                 isInWishlist(product.id)
                                   ? 'bg-red-500 text-white shadow-md'
                                   : 'bg-white/80 backdrop-blur-sm text-gray-600 hover:bg-red-500 hover:text-white shadow-sm'
                               }`}
                               aria-label="Add to wishlist"
                             >
-                              <Heart size={12} className={isInWishlist(product.id) ? 'fill-current' : ''} />
+                              <Heart size={10} className={isInWishlist(product.id) ? 'fill-current' : ''} />
                             </button>
                             
-                            {/* Badges */}
+                            {/* Badges - Smaller */}
                             {product.featured && (
-                              <div className="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
+                              <div className="absolute top-0.5 left-0.5 bg-red-500 text-white text-xs px-1 py-0.5 rounded font-bold text-[8px] sm:text-[10px]">
                                 Featured
                               </div>
                             )}
                             
-                            {/* Discount Badge */}
+                            {/* Discount Badge - Smaller */}
                             {(product as any).salePrice && (product as any).salePrice < (product as any).price && (
-                              <div className="absolute top-1 right-1 bg-gray-600 text-white text-xs px-1 py-0.5 rounded font-bold text-[10px]">
+                              <div className="absolute top-0.5 right-0.5 bg-gray-600 text-white text-xs px-1 py-0.5 rounded font-bold text-[8px] sm:text-[10px]">
                                 -{Math.round((((product as any).price - (product as any).salePrice) / (product as any).price) * 100)}%
                               </div>
                             )}
                           </div>
                           
-                          <div className="p-2 sm:p-3">
-                            <h3 className="font-medium text-xs sm:text-sm text-gray-900 line-clamp-2 mb-1 sm:mb-2">
+                          <div className="p-1.5 sm:p-2 md:p-3">
+                            <h3 className="font-medium text-xs sm:text-sm text-gray-900 line-clamp-2 mb-1">
                               {(product as any).name}
                             </h3>
                             
-                            {/* Seller name - Hidden on very small screens */}
+                            {/* Seller name - Hidden on mobile, visible on tablet+ */}
                             {product.seller && (
-                              <p className="text-xs text-gray-500 mb-1 sm:mb-2 line-clamp-1 hidden sm:block">
+                              <p className="text-xs text-gray-500 mb-1 line-clamp-1 hidden md:block">
                                 by {product.seller.businessName || 
                                     (product.seller.user?.firstName && product.seller.user?.lastName 
                                       ? `${product.seller.user?.firstName} ${product.seller.user?.lastName}`
@@ -725,23 +725,23 @@ const Products: React.FC = () => {
                               </p>
                             )}
                             
-                            {/* Rating - Only show if product has rating, hidden on mobile */}
+                            {/* Rating - Only show on desktop */}
                             {(product as any).avgRating > 0 && (
-                              <div className="hidden sm:flex items-center mb-2">
+                              <div className="hidden lg:flex items-center mb-2">
                                 <div className="flex items-center">
                                   {[...Array(5)].map((_, i) => (
-                                    <Star key={i} size={12} className={i < Math.floor((product as any).avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"} />
+                                    <Star key={i} size={10} className={i < Math.floor((product as any).avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"} />
                                   ))}
                                 </div>
                                 <span className="text-xs text-gray-500 ml-1">({(product as any).avgRating.toFixed(1)})</span>
                               </div>
                             )}
                             
-                            {/* Price Display */}
-                            <div className="mb-2">
+                            {/* Price Display - Smaller text on mobile */}
+                            <div className="mb-1 sm:mb-2">
                               {(product as any).salePrice ? (
                                 <div>
-                                  <div className="text-sm sm:text-base font-bold text-black">
+                                  <div className="text-xs sm:text-sm md:text-base font-bold text-black">
                                     {formatPrice((product as any).salePrice)}
                                   </div>
                                   <div className="text-xs text-gray-500 line-through">
@@ -749,20 +749,20 @@ const Products: React.FC = () => {
                                   </div>
                                 </div>
                               ) : (
-                                <div className="text-sm sm:text-base font-bold text-black">
+                                <div className="text-xs sm:text-sm md:text-base font-bold text-black">
                                   {formatPrice((product as any).price)}
                                 </div>
                               )}
                             </div>
                             
-                            {/* Action Buttons */}
+                            {/* Action Button - Smaller on mobile */}
                             <div className="flex gap-1">
                               <button
                                 onClick={(e) => quickAddToCart(product, e)}
-                                className="flex-1 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium py-1.5 sm:py-2 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
+                                className="flex-1 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-medium py-1 sm:py-1.5 md:py-2 rounded shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
                                 aria-label="Add to cart"
                               >
-                                <ShoppingCart size={12} className="mr-1 sm:mr-2" />
+                                <ShoppingCart size={10} className="mr-1" />
                                 <span className="hidden sm:inline">Cart</span>
                               </button>
                             </div>

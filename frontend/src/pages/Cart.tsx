@@ -79,14 +79,14 @@ const Cart: React.FC = () => {
                       initial={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="p-4 border-b border-gray-100 last:border-b-0"
+                      className="p-2 sm:p-3 md:p-4 border-b border-gray-100 last:border-b-0"
                     >
                       {/* Mobile-first responsive layout */}
-                      <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                         {/* Top row on mobile: Image + Details + Remove */}
-                        <div className="flex items-start space-x-3 flex-1">
-                          {/* Product Image */}
-                          <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gray-100 rounded-lg overflow-hidden">
+                        <div className="flex items-start space-x-2 sm:space-x-3 flex-1">
+                          {/* Product Image - Smaller on mobile */}
+                          <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-gray-100 rounded-lg overflow-hidden">
                             {item.image ? (
                               <img
                                 src={item.image}
@@ -95,75 +95,75 @@ const Cart: React.FC = () => {
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <Package className="text-gray-400" size={16} />
+                                <Package className="text-gray-400" size={12} />
                               </div>
                             )}
                           </div>
 
                           {/* Product Details */}
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-gray-900 text-sm sm:text-base line-clamp-2">{item.name}</h4>
-                            <div className="flex items-center space-x-2 mt-1">
+                            <h4 className="font-medium text-gray-900 text-xs sm:text-sm md:text-base line-clamp-2">{item.name}</h4>
+                            <div className="flex items-center space-x-2 mt-0.5 sm:mt-1">
                               {item.salePrice && item.salePrice < item.price ? (
                                 <>
-                                  <span className="text-red-500 font-medium text-sm sm:text-base">
+                                  <span className="text-red-500 font-medium text-xs sm:text-sm md:text-base">
                                     {formatPrice(item.salePrice)}
                                   </span>
-                                  <span className="text-gray-500 line-through text-xs sm:text-sm">
+                                  <span className="text-gray-500 line-through text-xs">
                                     {formatPrice(item.price)}
                                   </span>
                                 </>
                               ) : (
-                                <span className="text-gray-900 font-medium text-sm sm:text-base">
+                                <span className="text-gray-900 font-medium text-xs sm:text-sm md:text-base">
                                   {formatPrice(item.price)}
                                 </span>
                               )}
                             </div>
                             {item.stock <= 5 && (
-                              <p className="text-gray-600 text-xs mt-1">
+                              <p className="text-gray-600 text-xs mt-0.5">
                                 Only {item.stock} left in stock
                               </p>
                             )}
                           </div>
 
-                          {/* Remove Button - Top right on mobile */}
+                          {/* Remove Button - Smaller on mobile */}
                           <button
                             onClick={() => removeFromCart(item.id)}
-                            className="p-2 text-gray-500 hover:text-red-500 transition-colors duration-200 flex-shrink-0"
+                            className="p-1 sm:p-1.5 text-gray-500 hover:text-red-500 transition-colors duration-200 flex-shrink-0"
                             aria-label="Remove item from cart"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={14} />
                           </button>
                         </div>
 
                         {/* Bottom row on mobile: Quantity + Total */}
                         <div className="flex items-center justify-between sm:justify-end sm:space-x-4">
-                          {/* Quantity Controls */}
-                          <div className="flex items-center space-x-2">
+                          {/* Quantity Controls - Smaller on mobile */}
+                          <div className="flex items-center space-x-1 sm:space-x-2">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="p-2 text-gray-500 hover:text-gray-700 border border-gray-300 rounded-md"
+                              className="p-1 sm:p-1.5 text-gray-500 hover:text-gray-700 border border-gray-300 rounded-md"
                               disabled={item.quantity <= 1}
                               aria-label="Decrease quantity"
                             >
-                              <Minus size={14} />
+                              <Minus size={12} />
                             </button>
-                            <span className="w-10 text-center text-sm font-medium">
+                            <span className="w-8 sm:w-10 text-center text-xs sm:text-sm font-medium">
                               {item.quantity}
                             </span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="p-2 text-gray-500 hover:text-gray-700 border border-gray-300 rounded-md"
+                              className="p-1 sm:p-1.5 text-gray-500 hover:text-gray-700 border border-gray-300 rounded-md"
                               disabled={item.quantity >= item.stock}
                               aria-label="Increase quantity"
                             >
-                              <Plus size={14} />
+                              <Plus size={12} />
                             </button>
                           </div>
 
                           {/* Item Total */}
                           <div className="text-right">
-                            <p className="font-semibold text-gray-900 text-sm sm:text-base">
+                            <p className="font-semibold text-gray-900 text-xs sm:text-sm md:text-base">
                               {formatPrice(currentPrice * item.quantity)}
                             </p>
                           </div>
