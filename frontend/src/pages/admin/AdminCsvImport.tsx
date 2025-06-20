@@ -67,7 +67,9 @@ const AdminCsvImport: React.FC = () => {
     setError(null);
 
     try {
-
+      // Call the actual API to import products
+      const response = await adminApi.importProducts(selectedFile);
+      
       setResults(response.results);
       
       if (response.results.successful > 0) {

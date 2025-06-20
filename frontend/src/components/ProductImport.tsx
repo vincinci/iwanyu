@@ -40,9 +40,10 @@ const ProductImport: React.FC<ProductImportProps> = ({ onClose, onSuccess }) => 
     setError(null);
 
     try {
-
-      const response = { results: { successful: 0, failed: 0, errors: [] } } as any; // TODO: Get actual response
-    setResults(response.results);
+      // Call the actual API to import products
+      const response = await sellerApi.importProducts(selectedFile);
+      
+      setResults(response.results);
       
       if (response.results.successful > 0) {
         onSuccess();
