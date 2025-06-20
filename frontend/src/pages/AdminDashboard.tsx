@@ -37,7 +37,6 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('🚨 Mobile App Crash Detected:', error, errorInfo);
     console.error('AdminDashboard Error Boundary caught an error:', error, errorInfo);
   }
 
@@ -120,15 +119,6 @@ const AdminDashboard: React.FC = () => {
     }
     if (dashboard) {
       console.log('Dashboard data loaded:', dashboard);
-      // Additional debugging for recent orders
-      if (dashboard.recentOrders) {
-        console.log('Recent orders structure:', dashboard.recentOrders.map((order: any) => ({
-          id: order?.id,
-          hasUser: !!order?.user,
-          userType: typeof order?.user,
-          userKeys: order?.user ? Object.keys(order.user) : null
-        })));
-      }
     }
   }, [error, dashboard]);
 
@@ -173,7 +163,7 @@ const AdminDashboard: React.FC = () => {
               {JSON.stringify({
                 error: (false as any)?.message || 'Unknown error',
                 hasToken: !!localStorage.getItem('token'),
-                user: user ? { id: user?.id, role: user?.role, email: user?.email || 'N/A' } : null,
+                user: user ? { id: user.id, role: user.role, email: user.email } : null,
                 timestamp: new Date().toISOString()
               }, null, 2)}
             </pre>
@@ -209,47 +199,72 @@ const AdminDashboard: React.FC = () => {
       title: 'CSV Import',
       description: 'Import products from CSV file',
       icon: Upload,
-      path: '/admin/import',
-      color: 'bg-orange-500'
+      path: '/admin/csv-import',
+      color: 'bg-teal-500'
     },
     {
       title: 'Order Management',
-      description: 'View and manage all orders',
+      description: 'View and manage orders',
       icon: ShoppingCart,
       path: '/admin/orders',
+      color: 'bg-gray-600'
+    },
+    {
+      title: 'Category Management',
+      description: 'Manage product categories',
+      icon: Layers,
+      path: '/admin/categories',
       color: 'bg-indigo-500'
     },
     {
+      title: 'Banner Management',
+      description: 'Manage homepage banners and carousel',
+      icon: Image,
+      path: '/admin/banners',
+      color: 'bg-yellow-500'
+    },
+    {
       title: 'Payment Management',
-      description: 'Handle payouts and transactions',
+      description: 'Manage seller withdrawals and wallets',
       icon: CreditCard,
       path: '/admin/payments',
-      color: 'bg-teal-500'
+      color: 'bg-orange-500'
     }
   ];
 
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            {/* Back Button */}
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Home</span>
+            </button>
+
+            <div className="flex items-center gap-4 mb-6">
+              <img
+                src="/iwanyu-logo.png"
+                alt="Iwanyu Store Logo"
+                className="h-6 w-auto sm:h-7 md:h-8 max-w-[100px] sm:max-w-[120px] md:max-w-[140px]"
+              />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
                 <p className="text-gray-600">
                   Welcome back, {user?.firstName || user?.email || ''}! Here's what's happening with your store.
                 </p>
               </div>
-              <button
-                onClick={() => navigate('/')}
-                className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Store
-              </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Overview Stats */}
           <motion.div
@@ -376,7 +391,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            {!dashboard?.recentOrders?.length || !Array.isArray(dashboard.recentOrders) || dashboard.recentOrders.length === 0 ? (
+            {!dashboard?.recentOrders?.length ? (
               <div className="p-8 text-center">
                 <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Recent Orders</h3>
@@ -384,73 +399,41 @@ const AdminDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {(dashboard.recentOrders || []).slice(0, 5)
-                  .filter((order: any) => order && order.id && typeof order === 'object')
-                  .map((order: any, index: number) => {
-                  // Safety check for order data
-                  if (!order || !order.id || typeof order !== 'object') {
-                    console.warn('Invalid order data:', order);
-                    return null;
-                  }
-                  
-                  // Get user display name safely
-                  const getUserDisplayName = () => {
-                    try {
-                      if (!order?.user || typeof order.user !== 'object') {
-                        return 'Guest User';
-                      }
-                      return order.user?.firstName || order.user?.email || 'Unknown User';
-                    } catch (e) {
-                      console.warn('Error accessing user data for order:', order.id, e);
-                      return 'Unknown User';
-                    }
-                  };
-                  
-                  try {
-                    return (
-                    <div key={order.id} className="p-6 hover:bg-gray-50">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div>
-                            <h3 className="font-medium text-gray-900">
-                              Order #{order.orderNumber || order.id.slice(-8)}
-                            </h3>
-                            <p className="text-sm text-gray-600">
-                              {getUserDisplayName()} • {order.orderItems?.length || 0} items
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Unknown date'}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="text-right">
-                          <p className="font-medium text-gray-900">
-                            {formatPrice(order.total || 0)}
+                {dashboard.recentOrders.slice(0, 5).map((order: any) => (
+                  <div key={order.id} className="p-6 hover:bg-gray-50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <h3 className="font-medium text-gray-900">
+                            Order #{order.orderNumber || order.id.slice(-8)}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {order.user ? (order.user?.firstName || order.user?.email || 'Unknown User') : 'Unknown User'} • {order.orderItems?.length || 0} items
                           </p>
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            order.status === 'PENDING' ? 'bg-gray-100 text-gray-800' :
-                            order.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
-                            order.status === 'PROCESSING' ? 'bg-purple-100 text-purple-800' :
-                            order.status === 'SHIPPED' ? 'bg-indigo-100 text-indigo-800' :
-                            order.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
-                            {order.status || 'UNKNOWN'}
-                          </span>
+                          <p className="text-sm text-gray-500">
+                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Unknown date'}
+                          </p>
                         </div>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="font-medium text-gray-900">
+                          {formatPrice(order.total || 0)}
+                        </p>
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          order.status === 'PENDING' ? 'bg-gray-100 text-gray-800' :
+                          order.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
+                          order.status === 'PROCESSING' ? 'bg-purple-100 text-purple-800' :
+                          order.status === 'SHIPPED' ? 'bg-indigo-100 text-indigo-800' :
+                          order.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {order.status || 'UNKNOWN'}
+                        </span>
                       </div>
                     </div>
-                    );
-                  } catch (renderError) {
-                    console.error('🚨 Error rendering order:', order.id, renderError);
-                    return (
-                      <div key={order.id || `error-${index}`} className="p-6 bg-red-50">
-                        <p className="text-red-600">Error loading order data</p>
-                      </div>
-                    );
-                  }
-                }).filter(Boolean)}
+                  </div>
+                ))}
               </div>
             )}
           </motion.div>

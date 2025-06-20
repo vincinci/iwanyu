@@ -251,7 +251,9 @@ const Products: React.FC = () => {
       highRating: false,
     });
     setSearchQuery('');
-    setSearchParams(new URLSearchParams());
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('page');
+    setSearchParams(newParams);
   };
 
   const sortOptions = [
@@ -420,66 +422,20 @@ const Products: React.FC = () => {
                 {/* Categories */}
                 <div className="mb-8">
                   <h4 className="font-semibold text-gray-900 mb-4 text-sm uppercase tracking-wide">Categories</h4>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {categories
-                      .filter((category: Category) => (category as any).level === 0) // Only show parent categories
-                      .map((category: Category) => (
-                        <div key={category.id} className="space-y-1">
-                          {(category as any).children && (category as any).children.length > 0 ? (
-                            // Parent category with subcategories
-                            <div>
-                              <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 transition-colors">
-                                <span className="text-sm font-medium text-gray-900">
-                                  {category.name}
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                  ({(category as any)._count?.products || 0})
-                                </span>
-                              </div>
-                              
-                              {/* Subcategories */}
-                              <div className="ml-4 space-y-1">
-                                {(category as any).children.map((subcategory: any) => (
-                                  <label key={subcategory.id} className="flex items-center justify-between cursor-pointer group p-2 rounded hover:bg-gray-50 transition-colors">
-                                    <div className="flex items-center">
-                                      <input
-                                        type="checkbox"
-                                        checked={selectedCategories.includes(subcategory.slug)}
-                                        onChange={() => handleCategoryFilter(subcategory.slug)}
-                                        className="w-4 h-4 rounded border-gray-300 text-black focus:ring-orange-500 focus:ring-2"
-                                      />
-                                      <span className="ml-3 text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
-                                        {subcategory.name}
-                                      </span>
-                                    </div>
-                                    <span className="text-xs text-gray-400">
-                                      ({subcategory._count?.products || 0})
-                                    </span>
-                                  </label>
-                                ))}
-                              </div>
-                            </div>
-                          ) : (
-                            // Single category without subcategories
-                            <label className="flex items-center justify-between cursor-pointer group p-2 rounded hover:bg-gray-50 transition-colors">
-                              <div className="flex items-center">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedCategories.includes(category.slug)}
-                                  onChange={() => handleCategoryFilter(category.slug)}
-                                  className="w-4 h-4 rounded border-gray-300 text-black focus:ring-orange-500 focus:ring-2"
-                                />
-                                <span className="ml-3 text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
-                                  {category.name}
-                                </span>
-                              </div>
-                              <span className="text-xs text-gray-400">
-                                ({(category as any)._count?.products || 0})
-                              </span>
-                            </label>
-                          )}
-                        </div>
-                      ))}
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {categories.map((category: Category) => (
+                      <label key={category.id} className="flex items-center cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={selectedCategories.includes(category.slug)}
+                          onChange={() => handleCategoryFilter(category.slug)}
+                          className="w-4 h-4 rounded border-gray-300 text-black focus:ring-orange-500 focus:ring-2"
+                        />
+                        <span className="ml-3 text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
+                          {category.name}
+                        </span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 

@@ -165,3 +165,4 @@ fix-*.js
 
 # Generated files
 backend/generated/ 
+.vercel

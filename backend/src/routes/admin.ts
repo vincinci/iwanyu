@@ -113,13 +113,6 @@ router.get('/dashboard', authenticateToken, requireAdmin, async (req: AuthReques
           }
         }
       }
-    }).then(orders => {
-      // Ensure all orders have proper data structure
-      return orders.map(order => ({
-        ...order,
-        user: order.user || null, // Explicitly handle null users
-        orderItems: order.orderItems || []
-      }));
     });
 
     // Monthly revenue (last 6 months)
@@ -595,15 +588,7 @@ router.get('/products', authenticateToken, requireAdmin, async (req: AuthRequest
           seller: {
             select: {
               id: true,
-              businessName: true,
-              user: {
-                select: {
-                  id: true,
-                  email: true,
-                  firstName: true,
-                  lastName: true
-                }
-              }
+              businessName: true
             }
           },
           variants: {
@@ -789,7 +774,7 @@ router.delete('/products/:id', authenticateToken, requireAdmin, async (req: Auth
 });
 
 // Bulk Delete Products
-router.delete('/products/bulk-delete', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+router.delete('/products', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {
     const { productIds } = req.body;
 

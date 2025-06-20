@@ -32,35 +32,6 @@ router.get('/', async (req: Request, res: Response) => {
         parentId: true,
         level: true,
         sortOrder: true,
-        children: {
-          where: {
-            isActive: true
-          },
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            description: true,
-            image: true,
-            icon: true,
-            parentId: true,
-            level: true,
-            sortOrder: true,
-            _count: {
-              select: {
-                products: {
-                  where: {
-                    isActive: true
-                  }
-                }
-              }
-            }
-          },
-          orderBy: [
-            { sortOrder: 'asc' },
-            { name: 'asc' }
-          ]
-        },
         _count: {
           select: {
             products: {

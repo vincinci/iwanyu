@@ -54,28 +54,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         const storedToken = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
-        const storedApiUrl = localStorage.getItem('lastApiUrl');
         
         console.log('AuthContext: Initializing auth', {
           hasStoredToken: !!storedToken,
-          hasStoredUser: !!storedUser,
-          currentApiUrl: API_BASE_URL,
-          storedApiUrl: storedApiUrl
+          hasStoredUser: !!storedUser
         });
-        
-        // Clear auth data if API URL has changed (switching between dev/prod)
-        if (storedApiUrl && storedApiUrl !== API_BASE_URL) {
-          console.log('AuthContext: API URL changed, clearing stored auth data');
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          localStorage.setItem('lastApiUrl', API_BASE_URL);
-          clearTimeout(timeoutId);
-          setIsLoading(false);
-          return;
-        }
-        
-        // Store current API URL for future comparisons
-        localStorage.setItem('lastApiUrl', API_BASE_URL);
         
         if (storedToken && storedUser) {
           try {
@@ -132,12 +115,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               localStorage.removeItem('user');
             }
           } catch (error) {
-            console.warn('AuthContext: Token validation failed, clearing invalid token:', error);
-            // On validation error, clear the token instead of using stored data
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            setUser(null);
-            setToken(null);
+            console.warn('AuthContext: Token validation failed, using stored data:', error);
+            // On any error, use stored data for mobile compatibility
+            try {
+              setUser(JSON.parse(storedUser));
+              setToken(storedToken);
+            } catch (parseError) {
+              console.error('AuthContext: Failed to parse stored user data:', parseError);
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+            }
           }
         } else {
           console.log('AuthContext: No stored auth data found');
