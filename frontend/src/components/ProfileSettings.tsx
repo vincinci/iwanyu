@@ -255,11 +255,16 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   };
 
   const getAvatarUrl = () => {
+    console.log('getAvatarUrl - user:', user);
+    console.log('getAvatarUrl - user.avatar:', user?.avatar);
     if (user?.avatar) {
       // Add timestamp to prevent caching
       const timestamp = new Date().getTime();
-      return `http://localhost:3001/${user.avatar}?t=${timestamp}`;
+      const url = `http://localhost:3001/${user.avatar}?t=${timestamp}`;
+      console.log('getAvatarUrl - returning URL:', url);
+      return url;
     }
+    console.log('getAvatarUrl - no avatar, returning null');
     return null;
   };
 
