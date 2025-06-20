@@ -1,0 +1,24 @@
+{
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/dist",
+  "framework": "vite",
+  "installCommand": "npm install && cd frontend && npm install",
+  "devCommand": "cd frontend && npm run dev",
+  "env": {
+    "VITE_API_URL": "https://iwanyu-backend.onrender.com/api",
+    "VITE_APP_NAME": "Iwanyu Store",
+    "VITE_APP_DESCRIPTION": "Your Premier Ecommerce Destination",
+    "VITE_FRONTEND_URL": "https://iwanyu.vercel.app"
+  },
+  "functions": {
+    "frontend/dist/**": {
+      "includeFiles": "frontend/dist/**"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+} 
