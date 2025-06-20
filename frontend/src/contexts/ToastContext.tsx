@@ -20,6 +20,21 @@ export const useToast = () => {
   return context;
 };
 
+export const useSafeToast = () => {
+  const context = useContext(ToastContext);
+  if (!context) {
+    // Return no-op functions if context is not available
+    return {
+      showToast: () => {},
+      showSuccess: () => {},
+      showError: () => {},
+      showWarning: () => {},
+      showInfo: () => {},
+    };
+  }
+  return context;
+};
+
 interface ToastProviderProps {
   children: ReactNode;
 }

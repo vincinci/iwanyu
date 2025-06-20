@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useAuth } from './AuthContext';
-import { useToast } from './ToastContext';
+import { useSafeToast } from './ToastContext';
 import { wishlistApi } from '../services/wishlistApi';
 import type { WishlistItem } from '../services/wishlistApi';
 
@@ -33,7 +33,7 @@ interface WishlistProviderProps {
 
 export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) => {
   const { user } = useAuth();
-  const { showSuccess, showError, showInfo } = useToast();
+  const { showSuccess, showError, showInfo } = useSafeToast();
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
