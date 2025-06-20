@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { formatPrice } from '../utils/currency';
+import { SHIPPING_COST } from '../config/constants';
 
 const Cart: React.FC = () => {
   const { totalAmount } = useCart();
@@ -188,14 +189,14 @@ const Cart: React.FC = () => {
                 
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Shipping</span>
-                  <span className="text-gray-900">{formatPrice(0)}</span>
+                  <span className="text-gray-900">{formatPrice(SHIPPING_COST)}</span>
                 </div>
                 
                 <div className="border-t border-gray-200 pt-3">
                   <div className="flex justify-between">
                     <span className="font-semibold text-gray-900">Total</span>
                     <span className="font-semibold text-gray-900 text-lg">
-                      {formatPrice(totalAmount)}
+                      {formatPrice(totalAmount + SHIPPING_COST)}
                     </span>
                   </div>
                 </div>

@@ -5,6 +5,7 @@ import prisma from '../utils/db';
 import brevoService from '../services/brevoService';
 import cartAbandonmentService from '../services/cartAbandonmentService';
 import emailAutomationService from '../services/emailAutomationService';
+import { SHIPPING_COST } from '../config/constants';
 
 const router = express.Router();
 
@@ -164,7 +165,7 @@ router.post('/', optionalAuth, async (req: AuthRequest, res: Response) => {
       }
     }
 
-    const shippingCost = 1500; // Fixed delivery fee of 1500 RWF
+    const shippingCost = SHIPPING_COST; // Fixed delivery fee from constants
     const tax = 0; // You can implement tax calculation logic here
     const total = subtotal - discount + shippingCost + tax;
 

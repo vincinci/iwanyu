@@ -16,6 +16,7 @@ import {
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { formatPrice } from '../utils/currency';
+import { SHIPPING_COST } from '../config/constants';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -182,7 +183,7 @@ const Checkout: React.FC = () => {
     : totalAmount;
   
   // Add delivery fee to total
-  const deliveryFee = 1500;
+  const deliveryFee = SHIPPING_COST;
   const finalTotal = calculatedTotal + deliveryFee;
 
   // Add direct purchase product to cart as a backup when data loads

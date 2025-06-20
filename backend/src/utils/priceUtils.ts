@@ -1,3 +1,5 @@
+import { SHIPPING_COST } from '../config/constants';
+
 interface Product {
   price: number;
   salePrice?: number | null;
@@ -70,7 +72,7 @@ export function calculateOrderTotal(
     discount?: number;
   } = {}
 ): number {
-  const { shipping = 1500, tax = 0, discount = 0 } = options;
+  const { shipping = SHIPPING_COST, tax = 0, discount = 0 } = options;
   return subtotal - discount + shipping + tax;
 }
 
