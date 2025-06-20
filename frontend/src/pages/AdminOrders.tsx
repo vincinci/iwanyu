@@ -17,8 +17,9 @@ import { adminApi, type AdminOrder } from '../services/adminApi';
 import { formatPrice } from '../utils/currency';
 
 const AdminOrders: React.FC = () => {
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const error = await response.json();
+
   const queryClient = useQueryClient();
 
   const [statusFilter, setStatusFilter] = useState('');

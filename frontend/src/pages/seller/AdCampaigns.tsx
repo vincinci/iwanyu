@@ -29,7 +29,7 @@ const AdCampaigns: React.FC = () => {
   const fetchCampaigns = async () => {
     try {
       setLoading(true);
-      const error = await response.json();
+
       if (response.success) {
         setCampaigns(response.data);
       }

@@ -52,7 +52,7 @@ const BannerManager: React.FC = () => {
     imageUrl: ''
   });
   const { showSuccess, showError } = useToast();
-  const error = await response.json();
+
   const { user } = useAuth();
 
   // Admin protection
@@ -296,7 +296,7 @@ const BannerManager: React.FC = () => {
     try {
       const updatedBanners = banners.map(banner =>
         banner.id === bannerId
-          ? { ...banner, isActive: !banner.isActive, updatedAt: new Date() }
+          ? { ...banner, isActive: !(banner as any).isActive, updatedAt: new Date() }
           : banner
       );
       setBanners(updatedBanners);
@@ -469,7 +469,7 @@ const BannerManager: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                     className={`border rounded-lg p-4 transition-all ${
-                      banner.isActive ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'
+                      (banner as any).isActive ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'
                     }`}
                   >
                     <div className="flex flex-col lg:flex-row gap-4">
@@ -485,7 +485,7 @@ const BannerManager: React.FC = () => {
                               target.src = '/placeholder-banner.jpg';
                             }}
                           />
-                          {!banner.isActive && (
+                          {!(banner as any).isActive && (
                             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                               <span className="text-white font-medium">Inactive</span>
                             </div>
@@ -504,14 +504,14 @@ const BannerManager: React.FC = () => {
                             </div>
                             <div className="flex items-center gap-2">
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                banner.isActive 
+                                (banner as any).isActive 
                                   ? 'bg-green-100 text-green-800' 
                                   : 'bg-gray-100 text-gray-800'
                               }`}>
-                                {banner.isActive ? 'Active' : 'Inactive'}
+                                {(banner as any).isActive ? 'Active' : 'Inactive'}
                               </span>
                               <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                                Order: {banner.order}
+                                Order: {(banner as any).order}
                               </span>
                             </div>
                           </div>
@@ -541,12 +541,12 @@ const BannerManager: React.FC = () => {
                           <button
                             onClick={() => handleToggleActive(banner.id)}
                             className={`flex items-center gap-1 px-3 py-1 rounded-md transition-colors text-sm ${
-                              banner.isActive
+                              (banner as any).isActive
                                 ? 'bg-red-100 text-red-700 hover:bg-red-200'
                                 : 'bg-green-100 text-green-700 hover:bg-green-200'
                             }`}
                           >
-                            {banner.isActive ? 'Deactivate' : 'Activate'}
+                            {(banner as any).isActive ? 'Deactivate' : 'Activate'}
                           </button>
                           <button
                             onClick={() => handleReorderBanner(banner.id, 'up')}

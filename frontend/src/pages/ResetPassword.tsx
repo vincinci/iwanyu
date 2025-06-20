@@ -8,7 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 const ResetPassword: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const error = await response.json();
+
   const token = searchParams.get('token');
 
   const [password, setPassword] = useState('');

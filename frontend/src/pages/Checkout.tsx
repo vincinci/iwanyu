@@ -38,7 +38,7 @@ interface OrderItem {
 }
 
 const Checkout: React.FC = () => {
-  const error = await response.json();
+
   const location = useLocation();
   const { user } = useAuth();
   const { items,  itemCount, addToCart } = useCart();
@@ -82,7 +82,7 @@ const Checkout: React.FC = () => {
       isGuest?: boolean;
     }) => {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/orders`), {
+      const response = await fetch(`${API_BASE_URL}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const Checkout: React.FC = () => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+
         throw new Error(error.error || 'Failed to create order');
       }
 
@@ -299,12 +299,20 @@ const Checkout: React.FC = () => {
         signal: controller.signal
       });
 
+      const fetchPromise = fetch(`${API_BASE_URL}/orders/${orderId}/payment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+        signal: controller.signal,
+      });
       const response = await Promise.race([fetchPromise, timeoutPromise]) as Response;
       clearTimeout(requestTimeout);
 
       if (!response.ok) {
-        const response = await fetch(API_BASE_URL + '/api', {));
-        throw new Error(error.error || 'Failed to initialize payment');
+        const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
+        throw new Error(errorData.error || 'Failed to initialize payment');
       }
 
       const data = await response.json();

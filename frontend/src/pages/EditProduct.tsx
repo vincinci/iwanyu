@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 
 const EditProduct: React.FC = () => {
-  const error = await response.json();
+
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {

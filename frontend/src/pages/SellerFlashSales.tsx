@@ -12,7 +12,7 @@ import {
 
 const SellerFlashSales: React.FC = () => {
   const { user } = useAuth();
-  const error = await response.json();
+
   const [flashSales, setFlashSales] = useState<any[]>([]);
   const [discountedProducts, setDiscountedProducts] = useState<any[]>([]);
   const [selectedFlashSale, setSelectedFlashSale] = useState<string | null>(null);
@@ -181,33 +181,33 @@ const SellerFlashSales: React.FC = () => {
         ) : (
           <ul className="space-y-4">
             {flashSales.map((fs: unknown) => (
-              <li key={fs.id} className="border rounded p-4">
+              <li key={(fs as any).id} className="border rounded p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-bold text-gray-700">{fs.title}</div>
-                    <div className="text-sm text-gray-500">{fs.description}</div>
+                    <div className="font-bold text-gray-700">{(fs as any).title}</div>
+                    <div className="text-sm text-gray-500">{(fs as any).description}</div>
                     <div className="text-xs text-gray-400">
-                      {new Date(fs.startTime).toLocaleString()} - {new Date(fs.endTime).toLocaleString()}
+                      {new Date((fs as any).startTime).toLocaleString()} - {new Date((fs as any).endTime).toLocaleString()}
                     </div>
                   </div>
                   <button
-                    className={`ml-4 px-3 py-1 rounded ${selectedFlashSale === fs.id ? 'bg-gray-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                    onClick={() => setSelectedFlashSale(fs.id)}
+                    className={`ml-4 px-3 py-1 rounded ${selectedFlashSale === (fs as any).id ? 'bg-gray-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setSelectedFlashSale((fs as any).id)}
                   >
-                    {selectedFlashSale === fs.id ? 'Selected' : 'Manage'}
+                    {selectedFlashSale === (fs as any).id ? 'Selected' : 'Manage'}
                   </button>
                 </div>
                 {/* Products in this flash sale */}
-                {fs.products && fs.products.length > 0 && (
+                {(fs as any).products && (fs as any).products.length > 0 && (
                   <div className="mt-4">
                     <div className="font-semibold mb-2 text-sm">Products in this Flash Sale:</div>
                     <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {fs.products.map((fsp: unknown) => (
-                        <li key={fsp.productId} className="flex items-center justify-between border rounded px-2 py-1">
-                          <span>{fsp.product?.name}</span>
+                      {(fs as any).products.map((fsp: unknown) => (
+                        <li key={(fsp as any).productId} className="flex items-center justify-between border rounded px-2 py-1">
+                          <span>{(fsp as any).product?.name}</span>
                           <button
                             className="text-xs text-red-600 hover:underline"
-                            onClick={() => handleRemoveProduct(fs.id, fsp.productId)}
+                            onClick={() => handleRemoveProduct((fs as any).id, (fsp as any).productId)}
                             disabled={loading}
                           >
                             Remove
@@ -231,11 +231,11 @@ const SellerFlashSales: React.FC = () => {
         ) : (
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {discountedProducts.map((product: unknown) => (
-              <li key={product.id} className="flex items-center justify-between border rounded px-2 py-1">
-                <span>{product.name}</span>
+              <li key={(product as any).id} className="flex items-center justify-between border rounded px-2 py-1">
+                <span>{(product as any).name}</span>
                 <button
                   className="text-xs bg-yellow-400 hover:bg-gray-500 text-black font-bold px-3 py-1 rounded"
-                  onClick={() => handleAddProduct(product.id)}
+                  onClick={() => handleAddProduct((product as any).id)}
                   disabled={!selectedFlashSale || loading}
                 >
                   Add to Flash Sale

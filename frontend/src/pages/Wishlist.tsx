@@ -20,7 +20,7 @@ const Wishlist: React.FC = () => {
   const { user } = useAuth();
   const { items, isLoading, removeFromWishlist, moveToCart, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
-  const error = await response.json();
+
   // Helper function to get product rating from actual data
   const getProductRating = (product: unknown) => {
     // Use actual product rating if available

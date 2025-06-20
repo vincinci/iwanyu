@@ -22,8 +22,9 @@ import { formatPrice } from '../utils/currency';
 import { getImageUrl } from '../utils/imageUtils';
 
 const AdminProducts: React.FC = () => {
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const error = await response.json();
+
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState('');

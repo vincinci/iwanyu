@@ -369,7 +369,7 @@ const Home: React.FC = () => {
           const parsedBanners = JSON.parse(savedBanners);
           // Only show active banners, sorted by order
           const activeBanners = parsedBanners
-            .filter((banner: unknown) => banner.isActive)
+            .filter((banner: unknown) => (banner as any).isActive)
             .sort((a: unknown, b: unknown) => a.order - b.order);
           setBanners(activeBanners);
         } else {
@@ -452,7 +452,7 @@ const Home: React.FC = () => {
     const handleBannersUpdated = (event: unknown) => {
       const updatedBanners = event.detail;
       const activeBanners = updatedBanners
-        .filter((banner: unknown) => banner.isActive)
+        .filter((banner: unknown) => (banner as any).isActive)
         .sort((a: unknown, b: unknown) => a.order - b.order);
       setBanners(activeBanners);
     };
@@ -482,10 +482,10 @@ const Home: React.FC = () => {
     }
 
     try {
-      if (isInWishlist(product.id)) {
-        await removeFromWishlist(product.id);
+      if (isInWishlist((product as any).id)) {
+        await removeFromWishlist((product as any).id);
       } else {
-        await addToWishlist(product.id);
+        await addToWishlist((product as any).id);
       }
     } catch (error) {
       console.error('Wishlist error:', error);
@@ -500,8 +500,8 @@ const Home: React.FC = () => {
   const getProductRating = (product: unknown) => {
     try {
       // Use actual product rating if available
-      if (product?.avgRating && product.avgRating > 0) {
-        return parseFloat(product.avgRating.toFixed(1));
+      if ((product as any)?.avgRating && (product as any).avgRating > 0) {
+        return parseFloat((product as any).avgRating.toFixed(1));
       }
       return 0;
     } catch (error) {
@@ -607,7 +607,7 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
               {promotedProducts.slice(0, 18).map((product: PromotedProduct, index: number) => (
                   <motion.div
-                  key={product.id}
+                  key={(product as any).id}
                   initial={isMobile ? {} : { opacity: 0, y: -20 }}
                   whileInView={isMobile ? {} : { opacity: 1, y: 0 }}
                   transition={isMobile ? {} : { duration: 0.4, delay: index * 0.05 }}
@@ -615,14 +615,14 @@ const Home: React.FC = () => {
                   className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-gray-300 overflow-hidden"
                 >
                   <Link 
-                    to={`/products/${product.id}`} 
+                    to={`/products/${(product as any).id}`} 
                     className="block"
                     onClick={() => advertisementApi.trackClick(product.adId)}
                   >
                     <div className="relative overflow-hidden">
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
-                        alt={product.name}
+                        alt={(product as any).name}
                         className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
@@ -641,7 +641,7 @@ const Home: React.FC = () => {
                     
                     <div className="p-2">
                       <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2 group-hover:text-gray-700 transition-colors">
-                        {product.name}
+                        {(product as any).name}
                       </h3>
                       
                       <div className="text-sm font-bold text-gray-900">
@@ -698,17 +698,17 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
               {flashProducts.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
-                  key={product.id}
+                  key={(product as any).id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                   className="bg-white rounded-lg border hover:shadow-md transition-all duration-200 overflow-hidden group relative"
                 >
-                  <Link to={`/products/${product.id}`}>
+                  <Link to={`/products/${(product as any).id}`}>
                     {product.images?.[0] ? (
                       <img
                         src={product.images[0]}
-                        alt={product.name}
+                        alt={(product as any).name}
                         className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
@@ -735,9 +735,9 @@ const Home: React.FC = () => {
                   </Link>
                   
                   <div className="p-2">
-                    <Link to={`/products/${product.id}`}>
+                    <Link to={`/products/${(product as any).id}`}>
                       <h3 className="text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
-                        {product.name}
+                        {(product as any).name}
                       </h3>
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
                             {formatPrice(product.salePrice || product.price)}
@@ -789,18 +789,18 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
               {bestSellers.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
-                  key={product.id}
+                  key={(product as any).id}
                   initial={isMobile ? {} : { opacity: 0, y: -20 }}
                   whileInView={isMobile ? {} : { opacity: 1, y: 0 }}
                   transition={isMobile ? {} : { duration: 0.4, delay: index * 0.05 }}
                   viewport={{ once: true }}
                   className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden"
                 >
-                  <Link to={`/products/${product.id}`} className="block">
+                  <Link to={`/products/${(product as any).id}`} className="block">
                     <div className="relative overflow-hidden">
                       <img
                         src={product.images?.[0] || '/placeholder-product.jpg'}
-                          alt={product.name}
+                          alt={(product as any).name}
                         className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                         onError={(e) => {
@@ -819,7 +819,7 @@ const Home: React.FC = () => {
                     
                     <div className="p-2">
                       <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2">
-                        {product.name}
+                        {(product as any).name}
                       </h3>
                       
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
@@ -869,17 +869,17 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
               {latestProducts.slice(0, 18).map((product: Product, index: number) => (
                 <motion.div
-                  key={product.id}
+                  key={(product as any).id}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.02 }}
                   className="bg-white rounded-lg border hover:shadow-md transition-all duration-200 overflow-hidden group"
                 >
-                  <Link to={`/products/${product.id}`} className="block relative">
+                  <Link to={`/products/${(product as any).id}`} className="block relative">
                     {product.images?.[0] ? (
                       <img
                         src={product.images[0]}
-                        alt={product.name}
+                        alt={(product as any).name}
                         className="w-full h-20 md:h-24 object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
@@ -897,9 +897,9 @@ const Home: React.FC = () => {
                   </Link>
                   
                   <div className="p-2">
-                    <Link to={`/products/${product.id}`}>
+                    <Link to={`/products/${(product as any).id}`}>
                       <h3 className="text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
-                        {product.name}
+                        {(product as any).name}
                       </h3>
                       <div className="text-sm font-bold text-red-600 mb-2 text-center">
                         {formatPrice(product.salePrice || product.price)}

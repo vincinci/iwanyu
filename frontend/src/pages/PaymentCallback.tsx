@@ -9,7 +9,7 @@ type PaymentStatus = 'loading' | 'success' | 'failed' | 'cancelled' | 'timeout';
 
 const PaymentCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const error = await response.json();
+
   const [status, setStatus] = useState<PaymentStatus>('loading');
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [error, setError] = useState<string>('');

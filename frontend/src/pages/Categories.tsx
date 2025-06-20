@@ -42,6 +42,7 @@ import { categoriesApi } from '../services/api';
 import type { Category } from '../types/api';
 
 const Categories: React.FC = () => {
+  const [error, setError] = useState<string | null>(null);
   const { data: categoriesData, isLoading} = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoriesApi.getAll(),

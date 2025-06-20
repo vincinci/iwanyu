@@ -61,8 +61,8 @@ class AuthApi {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to update profile');
+
+      throw new Error(errorData.error || 'Failed to update profile');
     }
 
     return response.json();
@@ -74,8 +74,8 @@ class AuthApi {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Token validation failed');
+
+      throw new Error(errorData.error || 'Token validation failed');
     }
 
     return response.json();

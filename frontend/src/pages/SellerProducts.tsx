@@ -19,8 +19,9 @@ import { formatPrice } from '../utils/currency';
 import { getImageUrl } from '../utils/imageUtils';
 
 const SellerProducts: React.FC = () => {
+  const [error, setError] = useState<string | null>(null);
   const { user, isLoading: authLoading } = useAuth();
-  const error = await response.json();
+
   const queryClient = useQueryClient();
   const [selectedProduct, setSelectedProduct] = useState<SellerProduct | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);

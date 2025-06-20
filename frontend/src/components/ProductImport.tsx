@@ -40,7 +40,7 @@ const ProductImport: React.FC<ProductImportProps> = ({ onClose, onSuccess }) => 
     setError(null);
 
     try {
-      const error = await response.json();
+
       setResults(response.results);
       
       if (response.results.successful > 0) {

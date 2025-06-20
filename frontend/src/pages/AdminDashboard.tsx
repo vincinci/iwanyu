@@ -69,8 +69,9 @@ class ErrorBoundary extends React.Component<
 }
 
 const AdminDashboard: React.FC = () => {
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const error = await response.json();
+
   React.useEffect(() => {
     if (!user) {
       navigate('/login');

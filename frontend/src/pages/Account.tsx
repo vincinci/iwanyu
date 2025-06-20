@@ -102,7 +102,6 @@ const Account: React.FC = () => {
         phone: formData.phone
       };
 
-      const error = await response.json();
       // Update the auth context with new user data
       await refreshUser();
       

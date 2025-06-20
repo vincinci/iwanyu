@@ -36,7 +36,7 @@ import { addToRecentlyViewed } from '../utils/recentlyViewed';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const error = await response.json();
+
   const { user } = useAuth();
   const { showError } = useToast();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -53,8 +53,8 @@ const ProductDetail: React.FC = () => {
   // Helper function to get product rating from actual data
   const getProductRating = (product: unknown) => {
     // Use actual product rating if available
-    if (product?.avgRating && product.avgRating > 0) {
-      return parseFloat(product.avgRating.toFixed(1));
+    if ((product as any)?.avgRating && (product as any).avgRating > 0) {
+      return parseFloat((product as any).avgRating.toFixed(1));
     }
     return 0;
   };
@@ -153,7 +153,7 @@ const ProductDetail: React.FC = () => {
     setIsAddingToCart(true);
     
     // Add the specified quantity to cart
-    for (const i = 0; i < quantity; i++) {
+    for (let i = 0; i < quantity; i++) {
       addToCart(product);
     }
     
@@ -459,7 +459,7 @@ const ProductDetail: React.FC = () => {
             </h1>
 
             {/* Product Rating and Reviews - Only show if ratings exist */}
-            {product.avgRating > 0 && (
+            {(product as any).avgRating > 0 && (
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 space-y-2 sm:space-y-0 mb-6">
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center">
@@ -467,14 +467,14 @@ const ProductDetail: React.FC = () => {
                       <Star
                         key={i}
                         size={16}
-                        className={i < Math.floor(product.avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"}
+                        className={i < Math.floor((product as any).avgRating) ? "text-yellow-400 fill-current" : "text-gray-300"}
                       />
                     ))}
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-600">
                     <span className="flex items-center">
                       <Star size={14} className="text-yellow-400 fill-current mr-1" />
-                      {product.avgRating.toFixed(1)} ({product.totalReviews || 0} reviews)
+                      {(product as any).avgRating.toFixed(1)} ({product.totalReviews || 0} reviews)
                     </span>
                   </div>
                 </div>

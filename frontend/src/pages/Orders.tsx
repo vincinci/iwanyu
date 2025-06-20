@@ -24,6 +24,7 @@ import { getProductImageUrl } from '../utils/imageUtils';
 import { formatPrice } from '../utils/currency';
 
 const Orders: React.FC = () => {
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,7 +62,7 @@ const Orders: React.FC = () => {
   // Get order details
   const fetchOrderDetails = async (orderId: string) => {
     try {
-      const error = await response.json();
+
       setSelectedOrder(response.data);
       setShowOrderDetails(true);
     } catch (error) {

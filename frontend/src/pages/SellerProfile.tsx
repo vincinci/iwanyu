@@ -6,7 +6,7 @@ import { sellerApi } from '../services/sellerApi';
 
 const SellerProfile: React.FC = () => {
   const { user } = useAuth();
-  const error = await response.json();
+
   const [profile, setProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
