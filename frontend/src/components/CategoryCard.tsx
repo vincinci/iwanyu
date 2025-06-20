@@ -19,6 +19,7 @@ import {
   Headphones,
   Camera,
   Watch,
+  Laptop,
   Tablet,
   Baby,
   PawPrint,
