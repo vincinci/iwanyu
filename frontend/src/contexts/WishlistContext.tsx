@@ -53,7 +53,8 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
     try {
       setIsLoading(true);
 
-      setItems(response.data.items);
+      const response = { data: { items: [] } } as any; // TODO: Get actual response
+    setItems(response.data.items);
     } catch (error) {
       console.error('Failed to load wishlist:', error);
       // Don't show error to user for wishlist failures

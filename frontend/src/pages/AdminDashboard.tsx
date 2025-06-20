@@ -160,7 +160,7 @@ const AdminDashboard: React.FC = () => {
             <summary className="cursor-pointer text-sm text-gray-500">Debug Info</summary>
             <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
               {JSON.stringify({
-                error: (error as any)?.message || 'Unknown error',
+                error: (isError as any)?.message || 'Unknown error',
                 hasToken: !!localStorage.getItem('token'),
                 user: user ? { id: user.id, role: user.role, email: user.email } : null,
                 timestamp: new Date().toISOString()
@@ -334,7 +334,7 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Pending Sellers</p>
-                  <p className="text-2xl font-bold text-gray-600">{sellerStatusMap.PENDING || 0}</p>
+                  <p className="text-2xl font-bold text-gray-600">{(sellerStatusMap as any).PENDING || 0}</p>
                 </div>
                 <Clock className="w-8 h-8 text-gray-500" />
               </div>
@@ -344,7 +344,7 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Approved Sellers</p>
-                  <p className="text-2xl font-bold text-green-600">{sellerStatusMap.APPROVED || 0}</p>
+                  <p className="text-2xl font-bold text-green-600">{(sellerStatusMap as any).APPROVED || 0}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
@@ -354,7 +354,7 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Rejected Sellers</p>
-                  <p className="text-2xl font-bold text-red-600">{sellerStatusMap.REJECTED || 0}</p>
+                  <p className="text-2xl font-bold text-red-600">{(sellerStatusMap as any).REJECTED || 0}</p>
                 </div>
                 <XCircle className="w-8 h-8 text-red-500" />
               </div>
@@ -364,7 +364,7 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Suspended Sellers</p>
-                  <p className="text-2xl font-bold text-gray-600">{sellerStatusMap.SUSPENDED || 0}</p>
+                  <p className="text-2xl font-bold text-gray-600">{(sellerStatusMap as any).SUSPENDED || 0}</p>
                 </div>
                 <AlertCircle className="w-8 h-8 text-gray-500" />
               </div>

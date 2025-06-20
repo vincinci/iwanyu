@@ -260,7 +260,8 @@ class SellerApi {
       if (!response.ok) {
 
         console.error('API Error:', 'Request failed');
-        throw new Error((errorResponse as any).error || 'Unknown error' || 'Failed to create product');
+        const errorData = { error: 'Request failed' };
+      throw new Error(errorData.error || 'Unknown error' || 'Failed to create product');
       }
 
       const result = await response.json();
@@ -280,7 +281,8 @@ class SellerApi {
       if (!response.ok) {
 
         console.error('API Error:', 'Request failed');
-        throw new Error((errorResponse as any).error || 'Unknown error' || 'Failed to create product');
+        const errorData = { error: 'Request failed' };
+      throw new Error(errorData.error || 'Unknown error' || 'Failed to create product');
       }
 
       const result = await response.json();

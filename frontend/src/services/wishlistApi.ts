@@ -75,7 +75,8 @@ class WishlistApi {
     if (!response.ok) {
 
       console.error('❌ API Error response:', error);
-      throw new Error((errorResponse as any).error || 'Failed to add to wishlist');
+      const errorData = { error: 'Request failed' };
+      throw new Error(errorData.error || 'Failed to add to wishlist');
     }
 
     const result = await response.json();

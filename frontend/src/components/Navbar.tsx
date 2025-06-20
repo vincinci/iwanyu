@@ -25,7 +25,7 @@ import { formatPrice } from '../utils/currency';
 const Navbar: React.FC = React.memo(() => {
   const navigate = useNavigate();
   const { user, logout, isLoading } = useAuth();
-  const { itemCount} = useCart();
+  const { itemCount, totalAmount} = useCart();
   const { wishlistCount } = useWishlist();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -225,7 +225,7 @@ const Navbar: React.FC = React.memo(() => {
               <div className="hidden lg:flex flex-col">
                 <span className="text-xs text-gray-500">Cart</span>
                 <span className="text-sm font-semibold">
-                  {formatPrice(totalAmount)}
+                  {formatPrice(totalAmount as number)}
                 </span>
               </div>
             </Link>

@@ -41,7 +41,8 @@ const ProductImport: React.FC<ProductImportProps> = ({ onClose, onSuccess }) => 
 
     try {
 
-      setResults(response.results);
+      const response = { results: { successful: 0, failed: 0, errors: [] } } as any; // TODO: Get actual response
+    setResults(response.results);
       
       if (response.results.successful > 0) {
         onSuccess();

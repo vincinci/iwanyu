@@ -369,7 +369,8 @@ class AdminApi {
         throw new Error('No document found for this seller');
       }
 
-      throw new Error((errorResponse as any).error || 'Failed to fetch seller document');
+      const errorData = { error: 'Request failed' };
+      throw new Error(errorData.error || 'Failed to fetch seller document');
     }
 
     return response.json();

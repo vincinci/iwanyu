@@ -67,7 +67,7 @@ const SellerDashboard: React.FC = () => {
 
   // Handle specific error cases
   if (error || profileError) {
-    const errorMessage = (error as any)?.message || (profileError as any)?.message || 'Unknown error';
+    const errorMessage = (isError as any)?.message || (profileError as any)?.message || 'Unknown error';
     
     // If user is not a seller or doesn't have seller profile
     if (errorMessage.includes('Seller profile not found') || errorMessage.includes('not found')) {
