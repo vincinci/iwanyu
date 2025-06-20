@@ -141,6 +141,17 @@ export interface AdminProduct {
       lastName?: string;
     };
   };
+  variants?: Array<{
+    id: string;
+    name: string;
+    value: string;
+    price?: number;
+    stock: number;
+    sku?: string;
+    image?: string;
+    sortOrder: number;
+    isActive: boolean;
+  }>;
 }
 
 export interface ProductsResponse {

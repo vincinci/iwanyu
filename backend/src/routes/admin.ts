@@ -1785,8 +1785,7 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
         const status = mainProduct['Status'] === 'draft' ? 'inactive' : 'active';
         const isActive = mainProduct['Status'] !== 'archived' && mainProduct['Published'] !== 'FALSE';
 
-        // Create product - we'll create a simple product without variants for now
-        // In a full implementation, you'd handle variants properly
+        // Create product with variants support
         const newProduct = await prisma.product.create({
           data: {
             name: title,
@@ -1807,6 +1806,127 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
             sellerId: null
           }
         });
+
+        // Create variants from CSV data
+        type VariantData = {
+          name: string;
+          value: string;
+          price: number | null;
+          stock: number;
+          sku: string | null;
+          image: string | null;
+          sortOrder: number;
+        };
+        
+        const variantsToCreate: VariantData[] = [];
+        let sortOrder = 0;
+
+        for (const variant of variants) {
+          // Parse variant price
+          let variantPrice: number | null = null;
+          if (variant['Variant Price']) {
+            const variantPriceStr = variant['Variant Price'].toString().trim().replace(/[^\d.,]/g, '');
+            const parsedVariantPrice = parseFloat(variantPriceStr);
+            if (!isNaN(parsedVariantPrice) && parsedVariantPrice > 0) {
+              variantPrice = parsedVariantPrice;
+            }
+          }
+
+          // Parse variant stock
+          let variantStock = 0;
+          if (variant['Variant Inventory Qty']) {
+            variantStock = parseInt(variant['Variant Inventory Qty']) || 0;
+          }
+
+          // Create variants based on Option columns
+          const variantData: VariantData[] = [];
+
+          // Handle Option1 (e.g., Size, Color)
+          if (variant['Option1 Name'] && variant['Option1 Value']) {
+            variantData.push({
+              name: variant['Option1 Name'].trim(),
+              value: variant['Option1 Value'].trim(),
+              price: variantPrice,
+              stock: variantStock,
+              sku: variant['Variant SKU'] || null,
+              image: variant['Variant Image'] || null,
+              sortOrder: sortOrder++
+            });
+          }
+
+          // Handle Option2
+          if (variant['Option2 Name'] && variant['Option2 Value']) {
+            variantData.push({
+              name: variant['Option2 Name'].trim(),
+              value: variant['Option2 Value'].trim(),
+              price: variantPrice,
+              stock: variantStock,
+              sku: variant['Variant SKU'] || null,
+              image: variant['Variant Image'] || null,
+              sortOrder: sortOrder++
+            });
+          }
+
+          // Handle Option3
+          if (variant['Option3 Name'] && variant['Option3 Value']) {
+            variantData.push({
+              name: variant['Option3 Name'].trim(),
+              value: variant['Option3 Value'].trim(),
+              price: variantPrice,
+              stock: variantStock,
+              sku: variant['Variant SKU'] || null,
+              image: variant['Variant Image'] || null,
+              sortOrder: sortOrder++
+            });
+          }
+
+          // If no options are defined, create a default variant
+          if (variantData.length === 0 && (variantPrice || variantStock > 0)) {
+            variantData.push({
+              name: 'Default',
+              value: 'Default',
+              price: variantPrice,
+              stock: variantStock,
+              sku: variant['Variant SKU'] || null,
+              image: variant['Variant Image'] || null,
+              sortOrder: sortOrder++
+            });
+          }
+
+          variantsToCreate.push(...variantData);
+        }
+
+        // Remove duplicate variants (same name + value combination)
+        const uniqueVariants = variantsToCreate.filter((variant, index, self) => 
+          index === self.findIndex(v => v.name === variant.name && v.value === variant.value)
+        );
+
+        // Create variants in database
+        if (uniqueVariants.length > 0) {
+          for (const variantData of uniqueVariants) {
+            try {
+              await prisma.productVariant.create({
+                data: {
+                  productId: newProduct.id,
+                  name: variantData.name,
+                  value: variantData.value,
+                  price: variantData.price,
+                  stock: variantData.stock,
+                  sku: variantData.sku,
+                  image: variantData.image,
+                  sortOrder: variantData.sortOrder,
+                  isActive: true
+                }
+              });
+            } catch (variantError) {
+              // Log variant creation error but don't fail the whole import
+              console.error(`Failed to create variant ${variantData.name}:${variantData.value}:`, variantError);
+              importResults.warnings.push(`Product ${handle}: Failed to create variant ${variantData.name}:${variantData.value}`);
+            }
+          }
+          
+          importResults.warnings.push(`Product ${handle}: Created ${uniqueVariants.length} variants`);
+        }
 
         importResults.successful++;
         console.log(`Successfully imported product: ${title}`);

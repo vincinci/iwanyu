@@ -236,6 +236,12 @@ const AdminProducts: React.FC = () => {
                               <div className="text-sm text-gray-500">
                                 {product.category.name} • {product.sku || 'No SKU'}
                               </div>
+                              {product.variants && product.variants.length > 0 && (
+                                <div className="text-xs text-blue-600 mt-1">
+                                  {product.variants.length} variant{product.variants.length !== 1 ? 's' : ''} 
+                                  ({product.variants.map(v => `${v.name}:${v.value}`).join(', ')})
+                                </div>
+                              )}
                               {product.featured && (
                                 <div className="flex items-center mt-1">
                                   <Star className="w-3 h-3 text-yellow-400 mr-1" />
@@ -262,6 +268,11 @@ const AdminProducts: React.FC = () => {
                           }`}>
                             {product.stock} units
                           </div>
+                          {product.variants && product.variants.length > 0 && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              Variants: {product.variants.map(v => `${v.value}(${v.stock})`).join(', ')}
+                            </div>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(product.isActive, product.status)}`}>
