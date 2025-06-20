@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
@@ -35,7 +35,6 @@ import type { Category, Product } from '../types/api';
 
 const Products: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
@@ -83,7 +82,7 @@ const Products: React.FC = () => {
     data,
     isLoading,
     isError,
-    error,
+    
     ref,
     hasInstantData,
     isInstantFetching,
@@ -273,7 +272,7 @@ const Products: React.FC = () => {
   };
 
   // Helper function to get product rating from actual data
-  const getProductRating = (product: any) => {
+  const getProductRating = (product: unknown) => {
     // Use actual product rating if available
     if (product?.avgRating && product.avgRating > 0) {
       return parseFloat(product.avgRating.toFixed(1));

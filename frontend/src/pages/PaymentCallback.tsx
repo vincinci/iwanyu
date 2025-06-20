@@ -9,7 +9,7 @@ type PaymentStatus = 'loading' | 'success' | 'failed' | 'cancelled' | 'timeout';
 
 const PaymentCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const 
   const [status, setStatus] = useState<PaymentStatus>('loading');
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [error, setError] = useState<string>('');
@@ -115,7 +115,7 @@ const PaymentCallback: React.FC = () => {
             controller.abort();
           }, 15000);
 
-          const response = await fetch(`${API_BASE_URL}/payments/verify/${useTransactionId}`, {
+          const }/payments/verify/${useTransactionId}`, {
             method: 'GET',
             headers,
             signal: controller.signal

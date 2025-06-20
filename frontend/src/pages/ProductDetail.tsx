@@ -36,7 +36,7 @@ import { addToRecentlyViewed } from '../utils/recentlyViewed';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const 
   const { user } = useAuth();
   const { showError } = useToast();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -51,7 +51,7 @@ const ProductDetail: React.FC = () => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   // Helper function to get product rating from actual data
-  const getProductRating = (product: any) => {
+  const getProductRating = (product: unknown) => {
     // Use actual product rating if available
     if (product?.avgRating && product.avgRating > 0) {
       return parseFloat(product.avgRating.toFixed(1));
@@ -60,7 +60,7 @@ const ProductDetail: React.FC = () => {
   };
 
   // Use instant loading for product
-  const { product, isInstantLoading, hasInstantData, error } = useInstantProduct(id!, !!id);
+  const { product, isInstantLoading, hasInstantData} = useInstantProduct(id!, !!id);
 
   // Track recently viewed
   useEffect(() => {
@@ -153,7 +153,7 @@ const ProductDetail: React.FC = () => {
     setIsAddingToCart(true);
     
     // Add the specified quantity to cart
-    for (let i = 0; i < quantity; i++) {
+    for (const i = 0; i < quantity; i++) {
       addToCart(product);
     }
     

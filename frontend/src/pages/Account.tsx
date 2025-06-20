@@ -24,7 +24,7 @@ import { authApi, type UpdateProfileData } from '../services/authApi';
 
 const Account: React.FC = () => {
   const { user, refreshUser } = useAuth();
-  const { itemCount, totalAmount } = useCart();
+  const { itemCount} = useCart();
   const { wishlistCount } = useWishlist();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
@@ -102,7 +102,7 @@ const Account: React.FC = () => {
         phone: formData.phone
       };
 
-      const response = await authApi.updateProfile(updateData);
+      const 
       
       // Update the auth context with new user data
       await refreshUser();

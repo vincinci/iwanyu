@@ -16,7 +16,7 @@ import { adminApi, type AdminCategory } from '../services/adminApi';
 
 const AdminCategories: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const queryClient = useQueryClient();
 
   const [editingCategory, setEditingCategory] = useState<AdminCategory | null>(null);
@@ -30,7 +30,7 @@ const AdminCategories: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const { data: categories, isLoading, error } = useQuery({
+  const { data: categories, isLoading} = useQuery({
     queryKey: ['admin-categories'],
     queryFn: async () => {
       console.log('AdminCategories: Starting API call');
@@ -59,7 +59,7 @@ const AdminCategories: React.FC = () => {
   });
 
   const updateCategoryMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => 
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => 
       adminApi.updateCategory(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
@@ -74,11 +74,11 @@ const AdminCategories: React.FC = () => {
     },
   });
 
-  const handleCreateCategory = (categoryData: any) => {
+  const handleCreateCategory = (categoryData: unknown) => {
     createCategoryMutation.mutate(categoryData);
   };
 
-  const handleUpdateCategory = (categoryData: any) => {
+  const handleUpdateCategory = (categoryData: unknown) => {
     if (editingCategory) {
       updateCategoryMutation.mutate({ id: editingCategory.id, data: categoryData });
     }

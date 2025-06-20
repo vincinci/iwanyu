@@ -20,7 +20,7 @@ const BecomeSeller: React.FC = () => {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
 
   React.useEffect(() => {
     // Check localStorage immediately for instant response

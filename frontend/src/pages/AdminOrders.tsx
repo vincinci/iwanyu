@@ -18,7 +18,7 @@ import { formatPrice } from '../utils/currency';
 
 const AdminOrders: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const queryClient = useQueryClient();
 
   const [statusFilter, setStatusFilter] = useState('');
@@ -33,7 +33,7 @@ const AdminOrders: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading} = useQuery({
     queryKey: ['admin-orders', page, statusFilter],
     queryFn: () => adminApi.getOrders({ page, status: statusFilter, limit: 20 }),
     enabled: !!user && user.role === 'ADMIN',

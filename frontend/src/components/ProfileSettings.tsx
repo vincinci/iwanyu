@@ -4,7 +4,6 @@ import {
   User, 
   Mail, 
   Phone, 
-  MapPin, 
   Edit, 
   Save, 
   X, 
@@ -100,10 +99,10 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
     setIsUploadingImage(true);
     try {
-      const response = await authApi.uploadProfileImage(file);
+      const 
       await refreshUser();
       setMessage({ type: 'success', text: 'Profile image updated successfully!' });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Upload error:', error);
       setMessage({ 
         type: 'error', 
@@ -125,7 +124,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       await authApi.deleteProfileImage();
       await refreshUser();
       setMessage({ type: 'success', text: 'Profile image removed successfully!' });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Delete error:', error);
       setMessage({ 
         type: 'error', 

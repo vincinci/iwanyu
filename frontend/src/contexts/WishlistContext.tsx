@@ -52,7 +52,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
     
     try {
       setIsLoading(true);
-      const response = await wishlistApi.getWishlist();
+      const 
       setItems(response.data.items);
     } catch (error) {
       console.error('Failed to load wishlist:', error);
@@ -71,7 +71,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
     console.log('🔄 Adding to wishlist:', productId);
     
     try {
-      const response = await wishlistApi.addToWishlist(productId);
+      const 
       console.log('✅ API Response:', response);
       
       // Add the new item to the state

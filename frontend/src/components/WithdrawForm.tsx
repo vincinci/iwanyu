@@ -58,7 +58,7 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({
       
       alert(`Withdrawal initiated successfully! Reference: ${data.data.reference}`);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('Withdrawal error:', error);
       const errorMessage = error.response?.data?.error || 'Failed to process withdrawal';
       setErrors({ general: errorMessage });

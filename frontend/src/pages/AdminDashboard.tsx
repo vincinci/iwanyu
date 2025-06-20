@@ -70,7 +70,7 @@ class ErrorBoundary extends React.Component<
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
 
   React.useEffect(() => {
     if (!user) {
@@ -80,7 +80,7 @@ const AdminDashboard: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const { data: dashboard, isLoading, error } = useQuery({
+  const { data: dashboard, isLoading} = useQuery({
     queryKey: ['admin-dashboard'],
     queryFn: async () => {
       console.log('AdminDashboard: Starting query function');
@@ -105,7 +105,7 @@ const AdminDashboard: React.FC = () => {
   const sellerStatusMap = React.useMemo(() => {
     if (!dashboard?.sellerStatusCounts) return {};
     
-    return dashboard.sellerStatusCounts.reduce((acc: any, item) => {
+    return dashboard.sellerStatusCounts.reduce((acc: unknown, item) => {
       acc[item.status] = item._count;
       return acc;
     }, {});

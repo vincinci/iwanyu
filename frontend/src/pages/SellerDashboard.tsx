@@ -11,7 +11,7 @@ import ProductImport from '../components/ProductImport';
 
 const SellerDashboard: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const [showImportModal, setShowImportModal] = React.useState(false);
 
   React.useEffect(() => {
@@ -36,13 +36,13 @@ const SellerDashboard: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const { data: dashboard, isLoading, error } = useQuery({
+  const { data: dashboard, isLoading} = useQuery({
     queryKey: ['seller-dashboard'],
     queryFn: sellerApi.getDashboard,
     enabled: !!user && user.role === 'SELLER',
   });
 
-  const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
+  const { data: profile, isLoading: profileLoading} = useQuery({
     queryKey: ['seller-profile'],
     queryFn: sellerApi.getProfile,
     enabled: !!user && user.role === 'SELLER',

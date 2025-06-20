@@ -15,7 +15,7 @@ import { useCart } from '../contexts/CartContext';
 import { formatPrice } from '../utils/currency';
 
 const Cart: React.FC = () => {
-  const { items, removeFromCart, updateQuantity, clearCart, totalAmount, itemCount } = useCart();
+  const { items, removeFromCart, updateQuantity, clearCart,  itemCount } = useCart();
 
   if (items.length === 0) {
     return (

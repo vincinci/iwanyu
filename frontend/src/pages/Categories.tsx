@@ -1,12 +1,9 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   Package, 
-  ArrowRight, 
-  Grid, 
-  Tag,
+  ArrowRight,
   Smartphone,
   Shirt,
   Car,
@@ -45,7 +42,7 @@ import { categoriesApi } from '../services/api';
 import type { Category } from '../types/api';
 
 const Categories: React.FC = () => {
-  const { data: categoriesData, isLoading, error } = useQuery({
+  const { data: categoriesData, isLoading} = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoriesApi.getAll(),
   });

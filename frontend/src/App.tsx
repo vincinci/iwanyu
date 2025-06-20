@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Error Boundary for Mobile Crash Prevention
@@ -107,7 +107,6 @@ import AdminSellers from './pages/AdminSellers';
 import AdminPayments from './pages/AdminPayments';
 import BannerManager from './pages/admin/BannerManager';
 import AdminCsvImport from './pages/admin/AdminCsvImport';
-import { useGlobalPrefetch } from './hooks/useInstantProducts';
 import SellerWallet from './pages/SellerWallet';
 import SellerPayouts from './pages/SellerPayouts';
 import AdCampaigns from './pages/seller/AdCampaigns';

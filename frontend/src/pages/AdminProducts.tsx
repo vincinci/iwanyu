@@ -23,7 +23,7 @@ import { getImageUrl } from '../utils/imageUtils';
 
 const AdminProducts: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState('');
@@ -41,7 +41,7 @@ const AdminProducts: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading} = useQuery({
     queryKey: ['admin-products', page, search, statusFilter],
     queryFn: () => adminApi.getProducts({ page, search, status: statusFilter, limit: 20 }),
     enabled: !!user && user.role === 'ADMIN',
@@ -55,7 +55,7 @@ const AdminProducts: React.FC = () => {
   });
 
   const updateProductMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => adminApi.updateProduct(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => adminApi.updateProduct(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       setEditingProduct(null);
@@ -80,7 +80,7 @@ const AdminProducts: React.FC = () => {
     },
   });
 
-  const handleUpdateProduct = (productData: any) => {
+  const handleUpdateProduct = (productData: unknown) => {
     if (editingProduct) {
       updateProductMutation.mutate({ id: editingProduct.id, data: productData });
     }

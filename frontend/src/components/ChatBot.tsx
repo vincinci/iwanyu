@@ -7,8 +7,7 @@ import {
   Bot, 
   User, 
   Phone, 
-  Mail, 
-  Clock,
+  Mail,
   ShoppingCart,
   Package,
   CreditCard,
@@ -170,7 +169,7 @@ const ChatBot: React.FC = () => {
     let bestMatch = { intent: 'unknown', confidence: 0, response: '' };
     
     for (const [intentName, pattern] of Object.entries(intentPatterns)) {
-      let score = 0;
+      const score = 0;
       
       // Check for exact casual phrases
       for (const phrase of pattern.casualPhrases) {
@@ -529,7 +528,6 @@ const ChatBot: React.FC = () => {
     
     // Get smart response
     setTimeout(() => {
-      const response = getSmartResponse(userMessage);
       addMessage(response.text, true, response.actions);
       setIsTyping(false);
     }, 1000);

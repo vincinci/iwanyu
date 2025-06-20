@@ -49,12 +49,12 @@ class WishlistApi {
   }
 
   async getWishlist(): Promise<WishlistResponse> {
-    const response = await fetch(`${API_BASE_URL}/wishlist`, {
+    const }/wishlist`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to get wishlist');
     }
 
@@ -65,7 +65,7 @@ class WishlistApi {
     console.log('🌐 Making API call to add to wishlist:', productId);
     console.log('🔑 Auth headers:', this.getAuthHeaders());
     
-    const response = await fetch(`${API_BASE_URL}/wishlist/${productId}`, {
+    const }/wishlist/${productId}`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
     });
@@ -73,7 +73,7 @@ class WishlistApi {
     console.log('📡 API Response status:', response.status);
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       console.error('❌ API Error response:', error);
       throw new Error(error.error || 'Failed to add to wishlist');
     }
@@ -84,13 +84,13 @@ class WishlistApi {
   }
 
   async removeFromWishlist(productId: string): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/wishlist/${productId}`, {
+    const }/wishlist/${productId}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to remove from wishlist');
     }
 
@@ -98,13 +98,13 @@ class WishlistApi {
   }
 
   async clearWishlist(): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/wishlist`, {
+    const }/wishlist`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to clear wishlist');
     }
 
@@ -112,12 +112,12 @@ class WishlistApi {
   }
 
   async checkInWishlist(productId: string): Promise<{ success: boolean; data: { inWishlist: boolean } }> {
-    const response = await fetch(`${API_BASE_URL}/wishlist/check/${productId}`, {
+    const }/wishlist/check/${productId}`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to check wishlist status');
     }
 
@@ -125,14 +125,14 @@ class WishlistApi {
   }
 
   async moveToCart(productId: string, quantity: number = 1): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/wishlist/${productId}/move-to-cart`, {
+    const }/wishlist/${productId}/move-to-cart`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({ quantity }),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to move to cart');
     }
 

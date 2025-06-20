@@ -7,7 +7,6 @@ import {
   ShoppingCart, 
   Plus,
   Star,
-  Eye,
   Zap
 } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';

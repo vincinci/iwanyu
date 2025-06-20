@@ -54,7 +54,7 @@ export interface AdPricing {
 export const advertisementApi = {
   // Get promoted products for home page
   getHomePageAds: async (placement: string, limit: number = 5) => {
-    const response = await api.get(`/advertisements/home/${placement}?limit=${limit}`);
+    const }?limit=${limit}`);
     return response.data;
   },
 
@@ -65,14 +65,14 @@ export const advertisementApi = {
     if (categoryId) params.append('categoryId', categoryId);
     params.append('limit', limit.toString());
 
-    const response = await api.get(`/advertisements/promoted-products?${params.toString()}`);
+    const }`);
     return response.data;
   },
 
   // Track ad click
   trackClick: async (adId: string) => {
     try {
-      const response = await api.post(`/advertisements/click/${adId}`);
+      const }`);
       return response.data;
     } catch (error) {
       console.error('Error tracking ad click:', error);
@@ -83,7 +83,7 @@ export const advertisementApi = {
 
   // Get ad pricing information
   getPricing: async (): Promise<{ success: boolean; data: AdPricing }> => {
-    const response = await api.get('/advertisements/pricing');
+    const 
     return response.data;
   },
 
@@ -100,12 +100,12 @@ export const advertisementApi = {
     endDate: string;
     productIds: string[];
   }) => {
-    const response = await api.post('/advertisements/campaigns', campaignData);
+    const  campaignData);
     return response.data;
   },
 
   getCampaigns: async () => {
-    const response = await api.get('/advertisements/campaigns');
+    const 
     return response.data;
   },
 
@@ -114,7 +114,7 @@ export const advertisementApi = {
     paymentMethod: string;
     paymentReference?: string;
   }) => {
-    const response = await api.post(`/advertisements/campaigns/${campaignId}/payment`, paymentData);
+    const }/payment`, paymentData);
     return response.data;
   }
 };

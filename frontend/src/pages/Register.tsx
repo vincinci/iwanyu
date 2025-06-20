@@ -15,7 +15,7 @@ const Register: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register, user, isLoading } = useAuth();
-  const navigate = useNavigate();
+  const 
 
   // Redirect authenticated users away from register page
   React.useEffect(() => {

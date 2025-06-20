@@ -27,7 +27,7 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
   orderItems: OrderItem[];
-  shippingAddress?: any;
+  shippingAddress?: unknown;
   guestEmail?: string;
   guestPhone?: string;
 }
@@ -61,19 +61,19 @@ export const getUserOrders = async (params?: {
   if (params?.limit) searchParams.append('limit', params.limit.toString());
   if (params?.status) searchParams.append('status', params.status);
 
-  const response = await api.get(`/orders?${searchParams.toString()}`);
+  const }`);
   return response.data;
 };
 
 // Get specific order
 export const getOrder = async (orderId: string): Promise<OrderResponse> => {
-  const response = await api.get(`/orders/${orderId}`);
+  const }`);
   return response.data;
 };
 
 // Cancel order
 export const cancelOrder = async (orderId: string): Promise<{ success: boolean; message: string }> => {
-  const response = await api.put(`/orders/${orderId}/cancel`);
+  const }/cancel`);
   return response.data;
 };
 
@@ -83,12 +83,12 @@ export const createOrder = async (orderData: {
     productId: string;
     quantity: number;
   }>;
-  shippingAddress?: any;
+  shippingAddress?: unknown;
   couponCode?: string;
   notes?: string;
   isGuest?: boolean;
 }): Promise<{ success: boolean; data: { id: string } }> => {
-  const response = await api.post('/orders', orderData);
+  const  orderData);
   return response.data;
 };
 

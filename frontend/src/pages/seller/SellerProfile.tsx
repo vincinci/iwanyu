@@ -18,7 +18,7 @@ interface FormData {
 
 const SellerProfile: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const [formData, setFormData] = useState<FormData>({
     businessName: '',
     businessEmail: '',
@@ -52,7 +52,7 @@ const SellerProfile: React.FC = () => {
   }, [user, navigate]);
 
   // Fetch seller profile
-  const { data: profile, isLoading, error, refetch } = useQuery({
+  const { data: profile, isLoading,  refetch } = useQuery({
     queryKey: ['seller-profile'],
     queryFn: sellerApi.getProfile
   });

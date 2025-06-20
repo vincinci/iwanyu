@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Star, ThumbsUp, ThumbsDown, MessageCircle, User, Calendar, ShoppingBag, Filter, Edit2, Trash2, Save, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
-import { formatPrice } from '../utils/currency';
 import type { Review, ReviewStats } from '../services/reviewsApi';
 
 interface ReviewSectionProps {
@@ -18,7 +17,7 @@ interface ReviewFilters {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, productPrice }) => {
+const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState<ReviewStats | null>(null);
@@ -50,7 +49,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
       setLoading(reset);
       const currentPage = reset ? 1 : page;
       
-      const response = await fetch(`${API_BASE_URL}/reviews/product/${productId}?page=${currentPage}&limit=10&rating=${filters.rating}&sortBy=${filters.sortBy}`);
+      const }/reviews/product/${productId}?page=${currentPage}&limit=10&rating=${filters.rating}&sortBy=${filters.sortBy}`);
       const data = await response.json();
 
       if (data.success) {
@@ -76,7 +75,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
 
     setSubmitting(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/reviews`, {
+      const }/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +104,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
     if (!user) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}/helpful`, {
+      const }/reviews/${reviewId}/helpful`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -122,12 +121,12 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
     }
   };
 
-  const handleEditReview = async (reviewId: string, reviewData: any) => {
+  const handleEditReview = async (reviewId: string, reviewData: unknown) => {
     if (!user) return;
 
     setSubmitting(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
+      const }/reviews/${reviewId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +159,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName, p
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
+      const }/reviews/${reviewId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

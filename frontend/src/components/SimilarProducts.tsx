@@ -27,11 +27,10 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
       setLoading(true);
       
       // First try to get products from the same category
-      let response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/products?category=${currentProduct.categoryId}&limit=${limit * 2}&exclude=${currentProduct.id}`
+      const }/products?category=${currentProduct.categoryId}&limit=${limit * 2}&exclude=${currentProduct.id}`
       );
       
-      let data = await response.json();
+      const data = await response.json();
       let products = data.success ? data.data.products : [];
 
       // If we don't have enough products from the same category, get more from similar price range

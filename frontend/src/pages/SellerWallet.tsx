@@ -26,7 +26,7 @@ import WithdrawForm from '../components/WithdrawForm';
 
 const SellerWallet: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const queryClient = useQueryClient();
   
   const [showBalance, setShowBalance] = useState(true);
@@ -54,7 +54,7 @@ const SellerWallet: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const { data: walletSummary, isLoading, error } = useQuery({
+  const { data: walletSummary, isLoading} = useQuery({
     queryKey: ['wallet-summary'],
     queryFn: walletApi.getWalletSummary,
     enabled: !!user && user.role === 'SELLER',

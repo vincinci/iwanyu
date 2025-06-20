@@ -21,7 +21,7 @@ export interface Payout {
   failureReason?: string;
   completedAt?: string;
   createdAt: string;
-  accountDetails: any;
+  accountDetails: unknown;
 }
 
 export interface BankDetails {
@@ -47,7 +47,7 @@ export interface PayoutRequest {
 class WalletApi {
   // Get wallet summary with available balance and earnings
   getWalletSummary = async (): Promise<WalletSummary> => {
-    const response = await api.get('/payouts/summary');
+    const 
     
     // Transform the API response to match the expected interface
     const apiData = response.data.data;
@@ -65,7 +65,7 @@ class WalletApi {
 
   // Get payout history
   getPayoutHistory = async (page = 1, limit = 20) => {
-    const response = await api.get('/payouts/history', {
+    const  {
       params: { page, limit }
     });
     return response.data;
@@ -73,31 +73,31 @@ class WalletApi {
 
   // Get specific payout details
   getPayoutDetails = async (payoutId: string): Promise<Payout> => {
-    const response = await api.get(`/payouts/${payoutId}`);
+    const }`);
     return response.data.payout;
   };
 
   // Get available banks for a country
   getBanks = async (country: string = 'RW') => {
-    const response = await api.get(`/payouts/banks/${country}`);
+    const }`);
     return response.data;
   };
 
   // Get mobile money networks for a country
   getMobileMoneyNetworks = async (country: string = 'RW') => {
-    const response = await api.get(`/payouts/mobile-money-networks/${country}`);
+    const }`);
     return response.data;
   };
 
   // Verify bank account details
   verifyBankAccount = async (accountDetails: BankDetails) => {
-    const response = await api.post('/payouts/verify-account', accountDetails);
+    const  accountDetails);
     return response.data;
   };
 
   // Get transfer fee for payout
   getTransferFee = async (amount: number, currency: string = 'RWF') => {
-    const response = await api.post('/payouts/transfer-fee', { amount, currency });
+    const  { amount, currency });
     return response.data;
   };
 
@@ -114,7 +114,7 @@ class WalletApi {
       beneficiaryName: payoutData.accountDetails.account_name,
       narration: payoutData.narration
     };
-    const response = await api.post('/payouts/bank-transfer', requestData);
+    const  requestData);
     return response.data;
   };
 
@@ -131,7 +131,7 @@ class WalletApi {
       beneficiaryName: 'Mobile Money User', // Default name for mobile money
       narration: payoutData.narration
     };
-    const response = await api.post('/payouts/mobile-money', requestData);
+    const  requestData);
     return response.data;
   };
 
@@ -139,10 +139,10 @@ class WalletApi {
   withdraw = async (withdrawalData: {
     amount: number;
     method: 'BANK_TRANSFER' | 'MOBILE_MONEY';
-    accountDetails: any;
+    accountDetails: unknown;
     narration?: string;
   }) => {
-    const response = await api.post('/payouts/withdraw', withdrawalData);
+    const  withdrawalData);
     return response.data;
   };
 }

@@ -13,7 +13,7 @@ export const calculateDiscount = (originalPrice: number, salePrice?: number): nu
 /**
  * Get rating from product data (use actual avgRating if available)
  */
-export const getProductRating = (product: any): number => {
+export const getProductRating = (product: unknown): number => {
   // Use actual product rating if available, otherwise return 0
   if (product?.avgRating && product.avgRating > 0) {
     return parseFloat(product.avgRating.toFixed(1));
@@ -24,7 +24,7 @@ export const getProductRating = (product: any): number => {
 /**
  * Get review count from product data (use actual totalReviews if available)
  */
-export const getReviewCount = (product: any): number => {
+export const getReviewCount = (product: unknown): number => {
   return product?.totalReviews || 0;
 };
 

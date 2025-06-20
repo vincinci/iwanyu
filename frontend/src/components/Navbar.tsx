@@ -25,7 +25,7 @@ import { formatPrice } from '../utils/currency';
 const Navbar: React.FC = React.memo(() => {
   const navigate = useNavigate();
   const { user, logout, isLoading } = useAuth();
-  const { itemCount, totalAmount } = useCart();
+  const { itemCount} = useCart();
   const { wishlistCount } = useWishlist();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);

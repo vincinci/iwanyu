@@ -10,7 +10,7 @@ import type { Category } from '../types/api';
 
 const AddProduct: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 

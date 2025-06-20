@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { 
   ArrowRight, 
   Star, 
@@ -18,10 +18,7 @@ import {
   Gift,
   Truck,
   Shield,
-  Users,
-  Eye,
   Heart,
-  Plus,
   Monitor,
   Headphones,
   Camera,
@@ -49,14 +46,13 @@ import {
   Zap
 } from 'lucide-react';
 import { categoriesApi } from '../services/api';
-import { useInstantProducts, useGlobalPrefetch } from '../hooks/useInstantProducts';
+import { useInstantProducts } from '../hooks/useInstantProducts';
 import { useQuery } from '@tanstack/react-query';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../utils/currency';
-import { getProductImageUrl } from '../utils/imageUtils';
 import ProductSkeleton from '../components/ProductSkeleton';
 import { advertisementApi } from '../services/advertisementApi';
 import type { Category, Product } from '../types/api';
@@ -138,8 +134,6 @@ const Home: React.FC = () => {
     }
   });
 
-  const { prefetchEverything } = useGlobalPrefetch();
-  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
@@ -269,7 +263,7 @@ const Home: React.FC = () => {
     const fetchPromotedProducts = async () => {
       setPromotedLoading(true);
       try {
-        const response = await advertisementApi.getHomePageAds('HOME_FEATURED', 6);
+        const  6);
         if (response?.success && response?.data) {
           setPromotedProducts(response.data);
         }
@@ -375,8 +369,8 @@ const Home: React.FC = () => {
           const parsedBanners = JSON.parse(savedBanners);
           // Only show active banners, sorted by order
           const activeBanners = parsedBanners
-            .filter((banner: any) => banner.isActive)
-            .sort((a: any, b: any) => a.order - b.order);
+            .filter((banner: unknown) => banner.isActive)
+            .sort((a: unknown, b: unknown) => a.order - b.order);
           setBanners(activeBanners);
         } else {
           // Use default banners
@@ -455,11 +449,11 @@ const Home: React.FC = () => {
     loadBanners();
 
     // Listen for banner updates from admin panel
-    const handleBannersUpdated = (event: any) => {
+    const handleBannersUpdated = (event: unknown) => {
       const updatedBanners = event.detail;
       const activeBanners = updatedBanners
-        .filter((banner: any) => banner.isActive)
-        .sort((a: any, b: any) => a.order - b.order);
+        .filter((banner: unknown) => banner.isActive)
+        .sort((a: unknown, b: unknown) => a.order - b.order);
       setBanners(activeBanners);
     };
 
@@ -503,7 +497,7 @@ const Home: React.FC = () => {
   };
 
   // Helper function to get product rating safely - now uses actual product data
-  const getProductRating = (product: any) => {
+  const getProductRating = (product: unknown) => {
     try {
       // Use actual product rating if available
       if (product?.avgRating && product.avgRating > 0) {

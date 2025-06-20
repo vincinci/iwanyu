@@ -36,7 +36,7 @@ interface Payout {
   amount: number;
   currency: string;
   payoutMethod: 'BANK_TRANSFER' | 'MOBILE_MONEY';
-  accountDetails: any;
+  accountDetails: unknown;
   reference: string;
   status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
   narration?: string;
@@ -68,7 +68,7 @@ interface PayoutFilters {
 
 const AdminPayments: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const queryClient = useQueryClient();
 
   // State management
@@ -308,7 +308,7 @@ const AdminPayments: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Pending Requests</p>
                     <p className="text-2xl font-bold text-yellow-600">
-                      {analyticsData.data.byStatus.find((s: any) => s.status === 'PENDING')?._count._all || 0}
+                      {analyticsData.data.byStatus.find((s: unknown) => s.status === 'PENDING')?._count._all || 0}
                     </p>
                   </div>
                   <Clock className="w-8 h-8 text-yellow-500" />
@@ -320,7 +320,7 @@ const AdminPayments: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Completed Today</p>
                     <p className="text-2xl font-bold text-green-600">
-                      {analyticsData.data.byStatus.find((s: any) => s.status === 'COMPLETED')?._count._all || 0}
+                      {analyticsData.data.byStatus.find((s: unknown) => s.status === 'COMPLETED')?._count._all || 0}
                     </p>
                   </div>
                   <CheckCircle className="w-8 h-8 text-green-500" />
@@ -598,7 +598,7 @@ const AdminPayments: React.FC = () => {
                 </div>
               ) : walletsData?.data?.sellers?.length ? (
                 <div className="divide-y divide-gray-200">
-                  {walletsData.data.sellers.map((seller: any) => (
+                  {walletsData.data.sellers.map((seller: unknown) => (
                     <div key={seller.id} className="p-6 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
                         <div>
@@ -657,7 +657,7 @@ const AdminPayments: React.FC = () => {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Payouts by Status</h3>
                 <div className="space-y-3">
-                  {analyticsData.data.byStatus.map((status: any) => (
+                  {analyticsData.data.byStatus.map((status: unknown) => (
                     <div key={status.status} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {getStatusIcon(status.status)}
@@ -676,7 +676,7 @@ const AdminPayments: React.FC = () => {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Payouts by Method</h3>
                 <div className="space-y-3">
-                  {analyticsData.data.byMethod.map((method: any) => (
+                  {analyticsData.data.byMethod.map((method: unknown) => (
                     <div key={method.payoutMethod} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {method.payoutMethod === 'BANK_TRANSFER' ? (
@@ -705,7 +705,7 @@ const AdminPayments: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-900">Top Sellers by Payouts</h3>
                 </div>
                 <div className="divide-y divide-gray-200">
-                  {analyticsData.data.topSellers.slice(0, 10).map((seller: any, index: number) => (
+                  {analyticsData.data.topSellers.slice(0, 10).map((seller: unknown, index: number) => (
                     <div key={seller.sellerId} className="p-6 flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">

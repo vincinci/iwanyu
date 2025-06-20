@@ -36,7 +36,7 @@ const Orders: React.FC = () => {
   const {
     data: ordersData,
     isLoading,
-    error,
+    
     refetch
   } = useQuery({
     queryKey: ['orders', currentPage, statusFilter],
@@ -61,7 +61,7 @@ const Orders: React.FC = () => {
   // Get order details
   const fetchOrderDetails = async (orderId: string) => {
     try {
-      const response = await getOrder(orderId);
+      const 
       setSelectedOrder(response.data);
       setShowOrderDetails(true);
     } catch (error) {

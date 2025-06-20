@@ -135,7 +135,7 @@ class SellerApi {
         }
       });
 
-      const response = await fetch(`${API_BASE_URL}/seller/become-seller`, {
+      const }/seller/become-seller`, {
         method: 'POST',
         headers: {
           ...(token && { Authorization: `Bearer ${token}` }),
@@ -144,21 +144,21 @@ class SellerApi {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const 
         throw new Error(error.error || 'Failed to create seller profile');
       }
 
       return response.json();
     } else {
       // Traditional JSON submission
-      const response = await fetch(`${API_BASE_URL}/seller/become-seller`, {
+      const }/seller/become-seller`, {
         method: 'POST',
         headers: this.getAuthHeaders(),
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const 
         throw new Error(error.error || 'Failed to create seller profile');
       }
 
@@ -167,12 +167,12 @@ class SellerApi {
   }
 
   getProfile = async (): Promise<SellerProfile> => {
-    const response = await fetch(`${API_BASE_URL}/seller/profile`, {
+    const }/seller/profile`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to get seller profile');
     }
 
@@ -180,14 +180,14 @@ class SellerApi {
   }
 
   updateProfile = async (data: Partial<BecomeSellerData>): Promise<{ message: string }> => {
-    const response = await fetch(`${API_BASE_URL}/seller/profile`, {
+    const }/seller/profile`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to update seller profile');
     }
 
@@ -195,12 +195,12 @@ class SellerApi {
   }
 
   getDashboard = async (): Promise<SellerDashboard> => {
-    const response = await fetch(`${API_BASE_URL}/seller/dashboard`, {
+    const }/seller/dashboard`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to get dashboard data');
     }
 
@@ -209,12 +209,12 @@ class SellerApi {
 
   // Product management methods
   getProducts = async (): Promise<SellerProduct[]> => {
-    const response = await fetch(`${API_BASE_URL}/seller/products`, {
+    const }/seller/products`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to get products');
     }
 
@@ -248,7 +248,7 @@ class SellerApi {
 
       console.log('Sending FormData request...');
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/seller/products`, {
+      const }/seller/products`, {
         method: 'POST',
         headers: {
           ...(token && { Authorization: `Bearer ${token}` }),
@@ -259,7 +259,7 @@ class SellerApi {
       console.log('Response status:', response.status);
       
       if (!response.ok) {
-        const error = await response.json();
+        const 
         console.error('API Error:', error);
         throw new Error(error.error || error.message || 'Failed to create product');
       }
@@ -270,7 +270,7 @@ class SellerApi {
     } else {
       // Traditional JSON submission (when using image URL)
       console.log('Sending JSON request...');
-      const response = await fetch(`${API_BASE_URL}/seller/products`, {
+      const }/seller/products`, {
         method: 'POST',
         headers: this.getAuthHeaders(),
         body: JSON.stringify(data),
@@ -279,7 +279,7 @@ class SellerApi {
       console.log('Response status:', response.status);
 
       if (!response.ok) {
-        const error = await response.json();
+        const 
         console.error('API Error:', error);
         throw new Error(error.error || error.message || 'Failed to create product');
       }
@@ -291,14 +291,14 @@ class SellerApi {
   }
 
   updateProduct = async (id: string, data: Partial<ProductData>): Promise<{ message: string; product: SellerProduct }> => {
-    const response = await fetch(`${API_BASE_URL}/seller/products/${id}`, {
+    const }/seller/products/${id}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to update product');
     }
 
@@ -306,13 +306,13 @@ class SellerApi {
   }
 
   deleteProduct = async (id: string): Promise<{ message: string }> => {
-    const response = await fetch(`${API_BASE_URL}/seller/products/${id}`, {
+    const }/seller/products/${id}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to delete product');
     }
 
@@ -331,7 +331,7 @@ class SellerApi {
     formData.append('csvFile', csvFile);
 
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/seller/products/import`, {
+    const }/seller/products/import`, {
       method: 'POST',
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
@@ -340,7 +340,7 @@ class SellerApi {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to import products');
     }
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ShoppingCart, 
@@ -21,11 +20,6 @@ import {
   Store,
   Settings,
   Heart,
-  Bell,
-  Star,
-  TrendingUp,
-  Phone,
-  ChevronRight,
   Monitor,
   Headphones,
   Camera,
@@ -43,14 +37,11 @@ import {
   Flower,
   Briefcase,
   MapPin,
-  Zap,
   Shield,
   Coffee,
-  ShirtIcon as Clothing,
   Footprints,
   Glasses,
   Gem,
-  Wrench,
   Bike,
   Plane,
   Mountain
@@ -80,9 +71,7 @@ const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const { itemCount } = useCart();
   const { wishlistCount } = useWishlist();
-  const navigate = useNavigate();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   // Optimized scroll handler with throttling

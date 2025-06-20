@@ -1,8 +1,5 @@
 import axios from 'axios';
 import type { 
-  Product, 
-  Category, 
-  User, 
   ProductsQueryParams 
 } from '../types/api';
 
@@ -139,13 +136,13 @@ const throttledRequest = async <T>(request: () => Promise<T>): Promise<T> => {
 export const productsApi = {
   getAll: async (params: ProductsQueryParams = {}) => {
     return throttledRequest(async () => {
-      const response = await api.get('/products', { params });
+      const  { params });
       return response.data;
     });
   },
   getById: async (id: string) => {
     return throttledRequest(async () => {
-      const response = await api.get(`/products/${id}`);
+      const }`);
       return response.data;
     });
   },
@@ -155,13 +152,13 @@ export const productsApi = {
 export const categoriesApi = {
   getAll: async () => {
     return throttledRequest(async () => {
-      const response = await api.get('/categories');
+      const 
       return response.data;
     });
   },
   getById: async (id: string) => {
     return throttledRequest(async () => {
-      const response = await api.get(`/categories/${id}`);
+      const }`);
       return response.data;
     });
   },
@@ -171,25 +168,25 @@ export const categoriesApi = {
 export const authApi = {
   login: async (email: string, password: string) => {
     return throttledRequest(async () => {
-      const response = await api.post('/auth/login', { email, password });
+      const  { email, password });
       return response.data;
     });
   },
-  register: async (userData: any) => {
+  register: async (userData: unknown) => {
     return throttledRequest(async () => {
-      const response = await api.post('/auth/register', userData);
+      const  userData);
       return response.data;
     });
   },
   validateToken: async () => {
     return throttledRequest(async () => {
-      const response = await api.get('/auth/validate');
+      const 
       return response.data;
     });
   },
   logout: async () => {
     return throttledRequest(async () => {
-      const response = await api.post('/auth/logout');
+      const 
       return response.data;
     });
   },

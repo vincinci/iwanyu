@@ -18,7 +18,7 @@ import { adminApi, type AdminUser } from '../services/adminApi';
 
 const AdminUsers: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState('');
@@ -36,14 +36,14 @@ const AdminUsers: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading} = useQuery({
     queryKey: ['admin-users', page, search, roleFilter],
     queryFn: () => adminApi.getUsers({ page, search, role: roleFilter, limit: 20 }),
     enabled: !!user && user.role === 'ADMIN',
   });
 
   const updateUserMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => adminApi.updateUser(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => adminApi.updateUser(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       setEditingUser(null);
@@ -62,7 +62,7 @@ const AdminUsers: React.FC = () => {
     },
   });
 
-  const handleUpdateUser = (userData: any) => {
+  const handleUpdateUser = (userData: unknown) => {
     if (editingUser) {
       updateUserMutation.mutate({ id: editingUser.id, data: userData });
     }

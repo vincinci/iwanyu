@@ -38,17 +38,17 @@ interface OrderItem {
 }
 
 const Checkout: React.FC = () => {
-  const navigate = useNavigate();
+  const 
   const location = useLocation();
   const { user } = useAuth();
-  const { items, totalAmount, itemCount, addToCart } = useCart();
+  const { items,  itemCount, addToCart } = useCart();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isRedirectingToPayment, setIsRedirectingToPayment] = useState(false);
   const [checkoutAsGuest, setCheckoutAsGuest] = useState(!user);
   const [directPurchase, setDirectPurchase] = useState<{
     productId: string;
     quantity: number;
-    productData: any | null;
+    productData: unknown | null;
     selectedVariants?: Array<{
       variantName: string;
       variantValue: string;
@@ -82,7 +82,7 @@ const Checkout: React.FC = () => {
       isGuest?: boolean;
     }) => {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/orders`, {
+      const }/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const Checkout: React.FC = () => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const 
         throw new Error(error.error || 'Failed to create order');
       }
 
@@ -161,7 +161,7 @@ const Checkout: React.FC = () => {
         
         // Check if a variant with different pricing is selected
         if (directPurchase.selectedVariants && directPurchase.selectedVariants.length > 0) {
-          const selectedVariant = directPurchase.productData?.variants?.find((v: any) => 
+          const selectedVariant = directPurchase.productData?.variants?.find((v: unknown) => 
             v.id === directPurchase.selectedVariants![0].variantId
           );
           if (selectedVariant && selectedVariant.price && selectedVariant.price > 0) {
@@ -299,11 +299,11 @@ const Checkout: React.FC = () => {
         signal: controller.signal
       });
 
-      const response = await Promise.race([paymentPromise, timeoutPromise]) as Response;
+      const  timeoutPromise]) as Response;
       clearTimeout(requestTimeout);
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+        const }));
         throw new Error(error.error || 'Failed to initialize payment');
       }
 

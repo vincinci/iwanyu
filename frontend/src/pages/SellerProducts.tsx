@@ -20,7 +20,7 @@ import { getImageUrl } from '../utils/imageUtils';
 
 const SellerProducts: React.FC = () => {
   const { user, isLoading: authLoading } = useAuth();
-  const navigate = useNavigate();
+  const 
   const queryClient = useQueryClient();
   const [selectedProduct, setSelectedProduct] = useState<SellerProduct | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
@@ -36,7 +36,7 @@ const SellerProducts: React.FC = () => {
     }
   }, [user, authLoading, navigate]);
 
-  const { data: products, isLoading, error } = useQuery({
+  const { data: products, isLoading} = useQuery({
     queryKey: ['seller-products'],
     queryFn: sellerApi.getProducts,
     enabled: !!user && user.role === 'SELLER',

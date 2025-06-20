@@ -49,14 +49,14 @@ class CouponsApi {
       valid: boolean;
     };
   }> {
-    const response = await fetch(`${API_BASE_URL}/coupons/validate`, {
+    const }/coupons/validate`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({ code, orderAmount }),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to validate coupon');
     }
 
@@ -67,14 +67,14 @@ class CouponsApi {
     couponId: string,
     orderId?: string
   ): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/coupons/apply`, {
+    const }/coupons/apply`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify({ couponId, orderId }),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to apply coupon');
     }
 
@@ -85,12 +85,12 @@ class CouponsApi {
     success: boolean;
     data: CouponUsage[];
   }> {
-    const response = await fetch(`${API_BASE_URL}/coupons/usage`, {
+    const }/coupons/usage`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to get coupon usage');
     }
 
@@ -101,10 +101,10 @@ class CouponsApi {
     success: boolean;
     data: Coupon[];
   }> {
-    const response = await fetch(`${API_BASE_URL}/coupons/available`);
+    const }/coupons/available`);
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to get available coupons');
     }
 

@@ -26,7 +26,7 @@ import { adminApi, type AdminSeller } from '../services/adminApi';
 
 const AdminSellers: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const queryClient = useQueryClient();
   
   const [page, setPage] = useState(1);
@@ -45,7 +45,7 @@ const AdminSellers: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const { data: sellersData, isLoading, error } = useQuery({
+  const { data: sellersData, isLoading} = useQuery({
     queryKey: ['admin-sellers', page, status],
     queryFn: () => adminApi.getSellers({ page, limit: 20, status }),
     enabled: !!user && user.role === 'ADMIN',

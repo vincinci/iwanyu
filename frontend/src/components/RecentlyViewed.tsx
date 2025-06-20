@@ -30,8 +30,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
       
       if (user) {
         // For logged-in users, get from database
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/users/recently-viewed?limit=${limit}`,
+        const }/users/recently-viewed?limit=${limit}`,
           {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -63,8 +62,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
             // Fetch product details
             const productPromises = filteredIds.slice(0, limit).map(async (id: string) => {
               try {
-                const response = await fetch(
-                  `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/products/${id}`
+                const }/products/${id}`
                 );
                 if (response.ok) {
                   const data = await response.json();

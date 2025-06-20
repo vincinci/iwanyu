@@ -82,12 +82,12 @@ class UserActivityApi {
     const params = new URLSearchParams();
     if (limit) params.append('limit', limit.toString());
 
-    const response = await fetch(`${API_BASE_URL}/user-activity/recently-viewed?${params}`, {
+    const }/user-activity/recently-viewed?${params}`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to get recently viewed products');
     }
 
@@ -95,13 +95,13 @@ class UserActivityApi {
   }
 
   async addToRecentlyViewed(productId: string): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/user-activity/recently-viewed/${productId}`, {
+    const }/user-activity/recently-viewed/${productId}`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to record product view');
     }
 
@@ -109,13 +109,13 @@ class UserActivityApi {
   }
 
   async clearRecentlyViewed(): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/user-activity/recently-viewed`, {
+    const }/user-activity/recently-viewed`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to clear recently viewed products');
     }
 
@@ -130,12 +130,12 @@ class UserActivityApi {
       count: number;
     };
   }> {
-    const response = await fetch(`${API_BASE_URL}/user-activity/comparisons`, {
+    const }/user-activity/comparisons`, {
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to get product comparisons');
     }
 
@@ -153,13 +153,13 @@ class UserActivityApi {
       product: ComparisonItem;
     };
   }> {
-    const response = await fetch(`${API_BASE_URL}/user-activity/comparisons/${productId}`, {
+    const }/user-activity/comparisons/${productId}`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to add product to comparisons');
     }
 
@@ -167,13 +167,13 @@ class UserActivityApi {
   }
 
   async removeFromComparisons(productId: string): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/user-activity/comparisons/${productId}`, {
+    const }/user-activity/comparisons/${productId}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to remove product from comparisons');
     }
 
@@ -181,13 +181,13 @@ class UserActivityApi {
   }
 
   async clearComparisons(): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/user-activity/comparisons`, {
+    const }/user-activity/comparisons`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const 
       throw new Error(error.error || 'Failed to clear comparisons');
     }
 

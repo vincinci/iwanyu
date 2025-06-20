@@ -12,7 +12,7 @@ import {
 
 const SellerFlashSales: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const 
   const [flashSales, setFlashSales] = useState<any[]>([]);
   const [discountedProducts, setDiscountedProducts] = useState<any[]>([]);
   const [selectedFlashSale, setSelectedFlashSale] = useState<string | null>(null);
@@ -58,7 +58,7 @@ const SellerFlashSales: React.FC = () => {
       ]);
       setFlashSales(fsRes.data.data);
       setDiscountedProducts(dpRes.data.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to load data');
     } finally {
       setLoading(false);
@@ -78,7 +78,7 @@ const SellerFlashSales: React.FC = () => {
       await createSellerFlashSale(form);
       setForm({ title: '', description: '', startTime: '', endTime: '' });
       await fetchData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to create flash sale');
     } finally {
       setLoading(false);
@@ -93,7 +93,7 @@ const SellerFlashSales: React.FC = () => {
     try {
       await addProductToFlashSale(selectedFlashSale, productId);
       await fetchData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to add product to flash sale');
     } finally {
       setLoading(false);
@@ -107,7 +107,7 @@ const SellerFlashSales: React.FC = () => {
     try {
       await removeProductFromFlashSale(flashSaleId, productId);
       await fetchData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to remove product from flash sale');
     } finally {
       setLoading(false);
@@ -180,7 +180,7 @@ const SellerFlashSales: React.FC = () => {
           <div className="text-gray-500">No flash sales yet.</div>
         ) : (
           <ul className="space-y-4">
-            {flashSales.map((fs: any) => (
+            {flashSales.map((fs: unknown) => (
               <li key={fs.id} className="border rounded p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -202,7 +202,7 @@ const SellerFlashSales: React.FC = () => {
                   <div className="mt-4">
                     <div className="font-semibold mb-2 text-sm">Products in this Flash Sale:</div>
                     <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {fs.products.map((fsp: any) => (
+                      {fs.products.map((fsp: unknown) => (
                         <li key={fsp.productId} className="flex items-center justify-between border rounded px-2 py-1">
                           <span>{fsp.product?.name}</span>
                           <button
@@ -230,7 +230,7 @@ const SellerFlashSales: React.FC = () => {
           <div className="text-gray-500">No discounted products found.</div>
         ) : (
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {discountedProducts.map((product: any) => (
+            {discountedProducts.map((product: unknown) => (
               <li key={product.id} className="flex items-center justify-between border rounded px-2 py-1">
                 <span>{product.name}</span>
                 <button
