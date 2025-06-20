@@ -22,6 +22,7 @@ import { formatPrice } from '../utils/currency';
 import { getImageUrl } from '../utils/imageUtils';
 
 const AdminProducts: React.FC = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
@@ -301,7 +302,7 @@ const AdminProducts: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {data.products.map((product) => (
+                    {data.products.map((product: any) => (
                       <tr key={(product as any).id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <input
@@ -330,7 +331,7 @@ const AdminProducts: React.FC = () => {
                               {(product as any).variants && (product as any).variants.length > 0 && (
                                 <div className="text-xs text-blue-600 mt-1">
                                   {(product as any).variants.length} variant{(product as any).variants.length !== 1 ? 's' : ''} 
-                                  ({(product as any).variants.map(v => `${v.name}:${v.value}`).join(', ')})
+                                  ({(product as any).variants.map((v: any) => `${v.name}:${v.value}`).join(', ')})
                                 </div>
                               )}
                               {product.featured && (
@@ -361,7 +362,7 @@ const AdminProducts: React.FC = () => {
                           </div>
                           {(product as any).variants && (product as any).variants.length > 0 && (
                             <div className="text-xs text-gray-500 mt-1">
-                              Variants: {(product as any).variants.map(v => `${v.value}(${v.stock})`).join(', ')}
+                              Variants: {(product as any).variants.map((v: any) => `${v.value}(${v.stock})`).join(', ')}
                             </div>
                           )}
                         </td>

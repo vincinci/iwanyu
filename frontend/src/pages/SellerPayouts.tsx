@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AlertCircle, ArrowLeft, Wallet } from 'lucide-react';
 
 const SellerPayouts: React.FC = () => {
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Redirect to wallet page since payouts are handled there

@@ -15,6 +15,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { adminApi, type AdminCategory } from '../services/adminApi';
 
 const AdminCategories: React.FC = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
@@ -179,7 +180,7 @@ const AdminCategories: React.FC = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-              {categories.map((category) => (
+              {categories.map((category: any) => (
                 <motion.div
                   key={category.id}
                   initial={{ opacity: 0, scale: 0.9 }}

@@ -31,7 +31,7 @@ export const addToRecentlyViewed = async (productId: string, isLoggedIn: boolean
       localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updated));
     }
   } catch (error) {
-    console.error('Error adding to recently viewed:', error);
+    console.error('Error adding to recently viewed:', 'Error occurred');
   }
 };
 
@@ -39,7 +39,7 @@ export const getRecentlyViewed = (): string[] => {
   try {
     return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
   } catch (error) {
-    console.error('Error getting recently viewed:', error);
+    console.error('Error getting recently viewed:', 'Error occurred');
     return [];
   }
 };
@@ -48,7 +48,7 @@ export const clearRecentlyViewed = () => {
   try {
     localStorage.removeItem(RECENTLY_VIEWED_KEY);
   } catch (error) {
-    console.error('Error clearing recently viewed:', error);
+    console.error('Error clearing recently viewed:', 'Error occurred');
   }
 };
 
@@ -58,6 +58,6 @@ export const removeFromRecentlyViewed = (productId: string) => {
     const filtered = existing.filter(id => id !== productId);
     localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(filtered));
   } catch (error) {
-    console.error('Error removing from recently viewed:', error);
+    console.error('Error removing from recently viewed:', 'Error occurred');
   }
 }; 

@@ -68,6 +68,7 @@ interface PayoutFilters {
 }
 
 const AdminPayments: React.FC = () => {
+  const navigate = useNavigate();
   const { totalAmount } = useCart();
   const { user } = useAuth();
 

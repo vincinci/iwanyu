@@ -47,7 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
         await addToWishlist((product as any).id);
       }
     } catch (error) {
-      console.error('Error updating wishlist:', error);
+      console.error('Error updating wishlist:', 'Error occurred');
     }
   };
 

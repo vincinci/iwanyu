@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import PasswordInput from '../components/PasswordInput';
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');

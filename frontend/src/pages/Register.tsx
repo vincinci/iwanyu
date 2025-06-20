@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import PasswordInput from '../components/PasswordInput';
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',

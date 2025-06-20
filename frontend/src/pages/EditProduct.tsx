@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 
 const EditProduct: React.FC = () => {
+  const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
 

@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import ProfileSettings from '../components/ProfileSettings';
 
 const Profile: React.FC = () => {
+  const navigate = useNavigate();
 
   const { user } = useAuth();
 

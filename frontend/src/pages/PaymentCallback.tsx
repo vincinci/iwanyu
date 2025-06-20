@@ -8,6 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 type PaymentStatus = 'loading' | 'success' | 'failed' | 'cancelled' | 'timeout';
 
 const PaymentCallback: React.FC = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const [status, setStatus] = useState<PaymentStatus>('loading');
@@ -177,7 +178,7 @@ const PaymentCallback: React.FC = () => {
       } catch (error) {
         if (!isMounted.current) return;
         
-        console.error('Payment callback error:', error);
+        console.error('Payment callback error:', 'Error occurred');
         setStatus('failed');
         setError(error instanceof Error ? error.message : 'Unexpected error during payment verification');
       }

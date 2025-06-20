@@ -187,8 +187,8 @@ const Orders: React.FC = () => {
     );
   }
 
-  const orders = ordersData?.data.orders || [];
-  const pagination = ordersData?.data.pagination;
+  const orders = ordersData?.orders || [];
+  const pagination = ordersData?.pagination;
 
   return (
     <div className="min-h-screen bg-gray-50">

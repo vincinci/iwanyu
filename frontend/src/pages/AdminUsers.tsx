@@ -17,6 +17,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { adminApi, type AdminUser } from '../services/adminApi';
 
 const AdminUsers: React.FC = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
@@ -179,7 +180,7 @@ const AdminUsers: React.FC = () => {
             <summary className="cursor-pointer text-sm text-gray-500">Debug Info</summary>
             <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
               {JSON.stringify({
-                error: (isError as any)?.message || 'Unknown error',
+                error: (false as any)?.message || 'Unknown error',
                 hasToken: !!localStorage.getItem('token'),
                 user: user ? { id: user.id, role: user.role, email: user.email } : null,
                 timestamp: new Date().toISOString()

@@ -19,6 +19,7 @@ import { formatPrice } from '../utils/currency';
 import { getImageUrl } from '../utils/imageUtils';
 
 const SellerProducts: React.FC = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { user, isLoading: authLoading } = useAuth();
 
@@ -70,7 +71,7 @@ const SellerProducts: React.FC = () => {
     try {
       await deleteProductMutation.mutateAsync(id);
     } catch (error) {
-      console.error('Failed to delete product:', error);
+      console.error('Failed to delete product:', 'Error occurred');
     }
   };
 
@@ -200,7 +201,7 @@ const SellerProducts: React.FC = () => {
             transition={{ delay: 0.1 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
-            {products.map((product) => (
+            {products.map((product: any) => (
               <div key={(product as any).id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 {/* Product Image */}
                 <div className="aspect-w-16 aspect-h-9 bg-gray-100">

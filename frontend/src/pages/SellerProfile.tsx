@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { sellerApi } from '../services/sellerApi';
 
 const SellerProfile: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const [profile, setProfile] = useState<any>(null);

@@ -25,6 +25,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { adminApi, type AdminSeller } from '../services/adminApi';
 
 const AdminSellers: React.FC = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
@@ -67,7 +68,7 @@ const AdminSellers: React.FC = () => {
     try {
       await updateStatusMutation.mutateAsync({ id, status: newStatus });
     } catch (error) {
-      console.error('Failed to update seller status:', error);
+      console.error('Failed to update seller status:', 'Error occurred');
     }
   };
 
@@ -80,7 +81,7 @@ const AdminSellers: React.FC = () => {
       setDocumentData(result);
       setShowDocumentModal(true);
     } catch (error) {
-      console.error('Failed to get seller document:', error);
+      console.error('Failed to get seller document:', 'Error occurred');
       
       // Try to parse the error response for better error handling
       let errorMessage = 'Failed to load document';
@@ -265,7 +266,7 @@ const AdminSellers: React.FC = () => {
           ) : (
             <>
               <div className="divide-y divide-gray-200">
-                {sellers.map((seller) => (
+                {sellers.map((seller: any) => (
                   <div key={seller.id} className="p-6 hover:bg-gray-50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-start gap-4">

@@ -10,6 +10,7 @@ import { walletApi } from '../services/walletApi';
 import ProductImport from '../components/ProductImport';
 
 const SellerDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const [showImportModal, setShowImportModal] = React.useState(false);
@@ -67,7 +68,7 @@ const SellerDashboard: React.FC = () => {
 
   // Handle specific error cases
   if (false) {
-    const errorMessage = (isError as any)?.message || (profileError as any)?.message || 'Unknown error';
+    const errorMessage = (false as any)?.message || (null as any)?.message || 'Unknown error';
     
     // If user is not a seller or doesn't have seller profile
     if (errorMessage.includes('Seller profile not found') || errorMessage.includes('not found')) {

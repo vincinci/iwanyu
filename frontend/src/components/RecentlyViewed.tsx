@@ -68,7 +68,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
                   return data.success ? data.data.product : null;
                 }
               } catch (error) {
-                console.error('Error fetching product:', error);
+                console.error('Error fetching product:', 'Error occurred');
                 return null;
               }
             });
@@ -79,7 +79,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
         }
       }
     } catch (error) {
-      console.error('Error loading recently viewed:', error);
+      console.error('Error loading recently viewed:', 'Error occurred');
     } finally {
       setLoading(false);
     }
@@ -160,7 +160,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
           animate={{ x: -currentIndex * (100 / itemsPerView) + '%' }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
-          {recentProducts.map((product) => (
+          {recentProducts.map((product: any) => (
             <div key={(product as any).id} className="flex-shrink-0 w-1/3">
               <RecentProductCard product={product} />
             </div>
@@ -170,7 +170,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ currentProductId, limit
 
       {/* Mobile Grid View */}
       <div className="md:hidden grid grid-cols-2 gap-4">
-        {recentProducts.slice(0, 4).map((product) => (
+        {recentProducts.slice(0, 4).map((product: any) => (
           <RecentProductCard key={(product as any).id} product={product} compact />
         ))}
       </div>
@@ -200,7 +200,7 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
     try {
       addToCart(product);
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('Error adding to cart:', 'Error occurred');
     }
   };
 
@@ -215,7 +215,7 @@ const RecentProductCard: React.FC<RecentProductCardProps> = ({ product, compact 
         await addToWishlist((product as any).id);
       }
     } catch (error) {
-      console.error('Error updating wishlist:', error);
+      console.error('Error updating wishlist:', 'Error occurred');
     }
   };
 

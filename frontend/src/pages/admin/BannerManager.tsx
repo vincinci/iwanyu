@@ -39,6 +39,7 @@ interface BannerFormData {
 }
 
 const BannerManager: React.FC = () => {
+  const navigate = useNavigate();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -140,7 +141,7 @@ const BannerManager: React.FC = () => {
         saveBanners(defaultBanners);
       }
     } catch (error) {
-      console.error('Error loading banners:', error);
+      console.error('Error loading banners:', 'Error occurred');
       showError('Error', 'Failed to load banners');
     } finally {
       setIsLoading(false);
@@ -153,7 +154,7 @@ const BannerManager: React.FC = () => {
       // Also update the Home component's banner data
       window.dispatchEvent(new CustomEvent('bannersUpdated', { detail: bannersToSave }));
     } catch (error) {
-      console.error('Error saving banners:', error);
+      console.error('Error saving banners:', 'Error occurred');
       showError('Error', 'Failed to save banners');
     }
   };
@@ -268,7 +269,7 @@ const BannerManager: React.FC = () => {
       setEditingBanner(null);
       resetFormData();
     } catch (error) {
-      console.error('Error saving banner:', error);
+      console.error('Error saving banner:', 'Error occurred');
       showError('Error', 'Failed to save banner');
     }
   };
@@ -286,7 +287,7 @@ const BannerManager: React.FC = () => {
         saveBanners(reorderedBanners);
         showSuccess('Success', 'Banner deleted successfully');
       } catch (error) {
-        console.error('Error deleting banner:', error);
+        console.error('Error deleting banner:', 'Error occurred');
         showError('Error', 'Failed to delete banner');
       }
     }
@@ -303,7 +304,7 @@ const BannerManager: React.FC = () => {
       saveBanners(updatedBanners);
       showSuccess('Success', 'Banner status updated');
     } catch (error) {
-      console.error('Error updating banner status:', error);
+      console.error('Error updating banner status:', 'Error occurred');
       showError('Error', 'Failed to update banner status');
     }
   };
@@ -331,7 +332,7 @@ const BannerManager: React.FC = () => {
       saveBanners(reorderedBanners);
       showSuccess('Success', 'Banner order updated');
     } catch (error) {
-      console.error('Error reordering banner:', error);
+      console.error('Error reordering banner:', 'Error occurred');
       showError('Error', 'Failed to reorder banner');
     }
   };
@@ -343,7 +344,7 @@ const BannerManager: React.FC = () => {
         loadBanners();
         showSuccess('Success', 'Banners reset to defaults');
       } catch (error) {
-        console.error('Error resetting banners:', error);
+        console.error('Error resetting banners:', 'Error occurred');
         showError('Error', 'Failed to reset banners');
       }
     }

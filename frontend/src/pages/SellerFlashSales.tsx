@@ -11,6 +11,7 @@ import {
 } from '../services/api';
 
 const SellerFlashSales: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const [flashSales, setFlashSales] = useState<any[]>([]);

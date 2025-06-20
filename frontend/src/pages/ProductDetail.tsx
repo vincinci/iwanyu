@@ -35,6 +35,7 @@ import type { Product, ProductVariant } from '../types/api';
 import { addToRecentlyViewed } from '../utils/recentlyViewed';
 
 const ProductDetail: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
   const { user } = useAuth();

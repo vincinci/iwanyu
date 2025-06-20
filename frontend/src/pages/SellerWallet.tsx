@@ -25,6 +25,7 @@ import { formatPrice } from '../utils/currency';
 import WithdrawForm from '../components/WithdrawForm';
 
 const SellerWallet: React.FC = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 

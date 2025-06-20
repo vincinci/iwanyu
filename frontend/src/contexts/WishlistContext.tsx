@@ -53,8 +53,8 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
     try {
       setIsLoading(true);
 
-      const response = { data: { items: [] } } as any; // TODO: Get actual response
-    if (response?.data?.items) setItems(response.data.items);
+      const response = await wishlistApi.getWishlist();
+      if (response?.data?.items) setItems(response.data.items);
     } catch (error) {
       console.error('Failed to load wishlist:', 'Error occurred');
       // Don't show error to user for wishlist failures
@@ -72,7 +72,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
     console.log('🔄 Adding to wishlist:', productId);
     
     try {
-
+      const response = await wishlistApi.addToWishlist(productId);
       console.log('✅ API Response:', response);
       
       // Add the new item to the state

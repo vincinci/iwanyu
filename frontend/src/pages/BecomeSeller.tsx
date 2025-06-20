@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { sellerApi, type BecomeSellerData } from '../services/sellerApi';
 
 const BecomeSeller: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<BecomeSellerData>({
     businessName: '',
     businessEmail: '',

@@ -60,7 +60,7 @@ const Navbar: React.FC = React.memo(() => {
       setShowMobileMenu(false);
       navigate('/');
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('Logout failed:', 'Error occurred');
     }
   };
 
@@ -173,7 +173,7 @@ const Navbar: React.FC = React.memo(() => {
                     <div className="p-4">
                       <h3 className="font-semibold text-gray-900 mb-3">Shop by Category</h3>
                       <div className="grid grid-cols-2 gap-2">
-                        {categories.map((category) => (
+                        {categories.map((category: any) => (
                           <Link
                             key={category.slug}
                             to={`/products?category=${category.slug}`}
@@ -384,7 +384,7 @@ const Navbar: React.FC = React.memo(() => {
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">Categories</h3>
                   <div className="grid grid-cols-2 gap-2">
-                    {categories.slice(0, 6).map((category) => (
+                    {categories.slice(0, 6).map((category: any) => (
                       <Link
                         key={category.slug}
                         to={`/products?category=${category.slug}`}

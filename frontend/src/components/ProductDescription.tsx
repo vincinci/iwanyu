@@ -81,11 +81,11 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
 
     // Add variants as specifications
     if ((product as any).variants && (product as any).variants.length > 0) {
-      const variantTypes = [...new Set((product as any).variants.map(v => v.name))];
+      const variantTypes = [...new Set((product as any).variants.map((v: any) => v.name))];
       variantTypes.forEach(type => {
         const values = (product as any).variants!
-          .filter(v => v.name === type)
-          .map(v => v.value)
+          .filter((v: any) => v.name === type)
+          .map((v: any) => v.value)
           .join(', ');
         specs.push({ 
           label: `Available ${type}s`, 

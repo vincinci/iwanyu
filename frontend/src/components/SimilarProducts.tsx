@@ -75,7 +75,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
 
       setSimilarProducts(products.slice(0, limit));
     } catch (error) {
-      console.error('Error loading similar products:', error);
+      console.error('Error loading similar products:', 'Error occurred');
     } finally {
       setLoading(false);
     }
@@ -150,7 +150,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
           animate={{ x: -currentIndex * (100 / itemsPerView) + '%' }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
-          {similarProducts.map((product) => (
+          {similarProducts.map((product: any) => (
             <div key={(product as any).id} className="flex-shrink-0 w-1/4">
               <ProductCard product={product} />
             </div>
@@ -160,7 +160,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct, limit
 
       {/* Mobile Grid View */}
       <div className="md:hidden grid grid-cols-2 gap-4">
-        {similarProducts.slice(0, 4).map((product) => (
+        {similarProducts.slice(0, 4).map((product: any) => (
           <ProductCard key={(product as any).id} product={product} compact />
         ))}
       </div>
@@ -203,7 +203,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
     try {
       addToCart(product);
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('Error adding to cart:', 'Error occurred');
     }
   };
 
@@ -218,7 +218,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, compact = false }) =
         await addToWishlist((product as any).id);
       }
     } catch (error) {
-      console.error('Error updating wishlist:', error);
+      console.error('Error updating wishlist:', 'Error occurred');
     }
   };
 

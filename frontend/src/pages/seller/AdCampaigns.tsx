@@ -35,7 +35,7 @@ const AdCampaigns: React.FC = () => {
         setCampaigns(response.data);
       }
     } catch (error) {
-      console.error('Error fetching campaigns:', error);
+      console.error('Error fetching campaigns:', 'Error occurred');
     } finally {
       setLoading(false);
     }

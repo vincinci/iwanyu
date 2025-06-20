@@ -38,6 +38,7 @@ interface OrderItem {
 }
 
 const Checkout: React.FC = () => {
+  const navigate = useNavigate();
   const { totalAmount } = useCart();
 
   const location = useLocation();
@@ -94,7 +95,8 @@ const Checkout: React.FC = () => {
 
       if (!response.ok) {
 
-        throw new Error((error as any).error || 'Failed to create order');
+        const errorData = await response.json().catch(() => ({ error: 'Failed to create order' }));
+        throw new Error(errorData.error || 'Failed to create order');
       }
 
       return response.json();
@@ -107,7 +109,7 @@ const Checkout: React.FC = () => {
     onError: (error: any) => {
       console.error('Order creation failed:', 'Error occurred');
       setIsProcessing(false);
-      alert(error.message || 'Failed to place order. Please try again.');
+      alert((null as any).message || 'Failed to place order. Please try again.');
     },
   });
 
@@ -335,10 +337,10 @@ const Checkout: React.FC = () => {
       
       let errorMessage = 'Failed to initiate payment. Please try again.';
       if (error instanceof Error) {
-        if (error.name === 'AbortError' || error.message.includes('timeout')) {
+        if ((null as any).name === 'AbortError' || (null as any).message.includes('timeout')) {
           errorMessage = 'Payment initialization is taking too long. Please check your internet connection and try again.';
         } else {
-          errorMessage = error.message;
+          errorMessage = (null as any).message;
         }
       }
       

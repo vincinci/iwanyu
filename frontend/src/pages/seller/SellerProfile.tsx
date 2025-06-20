@@ -17,6 +17,7 @@ interface FormData {
 }
 
 const SellerProfile: React.FC = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 

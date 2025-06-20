@@ -103,7 +103,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       await refreshUser();
       setMessage({ type: 'success', text: 'Profile image updated successfully!' });
     } catch (error: any) {
-      console.error('Upload error:', error);
+      console.error('Upload error:', 'Error occurred');
       setMessage({ 
         type: 'error', 
         text: error.response?.data?.error || 'Failed to upload image' 
@@ -125,7 +125,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       await refreshUser();
       setMessage({ type: 'success', text: 'Profile image removed successfully!' });
     } catch (error: any) {
-      console.error('Delete error:', error);
+      console.error('Delete error:', 'Error occurred');
       setMessage({ 
         type: 'error', 
         text: error.response?.data?.error || 'Failed to delete image' 

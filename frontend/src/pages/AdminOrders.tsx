@@ -17,6 +17,7 @@ import { adminApi, type AdminOrder } from '../services/adminApi';
 import { formatPrice } from '../utils/currency';
 
 const AdminOrders: React.FC = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
@@ -222,7 +223,7 @@ const AdminOrders: React.FC = () => {
                         </td>
                         <td className="px-6 py-4">
                           <div className="text-sm text-gray-900">
-                            {order.orderItems.slice(0, 2).map((item, index) => (
+                                                          {order.orderItems.slice(0, 2).map((item: any, index: any) => (
                               <div key={index} className="mb-1">
                                 {item.quantity}x {(item as any).product.name}
                               </div>
