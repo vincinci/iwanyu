@@ -1,6 +1,6 @@
 export const chatbotConfig = {
   // Contact Information
-  whatsappNumber: "+250788123456", // Replace with actual WhatsApp number
+  whatsappNumber: "+250794306915", // Updated WhatsApp business number
   supportEmail: "support@iwanyu.store",
   hotlineNumber: "+250 78X XXX XXX", // Replace with actual number
   
