@@ -763,10 +763,51 @@ router.delete('/products/:id', authenticateToken, requireAdmin, async (req: Auth
       where: { id }
     });
 
+    // Clear product caches when products are deleted
+    clearProductCaches();
+
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {
     console.error('Delete product error:', error);
     res.status(500).json({ error: 'Failed to delete product' });
+  }
+});
+
+// Bulk Delete Products
+router.delete('/products', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { productIds } = req.body;
+
+    if (!Array.isArray(productIds) || productIds.length === 0) {
+      res.status(400).json({ error: 'Product IDs array is required' });
+      return;
+    }
+
+    // Validate all IDs are strings
+    if (!productIds.every(id => typeof id === 'string')) {
+      res.status(400).json({ error: 'All product IDs must be valid strings' });
+      return;
+    }
+
+    // Delete products in a transaction
+    const result = await prisma.product.deleteMany({
+      where: {
+        id: {
+          in: productIds
+        }
+      }
+    });
+
+    // Clear product caches when products are deleted
+    clearProductCaches();
+
+    res.json({ 
+      message: `${result.count} product(s) deleted successfully`,
+      deletedCount: result.count 
+    });
+  } catch (error) {
+    console.error('Bulk delete products error:', error);
+    res.status(500).json({ error: 'Failed to delete products' });
   }
 });
 

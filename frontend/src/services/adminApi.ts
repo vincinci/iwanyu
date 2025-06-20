@@ -436,6 +436,24 @@ class AdminApi {
     return response.json();
   }
 
+  async bulkDeleteProducts(productIds: string[]): Promise<{ message: string; deletedCount: number }> {
+    const response = await fetch(`${API_BASE_URL}/admin/products`, {
+      method: 'DELETE',
+      headers: {
+        ...this.getAuthHeaders(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ productIds }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to delete products');
+    }
+
+    return response.json();
+  }
+
   // Category Management
   async getCategories(): Promise<AdminCategory[]> {
     const response = await fetch(`${API_BASE_URL}/admin/categories`, {

@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 export interface UpdateProfileData {
@@ -24,6 +26,22 @@ export interface User {
 export interface UpdateProfileResponse {
   message: string;
   user: User;
+}
+
+export interface ProfileImageResponse {
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+    username: string | null;
+    phone: string | null;
+    avatar: string | null;
+    role: string;
+    updatedAt: string;
+  };
+  avatarUrl?: string;
 }
 
 class AuthApi {
@@ -61,6 +79,30 @@ class AuthApi {
     }
 
     return response.json();
+  }
+
+  async uploadProfileImage(file: File): Promise<ProfileImageResponse> {
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const response = await axios.post(`${API_BASE_URL}/auth/profile/avatar`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  }
+
+  async deleteProfileImage(): Promise<ProfileImageResponse> {
+    const token = localStorage.getItem('token');
+    const response = await axios.delete(`${API_BASE_URL}/auth/profile/avatar`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
   }
 }
 

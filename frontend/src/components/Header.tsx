@@ -515,8 +515,18 @@ const Header: React.FC = () => {
                     }}
                     className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 to-gray-100 transition-all duration-200 border border-transparent hover:border-gray-300"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-md">
-                      {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                    <div className="w-8 h-8 rounded-full overflow-hidden shadow-md">
+                      {user.avatar ? (
+                        <img
+                          src={`http://localhost:3001/${user.avatar}`}
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-r from-orange-500 to-pink-500 flex items-center justify-center text-white text-sm font-medium">
+                          {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                        </div>
+                      )}
                     </div>
                     <span className="text-sm text-gray-700 font-medium">{user.firstName || 'User'}</span>
                     <ChevronDown size={12} className="text-gray-500" />
@@ -711,9 +721,19 @@ const Header: React.FC = () => {
                     {user ? (
                     <div className="bg-gray-50 rounded-lg p-4">
                         <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
-                          {user.firstName?.charAt(0) || 'U'}
-                          </div>
+                        <div className="w-8 h-8 rounded-full overflow-hidden shadow-md">
+                          {user.avatar ? (
+                            <img
+                              src={`http://localhost:3001/${user.avatar}`}
+                              alt="Profile"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-r from-orange-500 to-pink-500 flex items-center justify-center text-white text-sm font-medium">
+                              {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                            </div>
+                          )}
+                        </div>
                           <div>
                           <p className="font-semibold text-gray-900">{user.firstName || 'User'}</p>
                             <p className="text-sm text-gray-600">{user.email}</p>

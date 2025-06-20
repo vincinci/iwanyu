@@ -30,6 +30,8 @@ const AdminProducts: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [showBulkActions, setShowBulkActions] = useState(false);
 
   React.useEffect(() => {
     if (!user) {
@@ -67,6 +69,17 @@ const AdminProducts: React.FC = () => {
     },
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: (productIds: string[]) => adminApi.bulkDeleteProducts(productIds),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      setSelectedProducts([]);
+      setShowBulkActions(false);
+      // You could add a toast notification here
+      console.log(data.message);
+    },
+  });
+
   const handleUpdateProduct = (productData: any) => {
     if (editingProduct) {
       updateProductMutation.mutate({ id: editingProduct.id, data: productData });
@@ -76,6 +89,41 @@ const AdminProducts: React.FC = () => {
   const handleDeleteProduct = (id: string) => {
     if (confirm('Are you sure you want to delete this product?')) {
       deleteProductMutation.mutate(id);
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedProducts.length === 0) return;
+    
+    const confirmMessage = `Are you sure you want to delete ${selectedProducts.length} selected product(s)? This action cannot be undone.`;
+    if (confirm(confirmMessage)) {
+      bulkDeleteMutation.mutate(selectedProducts);
+    }
+  };
+
+  const handleSelectProduct = (productId: string) => {
+    setSelectedProducts(prev => {
+      const newSelection = prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId];
+      
+      setShowBulkActions(newSelection.length > 0);
+      return newSelection;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (!data?.products) return;
+    
+    const allProductIds = data.products.map(p => p.id);
+    const allSelected = allProductIds.every(id => selectedProducts.includes(id));
+    
+    if (allSelected) {
+      setSelectedProducts([]);
+      setShowBulkActions(false);
+    } else {
+      setSelectedProducts(allProductIds);
+      setShowBulkActions(true);
     }
   };
 
@@ -182,6 +230,32 @@ const AdminProducts: React.FC = () => {
                 <Package className="w-5 h-5" />
                 Products ({data?.pagination.total || 0})
               </h2>
+              
+              {/* Bulk Actions */}
+              {showBulkActions && (
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-600">
+                    {selectedProducts.length} selected
+                  </span>
+                  <button
+                    onClick={handleBulkDelete}
+                    disabled={bulkDeleteMutation.isPending}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    {bulkDeleteMutation.isPending ? 'Deleting...' : 'Delete Selected'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedProducts([]);
+                      setShowBulkActions(false);
+                    }}
+                    className="text-sm text-gray-600 hover:text-gray-800"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -197,6 +271,14 @@ const AdminProducts: React.FC = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
+                      <th className="px-6 py-3 text-left">
+                        <input
+                          type="checkbox"
+                          checked={data.products.length > 0 && data.products.every(p => selectedProducts.includes(p.id))}
+                          onChange={handleSelectAll}
+                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                        />
+                      </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Product
                       </th>
@@ -220,6 +302,14 @@ const AdminProducts: React.FC = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {data.products.map((product) => (
                       <tr key={product.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <input
+                            type="checkbox"
+                            checked={selectedProducts.includes(product.id)}
+                            onChange={() => handleSelectProduct(product.id)}
+                            className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                          />
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             {getImageUrl(product.image) && (

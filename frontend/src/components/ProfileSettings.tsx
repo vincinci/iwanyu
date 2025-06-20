@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   User, 
@@ -26,6 +26,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   compact = false 
 }) => {
   const { user, refreshUser } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -34,13 +35,18 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     email: user?.email || '',
     username: user?.username || '',
-    phone: user?.phone || ''
+    phone: user?.phone || '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -48,6 +54,21 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
     newPassword: '',
     confirmPassword: ''
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        username: user.username || '',
+        phone: user.phone || '',
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+    }
+  }, [user]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -59,6 +80,60 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
     setPasswordData(prev => ({ ...prev, [field]: value }));
     setError(null);
     setSuccess(null);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please select a valid image file' });
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image size must be less than 5MB' });
+      return;
+    }
+
+    setIsUploadingImage(true);
+    try {
+      const response = await authApi.uploadProfileImage(file);
+      await refreshUser();
+      setMessage({ type: 'success', text: 'Profile image updated successfully!' });
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      setMessage({ 
+        type: 'error', 
+        text: error.response?.data?.error || 'Failed to upload image' 
+      });
+    } finally {
+      setIsUploadingImage(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    if (!user?.avatar) return;
+
+    setIsUploadingImage(true);
+    try {
+      await authApi.deleteProfileImage();
+      await refreshUser();
+      setMessage({ type: 'success', text: 'Profile image removed successfully!' });
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      setMessage({ 
+        type: 'error', 
+        text: error.response?.data?.error || 'Failed to delete image' 
+      });
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   const handleSave = async () => {
@@ -147,7 +222,10 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       lastName: user?.lastName || '',
       email: user?.email || '',
       username: user?.username || '',
-      phone: user?.phone || ''
+      phone: user?.phone || '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     });
     setPasswordData({
       currentPassword: '',
@@ -157,6 +235,17 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
     setError(null);
     setSuccess(null);
   };
+
+  const getAvatarUrl = () => {
+    if (user?.avatar) {
+      return `http://localhost:3001/${user.avatar}`;
+    }
+    return null;
+  };
+
+  if (!user) {
+    return <div className="p-4">Loading...</div>;
+  }
 
   return (
     <motion.div
@@ -187,6 +276,68 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
           {success}
         </div>
       )}
+
+      {/* Profile Image Section */}
+      <div className="mb-8">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Profile Picture</h3>
+        <div className="flex items-center space-x-6">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
+              {getAvatarUrl() ? (
+                <img
+                  src={getAvatarUrl()!}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              )}
+            </div>
+            {isUploadingImage && (
+              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex flex-col space-y-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+              disabled={isUploadingImage}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploadingImage}
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isUploadingImage ? 'Uploading...' : 'Upload Photo'}
+            </button>
+            
+            {user.avatar && (
+              <button
+                type="button"
+                onClick={handleDeleteImage}
+                disabled={isUploadingImage}
+                className="px-4 py-2 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Remove Photo
+              </button>
+            )}
+          </div>
+        </div>
+        <p className="mt-2 text-sm text-gray-500">
+          JPG, GIF or PNG. Max size of 5MB.
+        </p>
+      </div>
 
       {/* Action Buttons */}
       <div className="flex items-center justify-between mb-6">

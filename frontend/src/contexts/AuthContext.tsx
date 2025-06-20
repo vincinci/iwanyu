@@ -1,14 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
-interface User {
+export interface User {
   id: string;
   email: string;
   firstName?: string;
   lastName?: string;
   username?: string;
   phone?: string;
-  role: string;
+  avatar?: string;
+  role: 'USER' | 'ADMIN' | 'SELLER';
   createdAt?: string;
 }
 

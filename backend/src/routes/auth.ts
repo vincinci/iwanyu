@@ -2,6 +2,9 @@ import express, { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 import prisma from '../utils/db';
 import { authenticateToken } from '../middleware/auth';
 import brevoService from '../services/brevoService';
@@ -12,6 +15,38 @@ const router = express.Router();
 
 // Store password reset tokens in memory (in production, use Redis or database)
 const resetTokens = new Map<string, { userId: string; expires: Date }>();
+
+// Configure multer for profile image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = 'uploads/profiles';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req: any, file: any, cb: any) => {
+  // Check file type
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed!'), false);
+  }
+};
+
+const upload = multer({ 
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+});
 
 // Register
 router.post('/register', async (req: Request, res: Response) => {
@@ -420,6 +455,7 @@ router.put('/profile', authenticateToken, async (req: any, res: Response) => {
         lastName: true,
         username: true,
         phone: true,
+        avatar: true,
         role: true,
         updatedAt: true
       }
@@ -446,6 +482,124 @@ router.put('/profile', authenticateToken, async (req: any, res: Response) => {
     }
     
     res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+// Upload Profile Image
+router.post('/profile/avatar', authenticateToken, upload.single('avatar'), async (req: any, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    
+    if (!userId) {
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
+    }
+
+    if (!req.file) {
+      res.status(400).json({ error: 'No image file provided' });
+      return;
+    }
+
+    // Get current user to check for existing avatar
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatar: true }
+    });
+
+    // Delete old avatar file if it exists
+    if (currentUser?.avatar) {
+      const oldAvatarPath = path.join(process.cwd(), currentUser.avatar);
+      if (fs.existsSync(oldAvatarPath)) {
+        fs.unlinkSync(oldAvatarPath);
+      }
+    }
+
+    // Update user with new avatar path
+    const avatarPath = req.file.path.replace(/\\/g, '/'); // Normalize path separators
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { avatar: avatarPath },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+        phone: true,
+        avatar: true,
+        role: true,
+        updatedAt: true
+      }
+    });
+
+    res.json({
+      message: 'Profile image uploaded successfully',
+      user: updatedUser,
+      avatarUrl: `/uploads/profiles/${path.basename(avatarPath)}`
+    });
+  } catch (error) {
+    console.error('Upload avatar error:', error);
+    
+    // Clean up uploaded file on error
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    
+    res.status(500).json({ error: 'Failed to upload profile image' });
+  }
+});
+
+// Delete Profile Image
+router.delete('/profile/avatar', authenticateToken, async (req: any, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    
+    if (!userId) {
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
+    }
+
+    // Get current user to check for existing avatar
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatar: true }
+    });
+
+    if (!currentUser?.avatar) {
+      res.status(400).json({ error: 'No profile image to delete' });
+      return;
+    }
+
+    // Delete avatar file
+    const avatarPath = path.join(process.cwd(), currentUser.avatar);
+    if (fs.existsSync(avatarPath)) {
+      fs.unlinkSync(avatarPath);
+    }
+
+    // Update user to remove avatar
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { avatar: null },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+        phone: true,
+        avatar: true,
+        role: true,
+        updatedAt: true
+      }
+    });
+
+    res.json({
+      message: 'Profile image deleted successfully',
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Delete avatar error:', error);
+    res.status(500).json({ error: 'Failed to delete profile image' });
   }
 });
 
