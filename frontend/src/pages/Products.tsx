@@ -12,7 +12,12 @@ import {
   Zap,
   Truck,
   Shield,
-  ArrowUpDown
+  ArrowUpDown,
+  Search,
+  Filter,
+  Grid,
+  List,
+  SlidersHorizontal
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { categoriesApi } from '../services/api';
@@ -55,6 +60,11 @@ const Products: React.FC = () => {
   // Get current filters from URL
   const currentPage = parseInt(searchParams.get('page') || '1');
   const categoryFilter = searchParams.get('category') || '';
+  
+  // Sync local page state with URL
+  useEffect(() => {
+    setPage(currentPage);
+  }, [currentPage]);
   
   useEffect(() => {
     if (categoryFilter && !selectedCategories.includes(categoryFilter)) {
@@ -183,10 +193,11 @@ const Products: React.FC = () => {
     setPage(1); // Reset to first page when sort changes
   };
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (newPage: number) => {
     const newParams = new URLSearchParams(searchParams);
-    newParams.set('page', page.toString());
+    newParams.set('page', newPage.toString());
     setSearchParams(newParams);
+    setPage(newPage); // Also update local state
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -258,9 +269,132 @@ const Products: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-
       <div className="container mx-auto px-4 py-6">
+        {/* Search and Filter Bar */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Search Input */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Search for products, brands, and more..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X size={20} />
+                </button>
+              )}
+            </div>
+
+            {/* View Mode Toggle */}
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`flex items-center px-3 py-2 rounded-md transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-white shadow-sm text-gray-900'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Grid size={18} className="mr-1" />
+                Grid
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`flex items-center px-3 py-2 rounded-md transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-white shadow-sm text-gray-900'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <List size={18} className="mr-1" />
+                List
+              </button>
+            </div>
+
+            {/* Filters Button */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center px-4 py-3 rounded-lg font-medium transition-colors ${
+                showFilters
+                  ? 'bg-gray-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <SlidersHorizontal size={18} className="mr-2" />
+              Filters
+            </button>
+          </div>
+
+          {/* Active Filters and Product Count */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 pt-4 border-t border-gray-100">
+            <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-0">
+              {selectedCategories.map((categorySlug) => {
+                const category = categories.find((c: Category) => c.slug === categorySlug);
+                return category ? (
+                  <span
+                    key={categorySlug}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-50 text-blue-700 border border-blue-200"
+                  >
+                    {category.name}
+                    <button
+                      onClick={() => handleCategoryFilter(categorySlug)}
+                      className="ml-2 hover:text-blue-900"
+                    >
+                      <X size={14} />
+                    </button>
+                  </span>
+                ) : null;
+              })}
+              {(priceRange.min || priceRange.max) && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-50 text-green-700 border border-green-200">
+                  {priceRange.min && priceRange.max
+                    ? `${formatPrice(parseFloat(priceRange.min))} - ${formatPrice(parseFloat(priceRange.max))}`
+                    : priceRange.min
+                    ? `From ${formatPrice(parseFloat(priceRange.min))}`
+                    : `Up to ${formatPrice(parseFloat(priceRange.max))}`
+                  }
+                  <button
+                    onClick={() => setPriceRange({ min: '', max: '' })}
+                    className="ml-2 hover:text-green-900"
+                  >
+                    <X size={14} />
+                  </button>
+                </span>
+              )}
+              {Object.entries(quickFilters).some(([, active]) => active) && (
+                Object.entries(quickFilters).map(([filterType, active]) => 
+                  active ? (
+                    <span
+                      key={filterType}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-50 text-purple-700 border border-purple-200"
+                    >
+                      {filterType === 'freeShipping' ? 'Free Shipping' : 
+                       filterType === 'buyerProtection' ? 'Buyer Protection' : '4+ Stars'}
+                      <button
+                        onClick={() => handleQuickFilter(filterType as 'freeShipping' | 'buyerProtection' | 'highRating')}
+                        className="ml-2 hover:text-purple-900"
+                      >
+                        <X size={14} />
+                      </button>
+                    </span>
+                  ) : null
+                )
+              )}
+            </div>
+            <div className="text-sm text-gray-500">
+              {data?.data?.pagination?.total || 0} products found
+            </div>
+          </div>
+        </div>
+
         <div className="flex gap-6">
           {/* Sidebar Filters */}
           <AnimatePresence>
