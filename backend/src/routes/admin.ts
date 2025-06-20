@@ -1665,7 +1665,7 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
         }
 
         // Parse compare at price (sale price)
-        let salePrice = null;
+        let salePrice: number | null = null;
         if (mainProduct['Variant Compare At Price']) {
           const comparePrice = parseFloat(mainProduct['Variant Compare At Price']);
           if (!isNaN(comparePrice) && comparePrice > price) {
@@ -1682,7 +1682,7 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
         }
 
         // Handle category
-        let categoryId = null;
+        let categoryId: string | null = null;
         if (mainProduct['Product Category']) {
           const categoryPath = mainProduct['Product Category'];
           // Try to find existing category or create a simple one
@@ -1776,7 +1776,7 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
             description: mainProduct['Body (HTML)']?.replace(/<[^>]*>/g, '') || '', // Strip HTML
             price: price,
             salePrice: salePrice,
-            categoryId: categoryId as string,
+            categoryId: categoryId as string, // categoryId is guaranteed to be set above
             stock: totalStock || stock,
             image: images[0] || null,
             images: images,

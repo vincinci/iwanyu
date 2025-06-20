@@ -22,7 +22,7 @@ interface ImportResults {
   successful: number;
   failed: number;
   errors: string[];
-  warnings: string[];
+  warnings?: string[];
 }
 
 const AdminCsvImport: React.FC = () => {
