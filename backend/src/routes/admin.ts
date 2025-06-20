@@ -1,10 +1,42 @@
 import express, { Response } from 'express';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 import prisma from '../utils/db';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { clearProductCaches } from './products';
 import { NotificationType } from '@prisma/client';
 
 const router = express.Router();
+
+// Configure multer for CSV file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = 'uploads/csv/';
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'admin-import-' + uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
+  if (file.mimetype === 'text/csv' || file.mimetype === 'application/csv' || file.originalname.endsWith('.csv')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only CSV files are allowed'), false);
+  }
+};
+
+const upload = multer({ 
+  storage,
+  fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
 
 // Health check endpoint
 router.get('/health', (req: AuthRequest, res: Response) => {
@@ -1526,6 +1558,268 @@ router.get('/payouts/analytics', authenticateToken, requireAdmin, async (req: Au
   } catch (error) {
     console.error('Get payout analytics error:', error);
     res.status(500).json({ error: 'Failed to get payout analytics' });
+  }
+});
+
+// CSV Import endpoint
+router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFile'), async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'CSV file is required' });
+    }
+
+    // Read and parse CSV file
+    const fileContent = fs.readFileSync(req.file.path, 'utf8');
+    const lines = fileContent.split('\n').filter(line => line.trim());
+    
+    if (lines.length < 2) {
+      // Clean up uploaded file
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({ error: 'CSV file must contain headers and at least one product row' });
+    }
+
+    // Parse CSV manually to handle quoted values
+    function parseCSVLine(line: string): string[] {
+      const result: string[] = [];
+      let current = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current.trim());
+      return result;
+    }
+
+    const headers = parseCSVLine(lines[0]).map(h => h.replace(/"/g, ''));
+    const importResults = {
+      successful: 0,
+      failed: 0,
+      errors: [] as string[],
+      warnings: [] as string[]
+    };
+
+    // Group products by handle for Shopify format
+    const productGroups = new Map<string, any[]>();
+
+    // Process each data row and group by handle
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+
+      try {
+        const values = parseCSVLine(line);
+        const product: any = {};
+        
+        headers.forEach((header, index) => {
+          product[header] = values[index] ? values[index].replace(/^"|"$/g, '') : '';
+        });
+
+        const handle = product['Handle'];
+        if (!handle) {
+          importResults.errors.push(`Row ${i + 1}: Missing Handle (product identifier)`);
+          continue;
+        }
+
+        if (!productGroups.has(handle)) {
+          productGroups.set(handle, []);
+        }
+        productGroups.get(handle)!.push(product);
+      } catch (error) {
+        importResults.errors.push(`Row ${i + 1}: Failed to parse CSV row - ${(error as Error).message}`);
+      }
+    }
+
+    // Process each product group
+    for (const [handle, variants] of productGroups) {
+      try {
+        const mainProduct = variants[0];
+        
+        // Validate required fields
+        if (!mainProduct['Title']) {
+          importResults.errors.push(`Product ${handle}: Missing Title`);
+          importResults.failed++;
+          continue;
+        }
+
+        if (!mainProduct['Variant Price']) {
+          importResults.errors.push(`Product ${handle}: Missing Variant Price`);
+          importResults.failed++;
+          continue;
+        }
+
+        // Parse price
+        const price = parseFloat(mainProduct['Variant Price']);
+        if (isNaN(price) || price <= 0) {
+          importResults.errors.push(`Product ${handle}: Invalid price`);
+          importResults.failed++;
+          continue;
+        }
+
+        // Parse compare at price (sale price)
+        let salePrice = null;
+        if (mainProduct['Variant Compare At Price']) {
+          const comparePrice = parseFloat(mainProduct['Variant Compare At Price']);
+          if (!isNaN(comparePrice) && comparePrice > price) {
+            salePrice = price; // Current price becomes sale price
+            // price becomes compare price - but we'll keep price as the selling price
+          }
+        }
+
+        // Parse stock
+        let stock = 0;
+        if (mainProduct['Variant Inventory Qty']) {
+          stock = parseInt(mainProduct['Variant Inventory Qty']);
+          if (isNaN(stock)) stock = 0;
+        }
+
+        // Handle category
+        let categoryId = null;
+        if (mainProduct['Product Category']) {
+          const categoryPath = mainProduct['Product Category'];
+          // Try to find existing category or create a simple one
+          const categoryName = categoryPath.split('>').pop()?.trim() || categoryPath.trim();
+          
+          let category = await prisma.category.findFirst({
+            where: { 
+              OR: [
+                { name: { equals: categoryName, mode: 'insensitive' } },
+                { slug: categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
+              ]
+            }
+          });
+
+          if (!category) {
+            // Create new category
+            const slug = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            category = await prisma.category.create({
+              data: {
+                name: categoryName,
+                slug: slug,
+                description: `Category for ${categoryName} products`
+              }
+            });
+            importResults.warnings.push(`Created new category: ${categoryName}`);
+          }
+          categoryId = category.id;
+        } else {
+          // Use default category
+          let defaultCategory = await prisma.category.findFirst({
+            where: { slug: 'general' }
+          });
+          
+          if (!defaultCategory) {
+            defaultCategory = await prisma.category.create({
+              data: {
+                name: 'General',
+                slug: 'general',
+                description: 'General products category'
+              }
+            });
+          }
+          categoryId = defaultCategory.id;
+        }
+
+        // Create slug from handle or title
+        const slug = handle || mainProduct['Title'].toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+        // Check if product already exists
+        const existingProduct = await prisma.product.findFirst({
+          where: { 
+            OR: [
+              { slug: slug },
+              { name: mainProduct['Title'] }
+            ]
+          }
+        });
+
+        if (existingProduct) {
+          importResults.warnings.push(`Product ${handle}: Already exists, skipping`);
+          continue;
+        }
+
+        // Collect images
+        const images: string[] = [];
+        variants.forEach(variant => {
+          if (variant['Image Src'] && !images.includes(variant['Image Src'])) {
+            images.push(variant['Image Src']);
+          }
+          if (variant['Variant Image'] && !images.includes(variant['Variant Image'])) {
+            images.push(variant['Variant Image']);
+          }
+        });
+
+        // Calculate total stock from all variants
+        const totalStock = variants.reduce((sum, variant) => {
+          const variantStock = parseInt(variant['Variant Inventory Qty']) || 0;
+          return sum + variantStock;
+        }, 0);
+
+        // Determine status
+        const status = mainProduct['Status'] === 'draft' ? 'inactive' : 'active';
+        const isActive = mainProduct['Status'] !== 'archived' && mainProduct['Published'] !== 'FALSE';
+
+        // Create product - we'll create a simple product without variants for now
+        // In a full implementation, you'd handle variants properly
+        const newProduct = await prisma.product.create({
+          data: {
+            name: mainProduct['Title'],
+            slug: slug,
+            description: mainProduct['Body (HTML)']?.replace(/<[^>]*>/g, '') || '', // Strip HTML
+            price: price,
+            salePrice: salePrice,
+            categoryId: categoryId as string,
+            stock: totalStock || stock,
+            image: images[0] || null,
+            images: images,
+            brand: mainProduct['Vendor'] || null,
+            sku: mainProduct['Variant SKU'] || `SKU-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+            featured: false,
+            status: status,
+            isActive: isActive,
+            // Note: sellerId is null for admin imports - these are admin-managed products
+            sellerId: null
+          }
+        });
+
+        importResults.successful++;
+        console.log(`Successfully imported product: ${mainProduct['Title']}`);
+
+      } catch (error) {
+        console.error(`Error creating product ${handle}:`, error);
+        importResults.errors.push(`Product ${handle}: ${(error as Error).message}`);
+        importResults.failed++;
+      }
+    }
+
+    // Clean up uploaded file
+    fs.unlinkSync(req.file.path);
+
+    // Clear product cache since we added new products
+    clearProductCaches();
+
+    res.json({
+      message: 'CSV import completed',
+      results: importResults
+    });
+
+  } catch (error) {
+    console.error('CSV import error:', error);
+    
+    // Clean up uploaded file on error
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    
+    res.status(500).json({ error: 'Failed to import CSV file' });
   }
 });
 

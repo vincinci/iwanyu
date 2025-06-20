@@ -15,7 +15,8 @@ import {
   XCircle,
   ArrowLeft,
   CreditCard,
-  Image
+  Image,
+  Upload
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { adminApi } from '../services/adminApi';
@@ -192,6 +193,13 @@ const AdminDashboard: React.FC = () => {
       icon: Package,
       path: '/admin/products',
       color: 'bg-purple-500'
+    },
+    {
+      title: 'CSV Import',
+      description: 'Import products from CSV file',
+      icon: Upload,
+      path: '/admin/csv-import',
+      color: 'bg-teal-500'
     },
     {
       title: 'Order Management',
