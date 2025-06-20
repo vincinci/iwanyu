@@ -388,13 +388,6 @@ const AdminDashboard: React.FC = () => {
                   .filter((order: any) => order && order.id && typeof order === 'object')
                   .map((order: any, index: number) => {
                   // Safety check for order data
-                  console.log(`🔍 Processing order ${index}:`, {
-                    order: order,
-                    hasId: !!order?.id,
-                    hasUser: !!order?.user,
-                    orderType: typeof order
-                  });
-                  
                   if (!order || !order.id || typeof order !== 'object') {
                     console.warn('Invalid order data:', order);
                     return null;
@@ -403,14 +396,6 @@ const AdminDashboard: React.FC = () => {
                   // Get user display name safely
                   const getUserDisplayName = () => {
                     try {
-                      console.log('🔍 Order user data:', {
-                        orderId: order?.id,
-                        hasUser: !!order?.user,
-                        userType: typeof order?.user,
-                        userKeys: order?.user ? Object.keys(order.user) : 'no user',
-                        user: order?.user
-                      });
-                      
                       if (!order?.user || typeof order.user !== 'object') {
                         return 'Guest User';
                       }
