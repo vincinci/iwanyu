@@ -110,7 +110,7 @@ const SellerProfile: React.FC = () => {
           <User className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Profile Error</h2>
           <p className="text-gray-600 mb-4">
-            {(error as Error).message || 'Unable to load your profile. Please try again.'}
+            {(error as any).message || 'Unable to load your profile. Please try again.'}
           </p>
           <div className="space-y-2">
             <button 

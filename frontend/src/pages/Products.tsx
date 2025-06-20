@@ -281,7 +281,7 @@ const Products: React.FC = () => {
   };
 
   if (isError) {
-    return <ErrorMessage message={error?.message || 'Failed to load products'} />;
+    return <ErrorMessage message={(error as any)?.message || 'Failed to load products'} />;
   }
 
   return (

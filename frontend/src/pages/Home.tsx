@@ -371,7 +371,7 @@ const Home: React.FC = () => {
           // Only show active banners, sorted by order
           const activeBanners = parsedBanners
             .filter((banner: any) => (banner as any).isActive)
-            .sort((a: unknown, b: any) => a.order - b.order);
+            .sort((a: any, b: any) => a.order - b.order);
           setBanners(activeBanners);
         } else {
           // Use default banners
@@ -454,7 +454,7 @@ const Home: React.FC = () => {
       const updatedBanners = (event as any).detail;
       const activeBanners = updatedBanners
         .filter((banner: any) => (banner as any).isActive)
-        .sort((a: unknown, b: any) => a.order - b.order);
+        .sort((a: any, b: any) => a.order - b.order);
       setBanners(activeBanners);
     };
 

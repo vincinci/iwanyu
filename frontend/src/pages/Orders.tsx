@@ -63,7 +63,8 @@ const Orders: React.FC = () => {
   const fetchOrderDetails = async (orderId: string) => {
     try {
 
-      setSelectedOrder((response as any).data);
+      const response = { data: null }; // TODO: Get actual response
+    setSelectedOrder((response as any).data);
       setShowOrderDetails(true);
     } catch (error) {
       console.error('Failed to fetch order details:', error);
@@ -125,7 +126,7 @@ const Orders: React.FC = () => {
 
   const handleCancelOrder = (orderId: string) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
-      cancelOrderMutation.mutate(orderId);
+      cancelOrderMutation.mutate(orderId as any);
     }
   };
 

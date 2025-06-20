@@ -129,6 +129,11 @@ class OrdersApi {
 
 export const ordersApi = new OrdersApi(); 
 
-export const getUserOrders = getOrders;
-export const getOrder = getOrderById;
-export const cancelOrder = updateOrderStatus;
+
+
+
+
+// Fixed exports
+export const getUserOrders = async (params: any) => getOrders(params);
+export const getOrder = async (id: string) => getOrderById(id);
+export const cancelOrder = async (id: string, status: string) => updateOrderStatus(id, status);

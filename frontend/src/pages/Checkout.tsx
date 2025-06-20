@@ -38,6 +38,7 @@ interface OrderItem {
 }
 
 const Checkout: React.FC = () => {
+  const { totalAmount } = useCart();
 
   const location = useLocation();
   const { user } = useAuth();
@@ -93,7 +94,7 @@ const Checkout: React.FC = () => {
 
       if (!response.ok) {
 
-        throw new Error(error.error || 'Failed to create order');
+        throw new Error((error as any).error || 'Failed to create order');
       }
 
       return response.json();

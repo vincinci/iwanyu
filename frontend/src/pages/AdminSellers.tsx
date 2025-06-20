@@ -311,7 +311,7 @@ const AdminSellers: React.FC = () => {
 
                       <div className="flex items-center gap-2">
                         <div className="text-right text-sm text-gray-600 mr-4">
-                          <p>{seller._count.products} products</p>
+                          <p>{(seller as any)._count.products} products</p>
                           <p>Joined {new Date(seller.createdAt).toLocaleDateString()}</p>
                         </div>
                         

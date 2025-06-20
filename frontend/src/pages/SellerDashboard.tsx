@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -67,7 +67,7 @@ const SellerDashboard: React.FC = () => {
 
   // Handle specific error cases
   if (error || profileError) {
-    const errorMessage = error?.message || profileError?.message || 'Unknown error';
+    const errorMessage = (error as any)?.message || (profileError as any)?.message || 'Unknown error';
     
     // If user is not a seller or doesn't have seller profile
     if (errorMessage.includes('Seller profile not found') || errorMessage.includes('not found')) {

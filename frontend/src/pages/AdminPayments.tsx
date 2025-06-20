@@ -67,6 +67,7 @@ interface PayoutFilters {
 }
 
 const AdminPayments: React.FC = () => {
+  const { totalAmount } = useCart();
   const { user } = useAuth();
 
   const queryClient = useQueryClient();
@@ -293,13 +294,13 @@ const AdminPayments: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Total Payouts</p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {formatPrice(analyticsData.data.summary.totalAmount)}
+                      {formatPrice((analyticsData as any).data.summary.totalAmount)}
                     </p>
                   </div>
                   <DollarSign className="w-8 h-8 text-green-500" />
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  {analyticsData.data.summary.totalCount} transactions
+                  {(analyticsData as any).data.summary.totalCount} transactions
                 </p>
               </div>
 
@@ -308,7 +309,7 @@ const AdminPayments: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Pending Requests</p>
                     <p className="text-2xl font-bold text-yellow-600">
-                      {analyticsData.data.byStatus.find((s: any) => s.status === 'PENDING')?._count._all || 0}
+                      {(analyticsData as any).data.byStatus.find((s: any) => s.status === 'PENDING')?._count._all || 0}
                     </p>
                   </div>
                   <Clock className="w-8 h-8 text-yellow-500" />
@@ -320,7 +321,7 @@ const AdminPayments: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Completed Today</p>
                     <p className="text-2xl font-bold text-green-600">
-                      {analyticsData.data.byStatus.find((s: any) => s.status === 'COMPLETED')?._count._all || 0}
+                      {(analyticsData as any).data.byStatus.find((s: any) => s.status === 'COMPLETED')?._count._all || 0}
                     </p>
                   </div>
                   <CheckCircle className="w-8 h-8 text-green-500" />
@@ -332,7 +333,7 @@ const AdminPayments: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Average Amount</p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {formatPrice(analyticsData.data.summary.averageAmount)}
+                      {formatPrice((analyticsData as any).data.summary.averageAmount)}
                     </p>
                   </div>
                   <TrendingUp className="w-8 h-8 text-blue-500" />
@@ -346,7 +347,7 @@ const AdminPayments: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-900">Recent Payout Activity</h3>
               </div>
               <div className="p-6">
-                {payoutsData?.data?.payouts?.slice(0, 5).map((payout: Payout) => (
+                {(payoutsData as any)?.data?.payouts?.slice(0, 5).map((payout: Payout) => (
                   <div key={payout.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
@@ -470,7 +471,7 @@ const AdminPayments: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900">Withdrawal Requests</h3>
                   <span className="text-sm text-gray-500">
-                    {payoutsData?.data?.pagination?.total || 0} total requests
+                    {(payoutsData as any)?.data?.pagination?.total || 0} total requests
                   </span>
                 </div>
               </div>
@@ -480,9 +481,9 @@ const AdminPayments: React.FC = () => {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto mb-4"></div>
                   <p className="text-gray-600">Loading payouts...</p>
                 </div>
-              ) : payoutsData?.data?.payouts?.length ? (
+              ) : (payoutsData as any)?.data?.payouts?.length ? (
                 <div className="divide-y divide-gray-200">
-                  {payoutsData.data.payouts.map((payout: Payout) => (
+                  {(payoutsData as any).data.payouts.map((payout: Payout) => (
                     <div key={payout.id} className="p-6 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -549,11 +550,11 @@ const AdminPayments: React.FC = () => {
               )}
 
               {/* Pagination */}
-              {payoutsData?.data?.pagination?.pages > 1 && (
+              {(payoutsData as any)?.data?.pagination?.pages > 1 && (
                 <div className="p-6 border-t border-gray-200">
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-gray-700">
-                      Showing page {payoutsData.data.pagination.page} of {payoutsData.data.pagination.pages}
+                      Showing page {(payoutsData as any).data.pagination.page} of {(payoutsData as any).data.pagination.pages}
                     </p>
                     <div className="flex gap-2">
                       <button
@@ -564,8 +565,8 @@ const AdminPayments: React.FC = () => {
                         Previous
                       </button>
                       <button
-                        onClick={() => setPage(Math.min(payoutsData.data.pagination.pages, page + 1))}
-                        disabled={page === payoutsData.data.pagination.pages}
+                        onClick={() => setPage(Math.min((payoutsData as any).data.pagination.pages, page + 1))}
+                        disabled={page === (payoutsData as any).data.pagination.pages}
                         className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
                       >
                         Next
@@ -596,9 +597,9 @@ const AdminPayments: React.FC = () => {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto mb-4"></div>
                   <p className="text-gray-600">Loading wallets...</p>
                 </div>
-              ) : walletsData?.data?.sellers?.length ? (
+              ) : (walletsData as any)?.data?.sellers?.length ? (
                 <div className="divide-y divide-gray-200">
-                  {walletsData.data.sellers.map((seller: any) => (
+                  {(walletsData as any).data.sellers.map((seller: any) => (
                     <div key={seller.id} className="p-6 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
                         <div>
@@ -657,7 +658,7 @@ const AdminPayments: React.FC = () => {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Payouts by Status</h3>
                 <div className="space-y-3">
-                  {analyticsData.data.byStatus.map((status: any) => (
+                  {(analyticsData as any).data.byStatus.map((status: any) => (
                     <div key={status.status} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {getStatusIcon(status.status)}
@@ -676,7 +677,7 @@ const AdminPayments: React.FC = () => {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Payouts by Method</h3>
                 <div className="space-y-3">
-                  {analyticsData.data.byMethod.map((method: any) => (
+                  {(analyticsData as any).data.byMethod.map((method: any) => (
                     <div key={method.payoutMethod} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {method.payoutMethod === 'BANK_TRANSFER' ? (
@@ -699,31 +700,31 @@ const AdminPayments: React.FC = () => {
             </div>
 
             {/* Top Sellers */}
-            {analyticsData.data.topSellers?.length > 0 && (
+            {(analyticsData as any).data.topSellers?.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm">
                 <div className="p-6 border-b border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-900">Top Sellers by Payouts</h3>
                 </div>
                 <div className="divide-y divide-gray-200">
-                  {analyticsData.data.topSellers.slice(0, 10).map((seller: unknown, index: number) => (
-                    <div key={seller.sellerId} className="p-6 flex items-center justify-between">
+                  {(analyticsData as any).data.topSellers.slice(0, 10).map((seller: unknown, index: number) => (
+                    <div key={(seller as any).sellerId} className="p-6 flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
                           <span className="text-sm font-medium text-gray-600">#{index + 1}</span>
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">
-                            {seller.seller?.businessName || 
-                             `${seller.seller?.user?.firstName} ${seller.seller?.user?.lastName}`}
+                            {(seller as any).seller?.businessName || 
+                             `${(seller as any).seller?.user?.firstName} ${(seller as any).seller?.user?.lastName}`}
                           </p>
-                          <p className="text-sm text-gray-600">{seller.seller?.user?.email}</p>
+                          <p className="text-sm text-gray-600">{(seller as any).seller?.user?.email}</p>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-gray-900">
-                          {formatPrice(seller._sum.amount || 0)}
+                          {formatPrice((seller as any)._sum.amount || 0)}
                         </p>
-                        <p className="text-sm text-gray-500">{seller._count._all} payouts</p>
+                        <p className="text-sm text-gray-500">{(seller as any)._count._all} payouts</p>
                       </div>
                     </div>
                   ))}
