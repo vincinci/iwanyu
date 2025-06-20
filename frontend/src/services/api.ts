@@ -9,8 +9,6 @@ import type {
 // Use environment variable for production, fallback to localhost for development
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-console.log('API Base URL:', API_BASE_URL); // Debug log to check URL
-
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000, // 10 second timeout to prevent hanging
