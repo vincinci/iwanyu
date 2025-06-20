@@ -6,7 +6,8 @@ import { Package, ArrowLeft, AlertCircle, CheckCircle, Upload } from 'lucide-rea
 import { useAuth } from '../contexts/AuthContext';
 import { sellerApi, type ProductData } from '../services/sellerApi';
 import { categoriesApi } from '../services/api';
-import type { Category } from '../types/api';
+import type { Category, ProductVariant } from '../types/api';
+import ProductVariants from '../components/ProductVariants';
 
 const AddProduct: React.FC = () => {
   const navigate = useNavigate();
@@ -329,6 +330,18 @@ const AddProduct: React.FC = () => {
                   placeholder="Enter image URL"
                 />
               </div>
+            </div>
+
+            {/* Product Variants */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Product Variants (optional)
+              </label>
+              <ProductVariants
+                variants={formData.variants as ProductVariant[]}
+                onChange={(variants) => setFormData(prev => ({ ...prev, variants }))}
+                basePrice={formData.price}
+              />
             </div>
 
             {/* Submit Buttons */}
