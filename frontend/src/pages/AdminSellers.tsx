@@ -454,7 +454,7 @@ const AdminSellers: React.FC = () => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700">Email</label>
-                        <p className="text-gray-900">{selectedSeller.user.email}</p>
+                        <p className="text-gray-900">{selectedSeller.user?.email || 'No email available'}</p>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700">Products</label>
@@ -463,7 +463,7 @@ const AdminSellers: React.FC = () => {
                       <div>
                         <label className="block text-sm font-medium text-gray-700">Member Since</label>
                         <p className="text-gray-900">
-                          {new Date(selectedSeller.user.createdAt).toLocaleDateString()}
+                          {selectedSeller.user?.createdAt ? new Date(selectedSeller.user.createdAt).toLocaleDateString() : 'Unknown'}
                         </p>
                       </div>
                     </div>

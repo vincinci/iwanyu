@@ -608,7 +608,7 @@ const AdminPayments: React.FC = () => {
                           <h4 className="font-medium text-gray-900">
                             {seller.businessName || `${seller.user?.firstName || ''} ${seller.user?.lastName || ''}`}
                           </h4>
-                          <p className="text-sm text-gray-600">{seller.user.email}</p>
+                          <p className="text-sm text-gray-600">{seller.user?.email || 'No email available'}</p>
                         </div>
                         <div className="text-right">
                           <div className="grid grid-cols-3 gap-6 text-center">
@@ -719,7 +719,7 @@ const AdminPayments: React.FC = () => {
                             {(seller as any).seller?.businessName || 
                              `${(seller as any).seller?.user?.firstName || ''} ${(seller as any).seller?.user?.lastName || ''}`}
                           </p>
-                          <p className="text-sm text-gray-600">{(seller as any).seller?.user?.email}</p>
+                          <p className="text-sm text-gray-600">{(seller as any).seller?.user?.email || 'No email available'}</p>
                         </div>
                       </div>
                       <div className="text-right">
