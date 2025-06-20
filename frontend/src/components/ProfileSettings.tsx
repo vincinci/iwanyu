@@ -36,6 +36,16 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
   const [success, setSuccess] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Auto-clear message after 5 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
   
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
@@ -99,7 +109,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
     setIsUploadingImage(true);
     try {
-
+      await authApi.uploadProfileImage(file);
       await refreshUser();
       setMessage({ type: 'success', text: 'Profile image updated successfully!' });
     } catch (error: any) {
@@ -273,6 +283,15 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
       {success && (
         <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
           {success}
+        </div>
+      )}
+      {message && (
+        <div className={`mb-4 p-3 rounded-lg ${
+          message.type === 'error' 
+            ? 'bg-red-100 border border-red-400 text-red-700' 
+            : 'bg-green-100 border border-green-400 text-green-700'
+        }`}>
+          {message.text}
         </div>
       )}
 
