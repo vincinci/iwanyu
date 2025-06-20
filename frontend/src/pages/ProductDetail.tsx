@@ -24,6 +24,7 @@ import {
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../utils/currency';
 import { getProductImageUrls } from '../utils/imageUtils';
 import { useInstantProduct } from '../hooks/useInstantProducts';
@@ -37,6 +38,7 @@ const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { showError } = useToast();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -191,7 +193,7 @@ const ProductDetail: React.FC = () => {
       // Show more detailed error information
       const errorMessage = error instanceof Error ? error.message : 'Failed to update wishlist';
       console.error('Error details:', errorMessage);
-      alert(`Wishlist Error: ${errorMessage}`);
+      showError('Wishlist Error', errorMessage);
     } finally {
       setIsAddingToWishlist(false);
     }
@@ -227,7 +229,7 @@ const ProductDetail: React.FC = () => {
       setTimeout(() => setShowShareTooltip(false), 2000);
     } catch (error) {
       console.error('Copy failed:', error);
-      alert('Unable to copy link. Please copy the URL manually.');
+      showError('Copy Failed', 'Unable to copy link. Please copy the URL manually.');
     }
   };
 

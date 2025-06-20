@@ -25,6 +25,7 @@ import { useInstantProducts } from '../hooks/useInstantProducts';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../utils/currency';
 import { getProductImageUrl } from '../utils/imageUtils';
 import ProductSkeleton from '../components/ProductSkeleton';
@@ -38,6 +39,7 @@ const Products: React.FC = () => {
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
+  const { showInfo } = useToast();
 
   // UI State
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -206,7 +208,7 @@ const Products: React.FC = () => {
     e.stopPropagation();
     
     if (!user) {
-      alert('Please sign in to add items to your wishlist');
+      showInfo('Sign In Required', 'Please sign in to add items to your wishlist');
       return;
     }
 

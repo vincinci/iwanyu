@@ -54,6 +54,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../utils/currency';
 import { getProductImageUrl } from '../utils/imageUtils';
 import ProductSkeleton from '../components/ProductSkeleton';
@@ -141,6 +142,7 @@ const Home: React.FC = () => {
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
+  const { showInfo, showError } = useToast();
 
   // Mobile detection with safety check
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -401,7 +403,7 @@ const Home: React.FC = () => {
     e.stopPropagation();
     
     if (!user) {
-      alert('Please sign in to add items to your wishlist');
+      showInfo('Sign In Required', 'Please sign in to add items to your wishlist');
       return;
     }
 
@@ -413,9 +415,9 @@ const Home: React.FC = () => {
       }
     } catch (error) {
       console.error('Wishlist error:', error);
-      // Don't show alert on mobile to prevent crashes
+      // Don't show toast on mobile to prevent crashes
       if (!isMobile) {
-        alert('Failed to update wishlist. Please try again.');
+        showError('Wishlist Error', 'Failed to update wishlist. Please try again.');
       }
     }
   };

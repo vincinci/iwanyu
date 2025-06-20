@@ -72,6 +72,7 @@ class MobileErrorBoundary extends React.Component<
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { WishlistProvider } from './contexts/WishlistContext';
+import { ToastProvider } from './contexts/ToastContext';
 
 // Layout Components
 import Header from './components/Header';
@@ -272,7 +273,9 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
-              <AppContent />
+              <ToastProvider>
+                <AppContent />
+              </ToastProvider>
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>

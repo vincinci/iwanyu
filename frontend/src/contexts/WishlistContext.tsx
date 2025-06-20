@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useAuth } from './AuthContext';
+import { useToast } from './ToastContext';
 import { wishlistApi } from '../services/wishlistApi';
 import type { WishlistItem } from '../services/wishlistApi';
 
@@ -32,6 +33,7 @@ interface WishlistProviderProps {
 
 export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) => {
   const { user } = useAuth();
+  const { showSuccess, showError, showInfo } = useToast();
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -62,7 +64,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
 
   const addToWishlist = async (productId: string): Promise<void> => {
     if (!user) {
-      alert('Please sign in to add items to your wishlist');
+      showInfo('Sign In Required', 'Please sign in to add items to your wishlist');
       throw new Error('You must be logged in to add items to wishlist');
     }
 
@@ -80,14 +82,14 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       });
       
       // Show success message
-      alert('Product added to wishlist!');
+      showSuccess('Added to Wishlist', 'Product has been added to your wishlist!');
       console.log('✅ Added to wishlist:', response.message);
     } catch (error) {
       console.error('❌ Failed to add to wishlist:', error);
       if (error instanceof Error) {
-        alert(`Failed to add to wishlist: ${error.message}`);
+        showError('Failed to Add', `Could not add to wishlist: ${error.message}`);
       } else {
-        alert('Failed to add to wishlist. Please try again.');
+        showError('Failed to Add', 'Could not add to wishlist. Please try again.');
       }
       throw error;
     }
@@ -103,13 +105,13 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       setItems(prev => prev.filter(item => item.productId !== productId));
       
       console.log('Removed from wishlist');
-      alert('Product removed from wishlist');
+      showSuccess('Removed from Wishlist', 'Product has been removed from your wishlist');
     } catch (error) {
       console.error('Failed to remove from wishlist:', error);
       if (error instanceof Error) {
-        alert(`Failed to remove from wishlist: ${error.message}`);
+        showError('Failed to Remove', `Could not remove from wishlist: ${error.message}`);
       } else {
-        alert('Failed to remove from wishlist. Please try again.');
+        showError('Failed to Remove', 'Could not remove from wishlist. Please try again.');
       }
       throw error;
     }
