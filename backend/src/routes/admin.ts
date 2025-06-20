@@ -595,7 +595,15 @@ router.get('/products', authenticateToken, requireAdmin, async (req: AuthRequest
           seller: {
             select: {
               id: true,
-              businessName: true
+              businessName: true,
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  firstName: true,
+                  lastName: true
+                }
+              }
             }
           },
           variants: {

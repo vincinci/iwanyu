@@ -43,9 +43,17 @@ const AdminProducts: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const { data, isLoading} = useQuery({
+  const { data, isLoading, error: queryError } = useQuery({
     queryKey: ['admin-products', page, search, statusFilter],
-    queryFn: () => adminApi.getProducts({ page, search, status: statusFilter, limit: 20 }),
+    queryFn: async () => {
+      try {
+        return await adminApi.getProducts({ page, search, status: statusFilter, limit: 20 });
+      } catch (error: any) {
+        console.error('Products query error:', error);
+        setError(error.message || 'Failed to load products');
+        throw error;
+      }
+    },
     enabled: !!user && user.role === 'ADMIN',
   });
 
@@ -117,8 +125,8 @@ const AdminProducts: React.FC = () => {
   const handleSelectAll = () => {
     if (!data?.products) return;
     
-    const allProductIds = data.products.map(p => p.id);
-    const allSelected = allProductIds.every(id => selectedProducts.includes(id));
+    const allProductIds = data.products.map((p: AdminProduct) => p.id);
+    const allSelected = allProductIds.every((id: string) => selectedProducts.includes(id));
     
     if (allSelected) {
       setSelectedProducts([]);
@@ -276,7 +284,7 @@ const AdminProducts: React.FC = () => {
                       <th className="px-6 py-3 text-left">
                         <input
                           type="checkbox"
-                          checked={data.products.length > 0 && data.products.every(p => selectedProducts.includes(p.id))}
+                          checked={data?.products && data.products.length > 0 && data.products.every((p: AdminProduct) => selectedProducts.includes(p.id))}
                           onChange={handleSelectAll}
                           className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                         />
@@ -302,36 +310,36 @@ const AdminProducts: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {data.products.map((product: any) => (
-                      <tr key={(product as any).id} className="hover:bg-gray-50">
+                    {data?.products?.map((product: AdminProduct) => (
+                      <tr key={product.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <input
                             type="checkbox"
-                            checked={selectedProducts.includes((product as any).id)}
-                            onChange={() => handleSelectProduct((product as any).id)}
+                            checked={selectedProducts.includes(product.id)}
+                            onChange={() => handleSelectProduct(product.id)}
                             className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            {getImageUrl((product as any).image) && (
+                            {getImageUrl(product.image) && (
                               <img
-                                src={getImageUrl((product as any).image)!}
-                                alt={(product as any).name}
+                                src={getImageUrl(product.image)!}
+                                alt={product.name}
                                 className="w-10 h-10 rounded-lg object-cover mr-3"
                               />
                             )}
                             <div>
                               <div className="text-sm font-medium text-gray-900">
-                                {(product as any).name}
+                                {product.name}
                               </div>
                               <div className="text-sm text-gray-500">
                                 {product.category.name} • {product.sku || 'No SKU'}
                               </div>
-                              {(product as any).variants && (product as any).variants.length > 0 && (
+                              {product.variants && product.variants.length > 0 && (
                                 <div className="text-xs text-blue-600 mt-1">
-                                  {(product as any).variants.length} variant{(product as any).variants.length !== 1 ? 's' : ''} 
-                                  ({(product as any).variants.map((v: any) => `${v.name}:${v.value}`).join(', ')})
+                                  {product.variants.length} variant{product.variants.length !== 1 ? 's' : ''} 
+                                  ({product.variants.map((v) => `${v.name}:${v.value}`).join(', ')})
                                 </div>
                               )}
                               {product.featured && (
@@ -345,24 +353,24 @@ const AdminProducts: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            {formatPrice((product as any).price)}
+                            {formatPrice(product.price)}
                           </div>
-                          {(product as any).salePrice && (
+                          {product.salePrice && (
                             <div className="text-sm text-green-600">
-                              Sale: {formatPrice((product as any).salePrice)}
+                              Sale: {formatPrice(product.salePrice)}
                             </div>
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className={`text-sm font-medium ${
-                            (product as any).stock > 10 ? 'text-green-600' : 
-                            (product as any).stock > 0 ? 'text-gray-600' : 'text-red-600'
+                            product.stock > 10 ? 'text-green-600' : 
+                            product.stock > 0 ? 'text-gray-600' : 'text-red-600'
                           }`}>
-                            {(product as any).stock} units
+                            {product.stock} units
                           </div>
-                          {(product as any).variants && (product as any).variants.length > 0 && (
+                          {product.variants && product.variants.length > 0 && (
                             <div className="text-xs text-gray-500 mt-1">
-                              Variants: {(product as any).variants.map((v: any) => `${v.value}(${v.stock})`).join(', ')}
+                              Variants: {product.variants.map((v) => `${v.value}(${v.stock})`).join(', ')}
                             </div>
                           )}
                         </td>
@@ -391,15 +399,15 @@ const AdminProducts: React.FC = () => {
                               onClick={() => setEditingProduct(product)}
                               className="text-gray-600 hover:text-orange-900"
                               title="Edit product"
-                              aria-label={`Edit product ${(product as any).name}`}
+                              aria-label={`Edit product ${product.name}`}
                             >
                               <Edit3 className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleDeleteProduct((product as any).id)}
+                              onClick={() => handleDeleteProduct(product.id)}
                               className="text-red-600 hover:text-red-900"
                               title="Delete product"
-                              aria-label={`Delete product ${(product as any).name}`}
+                              aria-label={`Delete product ${product.name}`}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -412,7 +420,7 @@ const AdminProducts: React.FC = () => {
               </div>
 
               {/* Pagination */}
-              {data.pagination.pages > 1 && (
+              {data?.pagination && data.pagination.pages > 1 && (
                 <div className="px-6 py-3 border-t border-gray-200">
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-700">
