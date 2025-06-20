@@ -781,7 +781,7 @@ router.delete('/products/:id', authenticateToken, requireAdmin, async (req: Auth
 });
 
 // Bulk Delete Products
-router.delete('/products', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+router.delete('/products/bulk-delete', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {
     const { productIds } = req.body;
 
