@@ -1,48 +1,25 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Package, 
-  ArrowRight,
-  Smartphone,
-  Shirt,
-  Car,
-  Sparkles,
-  Home,
-  Trophy,
-  BookOpen,
-  Gamepad2,
-  Monitor,
-  Headphones,
-  Camera,
-  Watch,
-  Laptop,
-  Tablet,
-  Baby,
-  PawPrint,
-  Hammer,
-  Palette,
-  Music,
-  Dumbbell,
-  Apple,
-  UtensilsCrossed,
-  Flower,
-  Briefcase,
-  MapPin,
-  Shield,
-  Coffee,
-  Footprints,
-  Glasses,
-  Gem,
-  Bike,
-  Plane,
-  Mountain
+  Grid,
+  Search,
+  Filter,
+  TrendingUp,
+  ShoppingBag
 } from 'lucide-react';
 import { categoriesApi } from '../services/api';
+import CategoryCard from '../components/CategoryCard';
 import type { Category } from '../types/api';
 
 const Categories: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+
   const { data: categoriesData, isLoading} = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoriesApi.getAll(),
@@ -50,235 +27,201 @@ const Categories: React.FC = () => {
 
   const categories = categoriesData?.data?.categories || [];
 
-  const getCategoryIcon = (categoryName: string) => {
-    const name = categoryName.toLowerCase();
-    
-    // Electronics & Technology
-    if (name.includes('electronics') || name.includes('electronic')) return Monitor;
-    if (name.includes('mobile') || name.includes('phone') || name.includes('smartphone')) return Smartphone;
-    if (name.includes('computer') || name.includes('pc') || name.includes('desktop')) return Monitor;
-    if (name.includes('laptop') || name.includes('notebook')) return Laptop;
-    if (name.includes('tablet') || name.includes('ipad')) return Tablet;
-    if (name.includes('headphone') || name.includes('earphone') || name.includes('audio')) return Headphones;
-    if (name.includes('camera') || name.includes('photo')) return Camera;
-    if (name.includes('watch') || name.includes('smartwatch')) return Watch;
-    if (name.includes('gaming') || name.includes('console') || name.includes('game')) return Gamepad2;
-    
-    // Fashion & Apparel
-    if (name.includes('fashion') || name.includes('clothing') || name.includes('apparel')) return Shirt;
-    if (name.includes('shirt') || name.includes('top') || name.includes('blouse')) return Shirt;
-    if (name.includes('dress') || name.includes('gown')) return Shirt;
-    if (name.includes('pants') || name.includes('jeans') || name.includes('trouser')) return Shirt;
-    if (name.includes('shoes') || name.includes('sneakers') || name.includes('footwear')) return Footprints;
-    if (name.includes('bag') || name.includes('handbag') || name.includes('purse')) return Briefcase;
-    if (name.includes('jewelry') || name.includes('jewellery') || name.includes('accessory')) return Gem;
-    if (name.includes('watch') && name.includes('fashion')) return Watch;
-    if (name.includes('glasses') || name.includes('sunglasses')) return Glasses;
-    
-    // Home & Garden
-    if (name.includes('home') || name.includes('house') || name.includes('furniture')) return Home;
-    if (name.includes('garden') || name.includes('outdoor') || name.includes('plant')) return Flower;
-    if (name.includes('kitchen') || name.includes('cooking') || name.includes('utensil')) return UtensilsCrossed;
-    if (name.includes('tool') || name.includes('hardware') || name.includes('diy')) return Hammer;
-    
-    // Sports & Fitness
-    if (name.includes('sports') || name.includes('sport') || name.includes('fitness')) return Trophy;
-    if (name.includes('gym') || name.includes('workout') || name.includes('exercise')) return Dumbbell;
-    if (name.includes('bike') || name.includes('bicycle') || name.includes('cycling')) return Bike;
-    if (name.includes('outdoor') || name.includes('hiking') || name.includes('camping')) return Mountain;
-    
-    // Automotive
-    if (name.includes('automotive') || name.includes('auto') || name.includes('car')) return Car;
-    if (name.includes('motor') || name.includes('vehicle')) return Car;
-    
-    // Beauty & Health
-    if (name.includes('beauty') || name.includes('cosmetic') || name.includes('makeup')) return Sparkles;
-    if (name.includes('health') || name.includes('medical') || name.includes('wellness')) return Shield;
-    
-    // Books & Media
-    if (name.includes('books') || name.includes('book') || name.includes('reading')) return BookOpen;
-    if (name.includes('music') || name.includes('instrument') || name.includes('audio')) return Music;
-    
-    // Food & Beverage
-    if (name.includes('food') || name.includes('grocery') || name.includes('snack')) return Apple;
-    if (name.includes('drink') || name.includes('beverage') || name.includes('coffee')) return Coffee;
-    
-    // Baby & Kids
-    if (name.includes('baby') || name.includes('infant') || name.includes('toddler')) return Baby;
-    if (name.includes('kids') || name.includes('children') || name.includes('toy')) return Gamepad2;
-    
-    // Pets
-    if (name.includes('pet') || name.includes('dog') || name.includes('cat') || name.includes('animal')) return PawPrint;
-    
-    // Art & Crafts
-    if (name.includes('art') || name.includes('craft') || name.includes('paint') || name.includes('creative')) return Palette;
-    
-    // Business & Office
-    if (name.includes('office') || name.includes('business') || name.includes('work')) return Briefcase;
-    
-    // Travel & Luggage
-    if (name.includes('travel') || name.includes('luggage') || name.includes('suitcase')) return Plane;
-    if (name.includes('map') || name.includes('location') || name.includes('gps')) return MapPin;
-    
-    // General categories
-    if (name.includes('general') || name.includes('misc') || name.includes('other')) return Package;
-    
-    // Default fallback
-    return Package;
-  };
-
-  const renderCategoryIcon = (categoryName: string, size: number = 32) => {
-    const IconComponent = getCategoryIcon(categoryName);
-    return <IconComponent size={size} className="text-white" />;
-  };
-
-  const getCategoryColor = (index: number) => {
-    const colors = [
-      'from-blue-500 to-blue-600',
-      'from-green-500 to-green-600',
-      'from-purple-500 to-purple-600',
-      'from-red-500 to-red-600',
-      'from-gray-600 to-gray-700',
-      'from-pink-500 to-pink-600',
-      'from-indigo-500 to-indigo-600',
-      'from-teal-500 to-teal-600',
-    ];
-    return colors[index % colors.length];
-  };
+  // Filter categories based on search term
+  const filteredCategories = categories.filter((category: Category) => 
+    category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (category.description && category.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-600">
-          <h2 className="text-xl font-semibold mb-2">Error Loading Categories</h2>
-          <p className="text-sm">Please try again later.</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-2xl shadow-lg border border-red-100">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Package className="w-8 h-8 text-red-500" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Categories</h2>
+          <p className="text-gray-600 mb-4">We couldn't load the categories. Please try again.</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors font-medium"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-            All Categories
-          </h1>
-          <p className="text-sm text-gray-600">
-            Browse products by category
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        {/* Enhanced Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="text-center mb-8">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+              Shop by Category
+            </h1>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Discover amazing products across all our categories
+            </p>
+          </div>
 
-        {/* Categories Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg p-4 animate-pulse border border-gray-200">
-                <div className="bg-gray-300 h-12 w-12 rounded mb-3 mx-auto"></div>
-                <div className="bg-gray-300 h-4 rounded mb-2"></div>
-                <div className="bg-gray-300 h-3 rounded w-2/3 mx-auto"></div>
+          {/* Search and Controls */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-6">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search categories..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+              />
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-3 rounded-lg transition-all duration-200 ${
+                  viewMode === 'grid' 
+                    ? 'bg-blue-500 text-white shadow-lg' 
+                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                }`}
+              >
+                <Grid className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-3 rounded-lg transition-all duration-200 ${
+                  viewMode === 'list' 
+                    ? 'bg-blue-500 text-white shadow-lg' 
+                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                }`}
+              >
+                <Filter className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
+              <div className="text-2xl font-bold text-blue-600 mb-1">
+                {filteredCategories.filter((cat: Category) => cat.level === 0).length}
               </div>
+              <div className="text-sm text-gray-600">Main Categories</div>
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
+              <div className="text-2xl font-bold text-emerald-600 mb-1">
+                {filteredCategories.filter((cat: Category) => cat.level === 1).length}
+              </div>
+              <div className="text-sm text-gray-600">Subcategories</div>
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
+              <div className="text-2xl font-bold text-purple-600 mb-1">
+                {filteredCategories.reduce((sum: number, cat: Category) => sum + (cat._count?.products || 0), 0)}
+              </div>
+              <div className="text-sm text-gray-600">Total Products</div>
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
+              <div className="text-2xl font-bold text-rose-600 mb-1">
+                {filteredCategories.filter((cat: Category) => (cat._count?.products || 0) > 10).length}
+              </div>
+              <div className="text-sm text-gray-600">Popular</div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Categories Display */}
+        {isLoading ? (
+          <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+            {[...Array(6)].map((_, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 animate-pulse"
+              >
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="w-16 h-16 bg-gray-200 rounded-xl"></div>
+                  <div className="flex-1">
+                    <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[...Array(4)].map((_, j) => (
+                    <div key={j} className="h-12 bg-gray-200 rounded-lg"></div>
+                  ))}
+                </div>
+              </motion.div>
             ))}
           </div>
         ) : (
-          <div className="space-y-8">
-            {categories
-              .filter((category: Category) => category.level === 0 && (category._count?.products || 0) > 0) // Show only main categories with products
-              .map((category: Category, index: number) => {
-                const subcategories = categories.filter((subcat: Category) => 
-                  subcat.parentId === category.id && (subcat._count?.products || 0) > 0
-                ); // Only show subcategories with products
-                return (
-                  <div key={category.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                    {/* Main Category Header */}
-                    <div className={`bg-gradient-to-br ${getCategoryColor(index)} p-6 text-white`}>
-                      <div className="flex items-center space-x-4">
-                        <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center">
-                          {renderCategoryIcon(category.name, 40)}
-                        </div>
-                        <div className="flex-1">
-                          <h2 className="text-xl font-bold mb-2">{category.name}</h2>
-                          <p className="text-white/80 text-sm">
-                            {category.description || 'Explore our collection in this category'}
-                          </p>
-                          <div className="mt-2 flex items-center space-x-4 text-sm text-white/90">
-                            <span>{subcategories.length} subcategories</span>
-                          </div>
-                        </div>
-              <Link
-                to={`/products?category=${category.slug}`}
-                          className="bg-white/20 hover:bg-white/30 transition-colors px-4 py-2 rounded-lg font-medium"
-                        >
-                          View All
-                        </Link>
-                  </div>
-                </div>
-
-                    {/* Subcategories Grid */}
-                    {subcategories.length > 0 && (
-                      <div className="p-6">
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                          {subcategories
-                            .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder)
-                            .map((subcategory: Category) => (
-                              <Link
-                                key={subcategory.id}
-                                to={`/products?category=${subcategory.slug}`}
-                                className="group p-4 border border-gray-200 rounded-lg hover:border-gray-400 hover:bg-gray-100/50 transition-all duration-200"
-                              >
-                                <div className="flex items-center space-x-3 mb-3">
-                                  <div className="w-10 h-10 bg-gray-100 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
-                                    {renderCategoryIcon(subcategory.name, 20)}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h3 className="text-sm font-semibold text-gray-900 group-hover:text-gray-700 transition-colors truncate">
-                                      {subcategory.name}
-                                    </h3>
-                                  </div>
-                  </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={viewMode}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 max-w-4xl mx-auto'}`}
+            >
+              {filteredCategories
+                .filter((category: Category) => category.level === 0 && (category._count?.products || 0) > 0)
+                .map((category: Category, index: number) => {
+                  const subcategories = filteredCategories.filter((subcat: Category) => 
+                    subcat.parentId === category.id && (subcat._count?.products || 0) > 0
+                  );
                   
-                                <div className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors mb-3">
-                                  {subcategory.description || 'Browse products in this category'}
-                  </div>
-                  
-                                <div className="flex items-center justify-end">
-                                  <ArrowRight size={12} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
-                                </div>
-                              </Link>
-                            ))
-                          }
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Empty state for categories with no subcategories */}
-                    {subcategories.length === 0 && (
-                      <div className="p-6 text-center text-gray-500">
-                        <Package size={24} className="mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">No subcategories yet</p>
-                        <Link
-                          to={`/products?category=${category.slug}`}
-                          className="inline-flex items-center mt-2 text-sm text-gray-600 hover:text-gray-800 font-medium"
-                        >
-                    Browse Products
-                    <ArrowRight size={12} className="ml-1" />
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-          </div>
+                  return (
+                    <CategoryCard
+                      key={category.id}
+                      category={category}
+                      subcategories={subcategories}
+                      index={index}
+                      viewMode={viewMode}
+                      isExpanded={expandedCategory === category.id}
+                      onToggleExpanded={setExpandedCategory}
+                    />
+                  );
+                })}
+            </motion.div>
+          </AnimatePresence>
         )}
 
         {/* No categories found */}
-        {!isLoading && categories.length === 0 && (
-          <div className="text-center py-12">
-            <Package className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No categories found</h3>
-            <p className="text-gray-600">Categories will appear here once they are added.</p>
-          </div>
+        {!isLoading && filteredCategories.filter((cat: Category) => cat.level === 0).length === 0 && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-16"
+          >
+            <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Search className="w-12 h-12 text-gray-400" />
+            </div>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-3">No categories found</h3>
+            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              {searchTerm 
+                ? `No categories match "${searchTerm}". Try adjusting your search.`
+                : 'Categories will appear here once they are added.'
+              }
+            </p>
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors font-medium"
+              >
+                Clear Search
+              </button>
+            )}
+          </motion.div>
         )}
       </div>
     </div>
