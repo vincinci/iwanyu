@@ -11,12 +11,14 @@ import {
   CheckCircle,
   Eye,
   EyeOff,
-  ArrowLeft
+  ArrowLeft,
+  Upload
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { sellerApi, type SellerProduct } from '../services/sellerApi';
 import { formatPrice } from '../utils/currency';
 import { getImageUrl } from '../utils/imageUtils';
+import ProductImport from '../components/ProductImport';
 
 const SellerProducts: React.FC = () => {
   const navigate = useNavigate();
@@ -26,6 +28,7 @@ const SellerProducts: React.FC = () => {
   const queryClient = useQueryClient();
   const [selectedProduct, setSelectedProduct] = useState<SellerProduct | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showImportModal, setShowImportModal] = useState(false);
 
   React.useEffect(() => {
     // Don't redirect while auth is still loading
@@ -73,6 +76,12 @@ const SellerProducts: React.FC = () => {
     } catch (error) {
       console.error('Failed to delete product:', 'Error occurred');
     }
+  };
+
+  const handleImportSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['seller-products'] });
+    queryClient.invalidateQueries({ queryKey: ['seller-dashboard'] });
+    setShowImportModal(false);
   };
 
   if (isLoading) {
@@ -146,13 +155,22 @@ const SellerProducts: React.FC = () => {
                     </p>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => navigate('/seller/products/add')}
-                    className="btn-primary flex items-center gap-2"
-                  >
-                    <Plus size={20} />
-                    Add Product ({10 - (products?.length || 0)} slots remaining)
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => navigate('/seller/products/add')}
+                      className="btn-primary flex items-center gap-2"
+                    >
+                      <Plus size={20} />
+                      Add Product ({10 - (products?.length || 0)} slots remaining)
+                    </button>
+                    <button
+                      onClick={() => setShowImportModal(true)}
+                      className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                    >
+                      <Upload size={20} />
+                      Import CSV
+                    </button>
+                  </div>
                 )}
               </div>
             ) : (
@@ -185,13 +203,22 @@ const SellerProducts: React.FC = () => {
               }
             </p>
             {isApproved && (
-              <button
-                onClick={() => navigate('/seller/products/add')}
-                className="btn-primary flex items-center gap-2 mx-auto"
-              >
-                <Plus size={20} />
-                Add Your First Product
-              </button>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => navigate('/seller/products/add')}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  <Plus size={20} />
+                  Add Your First Product
+                </button>
+                <button
+                  onClick={() => setShowImportModal(true)}
+                  className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                >
+                  <Upload size={20} />
+                  Import from CSV
+                </button>
+              </div>
             )}
           </motion.div>
         ) : (
@@ -341,6 +368,16 @@ const SellerProducts: React.FC = () => {
                 </div>
               </motion.div>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* CSV Import Modal */}
+        <AnimatePresence>
+          {showImportModal && (
+            <ProductImport
+              onClose={() => setShowImportModal(false)}
+              onSuccess={handleImportSuccess}
+            />
           )}
         </AnimatePresence>
       </div>
