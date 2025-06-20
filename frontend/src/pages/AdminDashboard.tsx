@@ -173,7 +173,7 @@ const AdminDashboard: React.FC = () => {
               {JSON.stringify({
                 error: (false as any)?.message || 'Unknown error',
                 hasToken: !!localStorage.getItem('token'),
-                user: user ? { id: user.id, role: user.role, email: user.email } : null,
+                user: user ? { id: user?.id, role: user?.role, email: user?.email || 'N/A' } : null,
                 timestamp: new Date().toISOString()
               }, null, 2)}
             </pre>
@@ -384,8 +384,17 @@ const AdminDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {dashboard.recentOrders.slice(0, 5).map((order: any) => {
+                {dashboard.recentOrders.slice(0, 5)
+                  .filter((order: any) => order && order.id && typeof order === 'object')
+                  .map((order: any, index: number) => {
                   // Safety check for order data
+                  console.log(`🔍 Processing order ${index}:`, {
+                    order: order,
+                    hasId: !!order?.id,
+                    hasUser: !!order?.user,
+                    orderType: typeof order
+                  });
+                  
                   if (!order || !order.id || typeof order !== 'object') {
                     console.warn('Invalid order data:', order);
                     return null;
@@ -394,6 +403,14 @@ const AdminDashboard: React.FC = () => {
                   // Get user display name safely
                   const getUserDisplayName = () => {
                     try {
+                      console.log('🔍 Order user data:', {
+                        orderId: order?.id,
+                        hasUser: !!order?.user,
+                        userType: typeof order?.user,
+                        userKeys: order?.user ? Object.keys(order.user) : 'no user',
+                        user: order?.user
+                      });
+                      
                       if (!order?.user || typeof order.user !== 'object') {
                         return 'Guest User';
                       }
@@ -404,41 +421,50 @@ const AdminDashboard: React.FC = () => {
                     }
                   };
                   
-                  return (
-                  <div key={order.id} className="p-6 hover:bg-gray-50">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div>
-                          <h3 className="font-medium text-gray-900">
-                            Order #{order.orderNumber || order.id.slice(-8)}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {getUserDisplayName()} • {order.orderItems?.length || 0} items
+                  try {
+                    return (
+                    <div key={order.id} className="p-6 hover:bg-gray-50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div>
+                            <h3 className="font-medium text-gray-900">
+                              Order #{order.orderNumber || order.id.slice(-8)}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {getUserDisplayName()} • {order.orderItems?.length || 0} items
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Unknown date'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <p className="font-medium text-gray-900">
+                            {formatPrice(order.total || 0)}
                           </p>
-                          <p className="text-sm text-gray-500">
-                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Unknown date'}
-                          </p>
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            order.status === 'PENDING' ? 'bg-gray-100 text-gray-800' :
+                            order.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
+                            order.status === 'PROCESSING' ? 'bg-purple-100 text-purple-800' :
+                            order.status === 'SHIPPED' ? 'bg-indigo-100 text-indigo-800' :
+                            order.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {order.status || 'UNKNOWN'}
+                          </span>
                         </div>
                       </div>
-
-                      <div className="text-right">
-                        <p className="font-medium text-gray-900">
-                          {formatPrice(order.total || 0)}
-                        </p>
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          order.status === 'PENDING' ? 'bg-gray-100 text-gray-800' :
-                          order.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
-                          order.status === 'PROCESSING' ? 'bg-purple-100 text-purple-800' :
-                          order.status === 'SHIPPED' ? 'bg-indigo-100 text-indigo-800' :
-                          order.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {order.status || 'UNKNOWN'}
-                        </span>
-                      </div>
                     </div>
-                  </div>
-                  );
+                    );
+                  } catch (renderError) {
+                    console.error('🚨 Error rendering order:', order.id, renderError);
+                    return (
+                      <div key={order.id || `error-${index}`} className="p-6 bg-red-50">
+                        <p className="text-red-600">Error loading order data</p>
+                      </div>
+                    );
+                  }
                 }).filter(Boolean)}
               </div>
             )}
