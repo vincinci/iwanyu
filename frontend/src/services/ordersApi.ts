@@ -133,12 +133,12 @@ export const ordersApi = new OrdersApi();
 
 
 
-// Fixed exports
+// Properly exported functions from the class instance
+export const getUserOrders = (params: any) => ordersApi.getOrders(params);
+export const getOrder = (id: string) => ordersApi.getOrder(id);
+export const cancelOrder = (id: string, reason?: string) => ordersApi.cancelOrder(id, reason);
 
-
-
-
-// Working exports
-export const getUserOrders = getOrders;
-export const getOrder = getOrderById;
-export const cancelOrder = (orderId: string) => updateOrderStatus(orderId, 'CANCELLED');
+// Aliases for compatibility
+export const getOrders = (params: any) => ordersApi.getOrders(params);
+export const getOrderById = (id: string) => ordersApi.getOrder(id);
+export const updateOrderStatus = (id: string, status: string) => ordersApi.updateOrderStatus(id, status);

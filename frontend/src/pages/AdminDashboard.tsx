@@ -114,7 +114,7 @@ const AdminDashboard: React.FC = () => {
   // Log errors and data for debugging
   React.useEffect(() => {
     if (error) {
-      console.error('Dashboard query error:', error);
+      console.error('Dashboard query error:', 'Error occurred');
     }
     if (dashboard) {
       console.log('Dashboard data loaded:', dashboard);

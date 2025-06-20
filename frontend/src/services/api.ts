@@ -70,7 +70,7 @@ api.interceptors.request.use(
     return config;
   },
   (error: any) => {
-    console.error('Request interceptor error:', error);
+    console.error('Request interceptor error:', 'Error occurred');
     return Promise.reject(error);
   }
 );

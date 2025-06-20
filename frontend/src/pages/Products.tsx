@@ -218,7 +218,7 @@ const Products: React.FC = () => {
         await addToWishlist((product as any).id);
       }
     } catch (error) {
-      console.error('Wishlist error:', error);
+      console.error('Wishlist error:', 'Error occurred');
     }
   };
 

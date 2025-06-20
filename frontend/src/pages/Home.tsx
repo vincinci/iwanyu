@@ -269,7 +269,7 @@ const Home: React.FC = () => {
             setPromotedProducts(response.data);
         }
       } catch (error) {
-        console.error('Error fetching promoted products:', error);
+        console.error('Error fetching promoted products:', 'Error occurred');
         setPromotedProducts([]); // Set empty array on error
       } finally {
         setPromotedLoading(false);
@@ -410,7 +410,7 @@ const Home: React.FC = () => {
           setBanners(defaultBanners);
         }
       } catch (error) {
-        console.error('Error loading banners:', error);
+        console.error('Error loading banners:', 'Error occurred');
         // Fallback to default banners
         setBanners([
           {
@@ -469,7 +469,7 @@ const Home: React.FC = () => {
     try {
     addToCart(product);
     } catch (error) {
-      console.error('Add to cart failed:', error);
+      console.error('Add to cart failed:', 'Error occurred');
     }
   };
 
@@ -489,7 +489,7 @@ const Home: React.FC = () => {
         await addToWishlist((product as any).id);
       }
     } catch (error) {
-      console.error('Wishlist error:', error);
+      console.error('Wishlist error:', 'Error occurred');
       // Don't show toast on mobile to prevent crashes
       if (!isMobile) {
         showError('Wishlist Error', 'Failed to update wishlist. Please try again.');
@@ -558,7 +558,7 @@ const Home: React.FC = () => {
   // Catch any errors during rendering
   React.useEffect(() => {
     const handleError = (error: ErrorEvent) => {
-      console.error('Home page error:', error);
+      console.error('Home page error:', 'Error occurred');
       setHasError(true);
     };
 

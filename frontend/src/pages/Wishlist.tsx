@@ -34,7 +34,7 @@ const Wishlist: React.FC = () => {
     try {
       await removeFromWishlist(productId);
     } catch (error) {
-      console.error('Failed to remove from wishlist:', error);
+      console.error('Failed to remove from wishlist:', 'Error occurred');
     }
   };
 
@@ -44,7 +44,7 @@ const Wishlist: React.FC = () => {
       // Also add to cart context for immediate UI update
       addToCart(item.product);
     } catch (error) {
-      console.error('Failed to move to cart:', error);
+      console.error('Failed to move to cart:', 'Error occurred');
     }
   };
 
@@ -53,7 +53,7 @@ const Wishlist: React.FC = () => {
       try {
         await clearWishlist();
       } catch (error) {
-        console.error('Failed to clear wishlist:', error);
+        console.error('Failed to clear wishlist:', 'Error occurred');
       }
     }
   };

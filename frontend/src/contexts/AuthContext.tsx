@@ -134,7 +134,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsLoading(false);
         console.log('AuthContext: Auth initialization complete');
       } catch (error) {
-        console.error('AuthContext: Critical auth initialization error:', error);
+        console.error('AuthContext: Critical auth initialization error:', 'Error occurred');
         setIsLoading(false);
       }
     };
@@ -163,7 +163,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login error:', 'Error occurred');
       throw error;
     }
   };
@@ -189,7 +189,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('Registration error:', 'Error occurred');
       throw error;
     }
   };

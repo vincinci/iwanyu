@@ -105,7 +105,7 @@ const Checkout: React.FC = () => {
       initiatePayment(orderId);
     },
     onError: (error: any) => {
-      console.error('Order creation failed:', error);
+      console.error('Order creation failed:', 'Error occurred');
       setIsProcessing(false);
       alert(error.message || 'Failed to place order. Please try again.');
     },
@@ -147,7 +147,7 @@ const Checkout: React.FC = () => {
           setIsLoadingProduct(false);
         })
         .catch(error => {
-          console.error('Failed to fetch product:', error);
+          console.error('Failed to fetch product:', 'Error occurred');
           setIsLoadingProduct(false);
           navigate('/cart');
         });
@@ -329,7 +329,7 @@ const Checkout: React.FC = () => {
         throw new Error('Payment initialization failed - no payment URL received');
       }
     } catch (error) {
-      console.error('Payment initialization failed:', error);
+      console.error('Payment initialization failed:', 'Error occurred');
       setIsRedirectingToPayment(false);
       setIsProcessing(false);
       

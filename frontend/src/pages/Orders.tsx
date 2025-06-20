@@ -67,7 +67,7 @@ const Orders: React.FC = () => {
     setSelectedOrder((response as any).data);
       setShowOrderDetails(true);
     } catch (error) {
-      console.error('Failed to fetch order details:', error);
+      console.error('Failed to fetch order details:', 'Error occurred');
     }
   };
 

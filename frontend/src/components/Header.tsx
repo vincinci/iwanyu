@@ -64,6 +64,7 @@ const CategorySkeleton = React.memo(() => (
 ));
 
 const Header: React.FC = () => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');

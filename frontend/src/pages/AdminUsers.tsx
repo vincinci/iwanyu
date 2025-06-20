@@ -58,7 +58,7 @@ const AdminUsers: React.FC = () => {
       setDeletingUser(null);
     },
     onError: (error: any) => {
-      console.error('Delete user error:', error);
+      console.error('Delete user error:', 'Error occurred');
       alert(`Failed to delete user: ${error instanceof Error ? error.message : 'Unknown error'}`);
     },
   });

@@ -63,7 +63,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
         setHasMore(data.data.pagination.page < data.data.pagination.pages);
       }
     } catch (error) {
-      console.error('Error loading reviews:', error);
+      console.error('Error loading reviews:', 'Error occurred');
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
         loadReviews(true);
       }
     } catch (error) {
-      console.error('Error submitting review:', error);
+      console.error('Error submitting review:', 'Error occurred');
     } finally {
       setSubmitting(false);
     }
@@ -117,7 +117,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
         loadReviews(true);
       }
     } catch (error) {
-      console.error('Error voting on review:', error);
+      console.error('Error voting on review:', 'Error occurred');
     }
   };
 
@@ -144,7 +144,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
         alert(data.error || 'Failed to update review');
       }
     } catch (error) {
-      console.error('Error updating review:', error);
+      console.error('Error updating review:', 'Error occurred');
       alert('Failed to update review');
     } finally {
       setSubmitting(false);
@@ -173,7 +173,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
         alert(data.error || 'Failed to delete review');
       }
     } catch (error) {
-      console.error('Error deleting review:', error);
+      console.error('Error deleting review:', 'Error occurred');
       alert('Failed to delete review');
     }
   };

@@ -54,9 +54,9 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       setIsLoading(true);
 
       const response = { data: { items: [] } } as any; // TODO: Get actual response
-    setItems(response.data.items);
+    if (response?.data?.items) setItems(response.data.items);
     } catch (error) {
-      console.error('Failed to load wishlist:', error);
+      console.error('Failed to load wishlist:', 'Error occurred');
       // Don't show error to user for wishlist failures
     } finally {
       setIsLoading(false);
@@ -86,7 +86,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       showSuccess('Added to Wishlist', 'Product has been added to your wishlist!');
       console.log('✅ Added to wishlist:', response.message);
     } catch (error) {
-      console.error('❌ Failed to add to wishlist:', error);
+      console.error('❌ Failed to add to wishlist:', 'Error occurred');
       if (error instanceof Error) {
         showError('Failed to Add', `Could not add to wishlist: ${error.message}`);
       } else {
@@ -108,7 +108,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       console.log('Removed from wishlist');
       showSuccess('Removed from Wishlist', 'Product has been removed from your wishlist');
     } catch (error) {
-      console.error('Failed to remove from wishlist:', error);
+      console.error('Failed to remove from wishlist:', 'Error occurred');
       if (error instanceof Error) {
         showError('Failed to Remove', `Could not remove from wishlist: ${error.message}`);
       } else {
@@ -126,7 +126,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       setItems([]);
       console.log('Wishlist cleared');
     } catch (error) {
-      console.error('Failed to clear wishlist:', error);
+      console.error('Failed to clear wishlist:', 'Error occurred');
       throw error;
     }
   };
@@ -146,7 +146,7 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       
       console.log('Moved to cart');
     } catch (error) {
-      console.error('Failed to move to cart:', error);
+      console.error('Failed to move to cart:', 'Error occurred');
       throw error;
     }
   };
