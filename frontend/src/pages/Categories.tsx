@@ -6,37 +6,15 @@ import {
   ArrowRight,
   Smartphone,
   Shirt,
-  Car,
-  Sparkles,
   Home,
   Trophy,
-  BookOpen,
-  Gamepad2,
   Monitor,
   Headphones,
-  Camera,
   Watch,
   Laptop,
-  Tablet,
-  Baby,
-  PawPrint,
-  Hammer,
-  Palette,
-  Music,
   Dumbbell,
-  Apple,
   UtensilsCrossed,
-  Flower,
-  Briefcase,
-  MapPin,
-  Shield,
-  Coffee,
-  Footprints,
-  Glasses,
-  Gem,
-  Bike,
-  Plane,
-  Mountain
+  Flower
 } from 'lucide-react';
 import { categoriesApi } from '../services/api';
 import type { Category } from '../types/api';
@@ -53,83 +31,42 @@ const Categories: React.FC = () => {
   const getCategoryIcon = (categoryName: string) => {
     const name = categoryName.toLowerCase();
     
+    // Main Categories
+    if (name.includes('electronics') && name.includes('technology')) return Monitor;
+    if (name.includes('fashion') && name.includes('clothing')) return Shirt;
+    if (name.includes('sports') && name.includes('recreation')) return Trophy;
+    if (name.includes('home') && name.includes('living')) return Home;
+    
     // Electronics & Technology
+    if (name.includes('smartphone') || name.includes('phone') || name.includes('mobile')) return Smartphone;
+    if (name.includes('computer') || name.includes('laptop')) return Laptop;
+    if (name.includes('audio') || name.includes('headphone')) return Headphones;
+    if (name.includes('smart') && name.includes('device')) return Watch;
     if (name.includes('electronics') || name.includes('electronic')) return Monitor;
-    if (name.includes('mobile') || name.includes('phone') || name.includes('smartphone')) return Smartphone;
-    if (name.includes('computer') || name.includes('pc') || name.includes('desktop')) return Monitor;
-    if (name.includes('laptop') || name.includes('notebook')) return Laptop;
-    if (name.includes('tablet') || name.includes('ipad')) return Tablet;
-    if (name.includes('headphone') || name.includes('earphone') || name.includes('audio')) return Headphones;
-    if (name.includes('camera') || name.includes('photo')) return Camera;
-    if (name.includes('watch') || name.includes('smartwatch')) return Watch;
-    if (name.includes('gaming') || name.includes('console') || name.includes('game')) return Gamepad2;
     
-    // Fashion & Apparel
+    // Fashion & Clothing
+    if (name.includes('tops') || name.includes('shirt')) return Shirt;
+    if (name.includes('bottom') || name.includes('pants') || name.includes('jeans')) return Shirt;
+    if (name.includes('athletic') && name.includes('wear')) return Dumbbell;
     if (name.includes('fashion') || name.includes('clothing') || name.includes('apparel')) return Shirt;
-    if (name.includes('shirt') || name.includes('top') || name.includes('blouse')) return Shirt;
-    if (name.includes('dress') || name.includes('gown')) return Shirt;
-    if (name.includes('pants') || name.includes('jeans') || name.includes('trouser')) return Shirt;
-    if (name.includes('shoes') || name.includes('sneakers') || name.includes('footwear')) return Footprints;
-    if (name.includes('bag') || name.includes('handbag') || name.includes('purse')) return Briefcase;
-    if (name.includes('jewelry') || name.includes('jewellery') || name.includes('accessory')) return Gem;
-    if (name.includes('watch') && name.includes('fashion')) return Watch;
-    if (name.includes('glasses') || name.includes('sunglasses')) return Glasses;
     
-    // Home & Garden
-    if (name.includes('home') || name.includes('house') || name.includes('furniture')) return Home;
-    if (name.includes('garden') || name.includes('outdoor') || name.includes('plant')) return Flower;
-    if (name.includes('kitchen') || name.includes('cooking') || name.includes('utensil')) return UtensilsCrossed;
-    if (name.includes('tool') || name.includes('hardware') || name.includes('diy')) return Hammer;
+    // Sports & Recreation
+    if (name.includes('fitness') && name.includes('exercise')) return Dumbbell;
+    if (name.includes('sports') && name.includes('equipment')) return Trophy;
+    if (name.includes('sports') || name.includes('sport')) return Trophy;
     
-    // Sports & Fitness
-    if (name.includes('sports') || name.includes('sport') || name.includes('fitness')) return Trophy;
-    if (name.includes('gym') || name.includes('workout') || name.includes('exercise')) return Dumbbell;
-    if (name.includes('bike') || name.includes('bicycle') || name.includes('cycling')) return Bike;
-    if (name.includes('outdoor') || name.includes('hiking') || name.includes('camping')) return Mountain;
-    
-    // Automotive
-    if (name.includes('automotive') || name.includes('auto') || name.includes('car')) return Car;
-    if (name.includes('motor') || name.includes('vehicle')) return Car;
-    
-    // Beauty & Health
-    if (name.includes('beauty') || name.includes('cosmetic') || name.includes('makeup')) return Sparkles;
-    if (name.includes('health') || name.includes('medical') || name.includes('wellness')) return Shield;
-    
-    // Books & Media
-    if (name.includes('books') || name.includes('book') || name.includes('reading')) return BookOpen;
-    if (name.includes('music') || name.includes('instrument') || name.includes('audio')) return Music;
-    
-    // Food & Beverage
-    if (name.includes('food') || name.includes('grocery') || name.includes('snack')) return Apple;
-    if (name.includes('drink') || name.includes('beverage') || name.includes('coffee')) return Coffee;
-    
-    // Baby & Kids
-    if (name.includes('baby') || name.includes('infant') || name.includes('toddler')) return Baby;
-    if (name.includes('kids') || name.includes('children') || name.includes('toy')) return Gamepad2;
-    
-    // Pets
-    if (name.includes('pet') || name.includes('dog') || name.includes('cat') || name.includes('animal')) return PawPrint;
-    
-    // Art & Crafts
-    if (name.includes('art') || name.includes('craft') || name.includes('paint') || name.includes('creative')) return Palette;
-    
-    // Business & Office
-    if (name.includes('office') || name.includes('business') || name.includes('work')) return Briefcase;
-    
-    // Travel & Luggage
-    if (name.includes('travel') || name.includes('luggage') || name.includes('suitcase')) return Plane;
-    if (name.includes('map') || name.includes('location') || name.includes('gps')) return MapPin;
-    
-    // General categories
-    if (name.includes('general') || name.includes('misc') || name.includes('other')) return Package;
+    // Home & Living
+    if (name.includes('kitchen') && name.includes('dining')) return UtensilsCrossed;
+    if (name.includes('home') && name.includes('decor')) return Flower;
+    if (name.includes('home') || name.includes('living')) return Home;
     
     // Default fallback
     return Package;
   };
 
-  const renderCategoryIcon = (categoryName: string, size: number = 32) => {
+  const renderCategoryIcon = (categoryName: string, size: number = 32, className: string = "text-white") => {
     const IconComponent = getCategoryIcon(categoryName);
-    return <IconComponent size={size} className="text-white" />;
+    return <IconComponent size={size} className={className} />;
   };
 
   const getCategoryColor = (index: number) => {
@@ -228,8 +165,8 @@ const Categories: React.FC = () => {
                                 className="group p-4 border border-gray-200 rounded-lg hover:border-gray-400 hover:bg-gray-100/50 transition-all duration-200"
                               >
                                 <div className="flex items-center space-x-3 mb-3">
-                                  <div className="w-10 h-10 bg-gray-100 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
-                                    {renderCategoryIcon(subcategory.name, 20)}
+                                  <div className="w-10 h-10 bg-gray-100 group-hover:bg-gray-200 rounded-lg flex items-center justify-center transition-colors">
+                                    {renderCategoryIcon(subcategory.name, 20, "text-gray-600 group-hover:text-gray-700")}
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <h3 className="text-sm font-semibold text-gray-900 group-hover:text-gray-700 transition-colors truncate">
