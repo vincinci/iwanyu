@@ -2,17 +2,12 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Search, 
-  Filter, 
   X, 
   Star, 
   ShoppingCart, 
   Heart, 
   ChevronDown, 
   ChevronUp,
-  Grid, 
-  List,
-  SlidersHorizontal,
   Package,
   Zap,
   Truck,
@@ -28,7 +23,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../utils/currency';
 import { getProductImageUrl } from '../utils/imageUtils';
-import ProductSkeleton from '../components/ProductSkeleton';
 import ErrorMessage from '../components/ErrorMessage';
 import type { Category, Product } from '../types/api';
 import Header from '../components/Header';
@@ -86,7 +80,6 @@ const Products: React.FC = () => {
     
     ref,
     hasInstantData,
-    isInstantFetching,
     prefetchNextPage,
     prefetchPreviousPage
   } = useInstantProducts({
@@ -257,29 +250,7 @@ const Products: React.FC = () => {
     { value: 'name', label: 'Name: A to Z' },
   ];
 
-  // Helper function to calculate discount percentage
-  const calculateDiscount = (originalPrice: number, salePrice?: number) => {
-    if (!salePrice || salePrice >= originalPrice) return null;
-    return Math.round(((originalPrice - salePrice) / originalPrice) * 100);
-  };
 
-  // Helper function to get consistent sold count based on product ID
-  const getSoldCount = (productId: string) => {
-    const hash = productId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    return Math.abs(hash) % 1900 + 100;
-  };
-
-  // Helper function to get product rating from actual data
-  const getProductRating = (product: any) => {
-    // Use actual product rating if available
-    if ((product as any)?.avgRating && (product as any).avgRating > 0) {
-      return parseFloat((product as any).avgRating.toFixed(1));
-    }
-    return 0;
-  };
 
   if (isError) {
     return <ErrorMessage message={(isError as any)?.message || 'Failed to load products'} />;
