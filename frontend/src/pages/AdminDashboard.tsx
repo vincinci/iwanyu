@@ -14,7 +14,8 @@ import {
   CheckCircle,
   XCircle,
   ArrowLeft,
-  CreditCard
+  CreditCard,
+  Image
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { adminApi } from '../services/adminApi';
@@ -205,6 +206,13 @@ const AdminDashboard: React.FC = () => {
       icon: Layers,
       path: '/admin/categories',
       color: 'bg-indigo-500'
+    },
+    {
+      title: 'Banner Management',
+      description: 'Manage homepage banners and carousel',
+      icon: Image,
+      path: '/admin/banners',
+      color: 'bg-yellow-500'
     },
     {
       title: 'Payment Management',

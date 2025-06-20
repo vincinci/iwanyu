@@ -74,6 +74,7 @@ const Home: React.FC = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
   const [promotedProducts, setPromotedProducts] = useState<PromotedProduct[]>([]);
   const [promotedLoading, setPromotedLoading] = useState(true);
+  const [banners, setBanners] = useState<any[]>([]);
   
   // Flash sale timer with localStorage persistence
   const getFlashSaleEndTime = () => {
@@ -354,38 +355,106 @@ const Home: React.FC = () => {
     return Package;
   }, []);
 
-  const banners = [
-    {
-      title: "New Arrivals",
-      subtitle: "Latest fashion and lifestyle essentials",
-      image: banner1,
-      cta: "Shop Now"
-    },
-    {
-      title: "Winter Collection",
-      subtitle: "Stay warm with premium outerwear",
-      image: banner2,
-      cta: "Explore"
-    },
-    {
-      title: "Essential Style",
-      subtitle: "Premium quality everyday fashion",
-      image: banner3,
-      cta: "Discover"
-    },
-    {
-      title: "Active Lifestyle",
-      subtitle: "Performance gear for every adventure",
-      image: banner4,
-      cta: "Shop Collection"
-    },
-    {
-      title: "Premium Audio",
-      subtitle: "Experience superior sound quality",
-      image: banner5,
-      cta: "Listen Now"
-    }
-  ];
+  // Load banners from localStorage or use defaults
+  useEffect(() => {
+    const loadBanners = () => {
+      try {
+        const savedBanners = localStorage.getItem('iwanyu_banners');
+        if (savedBanners) {
+          const parsedBanners = JSON.parse(savedBanners);
+          // Only show active banners, sorted by order
+          const activeBanners = parsedBanners
+            .filter((banner: any) => banner.isActive)
+            .sort((a: any, b: any) => a.order - b.order);
+          setBanners(activeBanners);
+        } else {
+          // Use default banners
+          const defaultBanners = [
+            {
+              title: "New Arrivals",
+              subtitle: "Latest fashion and lifestyle essentials",
+              image: banner1,
+              cta: "Shop Now"
+            },
+            {
+              title: "Winter Collection",
+              subtitle: "Stay warm with premium outerwear",
+              image: banner2,
+              cta: "Explore"
+            },
+            {
+              title: "Essential Style",
+              subtitle: "Premium quality everyday fashion",
+              image: banner3,
+              cta: "Discover"
+            },
+            {
+              title: "Active Lifestyle",
+              subtitle: "Performance gear for every adventure",
+              image: banner4,
+              cta: "Shop Collection"
+            },
+            {
+              title: "Premium Audio",
+              subtitle: "Experience superior sound quality",
+              image: banner5,
+              cta: "Listen Now"
+            }
+          ];
+          setBanners(defaultBanners);
+        }
+      } catch (error) {
+        console.error('Error loading banners:', error);
+        // Fallback to default banners
+        setBanners([
+          {
+            title: "New Arrivals",
+            subtitle: "Latest fashion and lifestyle essentials",
+            image: banner1,
+            cta: "Shop Now"
+          },
+          {
+            title: "Winter Collection",
+            subtitle: "Stay warm with premium outerwear",
+            image: banner2,
+            cta: "Explore"
+          },
+          {
+            title: "Essential Style",
+            subtitle: "Premium quality everyday fashion",
+            image: banner3,
+            cta: "Discover"
+          },
+          {
+            title: "Active Lifestyle",
+            subtitle: "Performance gear for every adventure",
+            image: banner4,
+            cta: "Shop Collection"
+          },
+          {
+            title: "Premium Audio",
+            subtitle: "Experience superior sound quality",
+            image: banner5,
+            cta: "Listen Now"
+          }
+        ]);
+      }
+    };
+
+    loadBanners();
+
+    // Listen for banner updates from admin panel
+    const handleBannersUpdated = (event: any) => {
+      const updatedBanners = event.detail;
+      const activeBanners = updatedBanners
+        .filter((banner: any) => banner.isActive)
+        .sort((a: any, b: any) => a.order - b.order);
+      setBanners(activeBanners);
+    };
+
+    window.addEventListener('bannersUpdated', handleBannersUpdated);
+    return () => window.removeEventListener('bannersUpdated', handleBannersUpdated);
+  }, []);
 
   const quickAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
