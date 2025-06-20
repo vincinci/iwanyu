@@ -166,25 +166,68 @@ const Navbar: React.FC = React.memo(() => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full left-0 mt-1 w-80 bg-white rounded-lg shadow-lg border z-50"
+                    className="absolute left-0 top-full mt-2 w-96 bg-white rounded-lg shadow-lg border z-50"
                     onMouseEnter={() => setShowCategories(true)}
                     onMouseLeave={() => setShowCategories(false)}
                   >
                     <div className="p-4">
                       <h3 className="font-semibold text-gray-900 mb-3">Shop by Category</h3>
-                      <div className="grid grid-cols-2 gap-2">
-                        {categories.map((category: any) => (
-                          <Link
-                            key={category.slug}
-                            to={`/products?category=${category.slug}`}
-                            className="flex items-center space-x-2 p-2 rounded hover:bg-red-50 transition-colors"
-                            onClick={() => setShowCategories(false)}
-                          >
-                            <span className="text-lg">{category.icon}</span>
-                            <span className="text-sm text-gray-700 hover:text-red-600">
-                              {category.name}
-                            </span>
-                          </Link>
+                      <div className="space-y-2">
+                        {categories
+                          .filter((category: any) => category.level === 0) // Only show parent categories
+                          .map((category: any) => (
+                          <div key={category.slug} className="relative group">
+                            {category.children && category.children.length > 0 ? (
+                              // Parent category with subcategories
+                              <div>
+                                <div className="flex items-center justify-between p-2 rounded hover:bg-red-50 transition-colors">
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-lg">{category.icon || '📦'}</span>
+                                    <span className="text-sm font-medium text-gray-900">
+                                      {category.name}
+                                    </span>
+                                  </div>
+                                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </div>
+                                
+                                {/* Subcategories dropdown */}
+                                <div className="ml-6 mt-1 space-y-1 max-h-0 overflow-hidden group-hover:max-h-96 transition-all duration-300">
+                                  {category.children.map((subcategory: any) => (
+                                    <Link
+                                      key={subcategory.slug}
+                                      to={`/products?category=${subcategory.slug}`}
+                                      className="flex items-center justify-between p-2 rounded hover:bg-red-50 transition-colors"
+                                      onClick={() => setShowCategories(false)}
+                                    >
+                                      <span className="text-sm text-gray-700 hover:text-red-600">
+                                        {subcategory.name}
+                                      </span>
+                                      <span className="text-xs text-gray-400">
+                                        ({subcategory._count?.products || 0})
+                                      </span>
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            ) : (
+                              // Single category without subcategories
+                              <Link
+                                to={`/products?category=${category.slug}`}
+                                className="flex items-center space-x-2 p-2 rounded hover:bg-red-50 transition-colors"
+                                onClick={() => setShowCategories(false)}
+                              >
+                                <span className="text-lg">{category.icon || '📦'}</span>
+                                <span className="text-sm text-gray-700 hover:text-red-600">
+                                  {category.name}
+                                </span>
+                                <span className="text-xs text-gray-400 ml-auto">
+                                  ({category._count?.products || 0})
+                                </span>
+                              </Link>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>
