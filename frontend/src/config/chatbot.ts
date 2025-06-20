@@ -178,7 +178,7 @@ export const chatbotConfig = {
 
 // Derived responses that use the config values
 export const chatbotResponses = {
-  greeting: "Hi there! 👋 I'm your Iwanyu assistant. How can I help you today?",
+  greeting: "Hello! 👋 I'm your **AI-powered** Iwanyu assistant! 🤖✨\n\nI can understand natural language and help you with:\n• 🛍️ Product recommendations & shopping\n• 📦 Order tracking & delivery info\n• 💳 Payment options & security\n• 🔄 Returns & refunds\n• 🏪 Becoming a seller\n• 🎯 Personalized assistance\n\n**Just ask me anything in your own words!** 💬",
   orderHelp: "To place an order:\n1. Browse our products\n2. Add items to cart\n3. Proceed to checkout\n4. Enter your details\n5. Choose payment method\n6. Confirm order\n\nNeed help with a specific step?",
   trackOrder: "You can track your order by:\n1. Going to 'My Orders' in your account\n2. Click on the order you want to track\n3. View real-time status updates\n\nDon't have an account? Contact us with your order number.",
   paymentInfo: `We accept:\n• ${chatbotConfig.paymentMethods.join('\n• ')}\n\nAll payments are secure and encrypted.`,
