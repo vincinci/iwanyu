@@ -376,7 +376,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            {!dashboard?.recentOrders?.length || !Array.isArray(dashboard.recentOrders) ? (
+            {!dashboard?.recentOrders?.length || !Array.isArray(dashboard.recentOrders) || dashboard.recentOrders.length === 0 ? (
               <div className="p-8 text-center">
                 <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Recent Orders</h3>
@@ -384,7 +384,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {dashboard.recentOrders.slice(0, 5)
+                {(dashboard.recentOrders || []).slice(0, 5)
                   .filter((order: any) => order && order.id && typeof order === 'object')
                   .map((order: any, index: number) => {
                   // Safety check for order data
