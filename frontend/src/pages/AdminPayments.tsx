@@ -37,7 +37,7 @@ interface Payout {
   amount: number;
   currency: string;
   payoutMethod: 'BANK_TRANSFER' | 'MOBILE_MONEY';
-  accountDetails: unknown;
+  accountDetails: any;
   reference: string;
   status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
   narration?: string;
@@ -117,7 +117,7 @@ const AdminPayments: React.FC = () => {
     queryKey: ['admin-payout-analytics'],
     queryFn: () => adminApi.getPayoutAnalytics('30d'),
     enabled: !!user && user.role === 'ADMIN',
-  });
+  }) as { data: any; isLoading: boolean };
 
   const { data: walletsData, isLoading: walletsLoading } = useQuery({
     queryKey: ['admin-seller-wallets'],
@@ -249,7 +249,7 @@ const AdminPayments: React.FC = () => {
           </div>
         </motion.div>
 
-        <><div>{/* Navigation Tabs */}</div></>
+        {/* Navigation Tabs */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -311,7 +311,7 @@ const AdminPayments: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Pending Requests</p>
                     <p className="text-2xl font-bold text-yellow-600">
-                      {(analyticsData as any).data.byStatus.find((s: any) => s.status === 'PENDING')?._count._all || 0}
+                      {String((analyticsData as any).data.byStatus.find((s: any) => s.status === 'PENDING')?._count._all || 0)}
                     </p>
                   </div>
                   <Clock className="w-8 h-8 text-yellow-500" />
@@ -323,7 +323,7 @@ const AdminPayments: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Completed Today</p>
                     <p className="text-2xl font-bold text-green-600">
-                      {(analyticsData as any).data.byStatus.find((s: any) => s.status === 'COMPLETED')?._count._all || 0}
+                      {String((analyticsData as any).data.byStatus.find((s: any) => s.status === 'COMPLETED')?._count._all || 0)}
                     </p>
                   </div>
                   <CheckCircle className="w-8 h-8 text-green-500" />
