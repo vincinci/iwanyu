@@ -378,7 +378,7 @@ const AdminProducts: React.FC = () => {
                                 {product.seller.businessName || 'Unnamed Business'}
                               </div>
                               <div className="text-xs">
-                                {product.seller.user.email}
+                                {product.seller.user?.email || 'No email'}
                               </div>
                             </div>
                           ) : (
