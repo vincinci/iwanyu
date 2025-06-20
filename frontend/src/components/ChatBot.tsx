@@ -15,7 +15,8 @@ import {
   Truck,
   RotateCcw,
   MessageSquare,
-  ExternalLink
+  ExternalLink,
+  ShoppingBag
 } from 'lucide-react';
 import { chatbotConfig, chatbotResponses } from '../config/chatbot';
 
@@ -131,8 +132,8 @@ const ChatBot: React.FC = () => {
           icon: <Mail size={14} />
         },
         {
-          label: "Call Support",
-          action: () => window.open(`tel:${chatbotConfig.phoneNumber}`),
+          label: "Call Now",
+          action: () => window.open(`tel:${chatbotConfig.hotlineNumber}`),
           icon: <Phone size={14} />
         }
       ]
@@ -160,53 +161,144 @@ const ChatBot: React.FC = () => {
     }, 1000);
   };
 
+  const getSmartResponse = (message: string): { text: string; actions?: Message['actions'] } => {
+    const lowerMessage = message.toLowerCase();
+    const { faq, company, delivery, paymentMethods, returnPolicy, vendorInfo, policies, promotions } = chatbotConfig;
+    
+    // Search through all FAQ categories
+    const allFaqs = [
+      ...faq.general,
+      ...faq.orders,
+      ...faq.vendor,
+      ...faq.payments,
+      ...faq.returns,
+      ...faq.technical,
+      ...faq.policies,
+      ...faq.promotions
+    ];
+    
+    // Find matching FAQ
+    const matchingFaq = allFaqs.find(item => 
+      lowerMessage.includes(item.q.toLowerCase().split('?')[0].split(' ').slice(1, -1).join(' ')) ||
+      item.q.toLowerCase().includes(lowerMessage.split(' ').slice(0, 3).join(' ')) ||
+      lowerMessage.includes(item.a.toLowerCase().split(' ').slice(0, 3).join(' '))
+    );
+    
+    if (matchingFaq) {
+      return { text: matchingFaq.a };
+    }
+    
+    // Keyword-based responses
+    if (lowerMessage.includes('owner') || lowerMessage.includes('who owns')) {
+      return { text: `Iwanyu is proudly owned and managed by ${company.owner}.` };
+    }
+    
+    if (lowerMessage.includes('what is iwanyu') || lowerMessage.includes('about iwanyu')) {
+      return { text: company.description };
+    }
+    
+    if (lowerMessage.includes('app') || lowerMessage.includes('mobile')) {
+      return { text: "Yes! You can shop or manage your store easily through our Iwanyu mobile app. It's available for both customers and vendors." };
+    }
+    
+    if (lowerMessage.includes('delivery') || lowerMessage.includes('shipping')) {
+      return { 
+        text: `Delivery takes ${delivery.timeframe}. ${delivery.feeInfo} You can track your order once it's confirmed!` 
+      };
+    }
+    
+    if (lowerMessage.includes('payment') || lowerMessage.includes('pay')) {
+      return { 
+        text: `We accept: ${paymentMethods.join(', ')}. All payments are secure and protected.` 
+      };
+    }
+    
+    if (lowerMessage.includes('return') || lowerMessage.includes('refund')) {
+      return { 
+        text: `You can return products within ${returnPolicy.window}. ${returnPolicy.returnShippingCost}. We ensure you get a refund if items aren't as described.` 
+      };
+    }
+    
+    if (lowerMessage.includes('sell') || lowerMessage.includes('vendor') || lowerMessage.includes('seller')) {
+      return { 
+        text: `Becoming a seller is easy! ${vendorInfo.registrationFee}. We charge ${vendorInfo.commission}. You can manage everything from the app and get paid ${vendorInfo.paymentSchedule}.`,
+        actions: [
+          {
+            label: "Start Selling Now",
+            action: () => window.open('/seller/register', '_blank'),
+            icon: <ShoppingBag size={16} />
+          }
+        ]
+      };
+    }
+    
+    if (lowerMessage.includes('discount') || lowerMessage.includes('promo') || lowerMessage.includes('offer')) {
+      return { 
+        text: `Yes! We regularly offer discounts and promotions. ${promotions.referralProgram}. Follow our social media to never miss a deal!` 
+      };
+    }
+    
+    if (lowerMessage.includes('track') || lowerMessage.includes('order status')) {
+      return { 
+        text: "You can track your order! Once confirmed, you'll receive a tracking link or code to monitor progress.",
+        actions: [
+          {
+            label: "Track My Order",
+            action: () => window.open('/orders', '_blank'),
+            icon: <Package size={16} />
+          }
+        ]
+      };
+    }
+    
+    if (lowerMessage.includes('contact') || lowerMessage.includes('support') || lowerMessage.includes('help')) {
+      return { 
+        text: `You can reach us at ${chatbotConfig.supportEmail} or call ${chatbotConfig.hotlineNumber}. We're here ${chatbotConfig.businessHours.weekdays} on weekdays and ${chatbotConfig.businessHours.weekends} on weekends.`,
+        actions: [
+          {
+            label: "Email Support",
+            action: () => window.open(`mailto:${chatbotConfig.supportEmail}`, '_blank'),
+            icon: <Mail size={16} />
+          }
+        ]
+      };
+    }
+    
+    // Default response with helpful suggestions
+    return {
+      text: "I'm here to help! I can assist you with:\n\n• Product information and ordering\n• Delivery and tracking\n• Payment methods\n• Returns and refunds\n• Becoming a seller\n• Account issues\n• Promotions and discounts\n\nWhat would you like to know?",
+      actions: [
+        {
+          label: "Browse Products",
+          action: () => window.open('/products', '_blank'),
+          icon: <ShoppingBag size={16} />
+        },
+        {
+          label: "Contact Support",
+          action: () => openWhatsApp("Hello! I need help with my inquiry."),
+          icon: <MessageSquare size={16} />
+        }
+      ]
+    };
+  };
+
   const handleSendMessage = () => {
     if (!inputText.trim()) return;
-
+    
     const userMessage = inputText.trim();
-    addMessage(userMessage, false);
     setInputText('');
-
+    
+    // Add user message
+    addMessage(userMessage, false);
+    
+    // Show typing indicator
     setIsTyping(true);
+    
+    // Get smart response
     setTimeout(() => {
+      const response = getSmartResponse(userMessage);
+      addMessage(response.text, true, response.actions);
       setIsTyping(false);
-      
-      // Simple keyword matching for responses
-      const lowerMessage = userMessage.toLowerCase();
-      
-      if (lowerMessage.includes('order') || lowerMessage.includes('buy')) {
-        addMessage("I can help you with ordering! Check out our quick actions above or let me connect you with our support team.", true, [
-          {
-            label: "WhatsApp Support",
-            action: () => openWhatsApp(`Hello! I have a question about: ${userMessage}`),
-            icon: <MessageSquare size={14} />
-          }
-        ]);
-      } else if (lowerMessage.includes('delivery') || lowerMessage.includes('shipping')) {
-        addMessage("For delivery questions, our team can give you the most accurate information based on your location.", true, [
-          {
-            label: "Check Delivery",
-            action: () => openWhatsApp(`I want to know about delivery for: ${userMessage}`),
-            icon: <MessageSquare size={14} />
-          }
-        ]);
-      } else if (lowerMessage.includes('payment') || lowerMessage.includes('pay')) {
-        addMessage("For payment-related questions, our support team can assist you with secure payment options.", true, [
-          {
-            label: "Payment Help",
-            action: () => openWhatsApp(`I need help with payment: ${userMessage}`),
-            icon: <MessageSquare size={14} />
-          }
-        ]);
-      } else {
-        addMessage("Thanks for your message! Let me connect you with our support team for personalized assistance.", true, [
-          {
-            label: "WhatsApp Support",
-            action: () => openWhatsApp(`Hello! I have a question: ${userMessage}`),
-            icon: <MessageSquare size={14} />
-          }
-        ]);
-      }
     }, 1000);
   };
 
