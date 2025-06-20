@@ -120,6 +120,15 @@ const AdminDashboard: React.FC = () => {
     }
     if (dashboard) {
       console.log('Dashboard data loaded:', dashboard);
+      // Additional debugging for recent orders
+      if (dashboard.recentOrders) {
+        console.log('Recent orders structure:', dashboard.recentOrders.map((order: any) => ({
+          id: order?.id,
+          hasUser: !!order?.user,
+          userType: typeof order?.user,
+          userKeys: order?.user ? Object.keys(order.user) : null
+        })));
+      }
     }
   }, [error, dashboard]);
 
@@ -200,72 +209,47 @@ const AdminDashboard: React.FC = () => {
       title: 'CSV Import',
       description: 'Import products from CSV file',
       icon: Upload,
-      path: '/admin/csv-import',
-      color: 'bg-teal-500'
+      path: '/admin/import',
+      color: 'bg-orange-500'
     },
     {
       title: 'Order Management',
-      description: 'View and manage orders',
+      description: 'View and manage all orders',
       icon: ShoppingCart,
       path: '/admin/orders',
-      color: 'bg-gray-600'
-    },
-    {
-      title: 'Category Management',
-      description: 'Manage product categories',
-      icon: Layers,
-      path: '/admin/categories',
       color: 'bg-indigo-500'
     },
     {
-      title: 'Banner Management',
-      description: 'Manage homepage banners and carousel',
-      icon: Image,
-      path: '/admin/banners',
-      color: 'bg-yellow-500'
-    },
-    {
       title: 'Payment Management',
-      description: 'Manage seller withdrawals and wallets',
+      description: 'Handle payouts and transactions',
       icon: CreditCard,
       path: '/admin/payments',
-      color: 'bg-orange-500'
+      color: 'bg-teal-500'
     }
   ];
 
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            {/* Back Button */}
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Home</span>
-            </button>
-
-            <div className="flex items-center gap-4 mb-6">
-              <img
-                src="/iwanyu-logo.png"
-                alt="Iwanyu Store Logo"
-                className="h-6 w-auto sm:h-7 md:h-8 max-w-[100px] sm:max-w-[120px] md:max-w-[140px]"
-              />
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
                 <p className="text-gray-600">
                   Welcome back, {user?.firstName || user?.email || ''}! Here's what's happening with your store.
                 </p>
               </div>
+              <button
+                onClick={() => navigate('/')}
+                className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Store
+              </button>
             </div>
-          </motion.div>
+          </div>
 
           {/* Overview Stats */}
           <motion.div
@@ -402,7 +386,7 @@ const AdminDashboard: React.FC = () => {
               <div className="divide-y divide-gray-200">
                 {dashboard.recentOrders.slice(0, 5).map((order: any) => {
                   // Safety check for order data
-                  if (!order || !order.id) {
+                  if (!order || !order.id || typeof order !== 'object') {
                     console.warn('Invalid order data:', order);
                     return null;
                   }
@@ -410,10 +394,10 @@ const AdminDashboard: React.FC = () => {
                   // Get user display name safely
                   const getUserDisplayName = () => {
                     try {
-                      if (!order.user) {
+                      if (!order?.user || typeof order.user !== 'object') {
                         return 'Guest User';
                       }
-                      return order.user.firstName || order.user.email || 'Unknown User';
+                      return order.user?.firstName || order.user?.email || 'Unknown User';
                     } catch (e) {
                       console.warn('Error accessing user data for order:', order.id, e);
                       return 'Unknown User';
