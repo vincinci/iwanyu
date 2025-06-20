@@ -236,7 +236,7 @@ const ChatBot: React.FC = () => {
         className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${
           isOpen 
             ? 'bg-red-500 hover:bg-red-600' 
-            : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
+            : 'bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600'
         }`}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -289,10 +289,21 @@ const ChatBot: React.FC = () => {
             className="fixed bottom-24 right-6 z-40 w-96 max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-8rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white">
+            <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-4 text-white">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <Bot size={20} />
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center overflow-hidden">
+                  <img 
+                    src="/iwanyu-logo.png" 
+                    alt="Iwanyu Logo" 
+                    className="w-8 h-8 object-contain"
+                    onError={(e) => {
+                      // Fallback to Bot icon if logo fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      target.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                  <Bot size={20} className="hidden" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold">Iwanyu Assistant</h3>
@@ -312,7 +323,7 @@ const ChatBot: React.FC = () => {
                   <button
                     key={index}
                     onClick={() => handleQuickAction(action)}
-                    className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors text-sm"
+                    className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-200 hover:bg-yellow-50 hover:border-yellow-300 transition-colors text-sm"
                   >
                     {action.icon}
                     <span className="truncate">{action.label}</span>
@@ -331,8 +342,8 @@ const ChatBot: React.FC = () => {
                   className={`flex gap-3 ${message.isBot ? 'justify-start' : 'justify-end'}`}
                 >
                   {message.isBot && (
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Bot size={16} className="text-blue-600" />
+                    <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <Bot size={16} className="text-yellow-600" />
                     </div>
                   )}
                   
@@ -341,7 +352,7 @@ const ChatBot: React.FC = () => {
                       className={`p-3 rounded-2xl ${
                         message.isBot
                           ? 'bg-gray-100 text-gray-800'
-                          : 'bg-blue-500 text-white'
+                          : 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white'
                       }`}
                     >
                       <p className="text-sm whitespace-pre-line">{message.text}</p>
@@ -369,7 +380,7 @@ const ChatBot: React.FC = () => {
                   </div>
 
                   {!message.isBot && (
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
                       <User size={16} className="text-white" />
                     </div>
                   )}
@@ -382,8 +393,8 @@ const ChatBot: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex gap-3 justify-start"
                 >
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Bot size={16} className="text-blue-600" />
+                  <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <Bot size={16} className="text-yellow-600" />
                   </div>
                   <div className="bg-gray-100 rounded-2xl p-3">
                     <div className="flex gap-1">
@@ -407,12 +418,12 @@ const ChatBot: React.FC = () => {
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder="Type your message..."
-                  className="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
                 <button
                   onClick={handleSendMessage}
                   disabled={!inputText.trim()}
-                  className="p-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-xl hover:from-yellow-500 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send size={18} />
                 </button>
