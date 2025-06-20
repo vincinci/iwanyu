@@ -113,6 +113,13 @@ router.get('/dashboard', authenticateToken, requireAdmin, async (req: AuthReques
           }
         }
       }
+    }).then(orders => {
+      // Ensure all orders have proper data structure
+      return orders.map(order => ({
+        ...order,
+        user: order.user || null, // Explicitly handle null users
+        orderItems: order.orderItems || []
+      }));
     });
 
     // Monthly revenue (last 6 months)

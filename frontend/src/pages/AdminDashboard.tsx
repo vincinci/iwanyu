@@ -37,6 +37,7 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('🚨 Mobile App Crash Detected:', error, errorInfo);
     console.error('AdminDashboard Error Boundary caught an error:', error, errorInfo);
   }
 
@@ -391,7 +392,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            {!dashboard?.recentOrders?.length ? (
+            {!dashboard?.recentOrders?.length || !Array.isArray(dashboard.recentOrders) ? (
               <div className="p-8 text-center">
                 <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Recent Orders</h3>
@@ -399,7 +400,27 @@ const AdminDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {dashboard.recentOrders.slice(0, 5).map((order: any) => (
+                {dashboard.recentOrders.slice(0, 5).map((order: any) => {
+                  // Safety check for order data
+                  if (!order || !order.id) {
+                    console.warn('Invalid order data:', order);
+                    return null;
+                  }
+                  
+                  // Get user display name safely
+                  const getUserDisplayName = () => {
+                    try {
+                      if (!order.user) {
+                        return 'Guest User';
+                      }
+                      return order.user.firstName || order.user.email || 'Unknown User';
+                    } catch (e) {
+                      console.warn('Error accessing user data for order:', order.id, e);
+                      return 'Unknown User';
+                    }
+                  };
+                  
+                  return (
                   <div key={order.id} className="p-6 hover:bg-gray-50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
@@ -408,7 +429,7 @@ const AdminDashboard: React.FC = () => {
                             Order #{order.orderNumber || order.id.slice(-8)}
                           </h3>
                           <p className="text-sm text-gray-600">
-                            {order.user ? (order.user?.firstName || order.user?.email || 'Unknown User') : 'Unknown User'} • {order.orderItems?.length || 0} items
+                            {getUserDisplayName()} • {order.orderItems?.length || 0} items
                           </p>
                           <p className="text-sm text-gray-500">
                             {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Unknown date'}
@@ -433,7 +454,8 @@ const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                }).filter(Boolean)}
               </div>
             )}
           </motion.div>
