@@ -1,6 +1,6 @@
 import React from 'react';
 import { AnimatePresence } from 'framer-motion';
-import Toast, { ToastProps } from './Toast';
+import Toast, { type ToastProps } from './Toast';
 
 interface ToastContainerProps {
   toasts: ToastProps[];
