@@ -1623,9 +1623,17 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
           product[header] = values[index] ? values[index].replace(/^"|"$/g, '') : '';
         });
 
-        const handle = product['Handle'];
+        const handle = product['Handle']?.trim();
+        
+        // Skip rows with invalid or missing handles
         if (!handle) {
-          importResults.errors.push(`Row ${i + 1}: Missing Handle (product identifier)`);
+          importResults.warnings.push(`Row ${i + 1}: Missing Handle, skipping row`);
+          continue;
+        }
+        
+        // Skip if handle looks like HTML content or is too short/invalid
+        if (handle.includes('<') || handle.includes('>') || handle.length < 2) {
+          importResults.warnings.push(`Row ${i + 1}: Invalid Handle format (${handle.substring(0, 30)}...), skipping row`);
           continue;
         }
 
@@ -1634,7 +1642,7 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
         }
         productGroups.get(handle)!.push(product);
       } catch (error) {
-        importResults.errors.push(`Row ${i + 1}: Failed to parse CSV row - ${(error as Error).message}`);
+        importResults.warnings.push(`Row ${i + 1}: Failed to parse CSV row - ${(error as Error).message}`);
       }
     }
 
@@ -1643,23 +1651,33 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
       try {
         const mainProduct = variants[0];
         
-        // Validate required fields
-        if (!mainProduct['Title']) {
-          importResults.errors.push(`Product ${handle}: Missing Title`);
+        // Skip if handle looks like HTML content (starts with < or contains HTML tags)
+        if (handle.includes('<') || handle.includes('>') || handle.includes('</')) {
+          importResults.warnings.push(`Skipping invalid handle (appears to be HTML): ${handle.substring(0, 50)}...`);
+          continue;
+        }
+        
+        // Validate and clean title
+        let title = mainProduct['Title']?.trim();
+        if (!title || title.includes('<') || title.includes('>')) {
+          importResults.errors.push(`Product ${handle}: Missing or invalid Title`);
           importResults.failed++;
           continue;
         }
 
-        if (!mainProduct['Variant Price']) {
+        // Validate and parse price
+        let priceStr = mainProduct['Variant Price']?.toString().trim();
+        if (!priceStr) {
           importResults.errors.push(`Product ${handle}: Missing Variant Price`);
           importResults.failed++;
           continue;
         }
 
-        // Parse price
-        const price = parseFloat(mainProduct['Variant Price']);
+        // Clean price string (remove currency symbols, spaces, etc.)
+        priceStr = priceStr.replace(/[^\d.,]/g, '');
+        const price = parseFloat(priceStr);
         if (isNaN(price) || price <= 0) {
-          importResults.errors.push(`Product ${handle}: Invalid price`);
+          importResults.errors.push(`Product ${handle}: Invalid price (${mainProduct['Variant Price']})`);
           importResults.failed++;
           continue;
         }
@@ -1729,14 +1747,14 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
         }
 
         // Create slug from handle or title
-        const slug = handle || mainProduct['Title'].toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const slug = handle || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
         // Check if product already exists
         const existingProduct = await prisma.product.findFirst({
           where: { 
             OR: [
               { slug: slug },
-              { name: mainProduct['Title'] }
+              { name: title }
             ]
           }
         });
@@ -1771,7 +1789,7 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
         // In a full implementation, you'd handle variants properly
         const newProduct = await prisma.product.create({
           data: {
-            name: mainProduct['Title'],
+            name: title,
             slug: slug,
             description: mainProduct['Body (HTML)']?.replace(/<[^>]*>/g, '') || '', // Strip HTML
             price: price,
@@ -1791,7 +1809,7 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
         });
 
         importResults.successful++;
-        console.log(`Successfully imported product: ${mainProduct['Title']}`);
+        console.log(`Successfully imported product: ${title}`);
 
       } catch (error) {
         console.error(`Error creating product ${handle}:`, error);
@@ -1806,8 +1824,14 @@ router.post('/csv-import', authenticateToken, requireAdmin, upload.single('csvFi
     // Clear product cache since we added new products
     clearProductCaches();
 
+    // Add summary information
+    const totalProcessed = importResults.successful + importResults.failed;
+    const summary = `Import completed: ${importResults.successful} successful, ${importResults.failed} failed, ${importResults.warnings.length} warnings`;
+    
+    console.log(summary);
+    
     res.json({
-      message: 'CSV import completed',
+      message: summary,
       results: importResults
     });
 
