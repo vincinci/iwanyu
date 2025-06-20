@@ -590,6 +590,84 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Categories Section - Show only categories with products */}
+      {categories.filter((cat: Category) => (cat._count?.products || 0) > 0).length > 0 && (
+        <section className="py-4 md:py-8 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-4 md:mb-6">
+              <h2 className="text-lg md:text-2xl font-bold text-gray-900 flex items-center">
+                <Package className="mr-2 text-blue-500" size={20} />
+                Shop by Category
+              </h2>
+              <Link to="/categories" className="text-blue-500 hover:text-blue-600 font-medium text-sm md:text-base">
+                View All <ArrowRight className="inline ml-1" size={16} />
+              </Link>
+            </div>
+
+            {/* Categories Grid - Only show categories with products */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 md:gap-4">
+              {categories
+                .filter((category: Category) => (category._count?.products || 0) > 0)
+                .slice(0, isMobile ? 6 : 16)
+                .map((category: Category, index: number) => {
+                  const IconComponent = getCategoryIcon(category.name);
+                  const productCount = category._count?.products || 0;
+                  
+                  return (
+                    <motion.div
+                      key={category.id}
+                      initial={isMobile ? {} : { opacity: 0, y: 20 }}
+                      whileInView={isMobile ? {} : { opacity: 1, y: 0 }}
+                      transition={isMobile ? {} : { duration: 0.4, delay: index * 0.05 }}
+                      viewport={{ once: true }}
+                      className="group"
+                      onMouseEnter={() => setHoveredCategory(category.id)}
+                      onMouseLeave={() => setHoveredCategory(null)}
+                    >
+                      <Link
+                        to={`/products?category=${category.slug}`}
+                        className="block bg-white rounded-xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-blue-200 text-center"
+                      >
+                        <div className="flex flex-col items-center space-y-2">
+                          <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                            hoveredCategory === category.id 
+                              ? 'bg-blue-500 text-white scale-110' 
+                              : 'bg-blue-50 text-blue-500 group-hover:bg-blue-100'
+                          }`}>
+                            <IconComponent size={isMobile ? 20 : 24} />
+                          </div>
+                          
+                          <div>
+                            <h3 className="font-medium text-xs md:text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                              {category.name}
+                            </h3>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {productCount} item{productCount !== 1 ? 's' : ''}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+            </div>
+
+            {/* Show more categories link on mobile if there are more */}
+            {isMobile && categories.filter((cat: Category) => (cat._count?.products || 0) > 0).length > 6 && (
+              <div className="text-center mt-4">
+                <Link
+                  to="/categories"
+                  className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
+                >
+                  View All Categories
+                  <ArrowRight className="ml-2" size={16} />
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* Sponsored Products Section - Show on all devices */}
       {promotedProducts.length > 0 && (
         <section className="py-4 md:py-8 bg-gradient-to-r from-blue-50 to-purple-50">
