@@ -44,7 +44,9 @@ import {
   Gem,
   Bike,
   Plane,
-  Mountain
+  Mountain,
+  Zap,
+  MessageCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -691,7 +693,7 @@ const Header: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: '100%' }}
                 transition={{ duration: 0.2 }}
-                className="md:hidden fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 overflow-y-auto"
+                className="md:hidden fixed top-0 right-0 h-full w-full max-w-sm bg-white shadow-xl z-50 overflow-y-auto"
               >
                 {/* Header */}
                 <div className="sticky top-0 bg-white border-b border-gray-200 p-4">
@@ -711,7 +713,7 @@ const Header: React.FC = () => {
                     {user ? (
                     <div className="bg-gray-50 rounded-lg p-4">
                         <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-8 h-8 rounded-full overflow-hidden shadow-md">
+                        <div className="w-10 h-10 rounded-full overflow-hidden shadow-md">
                           {user.avatar ? (
                             <img
                               src={`http://localhost:3001/${user.avatar}?t=${Date.now()}`}
@@ -735,7 +737,7 @@ const Header: React.FC = () => {
                           {user.role === 'ADMIN' && (
                             <Link
                               to="/admin/dashboard"
-                            className="flex items-center space-x-2 p-2 rounded-lg bg-blue-100 text-blue-700"
+                            className="flex items-center space-x-2 p-3 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
                               onClick={() => setIsMenuOpen(false)}
                             >
                               <Settings size={16} />
@@ -746,16 +748,16 @@ const Header: React.FC = () => {
                           {user.role === 'SELLER' ? (
                             <Link
                               to="/seller/dashboard"
-                            className="flex items-center space-x-2 p-2 rounded-lg bg-green-100 text-green-700"
+                            className="flex items-center space-x-2 p-3 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
                               onClick={() => setIsMenuOpen(false)}
                             >
                               <Store size={16} />
                             <span>Seller Dashboard</span>
                             </Link>
-                        ) : (
+                        ) : user.role !== 'ADMIN' && (
                             <Link
                               to="/become-seller"
-                            className="flex items-center space-x-2 p-2 rounded-lg bg-purple-100 text-purple-700"
+                            className="flex items-center space-x-2 p-3 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
                               onClick={() => setIsMenuOpen(false)}
                             >
                               <Store size={16} />
@@ -765,11 +767,34 @@ const Header: React.FC = () => {
                         
                         <Link
                           to="/profile"
-                          className="flex items-center space-x-2 p-2 rounded-lg bg-gray-100 text-gray-700"
+                          className="flex items-center space-x-2 p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           <User size={16} />
                           <span>My Profile</span>
+                        </Link>
+
+                        <Link
+                          to="/orders"
+                          className="flex items-center space-x-2 p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <Package size={16} />
+                          <span>My Orders</span>
+                        </Link>
+
+                        <Link
+                          to="/wishlist"
+                          className="flex items-center space-x-2 p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <Heart size={16} />
+                          <span>Wishlist</span>
+                          {wishlistCount > 0 && (
+                            <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                              {wishlistCount}
+                            </span>
+                          )}
                         </Link>
                       </div>
                       </div>
@@ -780,14 +805,14 @@ const Header: React.FC = () => {
                       <div className="space-y-2">
                           <Link
                             to="/login"
-                          className="block w-full py-2 px-4 bg-gray-600 text-white rounded-lg"
+                          className="block w-full py-3 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             Login
                           </Link>
                           <Link
                             to="/register"
-                          className="block w-full py-2 px-4 border border-gray-400 text-gray-600 rounded-lg"
+                          className="block w-full py-3 px-4 border border-gray-400 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             Sign Up
@@ -796,15 +821,72 @@ const Header: React.FC = () => {
                       </div>
                     )}
 
-                  {/* Quick links */}
-                  <div>
+                  {/* Navigation Links */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">Browse</h3>
+                    
                     <Link
                       to="/products"
-                      className="flex items-center justify-center space-x-2 p-3 rounded-lg bg-gray-600 text-white mt-2"
+                      className="flex items-center space-x-3 p-3 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      <Package size={16} />
-                      <span>All Products</span>
+                      <Package size={18} />
+                      <span className="font-medium">All Products</span>
+                    </Link>
+
+                    <Link
+                      to="/categories"
+                      className="flex items-center space-x-3 p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Grid size={18} />
+                      <span className="font-medium">Categories</span>
+                    </Link>
+
+                    <Link
+                      to="/deals"
+                      className="flex items-center space-x-3 p-3 rounded-lg bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Zap size={18} />
+                      <span className="font-medium">Flash Deals</span>
+                    </Link>
+
+                    <Link
+                      to="/cart"
+                      className="flex items-center space-x-3 p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <ShoppingCart size={18} />
+                      <span className="font-medium">Shopping Cart</span>
+                      {itemCount > 0 && (
+                        <span className="bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                          {itemCount}
+                        </span>
+                      )}
+                    </Link>
+                  </div>
+
+                  {/* Help & Support */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">Support</h3>
+                    
+                    <Link
+                      to="/contact"
+                      className="flex items-center space-x-3 p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <MessageCircle size={18} />
+                      <span>Contact Us</span>
+                    </Link>
+
+                    <Link
+                      to="/about"
+                      className="flex items-center space-x-3 p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Shield size={18} />
+                      <span>About Us</span>
                     </Link>
                   </div>
 
@@ -815,7 +897,7 @@ const Header: React.FC = () => {
                             logout();
                             setIsMenuOpen(false);
                           }}
-                      className="w-full flex items-center justify-center space-x-2 p-3 text-red-600 border border-red-200 rounded-lg hover:bg-red-50"
+                      className="w-full flex items-center justify-center space-x-2 p-3 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors font-medium"
                         >
                       <X size={16} />
                       <span>Sign Out</span>
