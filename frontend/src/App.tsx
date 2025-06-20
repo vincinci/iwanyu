@@ -78,6 +78,7 @@ import { ToastProvider } from './contexts/ToastContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
+import ChatBot from './components/ChatBot';
 
 // Page Components
 import Home from './pages/Home';
@@ -230,6 +231,9 @@ const AppContent: React.FC = () => {
           </Routes>
         </main>
         <Footer />
+        
+        {/* Global ChatBot */}
+        <ChatBot />
       </div>
     </Router>
   );
