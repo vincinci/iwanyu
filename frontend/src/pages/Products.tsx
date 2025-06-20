@@ -54,17 +54,11 @@ const Products: React.FC = () => {
     buyerProtection: false,
     highRating: false,
   });
-  const [page, setPage] = useState(1);
   const [limit] = useState(12);
 
   // Get current filters from URL
   const currentPage = parseInt(searchParams.get('page') || '1');
   const categoryFilter = searchParams.get('category') || '';
-  
-  // Sync local page state with URL
-  useEffect(() => {
-    setPage(currentPage);
-  }, [currentPage]);
   
   useEffect(() => {
     if (categoryFilter && !selectedCategories.includes(categoryFilter)) {
@@ -93,7 +87,7 @@ const Products: React.FC = () => {
     prefetchNextPage,
     prefetchPreviousPage
   } = useInstantProducts({
-    page,
+    page: currentPage,
     limit,
     search: searchQuery || undefined,
     category: selectedCategories.length > 0 ? selectedCategories[0] : undefined,
@@ -108,17 +102,17 @@ const Products: React.FC = () => {
 
   // Prefetch next page when approaching the end
   useEffect(() => {
-    if (page < totalPages) {
+    if (currentPage < totalPages) {
       prefetchNextPage();
     }
-  }, [page, totalPages, prefetchNextPage]);
+  }, [currentPage, totalPages, prefetchNextPage]);
 
   // Prefetch previous page when going back
   useEffect(() => {
-    if (page > 1) {
+    if (currentPage > 1) {
       prefetchPreviousPage();
     }
-  }, [page, prefetchPreviousPage]);
+  }, [currentPage, prefetchPreviousPage]);
 
   // Debounced search with simple timeout instead of lodash
   const debouncedSearch = useCallback((query: string) => {
@@ -190,14 +184,16 @@ const Products: React.FC = () => {
     
     setSortBy(newSortBy);
     setSortOrder(newSortOrder);
-    setPage(1); // Reset to first page when sort changes
+    // Reset to first page when sort changes
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('page');
+    setSearchParams(newParams);
   };
 
   const handlePageChange = (newPage: number) => {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('page', newPage.toString());
     setSearchParams(newParams);
-    setPage(newPage); // Also update local state
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -229,7 +225,10 @@ const Products: React.FC = () => {
 
   const handlePriceRangeChange = (type: 'min' | 'max', value: string) => {
     setPriceRange(prev => ({ ...prev, [type]: value }));
-    setPage(1); // Reset to first page when filter changes
+    // Reset to first page when filter changes
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('page');
+    setSearchParams(newParams);
   };
 
   const handleQuickFilter = (filterType: 'freeShipping' | 'buyerProtection' | 'highRating') => {
@@ -237,7 +236,10 @@ const Products: React.FC = () => {
       ...prev,
       [filterType]: !prev[filterType]
     }));
-    setPage(1); // Reset to first page when filter changes
+    // Reset to first page when filter changes
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('page');
+    setSearchParams(newParams);
   };
 
   const clearAllFilters = () => {
@@ -250,7 +252,6 @@ const Products: React.FC = () => {
     });
     setSearchQuery('');
     setSearchParams(new URLSearchParams());
-    setPage(1);
   };
 
   const sortOptions = [
@@ -586,7 +587,7 @@ const Products: React.FC = () => {
                     </div>
                   )}
                   <span className="font-medium">
-                    Page {page} of {totalPages} • {products.length} products
+                    Page {currentPage} of {totalPages} • {products.length} products
                   </span>
                 </div>
               </div>
