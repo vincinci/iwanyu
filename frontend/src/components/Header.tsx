@@ -518,7 +518,7 @@ const Header: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    <span className="text-sm text-gray-700 font-medium">{user.firstName || 'User'}</span>
+                                                      <span className="text-sm text-gray-700 font-medium">{user?.firstName || 'User'}</span>
                     <ChevronDown size={12} className="text-gray-500" />
                   </button>
 
@@ -725,7 +725,7 @@ const Header: React.FC = () => {
                           )}
                         </div>
                           <div>
-                          <p className="font-semibold text-gray-900">{user.firstName || 'User'}</p>
+                          <p className="font-semibold text-gray-900">{user?.firstName || 'User'}</p>
                             <p className="text-sm text-gray-600">{user.email}</p>
                           </div>
                         </div>

@@ -361,7 +361,7 @@ const AdminPayments: React.FC = () => {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">
-                          {payout.seller.businessName || `${payout.seller.user.firstName} ${payout.seller.user.lastName}`}
+                                                        {payout.seller.businessName || `${payout.seller.user?.firstName || ''} ${payout.seller.user?.lastName || ''}`}
                         </p>
                         <p className="text-sm text-gray-500">
                           {new Date(payout.createdAt).toLocaleDateString()}
@@ -500,7 +500,7 @@ const AdminPayments: React.FC = () => {
                           <div>
                             <h4 className="font-medium text-gray-900">
                               {payout.seller.businessName || 
-                               `${payout.seller.user.firstName} ${payout.seller.user.lastName}`}
+                               `${payout.seller.user?.firstName || ''} ${payout.seller.user?.lastName || ''}`}
                             </h4>
                             <p className="text-sm text-gray-600">
                               {payout.payoutMethod === 'BANK_TRANSFER' ? 'Bank Transfer' : 'Mobile Money'}
@@ -606,7 +606,7 @@ const AdminPayments: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-medium text-gray-900">
-                            {seller.businessName || `${seller.user.firstName} ${seller.user.lastName}`}
+                            {seller.businessName || `${seller.user?.firstName || ''} ${seller.user?.lastName || ''}`}
                           </h4>
                           <p className="text-sm text-gray-600">{seller.user.email}</p>
                         </div>
@@ -717,7 +717,7 @@ const AdminPayments: React.FC = () => {
                         <div>
                           <p className="font-medium text-gray-900">
                             {(seller as any).seller?.businessName || 
-                             `${(seller as any).seller?.user?.firstName} ${(seller as any).seller?.user?.lastName}`}
+                             `${(seller as any).seller?.user?.firstName || ''} ${(seller as any).seller?.user?.lastName || ''}`}
                           </p>
                           <p className="text-sm text-gray-600">{(seller as any).seller?.user?.email}</p>
                         </div>
@@ -767,7 +767,7 @@ const AdminPayments: React.FC = () => {
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h4 className="font-medium text-gray-900 mb-2">Payout Details</h4>
                     <div className="text-sm text-gray-600 space-y-1">
-                      <p><span className="font-medium">Seller:</span> {selectedPayout.seller.businessName || `${selectedPayout.seller.user.firstName} ${selectedPayout.seller.user.lastName}`}</p>
+                      <p><span className="font-medium">Seller:</span> {selectedPayout.seller.businessName || `${selectedPayout.seller.user?.firstName || ''} ${selectedPayout.seller.user?.lastName || ''}`}</p>
                       <p><span className="font-medium">Amount:</span> {formatPrice(selectedPayout.amount)}</p>
                       <p><span className="font-medium">Method:</span> {selectedPayout.payoutMethod === 'BANK_TRANSFER' ? 'Bank Transfer' : 'Mobile Money'}</p>
                       <p><span className="font-medium">Reference:</span> {selectedPayout.reference}</p>

@@ -428,7 +428,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
                   {review.user.avatar ? (
                     <img
                       src={review.user.avatar}
-                      alt={`${review.user.firstName} ${review.user.lastName}`}
+                                                  alt={`${review.user?.firstName || ''} ${review.user?.lastName || ''}`}
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
@@ -442,7 +442,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <h4 className="font-medium text-gray-900">
-                        {review.user.firstName} {review.user.lastName}
+                                                  {review.user?.firstName || ''} {review.user?.lastName || ''}
                       </h4>
                       <div className="flex items-center space-x-2 mt-1">
                         {renderStars(review.rating)}

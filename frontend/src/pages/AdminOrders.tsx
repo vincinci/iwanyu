@@ -214,11 +214,11 @@ const AdminOrders: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm font-medium text-gray-900">
-                              {order.user.firstName && order.user.lastName
-                                ? `${order.user.firstName} ${order.user.lastName}`
-                                : order.user.email}
+                              {order.user && order.user?.firstName && order.user?.lastName
+                                ? `${order.user?.firstName} ${order.user?.lastName}`
+                                : order.user?.email || 'Unknown User'}
                             </div>
-                            <div className="text-sm text-gray-500">{order.user.email}</div>
+                            <div className="text-sm text-gray-500">{order.user?.email || 'Unknown'}</div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -318,11 +318,11 @@ const AdminOrders: React.FC = () => {
                     Customer
                   </label>
                   <p className="text-sm text-gray-900">
-                    {selectedOrder.user.firstName && selectedOrder.user.lastName
-                      ? `${selectedOrder.user.firstName} ${selectedOrder.user.lastName}`
-                      : selectedOrder.user.email}
+                    {selectedOrder.user && selectedOrder.user?.firstName && selectedOrder.user?.lastName
+                      ? `${selectedOrder.user?.firstName} ${selectedOrder.user?.lastName}`
+                      : selectedOrder.user?.email || 'Unknown User'}
                   </p>
-                  <p className="text-sm text-gray-500">{selectedOrder.user.email}</p>
+                  <p className="text-sm text-gray-500">{selectedOrder.user?.email || 'Unknown'}</p>
                 </div>
                 
                 <div>

@@ -288,7 +288,7 @@ const AdminSellers: React.FC = () => {
                           <div className="space-y-1 text-sm text-gray-600">
                             <div className="flex items-center gap-2">
                               <User className="w-4 h-4" />
-                              <span>{seller.user.firstName} {seller.user.lastName}</span>
+                              <span>{seller.user?.firstName || ''} {seller.user?.lastName || ''}</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Mail className="w-4 h-4" />
@@ -449,7 +449,7 @@ const AdminSellers: React.FC = () => {
                       <div>
                         <label className="block text-sm font-medium text-gray-700">Name</label>
                         <p className="text-gray-900">
-                          {selectedSeller.user.firstName} {selectedSeller.user.lastName}
+                          {selectedSeller.user?.firstName || ''} {selectedSeller.user?.lastName || ''}
                         </p>
                       </div>
                       <div>

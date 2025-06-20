@@ -329,8 +329,8 @@ const AdminUsers: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm font-medium text-gray-900">
-                              {userItem.firstName && userItem.lastName
-                                ? `${userItem.firstName} ${userItem.lastName}`
+                              {userItem?.firstName && userItem?.lastName
+                                ? `${userItem?.firstName} ${userItem?.lastName}`
                                 : userItem.email}
                             </div>
                             <div className="text-sm text-gray-500">{userItem.email}</div>
@@ -494,8 +494,8 @@ const AdminUsers: React.FC = () => {
               </p>
               <div className="bg-gray-50 p-3 rounded-lg">
                 <p className="text-sm font-medium text-gray-900">
-                  {deletingUser.firstName && deletingUser.lastName
-                    ? `${deletingUser.firstName} ${deletingUser.lastName}`
+                  {deletingUser?.firstName && deletingUser?.lastName
+                    ? `${deletingUser?.firstName} ${deletingUser?.lastName}`
                     : deletingUser.email}
                 </p>
                 <p className="text-sm text-gray-500">{deletingUser.email}</p>

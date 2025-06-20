@@ -138,8 +138,8 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                     {product.seller && (
                       <p className="text-xs text-gray-500 mb-2">
                         by {product.seller.businessName || 
-                            (product.seller.user?.firstName && product.seller.user?.lastName 
-                              ? `${product.seller.user.firstName} ${product.seller.user.lastName}`
+                                                          (product.seller.user?.firstName && product.seller.user?.lastName
+                                ? `${product.seller.user?.firstName} ${product.seller.user?.lastName}`
                               : (product.seller.user?.name || 'Seller'))}
                       </p>
                     )}

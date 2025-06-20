@@ -34,8 +34,8 @@ const Profile: React.FC = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {user?.firstName && user?.lastName 
-                  ? `${user.firstName} ${user.lastName}` 
+                              {user?.firstName && user?.lastName
+                ? `${user?.firstName} ${user?.lastName}` 
                   : user?.email?.split('@')[0] || 'User Profile'
                 }
               </h1>

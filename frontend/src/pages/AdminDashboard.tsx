@@ -408,7 +408,7 @@ const AdminDashboard: React.FC = () => {
                             Order #{order.orderNumber || order.id.slice(-8)}
                           </h3>
                           <p className="text-sm text-gray-600">
-                            {(order.user?.firstName || order.user?.email || 'Unknown User')} • {order.orderItems?.length || 0} items
+                            {order.user ? (order.user?.firstName || order.user?.email || 'Unknown User') : 'Unknown User'} • {order.orderItems?.length || 0} items
                           </p>
                           <p className="text-sm text-gray-500">
                             {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Unknown date'}
