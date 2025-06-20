@@ -16,7 +16,8 @@ import {
   RotateCcw,
   MessageSquare,
   ExternalLink,
-  ShoppingBag
+  ShoppingBag,
+  Store
 } from 'lucide-react';
 import { chatbotConfig, chatbotResponses } from '../config/chatbot';
 
@@ -165,7 +166,7 @@ const ChatBot: React.FC = () => {
     const lowerMessage = message.toLowerCase();
     const { faq, company, delivery, paymentMethods, returnPolicy, vendorInfo, policies, promotions } = chatbotConfig;
     
-    // Search through all FAQ categories
+    // Search through all FAQ categories including new ones
     const allFaqs = [
       ...faq.general,
       ...faq.orders,
@@ -174,52 +175,74 @@ const ChatBot: React.FC = () => {
       ...faq.returns,
       ...faq.technical,
       ...faq.policies,
-      ...faq.promotions
+      ...faq.promotions,
+      ...faq.shipping,
+      ...faq.account
     ];
     
-    // Find matching FAQ
-    const matchingFaq = allFaqs.find(item => 
-      lowerMessage.includes(item.q.toLowerCase().split('?')[0].split(' ').slice(1, -1).join(' ')) ||
-      item.q.toLowerCase().includes(lowerMessage.split(' ').slice(0, 3).join(' ')) ||
-      lowerMessage.includes(item.a.toLowerCase().split(' ').slice(0, 3).join(' '))
-    );
+    // Enhanced FAQ matching with multiple strategies
+    const matchingFaq = allFaqs.find(item => {
+      const question = item.q.toLowerCase();
+      const answer = item.a.toLowerCase();
+      
+      // Direct question match
+      if (question.includes(lowerMessage) || lowerMessage.includes(question.slice(0, -1))) {
+        return true;
+      }
+      
+      // Keyword extraction and matching
+      const messageWords = lowerMessage.split(' ').filter(word => word.length > 2);
+      const questionWords = question.split(' ').filter(word => word.length > 2);
+      
+      const matchCount = messageWords.filter(word => 
+        questionWords.some(qWord => qWord.includes(word) || word.includes(qWord))
+      ).length;
+      
+      // If 2 or more significant words match, consider it a match
+      return matchCount >= 2;
+    });
     
     if (matchingFaq) {
       return { text: matchingFaq.a };
     }
     
-    // Keyword-based responses
-    if (lowerMessage.includes('owner') || lowerMessage.includes('who owns')) {
+    // Enhanced keyword-based responses
+    if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+      const randomGreeting = chatbotConfig.greetings[Math.floor(Math.random() * chatbotConfig.greetings.length)];
+      return { text: randomGreeting };
+    }
+    
+    if (lowerMessage.includes('owner') || lowerMessage.includes('who owns') || lowerMessage.includes('founder')) {
       return { text: `Iwanyu is proudly owned and managed by ${company.owner}.` };
     }
     
-    if (lowerMessage.includes('what is iwanyu') || lowerMessage.includes('about iwanyu')) {
+    if (lowerMessage.includes('what is iwanyu') || lowerMessage.includes('about iwanyu') || lowerMessage.includes('tell me about')) {
       return { text: company.description };
     }
     
-    if (lowerMessage.includes('app') || lowerMessage.includes('mobile')) {
+    if (lowerMessage.includes('app') || lowerMessage.includes('mobile') || lowerMessage.includes('download')) {
       return { text: "Yes! You can shop or manage your store easily through our Iwanyu mobile app. It's available for both customers and vendors." };
     }
     
-    if (lowerMessage.includes('delivery') || lowerMessage.includes('shipping')) {
+    if (lowerMessage.includes('delivery') || lowerMessage.includes('shipping') || lowerMessage.includes('transport')) {
       return { 
         text: `Delivery takes ${delivery.timeframe}. ${delivery.feeInfo} You can track your order once it's confirmed!` 
       };
     }
     
-    if (lowerMessage.includes('payment') || lowerMessage.includes('pay')) {
+    if (lowerMessage.includes('payment') || lowerMessage.includes('pay') || lowerMessage.includes('money')) {
       return { 
         text: `We accept: ${paymentMethods.join(', ')}. All payments are secure and protected.` 
       };
     }
     
-    if (lowerMessage.includes('return') || lowerMessage.includes('refund')) {
+    if (lowerMessage.includes('return') || lowerMessage.includes('refund') || lowerMessage.includes('exchange')) {
       return { 
         text: `You can return products within ${returnPolicy.window}. ${returnPolicy.returnShippingCost}. We ensure you get a refund if items aren't as described.` 
       };
     }
     
-    if (lowerMessage.includes('sell') || lowerMessage.includes('vendor') || lowerMessage.includes('seller')) {
+    if (lowerMessage.includes('sell') || lowerMessage.includes('vendor') || lowerMessage.includes('seller') || lowerMessage.includes('business')) {
       return { 
         text: `Becoming a seller is easy! ${vendorInfo.registrationFee}. We charge ${vendorInfo.commission}. You can manage everything from the app and get paid ${vendorInfo.paymentSchedule}.`,
         actions: [
@@ -232,13 +255,13 @@ const ChatBot: React.FC = () => {
       };
     }
     
-    if (lowerMessage.includes('discount') || lowerMessage.includes('promo') || lowerMessage.includes('offer')) {
+    if (lowerMessage.includes('discount') || lowerMessage.includes('promo') || lowerMessage.includes('offer') || lowerMessage.includes('sale')) {
       return { 
         text: `Yes! We regularly offer discounts and promotions. ${promotions.referralProgram}. Follow our social media to never miss a deal!` 
       };
     }
     
-    if (lowerMessage.includes('track') || lowerMessage.includes('order status')) {
+    if (lowerMessage.includes('track') || lowerMessage.includes('order status') || lowerMessage.includes('where is my order')) {
       return { 
         text: "You can track your order! Once confirmed, you'll receive a tracking link or code to monitor progress.",
         actions: [
@@ -251,7 +274,7 @@ const ChatBot: React.FC = () => {
       };
     }
     
-    if (lowerMessage.includes('contact') || lowerMessage.includes('support') || lowerMessage.includes('help')) {
+    if (lowerMessage.includes('contact') || lowerMessage.includes('support') || lowerMessage.includes('help') || lowerMessage.includes('customer service')) {
       return { 
         text: `You can reach us at ${chatbotConfig.supportEmail} or call ${chatbotConfig.hotlineNumber}. We're here ${chatbotConfig.businessHours.weekdays} on weekdays and ${chatbotConfig.businessHours.weekends} on weekends.`,
         actions: [
@@ -264,14 +287,56 @@ const ChatBot: React.FC = () => {
       };
     }
     
-    // Default response with helpful suggestions
+    if (lowerMessage.includes('account') || lowerMessage.includes('profile') || lowerMessage.includes('login') || lowerMessage.includes('register')) {
+      return {
+        text: "I can help you with account-related questions! You can create an account for free, manage your profile, reset passwords, and more. What specifically do you need help with?",
+        actions: [
+          {
+            label: "Create Account",
+            action: () => window.open('/register', '_blank'),
+            icon: <User size={16} />
+          },
+          {
+            label: "Login Issues",
+            action: () => openWhatsApp("I'm having trouble logging into my account"),
+            icon: <MessageSquare size={16} />
+          }
+        ]
+      };
+    }
+    
+    if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('expensive') || lowerMessage.includes('cheap')) {
+      return {
+        text: "We have products at various price points from different vendors. You can filter by price range, compare options, and find great deals. Would you like help finding something specific?",
+        actions: [
+          {
+            label: "Browse Products",
+            action: () => window.open('/products', '_blank'),
+            icon: <ShoppingBag size={16} />
+          }
+        ]
+      };
+    }
+    
+    if (lowerMessage.includes('location') || lowerMessage.includes('address') || lowerMessage.includes('where') || lowerMessage.includes('rwanda')) {
+      return {
+        text: `We operate throughout ${company.location}. We deliver to all provinces including Kigali, Huye, Musanze, Rubavu, Rusizi, and other districts. Where would you like us to deliver?`
+      };
+    }
+    
+    // Default response with comprehensive help options
     return {
-      text: "I'm here to help! I can assist you with:\n\n• Product information and ordering\n• Delivery and tracking\n• Payment methods\n• Returns and refunds\n• Becoming a seller\n• Account issues\n• Promotions and discounts\n\nWhat would you like to know?",
+      text: "I'm here to help! I can assist you with:\n\n🛍️ Shopping & Products\n📦 Orders & Delivery\n💳 Payments & Refunds\n🏪 Becoming a Seller\n👤 Account Management\n🎯 Promotions & Discounts\n🔧 Technical Support\n📞 Contact Information\n\nWhat would you like to know more about?",
       actions: [
         {
           label: "Browse Products",
           action: () => window.open('/products', '_blank'),
           icon: <ShoppingBag size={16} />
+        },
+        {
+          label: "Start Selling",
+          action: () => window.open('/seller/register', '_blank'),
+          icon: <Store size={16} />
         },
         {
           label: "Contact Support",

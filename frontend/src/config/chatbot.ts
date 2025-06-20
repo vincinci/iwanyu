@@ -81,6 +81,26 @@ export const chatbotConfig = {
       {
         q: "Is there a mobile app for Iwanyu?",
         a: "Yes! You can shop or manage your store easily through our Iwanyu mobile app."
+      },
+      {
+        q: "What products can I find on Iwanyu?",
+        a: "You can find electronics, fashion items, home goods, beauty products, sports equipment, books, and much more from trusted vendors."
+      },
+      {
+        q: "How do I create an account?",
+        a: "Click 'Sign Up' on our website or app, enter your details (name, email, phone), verify your account, and you're ready to shop!"
+      },
+      {
+        q: "Is Iwanyu free to use?",
+        a: "Yes! Creating an account and browsing products is completely free. You only pay when you make a purchase."
+      },
+      {
+        q: "What languages does Iwanyu support?",
+        a: "Currently, Iwanyu supports English and Kinyarwanda. We're working on adding French support soon."
+      },
+      {
+        q: "How can I contact customer support?",
+        a: "You can contact us via WhatsApp at +250794306915, email us at support@iwanyu.store, or use this chat for instant help."
       }
     ],
     orders: [
@@ -99,6 +119,30 @@ export const chatbotConfig = {
       {
         q: "How much is the delivery fee?",
         a: "Delivery fees vary based on your location and vendor. It will be shown at checkout."
+      },
+      {
+        q: "Can I cancel my order?",
+        a: "Yes, you can cancel orders within 30 minutes of placing them. After that, contact our support team for assistance."
+      },
+      {
+        q: "What if my order is delayed?",
+        a: "If your order is delayed beyond the expected delivery time, contact us immediately and we'll track it with the vendor."
+      },
+      {
+        q: "Can I change my delivery address?",
+        a: "You can change your delivery address within 1 hour of placing the order. Contact support for urgent changes."
+      },
+      {
+        q: "Do you deliver nationwide in Rwanda?",
+        a: "Yes, we deliver to all provinces in Rwanda. Delivery times may vary based on location."
+      },
+      {
+        q: "Can I schedule a delivery time?",
+        a: "Some vendors offer scheduled delivery. You'll see this option at checkout if available."
+      },
+      {
+        q: "What happens if I'm not home during delivery?",
+        a: "Our delivery team will call you. If unavailable, they'll attempt redelivery or arrange a pickup point."
       }
     ],
     vendor: [
@@ -117,6 +161,30 @@ export const chatbotConfig = {
       {
         q: "How do I get paid as a seller?",
         a: "Payments are made to your preferred bank or mobile money account weekly or upon request."
+      },
+      {
+        q: "What documents do I need to start selling?",
+        a: "You need a valid National ID, business registration (if applicable), and bank account or mobile money details."
+      },
+      {
+        q: "How do I add products to my store?",
+        a: "In your vendor dashboard, click 'Add Product', upload photos, add descriptions, set prices, and publish."
+      },
+      {
+        q: "Can I sell internationally?",
+        a: "Currently, we focus on the Rwandan market, but we're planning international expansion soon."
+      },
+      {
+        q: "How do I handle customer inquiries?",
+        a: "Use our built-in messaging system to communicate directly with customers about their orders and questions."
+      },
+      {
+        q: "What if a customer returns a product?",
+        a: "Handle returns according to our policy. We'll guide you through the process and update payment accordingly."
+      },
+      {
+        q: "Can I offer discounts and promotions?",
+        a: "Yes! You can create discount codes, flash sales, and promotional offers through your vendor dashboard."
       }
     ],
     payments: [
@@ -127,6 +195,30 @@ export const chatbotConfig = {
       {
         q: "Is it safe to pay online?",
         a: "Yes! Iwanyu uses secure payment gateways to protect all transactions."
+      },
+      {
+        q: "Can I pay with a credit card?",
+        a: "Credit card payments are coming soon! Currently, we accept mobile money and bank transfers."
+      },
+      {
+        q: "What if my payment fails?",
+        a: "If payment fails, try again or use a different payment method. Contact support if the issue persists."
+      },
+      {
+        q: "Do you store my payment information?",
+        a: "We use secure, encrypted systems and don't store sensitive payment details on our servers."
+      },
+      {
+        q: "Can I get a receipt for my purchase?",
+        a: "Yes! You'll receive a digital receipt via email and SMS after every successful purchase."
+      },
+      {
+        q: "What currencies do you accept?",
+        a: "All transactions are in Rwandan Francs (RWF). We're working on multi-currency support."
+      },
+      {
+        q: "Can I pay in installments?",
+        a: "Installment payments are coming soon! Currently, full payment is required at checkout."
       }
     ],
     returns: [
@@ -141,6 +233,26 @@ export const chatbotConfig = {
       {
         q: "Do I pay for return shipping?",
         a: "In most cases, yes. But if the item was damaged or wrong, we cover the cost."
+      },
+      {
+        q: "How long does it take to get my refund?",
+        a: "Refunds are processed within 3-5 business days after we receive and verify the returned item."
+      },
+      {
+        q: "What items cannot be returned?",
+        a: "Perishable goods, customized items, underwear, and items damaged by misuse cannot be returned."
+      },
+      {
+        q: "Can I exchange an item instead of returning it?",
+        a: "Yes! Contact the vendor directly through our platform to arrange exchanges for size or color."
+      },
+      {
+        q: "What if I received a damaged item?",
+        a: "Contact us immediately with photos. We'll arrange a free return and full refund or replacement."
+      },
+      {
+        q: "Do I need the original packaging to return?",
+        a: "Yes, items should be in original condition with packaging, tags, and accessories included."
       }
     ],
     technical: [
@@ -151,6 +263,30 @@ export const chatbotConfig = {
       {
         q: "The app is crashing or not working properly.",
         a: "Please update the app to the latest version or reinstall. Let us know if the issue continues."
+      },
+      {
+        q: "How do I reset my password?",
+        a: "Click 'Forgot Password' on the login page, enter your email, and follow the reset instructions sent to you."
+      },
+      {
+        q: "Why can't I see my orders?",
+        a: "Make sure you're logged into the correct account. If the problem persists, contact our technical support."
+      },
+      {
+        q: "The website is loading slowly, what can I do?",
+        a: "Check your internet connection, clear your browser cache, or try using a different browser."
+      },
+      {
+        q: "How do I update my profile information?",
+        a: "Go to 'My Account' > 'Profile Settings' to update your personal information, address, and preferences."
+      },
+      {
+        q: "Can I use Iwanyu on multiple devices?",
+        a: "Yes! Log in with the same account on any device - phone, tablet, or computer."
+      },
+      {
+        q: "How do I enable notifications?",
+        a: "In your account settings, go to 'Notifications' and choose which alerts you want to receive."
       }
     ],
     policies: [
@@ -161,6 +297,22 @@ export const chatbotConfig = {
       {
         q: "Are products on Iwanyu original?",
         a: "We verify all vendors and encourage genuine listings. Report any suspicious product to us."
+      },
+      {
+        q: "What is your privacy policy?",
+        a: "We protect your personal data and never share it without consent. Read our full privacy policy on our website."
+      },
+      {
+        q: "How do you handle disputes between buyers and sellers?",
+        a: "We mediate disputes fairly, reviewing evidence from both parties to reach a resolution."
+      },
+      {
+        q: "What happens if a vendor doesn't deliver?",
+        a: "We'll contact the vendor and ensure delivery or provide a full refund if they can't fulfill the order."
+      },
+      {
+        q: "Can I report a problematic vendor?",
+        a: "Yes! Use the 'Report' feature on vendor profiles or contact support with details about the issue."
       }
     ],
     promotions: [
@@ -171,14 +323,87 @@ export const chatbotConfig = {
       {
         q: "Do you have a referral program?",
         a: "Yes! Invite friends to Iwanyu and earn shopping vouchers when they make their first order."
+      },
+      {
+        q: "How do I use a discount code?",
+        a: "Enter your discount code at checkout in the 'Promo Code' field before completing payment."
+      },
+      {
+        q: "Do you have seasonal sales?",
+        a: "Yes! We have special sales during holidays, back-to-school season, and other major events."
+      },
+      {
+        q: "Can I combine multiple discount codes?",
+        a: "Usually, only one discount code can be used per order, but some special promotions may allow combinations."
+      },
+      {
+        q: "How do I earn loyalty points?",
+        a: "Our loyalty program is coming soon! You'll earn points for purchases, reviews, and referrals."
+      }
+    ],
+    shipping: [
+      {
+        q: "What are your delivery areas?",
+        a: "We deliver throughout Rwanda including Kigali, Huye, Musanze, Rubavu, Rusizi, and all other districts."
+      },
+      {
+        q: "Do you offer same-day delivery?",
+        a: "Same-day delivery is available in Kigali for orders placed before 2 PM, subject to vendor availability."
+      },
+      {
+        q: "How is delivery fee calculated?",
+        a: "Delivery fees depend on your location, package size, and weight. The exact fee is shown at checkout."
+      },
+      {
+        q: "Can I pick up my order instead of delivery?",
+        a: "Some vendors offer pickup options. You'll see this choice at checkout if available."
+      },
+      {
+        q: "What if my package is lost during delivery?",
+        a: "We'll investigate with our delivery partners and provide a replacement or full refund."
+      }
+    ],
+    account: [
+      {
+        q: "How do I delete my account?",
+        a: "Contact our support team to request account deletion. We'll process it within 48 hours."
+      },
+      {
+        q: "Can I have multiple accounts?",
+        a: "Each person should have only one account. Multiple accounts may be flagged and suspended."
+      },
+      {
+        q: "How do I change my email address?",
+        a: "Go to Account Settings > Personal Information to update your email address."
+      },
+      {
+        q: "What if I forgot my username?",
+        a: "You can log in using your email address or phone number instead of username."
       }
     ]
+  },
+  
+  // Enhanced greeting system
+  greetings: [
+    "Hi there! 👋 Welcome to Iwanyu! I'm your personal shopping assistant. How can I help you today?",
+    "Hello! 🌟 I'm here to help you with anything about Iwanyu - shopping, selling, orders, or general questions. What would you like to know?",
+    "Welcome to Iwanyu! 🛍️ I'm your AI assistant ready to help with shopping, tracking orders, or answering any questions. How can I assist you?",
+    "Hi! 😊 Great to see you at Iwanyu! Whether you're looking to shop, sell, or need support, I'm here to help. What can I do for you?",
+    "Hello and welcome! 🎉 I'm your Iwanyu assistant. I can help you find products, track orders, answer questions about selling, or connect you with support. What interests you?"
+  ],
+  
+  // Context-aware responses
+  contextResponses: {
+    firstTime: "Welcome to Iwanyu! 🎉 Since this is your first time here, let me tell you that we're Rwanda's premier online marketplace where you can shop from trusted vendors or start your own store. What would you like to explore first?",
+    returning: "Welcome back to Iwanyu! 👋 Great to see you again. How can I assist you today?",
+    afterPurchase: "Thank you for your recent purchase! 🛍️ I can help you track your order, answer questions about delivery, or assist with anything else you need.",
+    vendor: "Hello! 👨‍💼 I see you're interested in selling on Iwanyu. That's fantastic! I can guide you through the registration process, explain our commission structure, or answer any vendor-related questions."
   }
 };
 
 // Derived responses that use the config values
 export const chatbotResponses = {
-  greeting: "Hi there! 👋 I'm your Iwanyu assistant. How can I help you today?",
+  greeting: chatbotConfig.greetings[Math.floor(Math.random() * chatbotConfig.greetings.length)],
   orderHelp: "To place an order:\n1. Browse our products\n2. Add items to cart\n3. Proceed to checkout\n4. Enter your details\n5. Choose payment method\n6. Confirm order\n\nNeed help with a specific step?",
   trackOrder: "You can track your order by:\n1. Going to 'My Orders' in your account\n2. Click on the order you want to track\n3. View real-time status updates\n\nDon't have an account? Contact us with your order number.",
   paymentInfo: `We accept:\n• ${chatbotConfig.paymentMethods.join('\n• ')}\n\nAll payments are secure and encrypted.`,
