@@ -54,6 +54,9 @@ const ProductVariants: React.FC<ProductVariantsProps> = ({ variants, onChange, b
     { name: 'Capacity', values: ['32GB', '64GB', '128GB', '256GB', '512GB'] }
   ];
 
+  // Add shoe sizes for 'Size' variant
+  const shoeSizes = ['38', '39', '40', '41', '42', '43', '44', '45', '46'];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -206,13 +209,24 @@ const ProductVariants: React.FC<ProductVariantsProps> = ({ variants, onChange, b
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                 >
                   <option value="">Select {newVariant.name.toLowerCase()}</option>
-                  {commonVariantTypes
-                    .find(type => type.name === newVariant.name)
-                    ?.values.map((value) => (
-                      <option key={value} value={value}>
-                        {value}
-                      </option>
-                    ))}
+                  {/* If Size, show both clothing and shoe sizes */}
+                  {newVariant.name === 'Size'
+                    ? [
+                        ...shoeSizes.map((size) => (
+                          <option key={size} value={size}>{size}</option>
+                        )),
+                        ...((commonVariantTypes
+                          .find(type => type.name === 'Size')
+                          ?.values.filter(v => !shoeSizes.includes(v)) || []).map((value) => (
+                            <option key={value} value={value}>{value}</option>
+                          ))
+                        )
+                      ]
+                    : (commonVariantTypes
+                        .find(type => type.name === newVariant.name)
+                        ?.values.map((value) => (
+                          <option key={value} value={value}>{value}</option>
+                        )) || [])}
                   <option value="custom">Custom...</option>
                 </select>
               ) : (
