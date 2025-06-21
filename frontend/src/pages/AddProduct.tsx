@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { sellerApi, type ProductData } from '../services/sellerApi';
 import { categoriesApi } from '../services/api';
 import type { Category, ProductVariant } from '../types/api';
-import ProductVariants from '../components/ProductVariants';
+import ShopifyVariants from '../components/ShopifyVariants';
 
 const AddProduct: React.FC = () => {
   const navigate = useNavigate();
@@ -28,8 +28,11 @@ const AddProduct: React.FC = () => {
     images: [],
     brand: '',
     sku: '',
-    variants: [],
+    variants: [], // Will only be used for backend submission
   });
+
+  // New: Separate state for ShopifyVariants
+  const [shopifyVariants, setShopifyVariants] = useState<any[]>([]);
 
   React.useEffect(() => {
     if (!user) {
@@ -132,8 +135,34 @@ const AddProduct: React.FC = () => {
       return;
     }
 
+    // Transform ShopifyVariants output to ProductVariant[]
+    let submitData = { ...formData };
+    if (Array.isArray(shopifyVariants) && shopifyVariants.length > 0 && shopifyVariants[0].options) {
+      // Get attribute names from the first variant's options length and the ShopifyVariants table header
+      const attributes = document.querySelectorAll('th');
+      const attrNames: string[] = [];
+      attributes.forEach((th) => {
+        const text = th.textContent?.trim();
+        if (text && !['Price', 'Stock', 'SKU', 'Image'].includes(text)) {
+          attrNames.push(text);
+        }
+      });
+      // Flatten combinations into ProductVariant[]
+      const flatVariants: ProductVariant[] = (shopifyVariants as any[]).map((comb: any) => {
+        return {
+          name: attrNames.map((n, i) => `${n}: ${comb.options[i]}`).join(', '),
+          value: comb.options.join(' / '),
+          price: comb.price,
+          stock: comb.stock,
+          sku: comb.sku,
+          image: comb.image,
+        };
+      });
+      submitData = { ...formData, variants: flatVariants as any };
+    }
+
     try {
-      await createProductMutation.mutateAsync(formData);
+      await createProductMutation.mutateAsync(submitData);
     } catch (err) {
       console.error('Submit error:', err);
     }
@@ -337,9 +366,9 @@ const AddProduct: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Product Variants (optional)
               </label>
-              <ProductVariants
-                variants={formData.variants as ProductVariant[]}
-                onChange={(variants) => setFormData(prev => ({ ...prev, variants }))}
+              <ShopifyVariants
+                value={shopifyVariants}
+                onChange={setShopifyVariants}
                 basePrice={formData.price}
               />
             </div>
