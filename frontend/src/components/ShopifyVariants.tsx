@@ -101,12 +101,30 @@ const ShopifyVariants: React.FC<ShopifyVariantsProps> = ({ value, onChange, base
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 border-2 border-orange-200 bg-orange-50 rounded-lg p-4 relative">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Product Options</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+          Product Options
+          {attributes.length === 0 && (
+            <span className="ml-2 text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded-full animate-pulse">Add options to create variants</span>
+          )}
+        </h3>
+        {attributes.length === 0 && (
+          <div className="mb-4 text-center">
+            <button
+              type="button"
+              className="inline-flex items-center px-6 py-3 rounded-lg bg-orange-600 text-white font-semibold text-base shadow hover:bg-orange-700 transition-colors"
+              onClick={addAttribute}
+              style={{ position: 'relative', zIndex: 2 }}
+            >
+              <Plus className="h-5 w-5 mr-2" /> Add Option (Size, Color, etc.)
+            </button>
+            <div className="text-xs text-gray-500 mt-2">E.g. Size, Color, Material, etc.</div>
+          </div>
+        )}
         <div className="flex flex-wrap gap-4 mb-4">
           {attributes.map((attr, idx) => (
-            <div key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+            <div key={idx} className="bg-white border border-gray-200 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-semibold text-gray-800">{attr.name}</span>
                 <button type="button" className="text-red-500 hover:text-red-700" onClick={() => removeAttribute(idx)}><X className="h-4 w-4" /></button>
@@ -135,15 +153,17 @@ const ShopifyVariants: React.FC<ShopifyVariantsProps> = ({ value, onChange, base
               )}
             </div>
           ))}
-          <div className="flex items-center gap-2">
-            <input
-              className="border rounded px-2 py-1 text-sm"
-              value={newAttrName}
-              onChange={e => setNewAttrName(e.target.value)}
-              placeholder="Add option (e.g. Size)"
-            />
-            <button type="button" className="text-green-600" onClick={addAttribute}><Plus className="h-4 w-4" /></button>
-          </div>
+          {attributes.length > 0 && (
+            <div className="flex items-center gap-2">
+              <input
+                className="border rounded px-2 py-1 text-sm"
+                value={newAttrName}
+                onChange={e => setNewAttrName(e.target.value)}
+                placeholder="Add option (e.g. Size)"
+              />
+              <button type="button" className="text-green-600" onClick={addAttribute}><Plus className="h-4 w-4" /></button>
+            </div>
+          )}
         </div>
       </div>
       {combinations.length > 0 && (
@@ -205,6 +225,16 @@ const ShopifyVariants: React.FC<ShopifyVariantsProps> = ({ value, onChange, base
             </tbody>
           </table>
         </div>
+      )}
+      {/* Sticky Add Option button for mobile */}
+      {attributes.length === 0 && (
+        <button
+          type="button"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-8 py-3 rounded-full bg-orange-600 text-white font-bold text-lg shadow-lg md:hidden animate-bounce"
+          onClick={addAttribute}
+        >
+          <Plus className="h-6 w-6 mr-2 inline" /> Add Option
+        </button>
       )}
     </div>
   );
