@@ -9,7 +9,6 @@ interface ProductVariantsProps {
 }
 
 const ProductVariants: React.FC<ProductVariantsProps> = ({ variants, onChange, basePrice }) => {
-  const [showAddForm, setShowAddForm] = useState(false);
   const [newVariant, setNewVariant] = useState<ProductVariant>({
     name: '',
     value: '',
@@ -19,340 +18,224 @@ const ProductVariants: React.FC<ProductVariantsProps> = ({ variants, onChange, b
     image: ''
   });
 
-  const addVariant = () => {
-    if (newVariant.name.trim() && newVariant.value.trim()) {
-      onChange([...variants, { ...newVariant }]);
-      setNewVariant({
-        name: '',
-        value: '',
-        price: basePrice,
-        stock: 0,
-        sku: '',
-        image: ''
-      });
-      setShowAddForm(false);
-    }
-  };
-
-  const removeVariant = (index: number) => {
-    const updatedVariants = variants.filter((_, i) => i !== index);
-    onChange(updatedVariants);
-  };
-
-  const updateVariant = (index: number, field: keyof ProductVariant, value: string | number) => {
-    const updatedVariants = variants.map((variant, i) => 
-      i === index ? { ...variant, [field]: value } : variant
-    );
-    onChange(updatedVariants);
-  };
-
+  const shoeSizes = ['38', '39', '40', '41', '42', '43', '44', '45', '46'];
   const commonVariantTypes = [
-    { name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] },
+    { name: 'Size', values: [...shoeSizes, 'XS', 'S', 'M', 'L', 'XL', 'XXL'] },
     { name: 'Color', values: ['Red', 'Blue', 'Green', 'Black', 'White', 'Yellow'] },
     { name: 'Material', values: ['Cotton', 'Polyester', 'Leather', 'Silk', 'Wool'] },
     { name: 'Style', values: ['Classic', 'Modern', 'Vintage', 'Casual', 'Formal'] },
     { name: 'Capacity', values: ['32GB', '64GB', '128GB', '256GB', '512GB'] }
   ];
 
-  // Add shoe sizes for 'Size' variant
-  const shoeSizes = ['38', '39', '40', '41', '42', '43', '44', '45', '46'];
+  const handleVariantChange = (index: number, field: keyof ProductVariant, value: string | number) => {
+    const updated = variants.map((v, i) => i === index ? { ...v, [field]: value } : v);
+    onChange(updated);
+  };
+
+  const handleRemove = (index: number) => {
+    onChange(variants.filter((_, i) => i !== index));
+  };
+
+  const handleAdd = () => {
+    if (newVariant.name.trim() && newVariant.value.trim()) {
+      onChange([...variants, { ...newVariant }]);
+      setNewVariant({ name: '', value: '', price: basePrice, stock: 0, sku: '', image: '' });
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-medium text-gray-900">Product Variants</h3>
-          <p className="text-sm text-gray-500">
-            Add different variations of your product (size, color, etc.)
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowAddForm(true)}
-          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-        >
-          <Plus className="h-4 w-4 mr-1" />
-          Add Variant
-        </button>
-      </div>
-
-      {/* Existing Variants */}
-      {variants.length > 0 && (
-        <div className="space-y-4">
-          {variants.map((variant, index) => (
-            <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-2">
-                  <Tag className="h-4 w-4 text-gray-400" />
-                  <span className="font-medium text-gray-900">
-                    {variant.name}: {variant.value}
-                  </span>
-                </div>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200 rounded-lg border border-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
+            <th className="px-3 py-2"></th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-100">
+          {variants.map((variant, idx) => (
+            <tr key={idx} className="hover:bg-gray-50">
+              {/* Type */}
+              <td className="px-3 py-2">
+                <select
+                  className="w-full border-gray-200 rounded-md text-sm"
+                  value={variant.name}
+                  onChange={e => handleVariantChange(idx, 'name', e.target.value)}
+                >
+                  <option value="">Type</option>
+                  {commonVariantTypes.map(type => (
+                    <option key={type.name} value={type.name}>{type.name}</option>
+                  ))}
+                  <option value="custom">Custom...</option>
+                </select>
+              </td>
+              {/* Value */}
+              <td className="px-3 py-2">
+                {variant.name && variant.name !== 'custom' ? (
+                  <select
+                    className="w-full border-gray-200 rounded-md text-sm"
+                    value={variant.value}
+                    onChange={e => handleVariantChange(idx, 'value', e.target.value)}
+                  >
+                    <option value="">Value</option>
+                    {(commonVariantTypes.find(type => type.name === variant.name)?.values || []).map(val => (
+                      <option key={val} value={val}>{val}</option>
+                    ))}
+                    <option value="custom">Custom...</option>
+                  </select>
+                ) : (
+                  <input
+                    className="w-full border-gray-200 rounded-md text-sm"
+                    value={variant.value}
+                    onChange={e => handleVariantChange(idx, 'value', e.target.value)}
+                    placeholder="Value"
+                  />
+                )}
+              </td>
+              {/* Price */}
+              <td className="px-3 py-2">
+                <input
+                  type="number"
+                  className="w-full border-gray-200 rounded-md text-sm"
+                  value={variant.price || ''}
+                  onChange={e => handleVariantChange(idx, 'price', parseFloat(e.target.value) || 0)}
+                  placeholder={`${basePrice}`}
+                  min="0"
+                />
+              </td>
+              {/* Stock */}
+              <td className="px-3 py-2">
+                <input
+                  type="number"
+                  className="w-full border-gray-200 rounded-md text-sm"
+                  value={variant.stock || ''}
+                  onChange={e => handleVariantChange(idx, 'stock', parseInt(e.target.value) || 0)}
+                  min="0"
+                  placeholder="0"
+                />
+              </td>
+              {/* SKU */}
+              <td className="px-3 py-2">
+                <input
+                  className="w-full border-gray-200 rounded-md text-sm"
+                  value={variant.sku || ''}
+                  onChange={e => handleVariantChange(idx, 'sku', e.target.value)}
+                  placeholder="SKU"
+                />
+              </td>
+              {/* Image */}
+              <td className="px-3 py-2">
+                <input
+                  className="w-full border-gray-200 rounded-md text-sm"
+                  value={variant.image || ''}
+                  onChange={e => handleVariantChange(idx, 'image', e.target.value)}
+                  placeholder="Image URL"
+                />
+              </td>
+              {/* Remove */}
+              <td className="px-3 py-2 text-center">
                 <button
                   type="button"
-                  onClick={() => removeVariant(index)}
-                  className="text-red-500 hover:text-red-700"
+                  onClick={() => handleRemove(idx)}
+                  className="text-red-500 hover:text-red-700 p-1"
+                  title="Remove variant"
                 >
                   <X className="h-4 w-4" />
                 </button>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Price (RWF)
-                  </label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      type="number"
-                      value={variant.price || ''}
-                      onChange={(e) => updateVariant(index, 'price', parseFloat(e.target.value) || 0)}
-                      className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                      placeholder={`${basePrice}`}
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Stock
-                  </label>
-                  <div className="relative">
-                    <Package className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      type="number"
-                      value={variant.stock}
-                      onChange={(e) => updateVariant(index, 'stock', parseInt(e.target.value) || 0)}
-                      className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                      min="0"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    SKU (Optional)
-                  </label>
-                  <div className="relative">
-                    <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={variant.sku || ''}
-                      onChange={(e) => updateVariant(index, 'sku', e.target.value)}
-                      className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                      placeholder="SKU-001"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Image URL (Optional)
-                  </label>
-                  <input
-                    type="url"
-                    value={variant.image || ''}
-                    onChange={(e) => updateVariant(index, 'image', e.target.value)}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
-            </div>
+              </td>
+            </tr>
           ))}
-        </div>
-      )}
-
-      {/* Add Variant Form */}
-      {showAddForm && (
-        <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-6">
-          <h4 className="text-md font-medium text-gray-900 mb-4">Add New Variant</h4>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Variant Type *
-              </label>
+          {/* Quick-add row */}
+          <tr className="bg-gray-50">
+            <td className="px-3 py-2">
               <select
+                className="w-full border-gray-200 rounded-md text-sm"
                 value={newVariant.name}
-                onChange={(e) => setNewVariant({ ...newVariant, name: e.target.value, value: '' })}
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+                onChange={e => setNewVariant({ ...newVariant, name: e.target.value, value: '' })}
               >
-                <option value="">Select variant type</option>
-                {commonVariantTypes.map((type) => (
-                  <option key={type.name} value={type.name}>
-                    {type.name}
-                  </option>
+                <option value="">Type</option>
+                {commonVariantTypes.map(type => (
+                  <option key={type.name} value={type.name}>{type.name}</option>
                 ))}
                 <option value="custom">Custom...</option>
               </select>
-              {newVariant.name === 'custom' && (
-                <input
-                  type="text"
-                  value={newVariant.name}
-                  onChange={(e) => setNewVariant({ ...newVariant, name: e.target.value })}
-                  className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                  placeholder="Enter custom variant type"
-                />
-              )}
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Variant Value *
-              </label>
+            </td>
+            <td className="px-3 py-2">
               {newVariant.name && newVariant.name !== 'custom' ? (
                 <select
+                  className="w-full border-gray-200 rounded-md text-sm"
                   value={newVariant.value}
-                  onChange={(e) => setNewVariant({ ...newVariant, value: e.target.value })}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+                  onChange={e => setNewVariant({ ...newVariant, value: e.target.value })}
                 >
-                  <option value="">Select {newVariant.name.toLowerCase()}</option>
-                  {/* If Size, show both clothing and shoe sizes */}
-                  {newVariant.name === 'Size'
-                    ? [
-                        ...shoeSizes.map((size) => (
-                          <option key={size} value={size}>{size}</option>
-                        )),
-                        ...((commonVariantTypes
-                          .find(type => type.name === 'Size')
-                          ?.values.filter(v => !shoeSizes.includes(v)) || []).map((value) => (
-                            <option key={value} value={value}>{value}</option>
-                          ))
-                        )
-                      ]
-                    : (commonVariantTypes
-                        .find(type => type.name === newVariant.name)
-                        ?.values.map((value) => (
-                          <option key={value} value={value}>{value}</option>
-                        )) || [])}
+                  <option value="">Value</option>
+                  {(commonVariantTypes.find(type => type.name === newVariant.name)?.values || []).map(val => (
+                    <option key={val} value={val}>{val}</option>
+                  ))}
                   <option value="custom">Custom...</option>
                 </select>
               ) : (
                 <input
-                  type="text"
+                  className="w-full border-gray-200 rounded-md text-sm"
                   value={newVariant.value}
-                  onChange={(e) => setNewVariant({ ...newVariant, value: e.target.value })}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                  placeholder="Enter variant value"
+                  onChange={e => setNewVariant({ ...newVariant, value: e.target.value })}
+                  placeholder="Value"
                 />
               )}
-              {newVariant.value === 'custom' && (
-                <input
-                  type="text"
-                  value={newVariant.value}
-                  onChange={(e) => setNewVariant({ ...newVariant, value: e.target.value })}
-                  className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                  placeholder="Enter custom value"
-                />
-              )}
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Price (RWF)
-              </label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="number"
-                  value={newVariant.price || ''}
-                  onChange={(e) => setNewVariant({ ...newVariant, price: parseFloat(e.target.value) || 0 })}
-                  className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                  placeholder={`${basePrice} (base price)`}
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Stock *
-              </label>
-              <div className="relative">
-                <Package className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="number"
-                  value={newVariant.stock}
-                  onChange={(e) => setNewVariant({ ...newVariant, stock: parseInt(e.target.value) || 0 })}
-                  className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                  min="0"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                SKU (Optional)
-              </label>
-              <div className="relative">
-                <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={newVariant.sku || ''}
-                  onChange={(e) => setNewVariant({ ...newVariant, sku: e.target.value })}
-                  className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-                  placeholder="SKU-001"
-                />
-              </div>
-            </div>
-          </div>
-          
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Image URL (Optional)
-            </label>
-            <input
-              type="url"
-              value={newVariant.image || ''}
-              onChange={(e) => setNewVariant({ ...newVariant, image: e.target.value })}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-              placeholder="https://example.com/variant-image.jpg"
-            />
-          </div>
-          
-          <div className="flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={addVariant}
-              disabled={!newVariant.name.trim() || !newVariant.value.trim()}
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
-            >
-              Add Variant
-            </button>
-          </div>
-        </div>
-      )}
-
-      {variants.length === 0 && !showAddForm && (
-        <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-          <Tag className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No variants</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Add variants to offer different options for your product.
-          </p>
-          <div className="mt-6">
-            <button
-              type="button"
-              onClick={() => setShowAddForm(true)}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add First Variant
-            </button>
-          </div>
-        </div>
-      )}
+            </td>
+            <td className="px-3 py-2">
+              <input
+                type="number"
+                className="w-full border-gray-200 rounded-md text-sm"
+                value={newVariant.price || ''}
+                onChange={e => setNewVariant({ ...newVariant, price: parseFloat(e.target.value) || 0 })}
+                placeholder={`${basePrice}`}
+                min="0"
+              />
+            </td>
+            <td className="px-3 py-2">
+              <input
+                type="number"
+                className="w-full border-gray-200 rounded-md text-sm"
+                value={newVariant.stock || ''}
+                onChange={e => setNewVariant({ ...newVariant, stock: parseInt(e.target.value) || 0 })}
+                min="0"
+                placeholder="0"
+              />
+            </td>
+            <td className="px-3 py-2">
+              <input
+                className="w-full border-gray-200 rounded-md text-sm"
+                value={newVariant.sku || ''}
+                onChange={e => setNewVariant({ ...newVariant, sku: e.target.value })}
+                placeholder="SKU"
+              />
+            </td>
+            <td className="px-3 py-2">
+              <input
+                className="w-full border-gray-200 rounded-md text-sm"
+                value={newVariant.image || ''}
+                onChange={e => setNewVariant({ ...newVariant, image: e.target.value })}
+                placeholder="Image URL"
+              />
+            </td>
+            <td className="px-3 py-2 text-center">
+              <button
+                type="button"
+                onClick={handleAdd}
+                className="text-green-600 hover:text-green-800 p-1"
+                title="Add variant"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };
