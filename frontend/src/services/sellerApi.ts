@@ -110,6 +110,15 @@ export interface SellerProduct {
   variants?: ProductVariant[];
 }
 
+export type ProductVariantInput = {
+  name: string;
+  value: string;
+  price: number;
+  stock: number;
+  sku?: string;
+  image?: string;
+};
+
 class SellerApi {
   private getAuthHeaders = () => {
     const token = localStorage.getItem('token');
@@ -345,6 +354,12 @@ class SellerApi {
       throw new Error(errorData.error || 'Failed to import products');
     }
 
+    return response.json();
+  }
+
+  async getProductById(id: string) {
+    const response = await fetch(`${API_BASE_URL}/seller/products/${id}`);
+    if (!response.ok) throw new Error('Failed to fetch product');
     return response.json();
   }
 }

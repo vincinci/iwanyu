@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Package, ArrowLeft, AlertCircle, CheckCircle, Upload } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { sellerApi, type ProductData } from '../services/sellerApi';
+import { sellerApi, type ProductData, type ProductVariantInput } from '../services/sellerApi';
 import { categoriesApi } from '../services/api';
 import type { Category, ProductVariant } from '../types/api';
 import ShopifyVariants from '../components/ShopifyVariants';
@@ -135,7 +135,7 @@ const AddProduct: React.FC = () => {
       return;
     }
 
-    // Transform ShopifyVariants output to ProductVariant[]
+    // Transform ShopifyVariants output to ProductVariantInput[]
     let submitData = { ...formData };
     if (Array.isArray(shopifyVariants) && shopifyVariants.length > 0 && shopifyVariants[0].options) {
       // Get attribute names from the first variant's options length and the ShopifyVariants table header
@@ -147,18 +147,16 @@ const AddProduct: React.FC = () => {
           attrNames.push(text);
         }
       });
-      // Flatten combinations into ProductVariant[]
-      const flatVariants: ProductVariant[] = (shopifyVariants as any[]).map((comb: any) => {
-        return {
-          name: attrNames.map((n, i) => `${n}: ${comb.options[i]}`).join(', '),
-          value: comb.options.join(' / '),
-          price: comb.price,
-          stock: comb.stock,
-          sku: comb.sku,
-          image: comb.image,
-        };
-      });
-      submitData = { ...formData, variants: flatVariants as any };
+      // Flatten combinations into ProductVariantInput[]
+      const flatVariants: ProductVariantInput[] = (shopifyVariants as any[]).map((comb: any) => ({
+        name: attrNames.map((n, i) => `${n}: ${comb.options[i]}`).join(', '),
+        value: comb.options.join(' / '),
+        price: comb.price,
+        stock: comb.stock,
+        sku: comb.sku,
+        image: comb.image,
+      }));
+      submitData = { ...formData, variants: flatVariants };
     }
 
     try {
