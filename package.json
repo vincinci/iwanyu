@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.835.0",
+    "@prisma/client": "^6.9.0",
+    "@sendinblue/client": "^3.3.1",
+    "axios": "^1.10.0",
+    "form-data": "^4.0.3",
+    "node-fetch": "^3.3.2"
+  }
+}

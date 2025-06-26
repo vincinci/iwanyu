@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/iwanyu-logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iwanyu - Your Premier Online Store</title>
+    <meta name="description" content="Iwanyu - Discover amazing products at great prices. Shop electronics, fashion, home goods and more with fast delivery and excellent service." />
+    
+    <!-- Extension Error Suppressor -->
+    <script>
+      (function() {
+        'use strict';
+        const originalError = console.error;
+        console.error = function(...args) {
+          const message = args.join(' ');
+          if (
+            message.includes('runtime.lastError') ||
+            message.includes('Could not establish connection') ||
+            message.includes('Receiving end does not exist') ||
+            message.includes('message port closed') ||
+            message.includes('FrameDoesNotExistError') ||
+            message.includes('back/forward cache') ||
+            message.includes('DelayedMessageSender')
+          ) {
+            return;
+          }
+          originalError.apply(console, args);
+        };
+        
+        window.addEventListener('unhandledrejection', function(event) {
+          const message = event.reason?.message || event.reason?.toString() || '';
+          if (
+            message.includes('runtime.lastError') ||
+            message.includes('extension') ||
+            message.includes('FrameDoesNotExistError')
+          ) {
+            event.preventDefault();
+            return;
+          }
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
