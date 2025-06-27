@@ -57,7 +57,7 @@ import ProductSkeleton from '../components/ProductSkeleton';
 import { advertisementApi } from '../services/advertisementApi';
 import type { Category, Product } from '../types/api';
 import type { PromotedProduct } from '../services/advertisementApi';
-import { getProductRating } from '../utils/productHelpers';
+import { getProductRating, calculateDiscount } from '../utils/productHelpers';
 import banner1 from '../assets/banners/banner-1.png';
 import banner2 from '../assets/banners/banner-2.png';
 import banner3 from '../assets/banners/banner-3.png';
@@ -997,4 +997,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home; 
+export default Home;

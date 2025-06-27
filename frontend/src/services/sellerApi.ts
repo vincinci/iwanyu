@@ -110,6 +110,29 @@ export interface SellerProduct {
   variants?: ProductVariant[];
 }
 
+export interface FlashSale {
+  id: string;
+  title: string;
+  description?: string;
+  startTime: Date;
+  endTime: Date;
+  isActive: boolean;
+  products: Array<{
+    id: string;
+    flashSaleId: string;
+    productId: string;
+    salePrice: number;
+    originalPrice: number;
+    stock: number;
+    sold: number;
+    isActive: boolean;
+    product: {
+      name: string;
+      images: string[];
+    };
+  }>;
+}
+
 export type ProductVariantInput = {
   name: string;
   value: string;
@@ -251,29 +274,13 @@ class SellerApi {
       method: 'POST',
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
-        // Do NOT set Content-Type, browser will set it for FormData
       },
       body: data,
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Request failed' }));
-      throw new Error(errorData.error || 'Unknown error' || 'Failed to create product');
-    }
-
-    return response.json();
-  }
-
-  updateProduct = async (id: string, data: Partial<ProductData>): Promise<{ message: string; product: SellerProduct }> => {
-    const response = await fetch(`${API_BASE_URL}/seller/products/${id}`, {
-      method: 'PUT',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Failed to update product' }));
-      throw new Error(errorData.error || 'Failed to update product');
+      const errorData = await response.json().catch(() => ({ error: 'Failed to create product' }));
+      throw new Error(errorData.error || 'Failed to create product');
     }
 
     return response.json();
@@ -345,6 +352,120 @@ class SellerApi {
     }
     return response.json();
   }
+
+  // Flash Sales
+  getFlashSales = async (): Promise<{ success: boolean; data: FlashSale[] }> => {
+    const response = await fetch(`${API_BASE_URL}/seller/flash-sales`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch flash sales' }));
+      throw new Error(errorData.error || 'Failed to fetch flash sales');
+    }
+
+    return response.json();
+  }
+
+  createFlashSale = async (data: { title: string; description?: string; startTime: string; endTime: string }) => {
+    const response = await fetch(`${API_BASE_URL}/seller/flash-sales`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to create flash sale' }));
+      throw new Error(errorData.error || 'Failed to create flash sale');
+    }
+
+    return response.json();
+  }
+
+  updateFlashSale = async (id: string, data: any) => {
+    const response = await fetch(`${API_BASE_URL}/seller/flash-sales/${id}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update flash sale' }));
+      throw new Error(errorData.error || 'Failed to update flash sale');
+    }
+
+    return response.json();
+  }
+
+  updateFlashSaleStatus = async (id: string, isActive: boolean) => {
+    const response = await fetch(`${API_BASE_URL}/seller/flash-sales/${id}/status`, {
+      method: 'PATCH',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ isActive }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update flash sale status' }));
+      throw new Error(errorData.error || 'Failed to update flash sale status');
+    }
+
+    return response.json();
+  }
+
+  getDiscountedProducts = async (): Promise<{ success: boolean; data: SellerProduct[] }> => {
+    const response = await fetch(`${API_BASE_URL}/seller/discounted-products`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch discounted products' }));
+      throw new Error(errorData.error || 'Failed to fetch discounted products');
+    }
+
+    return response.json();
+  }
+
+  addProductsToFlashSale = async (flashSaleId: string, productIds: string[]) => {
+    const response = await fetch(`${API_BASE_URL}/seller/flash-sales/${flashSaleId}/add-products`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ productIds }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to add products to flash sale' }));
+      throw new Error(errorData.error || 'Failed to add products to flash sale');
+    }
+
+    return response.json();
+  }
+
+  removeProductFromFlashSale = async (flashSaleId: string, productId: string) => {
+    const response = await fetch(`${API_BASE_URL}/seller/flash-sales/${flashSaleId}/remove-product/${productId}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to remove product from flash sale' }));
+      throw new Error(errorData.error || 'Failed to remove product from flash sale');
+    }
+
+    return response.json();
+  }
+
+  getFlashSalePreview = async (id: string) => {
+    const response = await fetch(`${API_BASE_URL}/seller/flash-sales/${id}/preview`, {
+      headers: this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to fetch flash sale preview' }));
+      throw new Error(errorData.error || 'Failed to fetch flash sale preview');
+    }
+
+    return response.json();
+  }
 }
 
-export const sellerApi = new SellerApi(); 
+export const sellerApi = new SellerApi();

@@ -18,4 +18,12 @@ export const getProductRating = (product: any): number => {
  */
 export const getReviewCount = (product: any): number => {
   return (product as any)?.totalReviews || 0;
-}; 
+};
+
+/**
+ * Calculate discount percentage for a product
+ */
+export const calculateDiscount = (originalPrice: number, salePrice: number): number => {
+  if (!salePrice || salePrice >= originalPrice) return 0;
+  return Math.round(((originalPrice - salePrice) / originalPrice) * 100);
+};
