@@ -29,7 +29,10 @@ const Login: React.FC = () => {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      setError('Invalid email or password');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to sign in. Please check your credentials.';
+      setError(errorMessage);
+      // Clear password on error for security
+      setPassword('');
     } finally {
       setLoading(false);
     }
@@ -125,4 +128,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login; 
+export default Login;

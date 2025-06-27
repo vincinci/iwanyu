@@ -17,20 +17,42 @@ export interface AuthRequest extends Request {
 }
 
 export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
-  }
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-    
-    // Check token expiration with some buffer time
-    const tokenExp = decoded.exp ? decoded.exp * 1000 : 0; // Convert to milliseconds
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({ 
+        error: 'Access token required',
+        code: 'TOKEN_MISSING'
+      });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        return res.status(401).json({ 
+          error: 'Token has expired',
+          code: 'TOKEN_EXPIRED'
+        });
+      }
+      if (error instanceof jwt.JsonWebTokenError) {
+        return res.status(401).json({ 
+          error: 'Invalid token format',
+          code: 'TOKEN_INVALID'
+        });
+      }
+      throw error;
+    }
+
+    const tokenExp = decoded.exp ? decoded.exp * 1000 : 0;
     if (tokenExp && Date.now() > tokenExp - 300000) { // 5 minutes buffer
-      return res.status(401).json({ error: 'Token expired' });
+      return res.status(401).json({ 
+        error: 'Token is about to expire',
+        code: 'TOKEN_EXPIRING_SOON'
+      });
     }
 
     const user = await prisma.user.findUnique({
@@ -50,8 +72,18 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       }
     });
 
-    if (!user || !user.isActive) {
-      return res.status(401).json({ error: 'User not found or inactive' });
+    if (!user) {
+      return res.status(401).json({ 
+        error: 'User not found',
+        code: 'USER_NOT_FOUND'
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(401).json({ 
+        error: 'Account is inactive',
+        code: 'ACCOUNT_INACTIVE'
+      });
     }
 
     req.user = {
@@ -67,12 +99,11 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     req.userId = user.id;
     next();
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({ error: 'Token expired' });
-    } else if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-    return res.status(403).json({ error: 'Token validation failed' });
+    console.error('Auth middleware error:', error);
+    return res.status(500).json({ 
+      error: 'Authentication failed',
+      code: 'AUTH_ERROR'
+    });
   }
 };
 

@@ -117,44 +117,42 @@ router.post('/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
     // Find user
     const user = await prisma.user.findUnique({
       where: { email }
     });
 
-    if (!user || !user.password) {
-      res.status(401).json({ error: 'Invalid credentials' });
-      return;
+    if (!user) {
+      return res.status(401).json({ error: 'No account found with this email address' });
+    }
+
+    if (!user.password) {
+      return res.status(401).json({ error: 'Account requires password reset' });
+    }
+
+    if (!user.isActive) {
+      return res.status(401).json({ error: 'Account is not active' });
     }
 
     // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      res.status(401).json({ error: 'Invalid credentials' });
-      return;
+      return res.status(401).json({ error: 'Incorrect password' });
     }
 
-    // Generate JWT
+    // Generate JWT with a shorter expiration for better security
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET!,
-      { expiresIn: '7d' }
+      { expiresIn: '24h' }
     );
 
     // Track cart abandonment on login
     await cartAbandonmentService.onUserLogin(user.id);
-
-    // Check for inactive users and trigger win-back if needed
-    const lastLogin = user.lastLoginAt || user.createdAt;
-    const daysSinceLastLogin = Math.floor((Date.now() - lastLogin.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysSinceLastLogin >= 30) {
-      await emailAutomationService.triggerWorkflow('win-back', `user-inactive-${daysSinceLastLogin >= 90 ? '90' : daysSinceLastLogin >= 60 ? '60' : '30'}days`, {
-        userId: user.id,
-        email: user.email,
-        name: user.name || user.firstName
-      }, { daysInactive: daysSinceLastLogin });
-    }
 
     // Update last login
     await prisma.user.update({
@@ -176,7 +174,7 @@ router.post('/login', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Login failed' });
+    res.status(500).json({ error: 'An unexpected error occurred. Please try again.' });
   }
 });
 

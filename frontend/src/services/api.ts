@@ -70,7 +70,7 @@ api.interceptors.request.use(
     return config;
   },
   (error: any) => {
-    console.error('Request interceptor error:', 'Error occurred');
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -81,24 +81,24 @@ api.interceptors.response.use(
   async (error: any) => {
     const originalRequest = error.config;
     
-    console.log('API Error intercepted:', {
+    // Log error details for debugging
+    console.log('API Error:', {
       status: error.response?.status,
-      url: error.config?.url,
-      method: error.config?.method,
-      currentPath: typeof window !== 'undefined' ? window.location.pathname : '/',
+      url: originalRequest?.url,
+      method: originalRequest?.method,
+      errorCode: error.response?.data?.code,
+      errorMessage: error.response?.data?.error,
       isNetworkError: !error.response && error.message.includes('Network Error')
     });
 
-    // Handle network errors gracefully
-    if (!error.response && error.message.includes('Network Error')) {
-      console.warn('Network error - backend might not be running');
-      return Promise.reject(new Error('Unable to connect to server. Please check your connection and try again.'));
-    }
-
-    // Handle request timeout
-    if (!error.response && error.code === 'ECONNABORTED') {
-      console.warn('Request timeout - backend might be slow');
-      return Promise.reject(new Error('The request timed out. Please try again.'));
+    // Network errors
+    if (!error.response) {
+      if (error.message.includes('Network Error')) {
+        return Promise.reject(new Error('Unable to connect to server. Please check your connection and try again.'));
+      }
+      if (error.code === 'ECONNABORTED') {
+        return Promise.reject(new Error('The request timed out. Please try again.'));
+      }
     }
 
     // Handle 502 Bad Gateway with retry
@@ -108,20 +108,46 @@ api.interceptors.response.use(
       return api(originalRequest);
     }
 
-    // Auto-logout on authentication errors, but not during login/register
-    if (error.response?.status === 401 && 
-        !originalRequest.url.includes('/login') && 
-        !originalRequest.url.includes('/register')) {
-      console.log('Authentication error - clearing stored data');
-      try {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        // Only redirect if we're not already on the login page
-        if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-          window.location.href = '/login';
+    // Handle authentication errors
+    if (error.response?.status === 401) {
+      const errorCode = error.response.data?.code;
+      
+      // Don't auto-logout for login/register attempts
+      if (!originalRequest.url.includes('/login') && !originalRequest.url.includes('/register')) {
+        const shouldClearAuth = [
+          'TOKEN_EXPIRED',
+          'TOKEN_INVALID',
+          'USER_NOT_FOUND',
+          'ACCOUNT_INACTIVE'
+        ].includes(errorCode);
+
+        if (shouldClearAuth) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          
+          // Only redirect if not already on login page
+          if (window.location.pathname !== '/login') {
+            window.location.href = '/login';
+          }
         }
-      } catch (storageError) {
-        console.warn('Failed to clear localStorage:', storageError);
+      }
+      
+      // Provide user-friendly error messages
+      switch (errorCode) {
+        case 'TOKEN_EXPIRED':
+          error.message = 'Your session has expired. Please sign in again.';
+          break;
+        case 'TOKEN_INVALID':
+          error.message = 'Invalid authentication. Please sign in again.';
+          break;
+        case 'USER_NOT_FOUND':
+          error.message = 'Account not found. Please sign in again.';
+          break;
+        case 'ACCOUNT_INACTIVE':
+          error.message = 'Your account is inactive. Please contact support.';
+          break;
+        default:
+          error.message = error.response.data?.error || 'Authentication failed';
       }
     }
 
