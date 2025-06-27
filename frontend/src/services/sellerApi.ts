@@ -268,7 +268,7 @@ class SellerApi {
     }
   }
 
-  createProduct = async
+  createProduct = async (data: FormData): Promise<{ message: string; product: SellerProduct }> => {
     const token = localStorage.getItem('token');
     const response = await fetch(`${API_BASE_URL}/seller/products`, {
       method: 'POST',
