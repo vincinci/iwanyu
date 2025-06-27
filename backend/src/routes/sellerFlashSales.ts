@@ -141,4 +141,197 @@ router.delete('/flash-sales/:flashSaleId/remove-product/:productId', authenticat
   }
 });
 
-export default router; 
+// Update flash sale status
+router.patch('/flash-sales/:id/status', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const seller = await getSeller(userId!);
+    if (!seller) return res.status(403).json({ error: 'Seller access required' });
+    
+    const { id } = req.params;
+    const { isActive } = req.body;
+
+    const flashSale = await prisma.flashSale.findFirst({
+      where: {
+        id,
+        products: {
+          some: {
+            product: {
+              sellerId: seller.id
+            }
+          }
+        }
+      }
+    });
+
+    if (!flashSale) {
+      return res.status(404).json({ error: 'Flash sale not found' });
+    }
+
+    await prisma.flashSale.update({
+      where: { id },
+      data: { isActive }
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update flash sale status' });
+  }
+});
+
+// Add multiple products to flash sale
+router.post('/flash-sales/:flashSaleId/add-products', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const seller = await getSeller(userId!);
+    if (!seller) return res.status(403).json({ error: 'Seller access required' });
+    
+    const { flashSaleId } = req.params;
+    const { productIds } = req.body;
+
+    if (!Array.isArray(productIds)) {
+      return res.status(400).json({ error: 'productIds must be an array' });
+    }
+
+    const products = await prisma.product.findMany({
+      where: {
+        id: { in: productIds },
+        sellerId: seller.id,
+        salePrice: { not: null },
+        isActive: true
+      }
+    });
+
+    const results = await Promise.all(
+      products.map(product => 
+        prisma.flashSaleProduct.create({
+          data: {
+            flashSaleId,
+            productId: product.id,
+            salePrice: product.salePrice!,
+            originalPrice: product.price,
+            stock: product.stock
+          }
+        }).catch(err => ({ error: err.message, productId: product.id }))
+      )
+    );
+
+    res.json({ 
+      success: true, 
+      data: {
+        added: results.filter(r => !('error' in r)).length,
+        failed: results.filter(r => 'error' in r).length,
+        errors: results.filter(r => 'error' in r)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add products to flash sale' });
+  }
+});
+
+// Get flash sale preview data
+router.get('/flash-sales/:id/preview', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const seller = await getSeller(userId!);
+    if (!seller) return res.status(403).json({ error: 'Seller access required' });
+    
+    const { id } = req.params;
+
+    const flashSale = await prisma.flashSale.findFirst({
+      where: {
+        id,
+        products: {
+          some: {
+            product: {
+              sellerId: seller.id
+            }
+          }
+        }
+      },
+      include: {
+        products: {
+          include: {
+            product: {
+              select: {
+                name: true,
+                images: true,
+                price: true,
+                salePrice: true,
+                stock: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!flashSale) {
+      return res.status(404).json({ error: 'Flash sale not found' });
+    }
+
+    // Calculate preview statistics
+    const stats = {
+      totalProducts: flashSale.products.length,
+      totalStock: flashSale.products.reduce((sum, p) => sum + p.stock, 0),
+      averageDiscount: flashSale.products.reduce((sum, p) => 
+        sum + ((p.originalPrice - p.salePrice) / p.originalPrice * 100), 0) / flashSale.products.length,
+      potentialRevenue: flashSale.products.reduce((sum, p) => sum + (p.salePrice * p.stock), 0)
+    };
+
+    res.json({ 
+      success: true, 
+      data: {
+        ...flashSale,
+        stats
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get flash sale preview' });
+  }
+});
+
+// Update flash sale details
+router.put('/flash-sales/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const seller = await getSeller(userId!);
+    if (!seller) return res.status(403).json({ error: 'Seller access required' });
+    
+    const { id } = req.params;
+    const { title, description, startTime, endTime } = req.body;
+
+    const flashSale = await prisma.flashSale.findFirst({
+      where: {
+        id,
+        products: {
+          some: {
+            product: {
+              sellerId: seller.id
+            }
+          }
+        }
+      }
+    });
+
+    if (!flashSale) {
+      return res.status(404).json({ error: 'Flash sale not found' });
+    }
+
+    await prisma.flashSale.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        startTime: startTime ? new Date(startTime) : undefined,
+        endTime: endTime ? new Date(endTime) : undefined
+      }
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update flash sale' });
+  }
+});
+
+export default router;

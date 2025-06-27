@@ -268,7 +268,7 @@ class SellerApi {
     }
   }
 
-  createProduct = async (data: FormData): Promise<{ message: string; product: SellerProduct }> => {
+  createProduct = async
     const token = localStorage.getItem('token');
     const response = await fetch(`${API_BASE_URL}/seller/products`, {
       method: 'POST',
@@ -464,6 +464,23 @@ class SellerApi {
       throw new Error(errorData.error || 'Failed to fetch flash sale preview');
     }
 
+    return response.json();
+  }
+
+  updateProduct = async (id: string, data: Partial<ProductData>): Promise<{ message: string; product: SellerProduct }> => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/seller/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update product' }));
+      throw new Error(errorData.error || 'Failed to update product');
+    }
     return response.json();
   }
 }
