@@ -26,12 +26,20 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    
+    // Check token expiration with some buffer time
+    const tokenExp = decoded.exp ? decoded.exp * 1000 : 0; // Convert to milliseconds
+    if (tokenExp && Date.now() > tokenExp - 300000) { // 5 minutes buffer
+      return res.status(401).json({ error: 'Token expired' });
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: decoded.id || decoded.userId },
       select: { 
         id: true, 
         email: true, 
         role: true,
+        isActive: true,
         seller: {
           select: {
             id: true,
@@ -42,8 +50,8 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       }
     });
 
-    if (!user) {
-      return res.status(401).json({ error: 'User not found' });
+    if (!user || !user.isActive) {
+      return res.status(401).json({ error: 'User not found or inactive' });
     }
 
     req.user = {
@@ -59,7 +67,12 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     req.userId = user.id;
     next();
   } catch (error) {
-    return res.status(403).json({ error: 'Invalid token' });
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ error: 'Token expired' });
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+    return res.status(403).json({ error: 'Token validation failed' });
   }
 };
 
@@ -80,4 +93,4 @@ export const requireSeller = (req: AuthRequest, res: Response, next: NextFunctio
   }
   
   next();
-}; 
+};

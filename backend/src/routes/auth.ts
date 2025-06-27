@@ -310,12 +310,10 @@ router.get('/verify-reset-token/:token', async (req: Request, res: Response) => 
 // Validate Token
 router.get('/validate', authenticateToken, async (req: any, res: Response) => {
   try {
-    // If we reach here, the token is valid (middleware passed)
     const userId = req.user?.id;
     
     if (!userId) {
-      res.status(401).json({ error: 'Invalid token' });
-      return;
+      return res.status(401).json({ error: 'Invalid token' });
     }
 
     // Get fresh user data
@@ -330,17 +328,23 @@ router.get('/validate', authenticateToken, async (req: any, res: Response) => {
         phone: true,
         avatar: true,
         role: true,
-        isActive: true
+        isActive: true,
+        seller: {
+          select: {
+            id: true,
+            businessName: true,
+            status: true
+          }
+        }
       }
     });
 
     if (!user || !user.isActive) {
-      res.status(401).json({ error: 'User not found or inactive' });
-      return;
+      return res.status(401).json({ error: 'User not found or inactive' });
     }
 
-    // Generate a new token with extended expiration for active users
-    const newToken = jwt.sign(
+    // Generate a new token with extended expiration
+    const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
@@ -348,8 +352,18 @@ router.get('/validate', authenticateToken, async (req: any, res: Response) => {
 
     res.json({
       valid: true,
-      user,
-      token: newToken // Return new token with extended expiration
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        phone: user.phone,
+        avatar: user.avatar,
+        role: user.role,
+        seller: user.seller
+      },
+      token // Return new token with extended expiration
     });
   } catch (error) {
     console.error('Token validation error:', error);
@@ -605,4 +619,4 @@ router.delete('/profile/avatar', authenticateToken, async (req: any, res: Respon
   }
 });
 
-export default router; 
+export default router;

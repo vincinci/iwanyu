@@ -50,91 +50,53 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const timeoutId = setTimeout(() => {
           console.log('AuthContext: Auth initialization timeout, proceeding without validation');
           setIsLoading(false);
-        }, 5000);
+        }, 3000); // Reduced timeout for better UX
 
         const storedToken = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
         
-        console.log('AuthContext: Initializing auth', {
-          hasStoredToken: !!storedToken,
-          hasStoredUser: !!storedUser
-        });
-        
         if (storedToken && storedUser) {
           try {
-            // Simplified validation - just trust stored data for faster mobile loading
-            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-            
-            if (isMobile) {
-              // On mobile, just use stored data without validation for speed
-              console.log('AuthContext: Mobile detected - using stored auth data');
-              setUser(JSON.parse(storedUser));
-              setToken(storedToken);
-              clearTimeout(timeoutId);
-              setIsLoading(false);
-              return;
-            }
-            
-            // Desktop validation with shorter timeout
-            console.log('AuthContext: Validating stored token');
             const controller = new AbortController();
-            const validationTimeout = setTimeout(() => controller.abort(), 3000);
-            
             const response = await fetch(`${API_BASE_URL}/auth/validate`, {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${storedToken}`,
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
               },
               signal: controller.signal
             });
 
-            clearTimeout(validationTimeout);
-            console.log('AuthContext: Token validation response', {
-              ok: response.ok,
-              status: response.status
-            });
-
             if (response.ok) {
-              const validationData = await response.json();
-              console.log('AuthContext: Token validation successful', validationData);
-              
-              const tokenToUse = validationData.token || storedToken;
-              setToken(tokenToUse);
-              localStorage.setItem('token', tokenToUse);
-              
-              if (validationData.user) {
-                setUser(validationData.user);
-                localStorage.setItem('user', JSON.stringify(validationData.user));
-              } else {
-                setUser(JSON.parse(storedUser));
-              }
+              const data = await response.json();
+              setUser(data.user);
+              setToken(data.token); // Use new token from response
+              localStorage.setItem('token', data.token);
+              localStorage.setItem('user', JSON.stringify(data.user));
             } else {
-              console.log('AuthContext: Token validation failed, clearing storage');
+              // Clear invalid auth data
               localStorage.removeItem('token');
               localStorage.removeItem('user');
+              setUser(null);
+              setToken(null);
             }
           } catch (error) {
-            console.warn('AuthContext: Token validation failed, using stored data:', error);
-            // On any error, use stored data for mobile compatibility
+            // On network error, use stored data temporarily
+            console.warn('AuthContext: Using stored data due to network error');
             try {
               setUser(JSON.parse(storedUser));
               setToken(storedToken);
             } catch (parseError) {
-              console.error('AuthContext: Failed to parse stored user data:', parseError);
               localStorage.removeItem('token');
               localStorage.removeItem('user');
             }
           }
-        } else {
-          console.log('AuthContext: No stored auth data found');
         }
         
         clearTimeout(timeoutId);
         setIsLoading(false);
-        console.log('AuthContext: Auth initialization complete');
       } catch (error) {
-        console.error('AuthContext: Critical auth initialization error:', 'Error occurred');
+        console.error('AuthContext: Auth initialization error:', error);
         setIsLoading(false);
       }
     };

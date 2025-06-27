@@ -89,28 +89,30 @@ api.interceptors.response.use(
       isNetworkError: !error.response && error.message.includes('Network Error')
     });
 
-    // Handle 502 Bad Gateway errors with retry
+    // Handle network errors gracefully
+    if (!error.response && error.message.includes('Network Error')) {
+      console.warn('Network error - backend might not be running');
+      return Promise.reject(new Error('Unable to connect to server. Please check your connection and try again.'));
+    }
+
+    // Handle request timeout
+    if (!error.response && error.code === 'ECONNABORTED') {
+      console.warn('Request timeout - backend might be slow');
+      return Promise.reject(new Error('The request timed out. Please try again.'));
+    }
+
+    // Handle 502 Bad Gateway with retry
     if (error.response?.status === 502 && !originalRequest._retry) {
       originalRequest._retry = true;
-      console.log('Retrying 502 error after delay...');
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+      await new Promise(resolve => setTimeout(resolve, 2000));
       return api(originalRequest);
     }
 
-    // Handle network errors gracefully (backend not running, no internet, etc.)
-    if (!error.response && error.code === 'ECONNABORTED') {
-      console.warn('Request timeout - backend might be slow or unavailable');
-      return Promise.reject(new Error('Request timeout. Please check your connection.'));
-    }
-
-    if (!error.response && error.message.includes('Network Error')) {
-      console.warn('Network error - backend might not be running');
-      return Promise.reject(new Error('Unable to connect to server. Please try again later.'));
-    }
-
-    // Auto-logout on authentication errors
-    if (error.response?.status === 401) {
-      console.log('Authentication error - clearing stored token');
+    // Auto-logout on authentication errors, but not during login/register
+    if (error.response?.status === 401 && 
+        !originalRequest.url.includes('/login') && 
+        !originalRequest.url.includes('/register')) {
+      console.log('Authentication error - clearing stored data');
       try {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -193,4 +195,4 @@ export const authApi = {
 };
 
 // Export the axios instance for direct use when needed
-export default api; 
+export default api;
