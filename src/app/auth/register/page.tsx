@@ -26,7 +26,7 @@ export default function RegisterPage() {
   } = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      role: 'shopper' as const,
+      role: 'SHOPPER' as const,
     },
   });
 

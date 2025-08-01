@@ -4,8 +4,9 @@ import { validateSessionFromRequest } from '@/lib/auth';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   try {
     const session = await validateSessionFromRequest(req);
     if (!session) {
